@@ -1,3 +1,4 @@
+class_name BattleFormation
 extends Node2D
 
 signal selection_changed(selected: bool)
@@ -23,8 +24,10 @@ func _process(delta: float) -> void:
 		global_position = _move_target
 		_has_move_target = false
 		_set_order("HOLD")
+		queue_redraw()
 		return
 	global_position += offset.normalized() * minf(move_speed * delta, offset.length())
+	queue_redraw()
 
 func contains_world_point(world_point: Vector2) -> bool:
 	return global_position.distance_to(world_point) <= selection_radius
@@ -46,6 +49,7 @@ func stop() -> void:
 	_has_move_target = false
 	_move_target = global_position
 	_set_order("HOLD")
+	queue_redraw()
 
 func get_order() -> String:
 	return current_order
@@ -57,10 +61,8 @@ func _set_order(value: String) -> void:
 	order_changed.emit(current_order)
 
 func _draw() -> void:
-	# Formation body
 	draw_circle(Vector2.ZERO, 26.0, Color(0.12, 0.55, 0.92))
 	draw_circle(Vector2.ZERO, 18.0, Color(0.05, 0.18, 0.32))
-	# Formation direction mark
 	draw_line(Vector2(-10.0, 0.0), Vector2(10.0, 0.0), Color.WHITE, 3.0)
 	draw_line(Vector2(0.0, -10.0), Vector2(0.0, 10.0), Color.WHITE, 3.0)
 	if is_selected:
