@@ -4,33 +4,47 @@ extends Node2D
 signal selection_changed(selected: bool)
 signal order_changed(order_name: String)
 signal health_changed(current_hp: int, max_hp_value: int)
+signal ammo_changed(current_ammo: int, max_ammo: int)
 signal attack_fired(attacker: BattleFormation, target: BattleFormation, damage: int)
 signal died(formation: BattleFormation)
 
+@export var definition: FormationDefinition
 @export var display_name: String = "FORMATION"
 @export var faction: String = "BLUE"
 @export var selectable: bool = true
-@export var move_speed: float = 260.0
 @export var selection_radius: float = 34.0
-@export var max_hp: int = 100
-@export var attack_damage: int = 20
-@export var attack_range: float = 240.0
-@export var fire_interval: float = 0.6
 @export var body_color: Color = Color(0.12, 0.55, 0.92)
 
 var is_selected: bool = false
 var is_alive: bool = true
 var current_order: String = "HOLD"
 var current_hp: int = 0
+var current_ammo: int = 0
+
+var move_speed: float = 100.0
+var max_hp: int = 100
+var can_attack: bool = true
+var attack_damage: int = 0
+var attack_range: float = 0.0
+var fire_interval: float = 1.0
+var ammo_capacity: int = 0
+var detection_range: float = 250.0
+var can_capture: bool = true
+var indirect_fire: bool = false
+var supply_capacity: int = 0
+
 var _move_target: Vector2
 var _has_move_target: bool = false
 var _combat_target: BattleFormation
 var _fire_cooldown: float = 0.0
 
 func _ready() -> void:
+	_apply_definition()
 	current_hp = max_hp
+	current_ammo = ammo_capacity
 	_move_target = global_position
 	health_changed.emit(current_hp, max_hp)
+	ammo_changed.emit(current_ammo, ammo_capacity)
 	queue_redraw()
 
 func _process(delta: float) -> void:
@@ -39,6 +53,25 @@ func _process(delta: float) -> void:
 	_fire_cooldown = maxf(0.0, _fire_cooldown - delta)
 	_update_combat()
 	_update_movement(delta)
+
+func _apply_definition() -> void:
+	if definition == null:
+		push_warning("%s has no FormationDefinition; safe fallback stats are active." % name)
+		return
+	var errors: PackedStringArray = definition.validate()
+	if not errors.is_empty():
+		push_error("Invalid FormationDefinition %s: %s" % [definition.id, ", ".join(errors)])
+	move_speed = definition.move_speed
+	max_hp = definition.max_hp
+	can_attack = definition.can_attack
+	attack_damage = definition.attack_damage
+	attack_range = definition.attack_range
+	fire_interval = definition.fire_interval
+	ammo_capacity = definition.ammo_capacity
+	detection_range = definition.detection_range
+	can_capture = definition.can_capture
+	indirect_fire = definition.indirect_fire
+	supply_capacity = definition.supply_capacity
 
 func contains_world_point(world_point: Vector2) -> bool:
 	return is_alive and selectable and global_position.distance_to(world_point) <= selection_radius
@@ -86,6 +119,12 @@ func take_damage(amount: int) -> void:
 func get_order() -> String:
 	return current_order
 
+func get_role() -> String:
+	return definition.role if definition != null else "UNDEFINED"
+
+func is_capture_capable() -> bool:
+	return is_alive and can_capture
+
 func _update_movement(delta: float) -> void:
 	if not _has_move_target:
 		return
@@ -100,6 +139,8 @@ func _update_movement(delta: float) -> void:
 	queue_redraw()
 
 func _update_combat() -> void:
+	if not can_attack or current_ammo <= 0:
+		return
 	if _combat_target == null:
 		return
 	if not is_instance_valid(_combat_target) or not _combat_target.is_alive:
@@ -110,6 +151,8 @@ func _update_combat() -> void:
 	if _fire_cooldown > 0.0:
 		return
 	_fire_cooldown = fire_interval
+	current_ammo = maxi(0, current_ammo - 1)
+	ammo_changed.emit(current_ammo, ammo_capacity)
 	attack_fired.emit(self, _combat_target, attack_damage)
 	_combat_target.take_damage(attack_damage)
 
