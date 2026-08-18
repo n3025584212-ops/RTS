@@ -20,6 +20,7 @@ var is_alive: bool = true
 var current_order: String = "HOLD"
 var current_hp: int = 0
 var current_ammo: int = 0
+var intel_state: String = "CONFIRMED"
 
 var move_speed: float = 100.0
 var max_hp: int = 100
@@ -107,6 +108,12 @@ func set_combat_target(target: BattleFormation) -> void:
 func clear_combat_target() -> void:
 	_combat_target = null
 
+func set_intel_state(value: String) -> void:
+	if intel_state == value:
+		return
+	intel_state = value
+	queue_redraw()
+
 func take_damage(amount: int) -> void:
 	if not is_alive or amount <= 0:
 		return
@@ -176,6 +183,15 @@ func _set_order(value: String) -> void:
 	order_changed.emit(current_order)
 
 func _draw() -> void:
+	if faction == "RED":
+		if intel_state == "UNSEEN" or intel_state == "LAST_KNOWN":
+			return
+		if intel_state == "CONTACT":
+			draw_circle(Vector2.ZERO, 24.0, Color(0.95, 0.60, 0.18, 0.16))
+			draw_arc(Vector2.ZERO, 26.0, 0.0, TAU, 32, Color(0.95, 0.60, 0.18, 0.9), 3.0)
+			draw_string(ThemeDB.fallback_font, Vector2(-7.0, 7.0), "?", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 22, Color(1.0, 0.82, 0.35))
+			return
+
 	if not is_alive:
 		draw_circle(Vector2.ZERO, 26.0, Color(0.12, 0.12, 0.12))
 		draw_line(Vector2(-18.0, -18.0), Vector2(18.0, 18.0), Color(0.8, 0.2, 0.2), 5.0)
