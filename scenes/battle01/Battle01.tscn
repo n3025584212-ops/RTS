@@ -20,6 +20,27 @@ script = ExtResource("4_objective")
 [node name="BlueFormation" type="Node2D" parent="."]
 position = Vector2(520, 900)
 script = ExtResource("3_formation")
+display_name = "BLUE-01"
+faction = "BLUE"
+selectable = true
+max_hp = 160
+attack_damage = 25
+attack_range = 260.0
+fire_interval = 0.45
+body_color = Color(0.12, 0.55, 0.92, 1)
+
+[node name="RedFormation" type="Node2D" parent="."]
+position = Vector2(1370, 900)
+script = ExtResource("3_formation")
+display_name = "RED-01"
+faction = "RED"
+selectable = false
+move_speed = 0.0
+max_hp = 80
+attack_damage = 10
+attack_range = 230.0
+fire_interval = 0.75
+body_color = Color(0.88, 0.18, 0.15, 1)
 
 [node name="BattleCamera" type="Camera2D" parent="."]
 script = ExtResource("5_camera")
@@ -42,8 +63,8 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
-offset_right = 570.0
-offset_bottom = 210.0
+offset_right = 600.0
+offset_bottom = 270.0
 theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="HUD/Root/TopLeft"]
@@ -54,7 +75,7 @@ text = "FRONTLINE / BATTLE01"
 [node name="Task" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "MISSION: Secure Central Bridgehead"
+text = "MISSION: Destroy RED-01 and secure Central Bridgehead"
 
 [node name="Selected" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
@@ -64,6 +85,14 @@ text = "Selected Formation: NONE"
 layout_mode = 2
 text = "Current Order: HOLD"
 
+[node name="BlueHealth" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+text = "BLUE-01 HP: 0 / 0"
+
+[node name="EnemyHealth" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+text = "RED-01 HP: 0 / 0"
+
 [node name="Objective" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 text = "Central Bridgehead: NEUTRAL"
@@ -72,6 +101,11 @@ text = "Central Bridgehead: NEUTRAL"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.8, 0.84, 1)
 text = "LMB Select  |  RMB Move  |  WASD Camera  |  Wheel Zoom"
+
+[node name="PrototypeNotice" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.72, 0.28, 1)
+text = "PROTOTYPE COMBAT VALUES — NOT FORMAL BALANCE"
 
 [node name="VictoryPanel" type="PanelContainer" parent="HUD/Root"]
 layout_mode = 0
