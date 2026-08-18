@@ -1,0 +1,76 @@
+name: Godot 4.7.1 Runtime Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Headless parse and runtime smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_TAG="4.7.1-stable"
+          GODOT_ARCHIVE="Godot_v4.7.1-stable_linux.x86_64.zip"
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_ARCHIVE}"
+
+          mkdir -p "$RUNNER_TEMP/godot"
+          curl -fL --retry 3 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Verify Godot version
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT" --version | tee godot-version.log
+          "$GODOT" --version | grep -E '^4\.7\.1'
+
+      - name: Parse and import project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s "$GODOT" --headless --editor --path . --quit 2>&1 | tee godot-editor.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file' godot-editor.log; then
+            echo 'Godot editor parse/import reported a blocking error.'
+            exit 1
+          fi
+
+      - name: Run main scene smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --quit-after 120 2>&1 | tee godot-runtime.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file' godot-runtime.log; then
+            echo 'Godot runtime reported a blocking error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_BOOT_OK' godot-runtime.log
+
+      - name: Upload verification logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-runtime-verification-${{ github.sha }}
+          path: |
+            godot-version.log
+            godot-editor.log
+            godot-runtime.log
+          if-no-files-found: warn
+          retention-days: 14
