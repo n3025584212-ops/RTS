@@ -1,6 +1,6 @@
 extends Node2D
 
-const BUILD_ID: String = "BATTLE01_RECON_CONTACT_V1"
+const BUILD_ID: String = "BATTLE01_TERRAIN_LOS_SMOKE_V1"
 const FORMATION_DEFINITION_PATHS := [
 	"res://resources/formations/recon.tres",
 	"res://resources/formations/infantry.tres",
@@ -13,14 +13,15 @@ const FORMATION_DEFINITION_PATHS := [
 @onready var blue: BattleFormation = $BlueFormation
 @onready var recon: BattleFormation = $BlueRecon
 @onready var red: BattleFormation = $RedFormation
+@onready var visibility: BattleVisibilityField = $VisibilityField
 @onready var intel: BattleIntelTracker = $IntelTracker
 @onready var objective: BattleObjective = $CentralBridgehead
 @onready var hud: BattleHUD = $HUD
 
 var _match_finished: bool = false
 var _combat_started: bool = false
-var _ci_intel_combat_smoke: bool = false
-var _ci_intel_phase: int = 0
+var _ci_los_smoke: bool = false
+var _ci_los_phase: int = 0
 
 func _ready() -> void:
 	if _validate_formation_definitions():
@@ -41,8 +42,12 @@ func _ready() -> void:
 	objective.captured.connect(_on_objective_captured)
 	hud.restart_requested.connect(_on_restart_requested)
 
+	blue.set_visibility_field(visibility)
+	recon.set_visibility_field(visibility)
+	red.set_visibility_field(visibility)
+
 	var observers: Array[BattleFormation] = [blue, recon]
-	intel.configure(observers, red)
+	intel.configure(observers, red, visibility)
 	red.set_combat_target(blue)
 	objective.set_tracked_formation(blue)
 	objective.set_capture_blocked(true)
@@ -51,16 +56,17 @@ func _ready() -> void:
 	hud.set_enemy_health(red.current_hp, red.max_hp, red.is_alive)
 	hud.set_intel_state(BattleIntelTracker.UNSEEN, Vector2.ZERO)
 
-	_ci_intel_combat_smoke = OS.get_cmdline_user_args().has("--battle01-ci-intel-combat-smoke")
-	if _ci_intel_combat_smoke:
+	_ci_los_smoke = OS.get_cmdline_user_args().has("--battle01-ci-los-smoke")
+	if _ci_los_smoke:
 		blue.move_speed = 700.0
-		recon.global_position = Vector2(1000.0, 900.0)
-		print("FRONTLINE_CI_INTEL_SMOKE_STARTED")
+		recon.global_position = Vector2(1050.0, 600.0)
+		print("FRONTLINE_CI_LOS_SMOKE_STARTED")
 
 	print("FRONTLINE_BOOT_OK build=%s" % BUILD_ID)
 	print("FRONTLINE_WALKING_SKELETON_READY")
 	print("FRONTLINE_COMBAT_SKELETON_READY")
 	print("FRONTLINE_RECON_CONTACT_READY")
+	print("FRONTLINE_TERRAIN_LOS_SMOKE_READY")
 
 func _validate_formation_definitions() -> bool:
 	var valid := true
@@ -99,22 +105,36 @@ func _on_intel_state_changed(state: String, last_known_position: Vector2) -> voi
 	elif state == BattleIntelTracker.CONFIRMED:
 		blue.set_combat_target(red)
 		print("FRONTLINE_INTEL_CONFIRMED")
-		if _ci_intel_combat_smoke:
-			if _ci_intel_phase == 0:
-				_ci_intel_phase = 1
-				recon.global_position = Vector2(300.0, 300.0)
-			elif _ci_intel_phase == 2:
-				_ci_intel_phase = 3
+		if _ci_los_smoke:
+			if _ci_los_phase == 0:
+				_ci_los_phase = 1
+				recon.global_position = Vector2(1000.0, 900.0)
+				print("FRONTLINE_TERRAIN_LOS_TEST_ARMED")
+			elif _ci_los_phase == 2:
+				_ci_los_phase = 3
 				print("FRONTLINE_INTEL_REACQUIRED")
+				print("FRONTLINE_FLANK_LOS_REACQUIRED")
+				visibility.deploy_smoke(Vector2(1210.0, 750.0), 95.0, 1.4)
+				print("FRONTLINE_SMOKE_DEPLOYED")
+			elif _ci_los_phase == 4:
+				_ci_los_phase = 5
+				print("FRONTLINE_SMOKE_CLEARED_REACQUIRED")
 				blue.set_selected(true)
 				blue.issue_move(objective.global_position)
-				print("FRONTLINE_CI_COMBAT_AFTER_RECON_STARTED")
+				print("FRONTLINE_CI_COMBAT_AFTER_LOS_STARTED")
 	elif state == BattleIntelTracker.LAST_KNOWN:
 		blue.clear_combat_target()
 		print("FRONTLINE_INTEL_LAST_KNOWN")
-		if _ci_intel_combat_smoke and _ci_intel_phase == 1:
-			_ci_intel_phase = 2
-			recon.global_position = Vector2(1000.0, 900.0)
+		if _ci_los_smoke:
+			if _ci_los_phase == 1:
+				if visibility.get_block_reason(recon.global_position, red.global_position) == BattleVisibilityField.TERRAIN:
+					print("FRONTLINE_TERRAIN_LOS_BLOCKED")
+				_ci_los_phase = 2
+				recon.global_position = Vector2(1050.0, 600.0)
+			elif _ci_los_phase == 3:
+				if visibility.get_block_reason(recon.global_position, red.global_position) == BattleVisibilityField.SMOKE:
+					print("FRONTLINE_SMOKE_LOS_BLOCKED")
+				_ci_los_phase = 4
 	else:
 		blue.clear_combat_target()
 
@@ -162,7 +182,8 @@ func _on_objective_captured() -> void:
 	hud.show_victory()
 	print("FRONTLINE_OBJECTIVE_CAPTURED objective=CentralBridgehead")
 	print("FRONTLINE_VICTORY")
-	if _ci_intel_combat_smoke and _ci_intel_phase == 3 and not red.is_alive and blue.is_alive and _combat_started:
+	if _ci_los_smoke and _ci_los_phase == 5 and not red.is_alive and blue.is_alive and _combat_started:
+		print("FRONTLINE_TERRAIN_LOS_SMOKE_PASS")
 		print("FRONTLINE_RECON_CONTACT_SMOKE_PASS")
 		print("FRONTLINE_COMBAT_SMOKE_PASS")
 
