@@ -2,9 +2,9 @@ extends Node2D
 
 const BUILD_ID: String = "BATTLE01_WALKING_SKELETON_INTERACTION_V1"
 
-@onready var formation: Node2D = $BlueFormation
-@onready var objective: Node2D = $CentralBridgehead
-@onready var hud: CanvasLayer = $HUD
+@onready var formation: BattleFormation = $BlueFormation
+@onready var objective: BattleObjective = $CentralBridgehead
+@onready var hud: BattleHUD = $HUD
 
 var _victory: bool = false
 
@@ -22,7 +22,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _victory:
 		return
 	if event is InputEventMouseButton and event.pressed:
-		var world_point := get_global_mouse_position()
+		var world_point: Vector2 = get_global_mouse_position()
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			formation.set_selected(formation.contains_world_point(world_point))
 			get_viewport().set_input_as_handled()
