@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="FormationDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle01/formation_definition.gd" id="1_def"]
+
+[resource]
+script = ExtResource("1_def")
+id = "ifv"
+display_name = "Mechanized IFV"
+role = "IFV"
+move_speed = 125.0
+max_hp = 180
+can_attack = true
+attack_damage = 24
+attack_range = 280.0
+fire_interval = 0.80
+ammo_capacity = 48
+detection_range = 340.0
+can_capture = true
+indirect_fire = false
+supply_capacity = 0
