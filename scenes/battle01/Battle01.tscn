@@ -1,31 +1,101 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
+[ext_resource type="Script" path="res://scripts/battle01/battlefield.gd" id="2_field"]
+[ext_resource type="Script" path="res://scripts/battle01/formation.gd" id="3_formation"]
+[ext_resource type="Script" path="res://scripts/battle01/objective.gd" id="4_objective"]
+[ext_resource type="Script" path="res://scripts/battle01/battle_camera.gd" id="5_camera"]
+[ext_resource type="Script" path="res://scripts/battle01/hud.gd" id="6_hud"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
 
+[node name="Battlefield" type="Node2D" parent="."]
+script = ExtResource("2_field")
+
+[node name="CentralBridgehead" type="Node2D" parent="."]
+position = Vector2(1600, 900)
+script = ExtResource("4_objective")
+
+[node name="BlueFormation" type="Node2D" parent="."]
+position = Vector2(520, 900)
+script = ExtResource("3_formation")
+
+[node name="BattleCamera" type="Camera2D" parent="."]
+script = ExtResource("5_camera")
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
 [node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("6_hud")
 
-[node name="Backdrop" type="ColorRect" parent="HUD"]
-offset_right = 1600.0
-offset_bottom = 900.0
+[node name="Root" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-color = Color(0.035, 0.045, 0.055, 1)
 
-[node name="Status" type="Label" parent="HUD"]
-offset_left = 32.0
-offset_top = 28.0
-offset_right = 760.0
-offset_bottom = 150.0
-theme_override_font_sizes/font_size = 24
-text = "FRONTLINE / BATTLE01\nWalking Skeleton"
+[node name="TopLeft" type="VBoxContainer" parent="HUD/Root"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 570.0
+offset_bottom = 210.0
+theme_override_constants/separation = 6
 
-[node name="Hint" type="Label" parent="HUD"]
-offset_left = 32.0
-offset_top = 150.0
-offset_right = 950.0
-offset_bottom = 230.0
-theme_override_colors/font_color = Color(0.72, 0.78, 0.82, 1)
-theme_override_font_sizes/font_size = 16
-text = "Repository boot baseline. Gameplay systems will be rebuilt from the current product specification."
+[node name="Title" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "FRONTLINE / BATTLE01"
+
+[node name="Task" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "MISSION: Secure Central Bridgehead"
+
+[node name="Selected" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+text = "Selected Formation: NONE"
+
+[node name="Order" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+text = "Current Order: HOLD"
+
+[node name="Objective" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+text = "Central Bridgehead: NEUTRAL"
+
+[node name="Controls" type="Label" parent="HUD/Root/TopLeft"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.8, 0.84, 1)
+text = "LMB Select  |  RMB Move  |  WASD Camera  |  Wheel Zoom"
+
+[node name="VictoryPanel" type="PanelContainer" parent="HUD/Root"]
+layout_mode = 0
+offset_left = 585.0
+offset_top = 325.0
+offset_right = 1015.0
+offset_bottom = 575.0
+
+[node name="VBox" type="VBoxContainer" parent="HUD/Root/VictoryPanel"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 18
+
+[node name="Victory" type="Label" parent="HUD/Root/VictoryPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "VICTORY"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="HUD/Root/VictoryPanel/VBox"]
+layout_mode = 2
+text = "Central Bridgehead secured."
+horizontal_alignment = 1
+
+[node name="Restart" type="Button" parent="HUD/Root/VictoryPanel/VBox"]
+layout_mode = 2
+text = "RESTART BATTLE01"
