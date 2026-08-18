@@ -32,7 +32,6 @@ jobs:
           curl -fL --retry 3 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
           unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
           chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
-
           echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
 
       - name: Verify Godot version
@@ -57,11 +56,12 @@ jobs:
         run: |
           set -euo pipefail
           timeout 30s "$GODOT" --headless --path . --quit-after 120 2>&1 | tee godot-runtime.log
-          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file' godot-runtime.log; then
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-runtime.log; then
             echo 'Godot runtime reported a blocking error.'
             exit 1
           fi
           grep -q 'FRONTLINE_BOOT_OK' godot-runtime.log
+          grep -q 'FRONTLINE_WALKING_SKELETON_READY' godot-runtime.log
 
       - name: Upload verification logs
         if: always()
