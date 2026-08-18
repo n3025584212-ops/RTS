@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/battlefield.gd" id="2_field"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" path="res://scripts/battle01/objective.gd" id="4_objective"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_camera.gd" id="5_camera"]
 [ext_resource type="Script" path="res://scripts/battle01/hud.gd" id="6_hud"]
+[ext_resource type="Resource" path="res://resources/formations/ifv.tres" id="7_blue_def"]
+[ext_resource type="Resource" path="res://resources/formations/infantry.tres" id="8_red_def"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
@@ -20,26 +22,19 @@ script = ExtResource("4_objective")
 [node name="BlueFormation" type="Node2D" parent="."]
 position = Vector2(520, 900)
 script = ExtResource("3_formation")
-display_name = "BLUE-01"
+definition = ExtResource("7_blue_def")
+display_name = "BLUE IFV-01"
 faction = "BLUE"
 selectable = true
-max_hp = 160
-attack_damage = 25
-attack_range = 260.0
-fire_interval = 0.45
 body_color = Color(0.12, 0.55, 0.92, 1)
 
 [node name="RedFormation" type="Node2D" parent="."]
 position = Vector2(1370, 900)
 script = ExtResource("3_formation")
-display_name = "RED-01"
+definition = ExtResource("8_red_def")
+display_name = "RED INF-01"
 faction = "RED"
 selectable = false
-move_speed = 0.0
-max_hp = 80
-attack_damage = 10
-attack_range = 230.0
-fire_interval = 0.75
 body_color = Color(0.88, 0.18, 0.15, 1)
 
 [node name="BattleCamera" type="Camera2D" parent="."]
@@ -64,7 +59,7 @@ layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
 offset_right = 600.0
-offset_bottom = 270.0
+offset_bottom = 290.0
 theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="HUD/Root/TopLeft"]
@@ -75,7 +70,7 @@ text = "FRONTLINE / BATTLE01"
 [node name="Task" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "MISSION: Destroy RED-01 and secure Central Bridgehead"
+text = "MISSION: Destroy RED INF-01 and secure Central Bridgehead"
 
 [node name="Selected" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
@@ -87,11 +82,11 @@ text = "Current Order: HOLD"
 
 [node name="BlueHealth" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "BLUE-01 HP: 0 / 0"
+text = "BLUE IFV-01 HP: 0 / 0"
 
 [node name="EnemyHealth" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "RED-01 HP: 0 / 0"
+text = "RED INF-01 HP: 0 / 0"
 
 [node name="Objective" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
@@ -104,8 +99,8 @@ text = "LMB Select  |  RMB Move  |  WASD Camera  |  Wheel Zoom"
 
 [node name="PrototypeNotice" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.72, 0.28, 1)
-text = "PROTOTYPE COMBAT VALUES — NOT FORMAL BALANCE"
+theme_override_colors/font_color = Color(0.55, 0.82, 1.0, 1)
+text = "DATA-DRIVEN FORMATION DEFINITIONS V1"
 
 [node name="VictoryPanel" type="PanelContainer" parent="HUD/Root"]
 layout_mode = 0
