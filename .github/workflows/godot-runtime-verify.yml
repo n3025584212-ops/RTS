@@ -51,23 +51,27 @@ jobs:
             exit 1
           fi
 
-      - name: Run deterministic combat smoke test
+      - name: Run recon contact and deterministic combat smoke test
         shell: bash
         run: |
           set -euo pipefail
-          timeout 30s "$GODOT" --headless --path . --quit-after 3000 -- --battle01-ci-combat-smoke 2>&1 | tee godot-runtime.log
+          timeout 30s "$GODOT" --headless --path . --quit-after 3000 -- --battle01-ci-intel-combat-smoke 2>&1 | tee godot-runtime.log
           if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-runtime.log; then
             echo 'Godot runtime reported a blocking error.'
             exit 1
           fi
           grep -q 'FRONTLINE_BOOT_OK' godot-runtime.log
-          grep -q 'FRONTLINE_WALKING_SKELETON_READY' godot-runtime.log
-          grep -q 'FRONTLINE_COMBAT_SKELETON_READY' godot-runtime.log
           grep -q 'FRONTLINE_FORMATION_DEFINITIONS_READY count=6' godot-runtime.log
+          grep -q 'FRONTLINE_RECON_CONTACT_READY' godot-runtime.log
+          grep -q 'FRONTLINE_INTEL_CONTACT' godot-runtime.log
+          grep -q 'FRONTLINE_INTEL_CONFIRMED' godot-runtime.log
+          grep -q 'FRONTLINE_INTEL_LAST_KNOWN' godot-runtime.log
+          grep -q 'FRONTLINE_INTEL_REACQUIRED' godot-runtime.log
           grep -q 'FRONTLINE_COMBAT_STARTED' godot-runtime.log
           grep -q 'FRONTLINE_RED_DESTROYED' godot-runtime.log
           grep -q 'FRONTLINE_OBJECTIVE_CAPTURED' godot-runtime.log
           grep -q 'FRONTLINE_VICTORY' godot-runtime.log
+          grep -q 'FRONTLINE_RECON_CONTACT_SMOKE_PASS' godot-runtime.log
           grep -q 'FRONTLINE_COMBAT_SMOKE_PASS' godot-runtime.log
 
       - name: Upload verification logs
