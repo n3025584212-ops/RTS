@@ -1,6 +1,6 @@
 extends Node2D
 
-const BUILD_ID: String = "BATTLE01_FORMATION_DEFINITIONS_V1"
+const BUILD_ID: String = "BATTLE01_RECON_CONTACT_V1"
 const FORMATION_DEFINITION_PATHS := [
 	"res://resources/formations/recon.tres",
 	"res://resources/formations/infantry.tres",
@@ -11,13 +11,16 @@ const FORMATION_DEFINITION_PATHS := [
 ]
 
 @onready var blue: BattleFormation = $BlueFormation
+@onready var recon: BattleFormation = $BlueRecon
 @onready var red: BattleFormation = $RedFormation
+@onready var intel: BattleIntelTracker = $IntelTracker
 @onready var objective: BattleObjective = $CentralBridgehead
 @onready var hud: BattleHUD = $HUD
 
 var _match_finished: bool = false
 var _combat_started: bool = false
-var _ci_combat_smoke: bool = false
+var _ci_intel_combat_smoke: bool = false
+var _ci_intel_phase: int = 0
 
 func _ready() -> void:
 	if _validate_formation_definitions():
@@ -33,28 +36,31 @@ func _ready() -> void:
 	red.attack_fired.connect(_on_attack_fired)
 	red.died.connect(_on_red_died)
 
+	intel.intel_state_changed.connect(_on_intel_state_changed)
 	objective.state_changed.connect(_on_objective_state_changed)
 	objective.captured.connect(_on_objective_captured)
 	hud.restart_requested.connect(_on_restart_requested)
 
-	blue.set_combat_target(red)
+	var observers: Array[BattleFormation] = [blue, recon]
+	intel.configure(observers, red)
 	red.set_combat_target(blue)
 	objective.set_tracked_formation(blue)
 	objective.set_capture_blocked(true)
 
 	hud.set_blue_health(blue.current_hp, blue.max_hp)
 	hud.set_enemy_health(red.current_hp, red.max_hp, red.is_alive)
+	hud.set_intel_state(BattleIntelTracker.UNSEEN, Vector2.ZERO)
 
-	_ci_combat_smoke = OS.get_cmdline_user_args().has("--battle01-ci-combat-smoke")
-	if _ci_combat_smoke:
+	_ci_intel_combat_smoke = OS.get_cmdline_user_args().has("--battle01-ci-intel-combat-smoke")
+	if _ci_intel_combat_smoke:
 		blue.move_speed = 700.0
-		blue.set_selected(true)
-		blue.issue_move(objective.global_position)
-		print("FRONTLINE_CI_COMBAT_SMOKE_STARTED")
+		recon.global_position = Vector2(1000.0, 900.0)
+		print("FRONTLINE_CI_INTEL_SMOKE_STARTED")
 
 	print("FRONTLINE_BOOT_OK build=%s" % BUILD_ID)
 	print("FRONTLINE_WALKING_SKELETON_READY")
 	print("FRONTLINE_COMBAT_SKELETON_READY")
+	print("FRONTLINE_RECON_CONTACT_READY")
 
 func _validate_formation_definitions() -> bool:
 	var valid := true
@@ -83,6 +89,35 @@ func _unhandled_input(event: InputEvent) -> void:
 			blue.issue_move(world_point)
 			get_viewport().set_input_as_handled()
 
+func _on_intel_state_changed(state: String, last_known_position: Vector2) -> void:
+	hud.set_intel_state(state, last_known_position)
+	print("FRONTLINE_INTEL_STATE state=%s" % state)
+
+	if state == BattleIntelTracker.CONTACT:
+		blue.clear_combat_target()
+		print("FRONTLINE_INTEL_CONTACT")
+	elif state == BattleIntelTracker.CONFIRMED:
+		blue.set_combat_target(red)
+		print("FRONTLINE_INTEL_CONFIRMED")
+		if _ci_intel_combat_smoke:
+			if _ci_intel_phase == 0:
+				_ci_intel_phase = 1
+				recon.global_position = Vector2(300.0, 300.0)
+			elif _ci_intel_phase == 2:
+				_ci_intel_phase = 3
+				print("FRONTLINE_INTEL_REACQUIRED")
+				blue.set_selected(true)
+				blue.issue_move(objective.global_position)
+				print("FRONTLINE_CI_COMBAT_AFTER_RECON_STARTED")
+	elif state == BattleIntelTracker.LAST_KNOWN:
+		blue.clear_combat_target()
+		print("FRONTLINE_INTEL_LAST_KNOWN")
+		if _ci_intel_combat_smoke and _ci_intel_phase == 1:
+			_ci_intel_phase = 2
+			recon.global_position = Vector2(1000.0, 900.0)
+	else:
+		blue.clear_combat_target()
+
 func _on_blue_selection_changed(selected: bool) -> void:
 	hud.set_selected(selected)
 
@@ -95,7 +130,9 @@ func _on_blue_health_changed(current_hp: int, max_hp_value: int) -> void:
 func _on_red_health_changed(current_hp: int, max_hp_value: int) -> void:
 	hud.set_enemy_health(current_hp, max_hp_value, current_hp > 0)
 
-func _on_attack_fired(_attacker: BattleFormation, _target: BattleFormation, _damage: int) -> void:
+func _on_attack_fired(attacker: BattleFormation, _target: BattleFormation, _damage: int) -> void:
+	if attacker == red:
+		intel.note_target_fired()
 	if not _combat_started:
 		_combat_started = true
 		print("FRONTLINE_COMBAT_STARTED")
@@ -125,7 +162,8 @@ func _on_objective_captured() -> void:
 	hud.show_victory()
 	print("FRONTLINE_OBJECTIVE_CAPTURED objective=CentralBridgehead")
 	print("FRONTLINE_VICTORY")
-	if _ci_combat_smoke and not red.is_alive and blue.is_alive and _combat_started:
+	if _ci_intel_combat_smoke and _ci_intel_phase == 3 and not red.is_alive and blue.is_alive and _combat_started:
+		print("FRONTLINE_RECON_CONTACT_SMOKE_PASS")
 		print("FRONTLINE_COMBAT_SMOKE_PASS")
 
 func _on_restart_requested() -> void:
