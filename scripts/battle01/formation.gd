@@ -37,6 +37,7 @@ var supply_capacity: int = 0
 var _move_target: Vector2
 var _has_move_target: bool = false
 var _combat_target: BattleFormation
+var _visibility_field: BattleVisibilityField
 var _fire_cooldown: float = 0.0
 
 func _ready() -> void:
@@ -108,6 +109,9 @@ func set_combat_target(target: BattleFormation) -> void:
 func clear_combat_target() -> void:
 	_combat_target = null
 
+func set_visibility_field(field: BattleVisibilityField) -> void:
+	_visibility_field = field
+
 func set_intel_state(value: String) -> void:
 	if intel_state == value:
 		return
@@ -154,6 +158,8 @@ func _update_combat() -> void:
 		_combat_target = null
 		return
 	if global_position.distance_to(_combat_target.global_position) > attack_range:
+		return
+	if _visibility_field != null and not _visibility_field.has_line_of_sight(global_position, _combat_target.global_position):
 		return
 	if _fire_cooldown > 0.0:
 		return
