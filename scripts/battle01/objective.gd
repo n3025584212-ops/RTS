@@ -1,3 +1,4 @@
+class_name BattleObjective
 extends Node2D
 
 signal state_changed(state: String, progress: float)
@@ -8,21 +9,19 @@ signal captured
 
 var state: String = "NEUTRAL"
 var progress: float = 0.0
-var _tracked_formation: Node2D
+var _tracked_formation: BattleFormation
 
 func _ready() -> void:
 	queue_redraw()
 	state_changed.emit(state, progress)
 
-func set_tracked_formation(formation: Node2D) -> void:
+func set_tracked_formation(formation: BattleFormation) -> void:
 	_tracked_formation = formation
 
 func _process(delta: float) -> void:
-	if state == "CAPTURED":
+	if state == "CAPTURED" or _tracked_formation == null:
 		return
-	if _tracked_formation == null:
-		return
-	var inside := global_position.distance_to(_tracked_formation.global_position) <= capture_radius
+	var inside: bool = global_position.distance_to(_tracked_formation.global_position) <= capture_radius
 	if inside:
 		state = "CAPTURING"
 		progress = minf(1.0, progress + delta / capture_time)
@@ -40,8 +39,8 @@ func _process(delta: float) -> void:
 			queue_redraw()
 
 func _draw() -> void:
-	var fill := Color(0.85, 0.67, 0.18, 0.14)
-	var edge := Color(0.95, 0.80, 0.28, 0.9)
+	var fill: Color = Color(0.85, 0.67, 0.18, 0.14)
+	var edge: Color = Color(0.95, 0.80, 0.28, 0.9)
 	if state == "CAPTURING":
 		fill = Color(0.12, 0.55, 0.92, 0.18)
 		edge = Color(0.35, 0.95, 1.0, 0.95)
