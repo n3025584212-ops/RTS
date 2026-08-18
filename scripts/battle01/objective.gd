@@ -32,6 +32,14 @@ func _process(delta: float) -> void:
 		return
 
 	var inside: bool = global_position.distance_to(_tracked_formation.global_position) <= capture_radius
+	if inside and not _tracked_formation.is_capture_capable():
+		if state != "NEUTRAL" or progress != 0.0:
+			state = "NEUTRAL"
+			progress = 0.0
+			state_changed.emit(state, progress)
+			queue_redraw()
+		return
+
 	if inside and _capture_blocked:
 		if state != "CONTESTED" or progress != 0.0:
 			state = "CONTESTED"
