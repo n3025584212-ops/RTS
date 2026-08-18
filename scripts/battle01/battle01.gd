@@ -56,7 +56,8 @@ func _ready() -> void:
 	hud.set_enemy_health(red.current_hp, red.max_hp, red.is_alive)
 	hud.set_intel_state(BattleIntelTracker.UNSEEN, Vector2.ZERO)
 
-	_ci_los_smoke = OS.get_cmdline_user_args().has("--battle01-ci-los-smoke")
+	var user_args: PackedStringArray = OS.get_cmdline_user_args()
+	_ci_los_smoke = user_args.has("--battle01-ci-los-smoke") or user_args.has("--battle01-ci-intel-combat-smoke")
 	if _ci_los_smoke:
 		blue.move_speed = 700.0
 		recon.global_position = Vector2(1050.0, 600.0)
