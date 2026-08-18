@@ -55,7 +55,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 30s "$GODOT" --headless --path . --quit-after 900 -- --battle01-ci-combat-smoke 2>&1 | tee godot-runtime.log
+          timeout 30s "$GODOT" --headless --path . --quit-after 3000 -- --battle01-ci-combat-smoke 2>&1 | tee godot-runtime.log
           if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-runtime.log; then
             echo 'Godot runtime reported a blocking error.'
             exit 1
