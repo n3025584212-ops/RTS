@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="FormationDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle01/formation_definition.gd" id="1_def"]
+
+[resource]
+script = ExtResource("1_def")
+id = "tank"
+display_name = "Main Battle Tank"
+role = "TANK"
+move_speed = 85.0
+max_hp = 280
+can_attack = true
+attack_damage = 45
+attack_range = 300.0
+fire_interval = 1.50
+ammo_capacity = 24
+detection_range = 300.0
+can_capture = true
+indirect_fire = false
+supply_capacity = 0
