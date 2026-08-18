@@ -1,6 +1,14 @@
 extends Node2D
 
-const BUILD_ID: String = "BATTLE01_COMBAT_SKELETON_V1"
+const BUILD_ID: String = "BATTLE01_FORMATION_DEFINITIONS_V1"
+const FORMATION_DEFINITION_PATHS := [
+	"res://resources/formations/recon.tres",
+	"res://resources/formations/infantry.tres",
+	"res://resources/formations/ifv.tres",
+	"res://resources/formations/tank.tres",
+	"res://resources/formations/artillery.tres",
+	"res://resources/formations/logistics.tres",
+]
 
 @onready var blue: BattleFormation = $BlueFormation
 @onready var red: BattleFormation = $RedFormation
@@ -12,6 +20,9 @@ var _combat_started: bool = false
 var _ci_combat_smoke: bool = false
 
 func _ready() -> void:
+	if _validate_formation_definitions():
+		print("FRONTLINE_FORMATION_DEFINITIONS_READY count=%d" % FORMATION_DEFINITION_PATHS.size())
+
 	blue.selection_changed.connect(_on_blue_selection_changed)
 	blue.order_changed.connect(_on_blue_order_changed)
 	blue.health_changed.connect(_on_blue_health_changed)
@@ -45,6 +56,21 @@ func _ready() -> void:
 	print("FRONTLINE_WALKING_SKELETON_READY")
 	print("FRONTLINE_COMBAT_SKELETON_READY")
 
+func _validate_formation_definitions() -> bool:
+	var valid := true
+	for path: String in FORMATION_DEFINITION_PATHS:
+		var loaded: Resource = load(path)
+		if loaded == null or not loaded is FormationDefinition:
+			push_error("Formation definition failed to load: %s" % path)
+			valid = false
+			continue
+		var formation_definition := loaded as FormationDefinition
+		var errors: PackedStringArray = formation_definition.validate()
+		if not errors.is_empty():
+			push_error("Formation definition invalid %s: %s" % [path, ", ".join(errors)])
+			valid = false
+	return valid
+
 func _unhandled_input(event: InputEvent) -> void:
 	if _match_finished:
 		return
@@ -63,11 +89,11 @@ func _on_blue_selection_changed(selected: bool) -> void:
 func _on_blue_order_changed(order_name: String) -> void:
 	hud.set_order(order_name)
 
-func _on_blue_health_changed(current_hp: int, max_hp: int) -> void:
-	hud.set_blue_health(current_hp, max_hp)
+func _on_blue_health_changed(current_hp: int, max_hp_value: int) -> void:
+	hud.set_blue_health(current_hp, max_hp_value)
 
-func _on_red_health_changed(current_hp: int, max_hp: int) -> void:
-	hud.set_enemy_health(current_hp, max_hp, current_hp > 0)
+func _on_red_health_changed(current_hp: int, max_hp_value: int) -> void:
+	hud.set_enemy_health(current_hp, max_hp_value, current_hp > 0)
 
 func _on_attack_fired(_attacker: BattleFormation, _target: BattleFormation, _damage: int) -> void:
 	if not _combat_started:
