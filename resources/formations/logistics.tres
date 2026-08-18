@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="FormationDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/battle01/formation_definition.gd" id="1_def"]
+
+[resource]
+script = ExtResource("1_def")
+id = "logistics"
+display_name = "Logistics Column"
+role = "LOGISTICS"
+move_speed = 100.0
+max_hp = 120
+can_attack = false
+attack_damage = 0
+attack_range = 0.0
+fire_interval = 1.0
+ammo_capacity = 0
+detection_range = 220.0
+can_capture = false
+indirect_fire = false
+supply_capacity = 2
