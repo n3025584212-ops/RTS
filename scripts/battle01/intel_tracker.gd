@@ -16,12 +16,14 @@ var last_known_position: Vector2 = Vector2.ZERO
 
 var _observers: Array[BattleFormation] = []
 var _target: BattleFormation
+var _visibility_field: BattleVisibilityField
 var _confirmation_progress: float = 0.0
 var _forced_reveal_remaining: float = 0.0
 
-func configure(observers: Array[BattleFormation], target: BattleFormation) -> void:
+func configure(observers: Array[BattleFormation], target: BattleFormation, visibility_field: BattleVisibilityField = null) -> void:
 	_observers = observers
 	_target = target
+	_visibility_field = visibility_field
 	if _target != null:
 		_target.set_intel_state(UNSEEN)
 	queue_redraw()
@@ -61,8 +63,11 @@ func _is_detected_by_any_observer() -> bool:
 	for observer: BattleFormation in _observers:
 		if observer == null or not is_instance_valid(observer) or not observer.is_alive:
 			continue
-		if observer.global_position.distance_to(_target.global_position) <= observer.detection_range:
-			return true
+		if observer.global_position.distance_to(_target.global_position) > observer.detection_range:
+			continue
+		if _visibility_field != null and not _visibility_field.has_line_of_sight(observer.global_position, _target.global_position):
+			continue
+		return true
 	return false
 
 func _set_state(next_state: String) -> void:
