@@ -1,3 +1,4 @@
+class_name BattleHUD
 extends CanvasLayer
 
 signal restart_requested
