@@ -9,7 +9,7 @@ signal captured
 
 var state: String = "NEUTRAL"
 var progress: float = 0.0
-var _tracked_formation: BattleFormation
+var _tracked_formations: Array[BattleFormation] = []
 var _capture_blocked: bool = false
 
 func _ready() -> void:
@@ -17,7 +17,12 @@ func _ready() -> void:
 	state_changed.emit(state, progress)
 
 func set_tracked_formation(formation: BattleFormation) -> void:
-	_tracked_formation = formation
+	_tracked_formations.clear()
+	if formation != null:
+		_tracked_formations.append(formation)
+
+func set_tracked_formations(formations: Array[BattleFormation]) -> void:
+	_tracked_formations = formations
 
 func set_capture_blocked(blocked: bool) -> void:
 	_capture_blocked = blocked
@@ -28,19 +33,15 @@ func set_capture_blocked(blocked: bool) -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	if state == "CAPTURED" or _tracked_formation == null or not _tracked_formation.is_alive:
+	if state == "CAPTURED":
 		return
 
-	var inside: bool = global_position.distance_to(_tracked_formation.global_position) <= capture_radius
-	if inside and not _tracked_formation.is_capture_capable():
-		if state != "NEUTRAL" or progress != 0.0:
-			state = "NEUTRAL"
-			progress = 0.0
-			state_changed.emit(state, progress)
-			queue_redraw()
+	var capturer: BattleFormation = _find_capture_capable_formation_inside()
+	if capturer == null:
+		_reset_to_neutral_if_needed()
 		return
 
-	if inside and _capture_blocked:
+	if _capture_blocked:
 		if state != "CONTESTED" or progress != 0.0:
 			state = "CONTESTED"
 			progress = 0.0
@@ -48,21 +49,31 @@ func _process(delta: float) -> void:
 			queue_redraw()
 		return
 
-	if inside:
-		state = "CAPTURING"
-		progress = minf(1.0, progress + delta / capture_time)
+	state = "CAPTURING"
+	progress = minf(1.0, progress + delta / capture_time)
+	state_changed.emit(state, progress)
+	queue_redraw()
+	if progress >= 1.0:
+		state = "CAPTURED"
+		state_changed.emit(state, progress)
+		captured.emit()
+
+func _find_capture_capable_formation_inside() -> BattleFormation:
+	for formation: BattleFormation in _tracked_formations:
+		if formation == null or not is_instance_valid(formation):
+			continue
+		if not formation.is_capture_capable():
+			continue
+		if global_position.distance_to(formation.global_position) <= capture_radius:
+			return formation
+	return null
+
+func _reset_to_neutral_if_needed() -> void:
+	if progress > 0.0 or state != "NEUTRAL":
+		progress = 0.0
+		state = "NEUTRAL"
 		state_changed.emit(state, progress)
 		queue_redraw()
-		if progress >= 1.0:
-			state = "CAPTURED"
-			state_changed.emit(state, progress)
-			captured.emit()
-	else:
-		if progress > 0.0 or state != "NEUTRAL":
-			progress = 0.0
-			state = "NEUTRAL"
-			state_changed.emit(state, progress)
-			queue_redraw()
 
 func _draw() -> void:
 	var fill: Color = Color(0.85, 0.67, 0.18, 0.14)

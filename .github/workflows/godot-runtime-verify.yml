@@ -51,7 +51,7 @@ jobs:
             exit 1
           fi
 
-      - name: Run recon contact and deterministic combat smoke test
+      - name: Run terrain LOS and combat regression smoke
         shell: bash
         run: |
           set -euo pipefail
@@ -63,16 +63,40 @@ jobs:
           grep -q 'FRONTLINE_BOOT_OK' godot-runtime.log
           grep -q 'FRONTLINE_FORMATION_DEFINITIONS_READY count=6' godot-runtime.log
           grep -q 'FRONTLINE_RECON_CONTACT_READY' godot-runtime.log
+          grep -q 'FRONTLINE_TERRAIN_LOS_SMOKE_READY' godot-runtime.log
           grep -q 'FRONTLINE_INTEL_CONTACT' godot-runtime.log
           grep -q 'FRONTLINE_INTEL_CONFIRMED' godot-runtime.log
+          grep -q 'FRONTLINE_TERRAIN_LOS_BLOCKED' godot-runtime.log
           grep -q 'FRONTLINE_INTEL_LAST_KNOWN' godot-runtime.log
-          grep -q 'FRONTLINE_INTEL_REACQUIRED' godot-runtime.log
-          grep -q 'FRONTLINE_COMBAT_STARTED' godot-runtime.log
+          grep -q 'FRONTLINE_FLANK_LOS_REACQUIRED' godot-runtime.log
+          grep -q 'FRONTLINE_SMOKE_LOS_BLOCKED' godot-runtime.log
           grep -q 'FRONTLINE_RED_DESTROYED' godot-runtime.log
           grep -q 'FRONTLINE_OBJECTIVE_CAPTURED' godot-runtime.log
           grep -q 'FRONTLINE_VICTORY' godot-runtime.log
-          grep -q 'FRONTLINE_RECON_CONTACT_SMOKE_PASS' godot-runtime.log
-          grep -q 'FRONTLINE_COMBAT_SMOKE_PASS' godot-runtime.log
+          grep -q 'FRONTLINE_TERRAIN_LOS_SMOKE_PASS' godot-runtime.log
+
+      - name: Run multi-formation command smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --quit-after 3000 -- --battle01-ci-multi-command-smoke 2>&1 | tee godot-multi-command.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-multi-command.log; then
+            echo 'Godot multi-command runtime reported a blocking error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_MULTI_FORMATION_COMMAND_READY' godot-multi-command.log
+          grep -q 'FRONTLINE_SELECTION_RECON_ONLY' godot-multi-command.log
+          grep -q 'FRONTLINE_COMMAND_RECON_MOVE' godot-multi-command.log
+          grep -q 'FRONTLINE_RECON_SCOUT_CONFIRMED' godot-multi-command.log
+          grep -q 'FRONTLINE_SELECTION_IFV_ONLY' godot-multi-command.log
+          grep -q 'FRONTLINE_COMMAND_IFV_MOVE' godot-multi-command.log
+          grep -q 'FRONTLINE_BOX_MULTI_SELECTED count=2' godot-multi-command.log
+          grep -q 'FRONTLINE_GROUP_MOVE_ISSUED count=2' godot-multi-command.log
+          grep -q 'FRONTLINE_COMBAT_STARTED' godot-multi-command.log
+          grep -q 'FRONTLINE_RED_DESTROYED' godot-multi-command.log
+          grep -q 'FRONTLINE_OBJECTIVE_CAPTURED' godot-multi-command.log
+          grep -q 'FRONTLINE_VICTORY' godot-multi-command.log
+          grep -q 'FRONTLINE_MULTI_FORMATION_COMMAND_SMOKE_PASS' godot-multi-command.log
 
       - name: Upload verification logs
         if: always()
@@ -83,5 +107,6 @@ jobs:
             godot-version.log
             godot-editor.log
             godot-runtime.log
+            godot-multi-command.log
           if-no-files-found: warn
           retention-days: 14

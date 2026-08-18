@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/battlefield.gd" id="2_field"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/battle01/intel_tracker.gd" id="9_intel"]
 [ext_resource type="Resource" path="res://resources/formations/recon.tres" id="10_recon_def"]
 [ext_resource type="Script" path="res://scripts/battle01/visibility_field.gd" id="11_visibility"]
+[ext_resource type="Script" path="res://scripts/battle01/selection_controller.gd" id="12_selection"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
@@ -35,12 +36,12 @@ selectable = true
 body_color = Color(0.12, 0.55, 0.92, 1)
 
 [node name="BlueRecon" type="Node2D" parent="."]
-position = Vector2(1050, 600)
+position = Vector2(760, 600)
 script = ExtResource("3_formation")
 definition = ExtResource("10_recon_def")
 display_name = "BLUE RECON-01"
 faction = "BLUE"
-selectable = false
+selectable = true
 body_color = Color(0.18, 0.78, 0.92, 1)
 
 [node name="RedFormation" type="Node2D" parent="."]
@@ -51,6 +52,9 @@ display_name = "RED INF-01"
 faction = "RED"
 selectable = false
 body_color = Color(0.88, 0.18, 0.15, 1)
+
+[node name="SelectionController" type="Node2D" parent="."]
+script = ExtResource("12_selection")
 
 [node name="IntelTracker" type="Node2D" parent="."]
 script = ExtResource("9_intel")
@@ -76,8 +80,8 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
-offset_right = 680.0
-offset_bottom = 340.0
+offset_right = 760.0
+offset_bottom = 365.0
 theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="HUD/Root/TopLeft"]
@@ -88,19 +92,19 @@ text = "FRONTLINE / BATTLE01"
 [node name="Task" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "MISSION: Use LOS and recon, destroy RED INF-01, secure bridgehead"
+text = "MISSION: Scout with Recon, maneuver IFV, destroy enemy, secure bridgehead"
 
 [node name="Selected" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "Selected Formation: NONE"
+text = "Selected Formations: NONE"
 
 [node name="Order" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "Current Order: HOLD"
+text = "Current Orders: --"
 
 [node name="BlueHealth" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "BLUE IFV-01 HP: 0 / 0"
+text = "Friendly: IFV 0/0 | RECON 0/0"
 
 [node name="EnemyHealth" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
@@ -118,12 +122,12 @@ text = "Central Bridgehead: NEUTRAL"
 [node name="Controls" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.8, 0.84, 1)
-text = "LMB Select IFV | RMB Move | Terrain/smoke block LOS | WASD / Wheel"
+text = "LMB select | Shift+LMB add/toggle | Drag box multi-select | RMB move | WASD / Wheel"
 
 [node name="PrototypeNotice" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.82, 1.0, 1)
-text = "TERRAIN LOS + SMOKE + LAST KNOWN V1"
+text = "MULTI-FORMATION COMMAND + RECON/LOS V1"
 
 [node name="VictoryPanel" type="PanelContainer" parent="HUD/Root"]
 layout_mode = 0

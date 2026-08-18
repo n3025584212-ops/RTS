@@ -23,21 +23,35 @@ var _enemy_alive: bool = true
 func _ready() -> void:
 	restart_button.pressed.connect(_on_restart_pressed)
 	result_panel.visible = false
-	set_selected(false)
-	set_order("HOLD")
-	set_blue_health(0, 0)
+	set_selection_summary([])
+	set_order_summary([])
+	set_friendly_health(0, 0, 0, 0)
 	set_enemy_health(0, 0, true)
 	set_intel_state("UNSEEN", Vector2.ZERO)
 	set_objective("NEUTRAL", 0.0)
 
-func set_selected(selected: bool) -> void:
-	selected_label.text = "Selected Formation: %s" % ("BLUE IFV-01" if selected else "NONE")
+func set_selection_summary(formations: Array[BattleFormation]) -> void:
+	if formations.is_empty():
+		selected_label.text = "Selected Formations: NONE"
+		return
+	var names: PackedStringArray = []
+	for formation: BattleFormation in formations:
+		if formation != null and is_instance_valid(formation):
+			names.append(formation.display_name)
+	selected_label.text = "Selected Formations: %s" % ", ".join(names)
 
-func set_order(order_name: String) -> void:
-	order_label.text = "Current Order: %s" % order_name
+func set_order_summary(formations: Array[BattleFormation]) -> void:
+	if formations.is_empty():
+		order_label.text = "Current Orders: --"
+		return
+	var orders: PackedStringArray = []
+	for formation: BattleFormation in formations:
+		if formation != null and is_instance_valid(formation):
+			orders.append("%s=%s" % [formation.display_name, formation.get_order()])
+	order_label.text = "Current Orders: %s" % " | ".join(orders)
 
-func set_blue_health(current_hp: int, max_hp: int) -> void:
-	blue_health_label.text = "BLUE IFV-01 HP: %d / %d" % [current_hp, max_hp]
+func set_friendly_health(ifv_hp: int, ifv_max_hp: int, recon_hp: int, recon_max_hp: int) -> void:
+	blue_health_label.text = "Friendly: IFV %d/%d | RECON %d/%d" % [ifv_hp, ifv_max_hp, recon_hp, recon_max_hp]
 
 func set_enemy_health(current_hp: int, max_hp: int, alive: bool) -> void:
 	_enemy_hp = current_hp
@@ -86,7 +100,7 @@ func show_victory() -> void:
 func show_defeat() -> void:
 	result_panel.visible = true
 	result_title.text = "DEFEAT"
-	result_message.text = "BLUE IFV-01 destroyed before securing the bridgehead."
+	result_message.text = "Main combat formation destroyed before securing the bridgehead."
 	task_label.text = "MISSION FAILED — COMBAT POWER LOST"
 
 func _on_restart_pressed() -> void:
