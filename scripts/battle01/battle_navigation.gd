@@ -77,7 +77,7 @@ func _ready() -> void:
 	queue_redraw()
 	print("FRONTLINE_NAVIGATION_GRID_READY cells=%d blocked=%d" % [GRID_SIZE.x * GRID_SIZE.y, _solid_cells.size()])
 
-func get_path(from_world: Vector2, to_world: Vector2) -> PackedVector2Array:
+func find_path(from_world: Vector2, to_world: Vector2) -> PackedVector2Array:
 	var from_id: Vector2i = _nearest_walkable_id(_world_to_id(from_world))
 	var to_id: Vector2i = _nearest_walkable_id(_world_to_id(to_world))
 	if not _is_walkable_id(from_id) or not _is_walkable_id(to_id):
@@ -126,7 +126,7 @@ func _get_route_via(guides: Array[Vector2]) -> PackedVector2Array:
 	if guides.size() < 2:
 		return result
 	for i: int in range(1, guides.size()):
-		var segment: PackedVector2Array = get_path(guides[i - 1], guides[i])
+		var segment: PackedVector2Array = find_path(guides[i - 1], guides[i])
 		if segment.is_empty():
 			return PackedVector2Array()
 		var start_index: int = 1 if not result.is_empty() else 0
