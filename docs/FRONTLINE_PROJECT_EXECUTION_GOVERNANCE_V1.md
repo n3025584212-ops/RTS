@@ -344,3 +344,39 @@ A task is complete when:
 - no unresolved blocker remains.
 
 The goal is a credible, playable, internally coherent FRONTLINE product—not maximum procedural compliance.
+
+## 15. Project hygiene and retention
+
+PROJECT_HYGIENE_REQUIRED=YES
+DEFAULT_RETENTION_POLICY=DELETE_REDUNDANT_KEEP_UNIQUE
+GIT_HISTORY_IS_PRIMARY_RECOVERY=YES
+
+FRONTLINE must not accumulate redundant backups, duplicate project copies, stale build outputs, temporary archives, dead branches, or repeated QA evidence as a substitute for source control.
+
+Default behavior is cleanup, not indefinite retention.
+
+Keep long-term only when an item is materially one of the following:
+
+- current source-of-truth project state;
+- unique source asset or evidence not reproducible from Git/project inputs;
+- active work needed by an unresolved task;
+- explicitly frozen milestone/release artifact;
+- externally required delivery package.
+
+Otherwise, after confirming that no unique information would be lost, remove or allow expiration of:
+
+- duplicate ZIP/project backups already represented in Git history;
+- superseded local project copies;
+- merged or abandoned temporary construction/QA branches;
+- stale build/export directories;
+- generated caches and import artifacts that can be reproduced;
+- obsolete CI artifacts after their useful verification window;
+- repeated screenshots/logs that prove nothing beyond retained evidence;
+- temporary transfer packages after successful ingestion;
+- failed/intermediate outputs that have no remaining diagnostic value.
+
+A new full-project ZIP or full repository copy requires a specific reason. "Keep it just in case" is not sufficient by itself.
+
+Routine work should prefer commits, tags/releases for true milestones, short-lived CI artifacts, and focused evidence over whole-project duplication.
+
+Project cleanup is part of normal completion hygiene. Windows and external executors should avoid generating unnecessary retained artifacts in the first place, and should identify disposable outputs when they create them.
