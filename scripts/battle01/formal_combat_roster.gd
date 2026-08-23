@@ -11,12 +11,27 @@ var enemy_armor: Array[BattleFormation] = []
 var enemy_supply_trucks: Array[BattleFormation] = []
 var reinforcement_infantry: Array[BattleFormation] = []
 var reinforcement_armor: Array[BattleFormation] = []
+var _initialized: bool = false
 
 @onready var _navigation: BattleNavigation = get_parent().get_node("Navigation") as BattleNavigation
 @onready var _visibility: BattleVisibilityField = get_parent().get_node("VisibilityField") as BattleVisibilityField
 @onready var _primary_infantry: BattleFormation = get_parent().get_node("RedFormation") as BattleFormation
 
 func _ready() -> void:
+	var battle: Node = get_parent()
+	if battle == null:
+		push_error("Formal combat roster requires a Battle01 parent.")
+		return
+	if battle.is_node_ready():
+		_initialize_roster()
+	else:
+		battle.ready.connect(_initialize_roster, CONNECT_ONE_SHOT)
+
+func _initialize_roster() -> void:
+	if _initialized:
+		return
+	_initialized = true
+
 	if _primary_infantry == null:
 		push_error("Formal combat roster requires existing RedFormation as RED INF-01.")
 		return
