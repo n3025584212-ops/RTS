@@ -127,22 +127,23 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'FRONTLINE_CENTRAL_ROUTE_PASS' godot-navigation.log && echo CENTRAL_ROUTE_VALID
-          grep -q 'FRONTLINE_NORTH_ROUTE_PASS' godot-navigation.log && echo NORTH_ROUTE_VALID
-          grep -q 'FRONTLINE_SOUTH_ROUTE_PASS' godot-navigation.log && echo SOUTH_ROUTE_VALID
-          grep -q 'FRONTLINE_RIVER_BLOCKING_PASS' godot-navigation.log && echo RIVER_CANNOT_BE_CROSSED_OUTSIDE_BRIDGE
-          grep -q 'FRONTLINE_FORMATION_PATH_AROUND_BLOCKER_PASS' godot-navigation.log && echo FORMATION_PATHS_AROUND_BLOCKER
-          grep -q 'FRONTLINE_MULTI_FORMATION_NAV_PASS' godot-navigation.log && echo MULTI_FORMATION_MOVE_WORKS
-          grep -q 'FRONTLINE_TERRAIN_LOS_SMOKE_PASS' godot-runtime.log && echo RECON_LOS_REGRESSION_PASS
-          grep -q 'FRONTLINE_RED_DESTROYED' godot-runtime.log && echo COMBAT_REGRESSION_PASS
-          grep -q 'FRONTLINE_OBJECTIVE_CAPTURED' godot-runtime.log && echo OBJECTIVE_CAPTURE_PASS
-          grep -q 'FRONTLINE_VICTORY' godot-runtime.log && echo VICTORY_PASS
-          echo FRONTLINE_NAVIGATION_ROUTE_READY
-          echo FRONTLINE_CENTRAL_ROUTE_PASS
-          echo FRONTLINE_NORTH_ROUTE_PASS
-          echo FRONTLINE_SOUTH_ROUTE_PASS
-          echo FRONTLINE_NAVIGATION_SMOKE_PASS
-        | tee godot-navigation-summary.log
+          {
+            grep -q 'FRONTLINE_CENTRAL_ROUTE_PASS' godot-navigation.log && echo CENTRAL_ROUTE_VALID
+            grep -q 'FRONTLINE_NORTH_ROUTE_PASS' godot-navigation.log && echo NORTH_ROUTE_VALID
+            grep -q 'FRONTLINE_SOUTH_ROUTE_PASS' godot-navigation.log && echo SOUTH_ROUTE_VALID
+            grep -q 'FRONTLINE_RIVER_BLOCKING_PASS' godot-navigation.log && echo RIVER_CANNOT_BE_CROSSED_OUTSIDE_BRIDGE
+            grep -q 'FRONTLINE_FORMATION_PATH_AROUND_BLOCKER_PASS' godot-navigation.log && echo FORMATION_PATHS_AROUND_BLOCKER
+            grep -q 'FRONTLINE_MULTI_FORMATION_NAV_PASS' godot-navigation.log && echo MULTI_FORMATION_MOVE_WORKS
+            grep -q 'FRONTLINE_TERRAIN_LOS_SMOKE_PASS' godot-runtime.log && echo RECON_LOS_REGRESSION_PASS
+            grep -q 'FRONTLINE_RED_DESTROYED' godot-runtime.log && echo COMBAT_REGRESSION_PASS
+            grep -q 'FRONTLINE_OBJECTIVE_CAPTURED' godot-runtime.log && echo OBJECTIVE_CAPTURE_PASS
+            grep -q 'FRONTLINE_VICTORY' godot-runtime.log && echo VICTORY_PASS
+            echo FRONTLINE_NAVIGATION_ROUTE_READY
+            echo FRONTLINE_CENTRAL_ROUTE_PASS
+            echo FRONTLINE_NORTH_ROUTE_PASS
+            echo FRONTLINE_SOUTH_ROUTE_PASS
+            echo FRONTLINE_NAVIGATION_SMOKE_PASS
+          } | tee godot-navigation-summary.log
 
       - name: Upload verification logs
         if: always()
