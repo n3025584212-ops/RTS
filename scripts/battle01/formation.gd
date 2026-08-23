@@ -99,7 +99,7 @@ func issue_move(world_target: Vector2) -> bool:
 	if _navigation == null:
 		push_error("%s cannot MOVE without BattleNavigation." % name)
 		return false
-	var new_path: PackedVector2Array = _navigation.get_path(global_position, world_target)
+	var new_path: PackedVector2Array = _navigation.find_path(global_position, world_target)
 	if new_path.is_empty():
 		push_warning("%s MOVE rejected: no legal navigation path." % name)
 		return false
