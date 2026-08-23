@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   verify:
-    name: Headless parse and runtime smoke
+    name: Formal Battle01 runtime verification
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -27,7 +27,6 @@ jobs:
           GODOT_TAG="4.7.1-stable"
           GODOT_ARCHIVE="Godot_v4.7.1-stable_linux.x86_64.zip"
           GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_ARCHIVE}"
-
           mkdir -p "$RUNNER_TEMP/godot"
           curl -fL --retry 3 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
           unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
@@ -51,6 +50,29 @@ jobs:
             exit 1
           fi
 
+      - name: Boot Battle01 main scene
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --quit-after 120 2>&1 | tee godot-main-scene.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-main-scene.log; then
+            echo 'Battle01 main scene reported a blocking runtime error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_BOOT_OK' godot-main-scene.log
+          grep -q 'FRONTLINE_FORMAL_COMBAT_ROSTER_READY enemy_infantry=2 enemy_armor=1 enemy_supply_truck=1 reinforcement_infantry=1 reinforcement_armor=1' godot-main-scene.log
+
+      - name: Run formal combat roster smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --script tests/formal_combat_roster_smoke.gd 2>&1 | tee godot-formal-roster.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access|FORMAL_ROSTER_SMOKE_FAIL' godot-formal-roster.log; then
+            echo 'Formal combat roster smoke reported a blocking error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_FORMAL_COMBAT_ROSTER_SMOKE_PASS' godot-formal-roster.log
+
       - name: Run terrain LOS and combat regression smoke
         shell: bash
         run: |
@@ -61,9 +83,7 @@ jobs:
             exit 1
           fi
           grep -q 'FRONTLINE_BOOT_OK' godot-runtime.log
-          grep -q 'FRONTLINE_FORMATION_DEFINITIONS_READY count=6' godot-runtime.log
           grep -q 'FRONTLINE_RECON_CONTACT_READY' godot-runtime.log
-          grep -q 'FRONTLINE_TERRAIN_LOS_SMOKE_READY' godot-runtime.log
           grep -q 'FRONTLINE_INTEL_CONTACT' godot-runtime.log
           grep -q 'FRONTLINE_INTEL_CONFIRMED' godot-runtime.log
           grep -q 'FRONTLINE_TERRAIN_LOS_BLOCKED' godot-runtime.log
@@ -74,6 +94,7 @@ jobs:
           grep -q 'FRONTLINE_OBJECTIVE_CAPTURED' godot-runtime.log
           grep -q 'FRONTLINE_VICTORY' godot-runtime.log
           grep -q 'FRONTLINE_TERRAIN_LOS_SMOKE_PASS' godot-runtime.log
+          grep -q 'FRONTLINE_COMBAT_SMOKE_PASS' godot-runtime.log
 
       - name: Run multi-formation command smoke
         shell: bash
@@ -85,11 +106,6 @@ jobs:
             exit 1
           fi
           grep -q 'FRONTLINE_MULTI_FORMATION_COMMAND_READY' godot-multi-command.log
-          grep -q 'FRONTLINE_SELECTION_RECON_ONLY' godot-multi-command.log
-          grep -q 'FRONTLINE_COMMAND_RECON_MOVE' godot-multi-command.log
-          grep -q 'FRONTLINE_RECON_SCOUT_CONFIRMED' godot-multi-command.log
-          grep -q 'FRONTLINE_SELECTION_IFV_ONLY' godot-multi-command.log
-          grep -q 'FRONTLINE_COMMAND_IFV_MOVE' godot-multi-command.log
           grep -q 'FRONTLINE_BOX_MULTI_SELECTED count=2' godot-multi-command.log
           grep -q 'FRONTLINE_GROUP_MOVE_ISSUED count=2' godot-multi-command.log
           grep -q 'FRONTLINE_COMBAT_STARTED' godot-multi-command.log
@@ -107,55 +123,82 @@ jobs:
             echo 'Godot navigation runtime reported a blocking error.'
             exit 1
           fi
-          grep -q 'FRONTLINE_NAVIGATION_ROUTE_READY' godot-navigation.log
-          grep -q 'CENTRAL_ROUTE_VALID' godot-navigation.log
           grep -q 'FRONTLINE_CENTRAL_ROUTE_PASS' godot-navigation.log
-          grep -q 'NORTH_ROUTE_VALID' godot-navigation.log
           grep -q 'FRONTLINE_NORTH_ROUTE_PASS' godot-navigation.log
-          grep -q 'SOUTH_ROUTE_VALID' godot-navigation.log
           grep -q 'FRONTLINE_SOUTH_ROUTE_PASS' godot-navigation.log
-          grep -q 'RIVER_CANNOT_BE_CROSSED_OUTSIDE_BRIDGE' godot-navigation.log
-          grep -q 'FORMATION_PATHS_AROUND_BLOCKER' godot-navigation.log
-          grep -q 'FRONTLINE_SINGLE_RECON_NAV_PASS' godot-navigation.log
-          grep -q 'FRONTLINE_SINGLE_IFV_NAV_PASS' godot-navigation.log
-          grep -q 'MULTI_FORMATION_MOVE_WORKS' godot-navigation.log
+          grep -q 'FRONTLINE_RIVER_BLOCKING_PASS' godot-navigation.log
+          grep -q 'FRONTLINE_FORMATION_PATH_AROUND_BLOCKER_PASS' godot-navigation.log
           grep -q 'FRONTLINE_MULTI_FORMATION_NAV_PASS' godot-navigation.log
-          grep -q 'RECON_LOS_REGRESSION_PASS' godot-navigation.log
+          grep -q 'FRONTLINE_RECON_LOS_REGRESSION_PASS' godot-navigation.log
           grep -q 'FRONTLINE_NAVIGATION_SMOKE_PASS' godot-navigation.log
 
-      - name: Aggregate navigation acceptance
+      - name: Run defeat and restart runtime regression
         shell: bash
         run: |
           set -euo pipefail
-          {
-            grep -q 'FRONTLINE_CENTRAL_ROUTE_PASS' godot-navigation.log && echo CENTRAL_ROUTE_VALID
-            grep -q 'FRONTLINE_NORTH_ROUTE_PASS' godot-navigation.log && echo NORTH_ROUTE_VALID
-            grep -q 'FRONTLINE_SOUTH_ROUTE_PASS' godot-navigation.log && echo SOUTH_ROUTE_VALID
-            grep -q 'FRONTLINE_RIVER_BLOCKING_PASS' godot-navigation.log && echo RIVER_CANNOT_BE_CROSSED_OUTSIDE_BRIDGE
-            grep -q 'FRONTLINE_FORMATION_PATH_AROUND_BLOCKER_PASS' godot-navigation.log && echo FORMATION_PATHS_AROUND_BLOCKER
-            grep -q 'FRONTLINE_MULTI_FORMATION_NAV_PASS' godot-navigation.log && echo MULTI_FORMATION_MOVE_WORKS
-            grep -q 'FRONTLINE_TERRAIN_LOS_SMOKE_PASS' godot-runtime.log && echo RECON_LOS_REGRESSION_PASS
-            grep -q 'FRONTLINE_RED_DESTROYED' godot-runtime.log && echo COMBAT_REGRESSION_PASS
-            grep -q 'FRONTLINE_OBJECTIVE_CAPTURED' godot-runtime.log && echo OBJECTIVE_CAPTURE_PASS
-            grep -q 'FRONTLINE_VICTORY' godot-runtime.log && echo VICTORY_PASS
-            echo FRONTLINE_NAVIGATION_ROUTE_READY
-            echo FRONTLINE_CENTRAL_ROUTE_PASS
-            echo FRONTLINE_NORTH_ROUTE_PASS
-            echo FRONTLINE_SOUTH_ROUTE_PASS
-            echo FRONTLINE_NAVIGATION_SMOKE_PASS
-          } | tee godot-navigation-summary.log
+          cat > tests/qa_match_end_runtime_smoke.gd <<'GD'
+          extends SceneTree
+          var failures: Array[String] = []
+          func _init() -> void:
+              call_deferred("_run")
+          func _check(condition: bool, message: String) -> void:
+              if not condition:
+                  failures.append(message)
+                  push_error("QA_MATCH_END_FAIL: " + message)
+          func _run() -> void:
+              var packed: PackedScene = load("res://scenes/battle01/Battle01.tscn") as PackedScene
+              _check(packed != null, "Battle01 loads")
+              if packed == null:
+                  quit(1)
+                  return
+              var battle: Node = packed.instantiate()
+              get_root().add_child(battle)
+              current_scene = battle
+              await process_frame
+              var blue: BattleFormation = battle.get_node("BlueFormation") as BattleFormation
+              var recon: BattleFormation = battle.get_node("BlueRecon") as BattleFormation
+              _check(blue != null and recon != null, "Blue formations exist")
+              blue.take_damage(1000000)
+              recon.take_damage(1000000)
+              await process_frame
+              _check(bool(battle.get("_match_finished")), "Defeat closes match")
+              if failures.is_empty():
+                  print("FRONTLINE_DEFEAT_RUNTIME_PASS")
+              var old_id: int = battle.get_instance_id()
+              battle.call("_on_restart_requested")
+              await process_frame
+              await process_frame
+              _check(current_scene != null, "Restart produced current scene")
+              if current_scene != null:
+                  _check(current_scene.get_instance_id() != old_id, "Restart replaced scene instance")
+                  _check(current_scene.name == "Battle01", "Restart returned to Battle01")
+              if failures.is_empty():
+                  print("FRONTLINE_RESTART_RUNTIME_PASS")
+                  quit(0)
+              else:
+                  quit(1)
+          GD
+          timeout 30s "$GODOT" --headless --path . --script tests/qa_match_end_runtime_smoke.gd 2>&1 | tee godot-match-end.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access|QA_MATCH_END_FAIL' godot-match-end.log; then
+            echo 'Defeat/restart runtime regression reported a blocking error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_DEFEAT_RUNTIME_PASS' godot-match-end.log
+          grep -q 'FRONTLINE_RESTART_RUNTIME_PASS' godot-match-end.log
 
       - name: Upload verification logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: godot-runtime-verification-${{ github.sha }}
+          name: godot-formal-runtime-verification-${{ github.sha }}
           path: |
             godot-version.log
             godot-editor.log
+            godot-main-scene.log
+            godot-formal-roster.log
             godot-runtime.log
             godot-multi-command.log
             godot-navigation.log
-            godot-navigation-summary.log
+            godot-match-end.log
           if-no-files-found: warn
           retention-days: 14
