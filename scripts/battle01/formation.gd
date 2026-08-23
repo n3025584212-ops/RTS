@@ -36,6 +36,9 @@ var supply_capacity: int = 0
 
 var _move_target: Vector2
 var _has_move_target: bool = false
+var _move_path := PackedVector2Array()
+var _path_index: int = 0
+var _navigation: BattleNavigation
 var _combat_target: BattleFormation
 var _visibility_field: BattleVisibilityField
 var _fire_cooldown: float = 0.0
@@ -87,16 +90,31 @@ func set_selected(value: bool) -> void:
 	queue_redraw()
 	selection_changed.emit(is_selected)
 
-func issue_move(world_target: Vector2) -> void:
+func set_navigation(navigation: BattleNavigation) -> void:
+	_navigation = navigation
+
+func issue_move(world_target: Vector2) -> bool:
 	if not is_alive:
-		return
-	_move_target = world_target
+		return false
+	if _navigation == null:
+		push_error("%s cannot MOVE without BattleNavigation." % name)
+		return false
+	var new_path: PackedVector2Array = _navigation.get_path(global_position, world_target)
+	if new_path.is_empty():
+		push_warning("%s MOVE rejected: no legal navigation path." % name)
+		return false
+	_move_path = new_path
+	_path_index = 1 if _move_path.size() > 1 else 0
+	_move_target = _move_path[_move_path.size() - 1]
 	_has_move_target = true
 	_set_order("MOVE")
 	queue_redraw()
+	return true
 
 func stop() -> void:
 	_has_move_target = false
+	_move_path = PackedVector2Array()
+	_path_index = 0
 	_move_target = global_position
 	_set_order("HOLD")
 	queue_redraw()
@@ -136,17 +154,40 @@ func get_role() -> String:
 func is_capture_capable() -> bool:
 	return is_alive and can_capture
 
+func has_active_navigation_path() -> bool:
+	return _has_move_target and not _move_path.is_empty()
+
+func get_navigation_path() -> PackedVector2Array:
+	return _move_path.duplicate()
+
 func _update_movement(delta: float) -> void:
 	if not _has_move_target:
 		return
-	var offset: Vector2 = _move_target - global_position
-	if offset.length() <= 4.0:
-		global_position = _move_target
-		_has_move_target = false
-		_set_order("HOLD")
+	if _move_path.is_empty() or _path_index >= _move_path.size():
+		_finish_move()
+		return
+
+	while _path_index < _move_path.size():
+		var waypoint: Vector2 = _move_path[_path_index]
+		var offset: Vector2 = waypoint - global_position
+		if offset.length() <= 4.0:
+			global_position = waypoint
+			_path_index += 1
+			continue
+		global_position += offset.normalized() * minf(move_speed * delta, offset.length())
 		queue_redraw()
 		return
-	global_position += offset.normalized() * minf(move_speed * delta, offset.length())
+
+	_finish_move()
+
+func _finish_move() -> void:
+	if not _move_path.is_empty():
+		global_position = _move_path[_move_path.size() - 1]
+	_has_move_target = false
+	_move_path = PackedVector2Array()
+	_path_index = 0
+	_move_target = global_position
+	_set_order("HOLD")
 	queue_redraw()
 
 func _update_combat() -> void:
@@ -174,6 +215,8 @@ func _die() -> void:
 		return
 	is_alive = false
 	_has_move_target = false
+	_move_path = PackedVector2Array()
+	_path_index = 0
 	_combat_target = null
 	if is_selected:
 		is_selected = false
@@ -215,5 +258,9 @@ func _draw() -> void:
 
 	if is_selected:
 		draw_arc(Vector2.ZERO, 38.0, 0.0, TAU, 48, Color(0.35, 0.95, 1.0), 3.0)
-	if _has_move_target:
-		draw_line(Vector2.ZERO, to_local(_move_target), Color(0.35, 0.95, 1.0, 0.65), 2.0)
+	if _has_move_target and _path_index < _move_path.size():
+		var local_path := PackedVector2Array([Vector2.ZERO])
+		for i: int in range(_path_index, _move_path.size()):
+			local_path.append(to_local(_move_path[i]))
+		if local_path.size() >= 2:
+			draw_polyline(local_path, Color(0.35, 0.95, 1.0, 0.65), 2.0)

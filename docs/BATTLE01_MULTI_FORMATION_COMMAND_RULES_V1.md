@@ -12,6 +12,7 @@ Battle01 now exposes both BLUE IFV-01 and BLUE RECON-01 as player-commandable fo
 - Dragging a left-mouse selection box selects all friendly selectable formations inside the rectangle.
 - Right click issues MOVE to the current selection.
 - Multi-formation MOVE uses a small lateral spacing around the target point instead of stacking every formation onto one coordinate.
+- Each selected formation now resolves its own Battle01 navigation path to that offset target.
 - Selection rings remain owned by each BattleFormation.
 - Selection state and move order distribution are owned by BattleSelectionController.
 - Battle01 orchestrates input routing and match flow; it does not own the individual formation movement implementation.
@@ -31,7 +32,7 @@ This turns Recon/LOS from an automated system test into a player-commandable tac
 
 ## Deferred
 
-This V1 does not yet add control groups, queued orders, attack-move, formation facing, pathfinding around blockers, command cards, or formal command preview UI.
+This V1 does not yet add control groups, queued orders, attack-move, formation facing, advanced formation steering, AI route planning, command cards, or formal command preview UI.
 
 ## CI acceptance marker
 

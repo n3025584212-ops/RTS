@@ -80,12 +80,15 @@ func issue_move(world_target: Vector2, spacing: float = -1.0) -> int:
 		return 0
 	var actual_spacing: float = group_spacing if spacing < 0.0 else spacing
 	var count: int = _selected.size()
+	var issued_count: int = 0
 	for i: int in range(count):
 		var formation: BattleFormation = _selected[i]
 		var lateral: float = (float(i) - float(count - 1) * 0.5) * actual_spacing
-		formation.issue_move(world_target + Vector2(0.0, lateral))
-	move_order_issued.emit(_selected, world_target)
-	return count
+		if formation.issue_move(world_target + Vector2(0.0, lateral)):
+			issued_count += 1
+	if issued_count > 0:
+		move_order_issued.emit(_selected, world_target)
+	return issued_count
 
 func _select_at_point(world_point: Vector2, additive: bool) -> void:
 	var picked: BattleFormation = null

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/battlefield.gd" id="2_field"]
@@ -12,12 +12,16 @@
 [ext_resource type="Resource" path="res://resources/formations/recon.tres" id="10_recon_def"]
 [ext_resource type="Script" path="res://scripts/battle01/visibility_field.gd" id="11_visibility"]
 [ext_resource type="Script" path="res://scripts/battle01/selection_controller.gd" id="12_selection"]
+[ext_resource type="Script" path="res://scripts/battle01/battle_navigation.gd" id="13_nav"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
 
 [node name="Battlefield" type="Node2D" parent="."]
 script = ExtResource("2_field")
+
+[node name="Navigation" type="Node2D" parent="."]
+script = ExtResource("13_nav")
 
 [node name="VisibilityField" type="Node2D" parent="."]
 script = ExtResource("11_visibility")
@@ -127,7 +131,7 @@ text = "LMB select | Shift+LMB add/toggle | Drag box multi-select | RMB move | W
 [node name="PrototypeNotice" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.82, 1.0, 1)
-text = "MULTI-FORMATION COMMAND + RECON/LOS V1"
+text = "NAVIGATION ROUTES + MULTI-FORMATION + RECON/LOS V1"
 
 [node name="VictoryPanel" type="PanelContainer" parent="HUD/Root"]
 layout_mode = 0
