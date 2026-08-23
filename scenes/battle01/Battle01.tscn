@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/battlefield.gd" id="2_field"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://scripts/battle01/visibility_field.gd" id="11_visibility"]
 [ext_resource type="Script" path="res://scripts/battle01/selection_controller.gd" id="12_selection"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_navigation.gd" id="13_nav"]
+[ext_resource type="Script" path="res://scripts/battle01/formal_combat_roster.gd" id="14_roster"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
@@ -56,6 +57,9 @@ display_name = "RED INF-01"
 faction = "RED"
 selectable = false
 body_color = Color(0.88, 0.18, 0.15, 1)
+
+[node name="FormalCombatRoster" type="Node" parent="."]
+script = ExtResource("14_roster")
 
 [node name="SelectionController" type="Node2D" parent="."]
 script = ExtResource("12_selection")
