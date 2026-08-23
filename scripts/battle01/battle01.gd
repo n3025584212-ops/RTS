@@ -161,14 +161,14 @@ func _run_navigation_static_smoke() -> bool:
 
 	var blocker_start := Vector2(1000.0, 900.0)
 	var blocker_end := Vector2(1360.0, 900.0)
-	var blocker_path: PackedVector2Array = navigation.get_path(blocker_start, blocker_end)
+	var blocker_path: PackedVector2Array = navigation.find_path(blocker_start, blocker_end)
 	var blocker_detour: bool = (
 		not blocker_path.is_empty()
 		and navigation.get_path_length(blocker_path) > blocker_start.distance_to(blocker_end) * 1.10
 	)
 	var industrial_start := Vector2(2380.0, 900.0)
 	var industrial_end := Vector2(2720.0, 900.0)
-	var industrial_path: PackedVector2Array = navigation.get_path(industrial_start, industrial_end)
+	var industrial_path: PackedVector2Array = navigation.find_path(industrial_start, industrial_end)
 	var industrial_detour: bool = (
 		not industrial_path.is_empty()
 		and navigation.get_path_length(industrial_path) > industrial_start.distance_to(industrial_end) * 1.08
