@@ -158,4 +158,4 @@ jobs:
             godot-navigation.log
             godot-navigation-summary.log
           if-no-files-found: warn
-          retention-days: 14
+          retention-days: 7
