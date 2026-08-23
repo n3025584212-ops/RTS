@@ -51,5 +51,6 @@ FRONTLINE / 《战线》是一款现代战争题材、俯视斜视角、以 Form
 - The deleted previous local project is not inherited.
 - GPT cloud windows 00–08 retain design/review ownership by domain.
 - Codex/Qwen/other coding agents are temporary construction executors, not project authorities.
-- Project-wide design-to-implementation, implementation freedom, acceptance authority, minimum-sufficient-evidence, risk-scaled audit, and anti-over-audit rules are defined by `docs/FRONTLINE_PROJECT_EXECUTION_GOVERNANCE_V1.md`.
+- Project-wide design-to-implementation, implementation freedom, acceptance authority, minimum-sufficient-evidence, risk-scaled audit, anti-over-audit, and project hygiene/retention rules are defined by `docs/FRONTLINE_PROJECT_EXECUTION_GOVERNANCE_V1.md`.
 - All registered FRONTLINE windows and external construction executors inherit that governance by default unless Window 00 explicitly freezes a narrower task-specific override.
+- Project hygiene is system-wide mandatory: default cleanup instead of indefinite retention; Git history is the primary recovery mechanism; redundant backups, stale temporary branches, reproducible caches/builds, obsolete CI artifacts, and duplicate evidence must not be accumulated without a specific retention reason.
