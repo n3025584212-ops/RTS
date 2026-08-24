@@ -1,6 +1,6 @@
 extends Node2D
 
-const BUILD_ID: String = "BATTLE01_NAVIGATION_ROUTE_MOVEMENT_V1"
+const BUILD_ID: String = "BATTLE01_LOGISTICS_REINFORCEMENT_OBJECTIVE_FLOW_V1"
 const FORMATION_DEFINITION_PATHS := [
 	"res://resources/formations/recon.tres",
 	"res://resources/formations/infantry.tres",
@@ -13,15 +13,18 @@ const FORMATION_DEFINITION_PATHS := [
 @onready var navigation: BattleNavigation = $Navigation
 @onready var blue: BattleFormation = $BlueFormation
 @onready var recon: BattleFormation = $BlueRecon
+@onready var blue_infantry: BattleFormation = $BlueInfantry
+@onready var blue_supply: BattleFormation = $BlueSupply
 @onready var red: BattleFormation = $RedFormation
 @onready var selection: BattleSelectionController = $SelectionController
 @onready var visibility: BattleVisibilityField = $VisibilityField
 @onready var intel: BattleIntelTracker = $IntelTracker
 @onready var objective: BattleObjective = $CentralBridgehead
+@onready var industrial_objective: BattleObjective = $IndustrialObjective
+@onready var war_flow: BattlePlayerWarFlow = $PlayerWarFlow
 @onready var hud: BattleHUD = $HUD
 
 var _friendlies: Array[BattleFormation] = []
-var _match_finished: bool = false
 var _combat_started: bool = false
 var _ci_los_smoke: bool = false
 var _ci_los_phase: int = 0
@@ -39,42 +42,39 @@ func _ready() -> void:
 	if _validate_formation_definitions():
 		print("FRONTLINE_FORMATION_DEFINITIONS_READY count=%d" % FORMATION_DEFINITION_PATHS.size())
 
-	_friendlies = [blue, recon]
-	blue.set_navigation(navigation)
-	recon.set_navigation(navigation)
+	_friendlies = [recon, blue, blue_infantry, blue_supply]
+	for formation: BattleFormation in _friendlies:
+		formation.set_navigation(navigation)
+		formation.set_visibility_field(visibility)
+		formation.order_changed.connect(_on_friendly_order_changed)
+		formation.health_changed.connect(_on_any_friendly_health_changed)
+		formation.ammo_changed.connect(_on_any_friendly_ammo_changed)
+		formation.attack_fired.connect(_on_attack_fired)
+		formation.died.connect(_on_friendly_died)
+
 	red.set_navigation(navigation)
+	red.set_visibility_field(visibility)
+	red.health_changed.connect(_on_red_health_changed)
+	red.attack_fired.connect(_on_attack_fired)
+	red.died.connect(_on_red_died)
 
 	selection.configure(_friendlies)
 	selection.selection_changed.connect(_on_selection_changed)
 	selection.move_order_issued.connect(_on_move_order_issued)
 
-	blue.order_changed.connect(_on_friendly_order_changed)
-	blue.health_changed.connect(_on_blue_health_changed)
-	blue.attack_fired.connect(_on_attack_fired)
-	blue.died.connect(_on_blue_died)
-
-	recon.order_changed.connect(_on_friendly_order_changed)
-	recon.health_changed.connect(_on_recon_health_changed)
-	recon.attack_fired.connect(_on_attack_fired)
-	recon.died.connect(_on_recon_died)
-
-	red.health_changed.connect(_on_red_health_changed)
-	red.attack_fired.connect(_on_attack_fired)
-	red.died.connect(_on_red_died)
-
 	intel.intel_state_changed.connect(_on_intel_state_changed)
-	objective.state_changed.connect(_on_objective_state_changed)
-	objective.captured.connect(_on_objective_captured)
 	hud.restart_requested.connect(_on_restart_requested)
 
-	blue.set_visibility_field(visibility)
-	recon.set_visibility_field(visibility)
-	red.set_visibility_field(visibility)
-
-	intel.configure(_friendlies, red, visibility)
+	# Preserve the already-accepted player Recon/LOS observation baseline. The new
+	# Infantry/Supply formations participate in command/objective flow without
+	# redesigning the existing intel tracker in this task.
+	intel.configure([blue, recon], red, visibility)
 	red.set_combat_target(blue)
-	objective.set_tracked_formations(_friendlies)
-	objective.set_capture_blocked(true)
+
+	war_flow.friendlies_changed.connect(_on_friendlies_changed)
+	war_flow.victory.connect(_on_war_flow_victory)
+	war_flow.defeat.connect(_on_war_flow_defeat)
+	war_flow.configure(_friendlies)
 
 	_refresh_friendly_health()
 	hud.set_enemy_health(red.current_hp, red.max_hp, red.is_alive)
@@ -111,6 +111,7 @@ func _ready() -> void:
 			if selection.issue_move(Vector2(1000.0, 620.0)) == 1:
 				_ci_navigation_phase = 1
 
+	objective.capture_completed.connect(_on_central_capture_completed)
 	print("FRONTLINE_BOOT_OK build=%s" % BUILD_ID)
 	print("FRONTLINE_WALKING_SKELETON_READY")
 	print("FRONTLINE_COMBAT_SKELETON_READY")
@@ -118,12 +119,13 @@ func _ready() -> void:
 	print("FRONTLINE_TERRAIN_LOS_SMOKE_READY")
 	print("FRONTLINE_MULTI_FORMATION_COMMAND_READY")
 	print("FRONTLINE_NAVIGATION_ROUTE_READY")
+	print("FRONTLINE_LOGISTICS_OBJECTIVE_FLOW_READY")
 
 func _process(_delta: float) -> void:
 	if _ci_navigation_smoke:
 		_update_navigation_smoke()
 		return
-	if not _ci_multi_command_smoke or _match_finished:
+	if not _ci_multi_command_smoke or war_flow.is_match_finished():
 		return
 	if _ci_multi_phase == 1 and blue.global_position.distance_to(Vector2(1000.0, 900.0)) <= 8.0:
 		_ci_multi_phase = 2
@@ -249,8 +251,28 @@ func _validate_formation_definitions() -> bool:
 	return valid
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _match_finished:
+	if war_flow.is_match_finished():
 		return
+
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_F:
+			war_flow.try_supply_selected()
+			get_viewport().set_input_as_handled()
+			return
+		if event.keycode == KEY_X:
+			var prefer_forward: bool = not Input.is_key_pressed(KEY_SHIFT)
+			war_flow.withdraw_selected(prefer_forward)
+			get_viewport().set_input_as_handled()
+			return
+		if event.keycode == KEY_1:
+			war_flow.deploy_reserve("INFANTRY")
+			get_viewport().set_input_as_handled()
+			return
+		if event.keycode == KEY_2:
+			war_flow.deploy_reserve("ARMOR")
+			get_viewport().set_input_as_handled()
+			return
+
 	var world_point: Vector2 = get_global_mouse_position()
 	if selection.handle_input(event, world_point):
 		get_viewport().set_input_as_handled()
@@ -324,14 +346,16 @@ func _on_intel_state_changed(state: String, last_known_position: Vector2) -> voi
 	else:
 		blue.clear_combat_target()
 
-func _on_blue_health_changed(_current_hp: int, _max_hp_value: int) -> void:
+func _on_any_friendly_health_changed(_current_hp: int, _max_hp_value: int) -> void:
 	_refresh_friendly_health()
 
-func _on_recon_health_changed(_current_hp: int, _max_hp_value: int) -> void:
-	_refresh_friendly_health()
+func _on_any_friendly_ammo_changed(_current_ammo: int, _max_ammo: int) -> void:
+	hud.set_force_status(_friendlies)
+	hud.set_selection_summary(selection.get_selected())
 
 func _refresh_friendly_health() -> void:
 	hud.set_friendly_health(blue.current_hp, blue.max_hp, recon.current_hp, recon.max_hp)
+	hud.set_force_status(_friendlies)
 
 func _on_red_health_changed(current_hp: int, max_hp_value: int) -> void:
 	hud.set_enemy_health(current_hp, max_hp_value, current_hp > 0)
@@ -344,43 +368,56 @@ func _on_attack_fired(attacker: BattleFormation, _target: BattleFormation, _dama
 		print("FRONTLINE_COMBAT_STARTED")
 
 func _on_red_died(_formation: BattleFormation) -> void:
-	objective.set_capture_blocked(false)
 	hud.set_enemy_health(0, red.max_hp, false)
 	print("FRONTLINE_RED_DESTROYED")
 
-func _on_blue_died(_formation: BattleFormation) -> void:
-	if _match_finished:
-		return
-	_match_finished = true
-	red.stop()
-	hud.show_defeat()
-	print("FRONTLINE_DEFEAT")
-
-func _on_recon_died(_formation: BattleFormation) -> void:
+func _on_friendly_died(formation: BattleFormation) -> void:
 	_refresh_friendly_health()
 	hud.set_selection_summary(selection.get_selected())
 	hud.set_order_summary(selection.get_selected())
-	print("FRONTLINE_RECON_LOST")
+	if formation == recon:
+		print("FRONTLINE_RECON_LOST")
+	elif formation == blue:
+		print("FRONTLINE_IFV_LOST_NO_AUTO_DEFEAT")
+	elif formation == blue_supply:
+		print("FRONTLINE_BLUE_SUPPLY_LOST charges=0")
+	war_flow.force_evaluate_match_state()
 
-func _on_objective_state_changed(state: String, progress: float) -> void:
-	hud.set_objective(state, progress)
+func _on_friendlies_changed(formations: Array[BattleFormation]) -> void:
+	_friendlies = formations.duplicate()
+	if not _friendlies.is_empty():
+		var newest: BattleFormation = _friendlies[_friendlies.size() - 1]
+		if newest != null and is_instance_valid(newest):
+			newest.order_changed.connect(_on_friendly_order_changed)
+			newest.health_changed.connect(_on_any_friendly_health_changed)
+			newest.ammo_changed.connect(_on_any_friendly_ammo_changed)
+			newest.attack_fired.connect(_on_attack_fired)
+			newest.died.connect(_on_friendly_died)
+	_refresh_friendly_health()
 
-func _on_objective_captured() -> void:
-	if _match_finished:
+func _on_central_capture_completed(new_owner: String, _previous_owner: String) -> void:
+	if new_owner != BattleObjective.OWNER_PLAYER:
 		return
-	_match_finished = true
-	blue.stop()
-	recon.stop()
-	red.stop()
-	hud.show_victory()
-	print("FRONTLINE_OBJECTIVE_CAPTURED objective=CentralBridgehead")
-	print("FRONTLINE_VICTORY")
+	print("FRONTLINE_CENTRAL_PHASE_COMPLETE")
+	# Keep legacy focused regression hooks meaningful under the new dual-objective
+	# victory contract: after proving their original bridgehead behavior, they travel
+	# normally to the now-unlocked final objective rather than receiving instant Victory.
+	if _ci_los_smoke or _ci_multi_command_smoke:
+		selection.select_only(blue)
+		blue.issue_move(industrial_objective.global_position)
+		print("FRONTLINE_LEGACY_SMOKE_FINAL_PUSH_STARTED")
+
+func _on_war_flow_victory() -> void:
+	print("FRONTLINE_DUAL_OBJECTIVE_VICTORY_PASS")
 	if _ci_multi_command_smoke and _ci_multi_phase == 3 and not red.is_alive and blue.is_alive and _combat_started:
 		print("FRONTLINE_MULTI_FORMATION_COMMAND_SMOKE_PASS")
 	elif _ci_los_smoke and _ci_los_phase == 5 and not red.is_alive and blue.is_alive and _combat_started:
 		print("FRONTLINE_TERRAIN_LOS_SMOKE_PASS")
 		print("FRONTLINE_RECON_CONTACT_SMOKE_PASS")
 		print("FRONTLINE_COMBAT_SMOKE_PASS")
+
+func _on_war_flow_defeat() -> void:
+	print("FRONTLINE_FORCE_COLLAPSE_DEFEAT_PASS")
 
 func _on_restart_requested() -> void:
 	get_tree().reload_current_scene()
