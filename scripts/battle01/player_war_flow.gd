@@ -378,7 +378,7 @@ func _on_objective_contest_changed(_value: bool) -> void:
 	_refresh_hud()
 
 func _update_forward_rally() -> void:
-	var active: bool = _central.get_owner() == BattleObjective.OWNER_PLAYER and not _central.is_contested()
+	var active: bool = _central.get_control_owner() == BattleObjective.OWNER_PLAYER and not _central.is_contested()
 	if active == _forward_rally_active:
 		return
 	_forward_rally_active = active
@@ -390,9 +390,9 @@ func _evaluate_match_state() -> void:
 	if _match_finished:
 		return
 	if (
-		_central.get_owner() == BattleObjective.OWNER_PLAYER
+		_central.get_control_owner() == BattleObjective.OWNER_PLAYER
 		and not _central.is_contested()
-		and _industrial.get_owner() == BattleObjective.OWNER_PLAYER
+		and _industrial.get_control_owner() == BattleObjective.OWNER_PLAYER
 		and not _industrial.is_contested()
 	):
 		_finish_match(true)
@@ -476,10 +476,10 @@ func _refresh_hud() -> void:
 	_hud.set_supply_status(supply_charges, supply_max, _supply_progress, _supply_truck != null, _supply_feedback)
 	_hud.set_reserve_status(_reserve_unlocked, _reserve_committed, _reserve_choice)
 	_hud.set_objectives(
-		_central.get_owner(),
+		_central.get_control_owner(),
 		_central.is_contested(),
 		_central.progress,
-		_industrial.get_owner(),
+		_industrial.get_control_owner(),
 		_industrial.is_contested(),
 		_industrial.progress,
 		_industrial.is_player_capture_locked()
