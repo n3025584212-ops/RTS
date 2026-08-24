@@ -67,7 +67,8 @@ func set_selection_summary(formations: Array[BattleFormation]) -> void:
 		if formation.is_supply_truck():
 			summaries.append("%s HP %d/%d SUP %d/%d" % [formation.display_name, formation.current_hp, formation.max_hp, formation.get_supply_charges(), formation.supply_capacity])
 		elif formation.ammo_capacity > 0:
-			summaries.append("%s HP %d/%d AMMO %d/%d" % [formation.display_name, formation.current_hp, formation.max_hp, formation.current_ammo, formation.ammo_capacity])
+			var expected_after_supply: int = mini(formation.ammo_capacity, formation.current_ammo + int(round(float(formation.ammo_capacity) * 0.5)))
+			summaries.append("%s HP %d/%d AMMO %d/%d → SUPPLY %d" % [formation.display_name, formation.current_hp, formation.max_hp, formation.current_ammo, formation.ammo_capacity, expected_after_supply])
 		else:
 			summaries.append("%s HP %d/%d" % [formation.display_name, formation.current_hp, formation.max_hp])
 	selected_label.text = "Selected: %s" % " | ".join(summaries)
