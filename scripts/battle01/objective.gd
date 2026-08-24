@@ -146,6 +146,10 @@ func _has_capture_presence(faction: String) -> bool:
 			continue
 		if not formation.is_alive or formation.faction != faction:
 			continue
+		# Dormant reinforcement nodes exist in the formal roster but are not battlefield
+		# capture/contest presence until the existing Enemy AI activates them.
+		if formation.process_mode == Node.PROCESS_MODE_DISABLED or not formation.visible:
+			continue
 		if not formation.is_capture_capable():
 			continue
 		if global_position.distance_to(formation.global_position) <= capture_radius:
