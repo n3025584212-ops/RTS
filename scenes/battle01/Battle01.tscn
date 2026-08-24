@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/battlefield.gd" id="2_field"]
@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://scripts/battle01/battle_camera.gd" id="5_camera"]
 [ext_resource type="Script" path="res://scripts/battle01/hud.gd" id="6_hud"]
 [ext_resource type="Resource" path="res://resources/formations/ifv.tres" id="7_blue_def"]
-[ext_resource type="Resource" path="res://resources/formations/infantry.tres" id="8_red_def"]
+[ext_resource type="Resource" path="res://resources/formations/infantry.tres" id="8_infantry_def"]
 [ext_resource type="Script" path="res://scripts/battle01/intel_tracker.gd" id="9_intel"]
 [ext_resource type="Resource" path="res://resources/formations/recon.tres" id="10_recon_def"]
 [ext_resource type="Script" path="res://scripts/battle01/visibility_field.gd" id="11_visibility"]
@@ -15,6 +15,8 @@
 [ext_resource type="Script" path="res://scripts/battle01/battle_navigation.gd" id="13_nav"]
 [ext_resource type="Script" path="res://scripts/battle01/formal_combat_roster.gd" id="14_roster"]
 [ext_resource type="Script" path="res://scripts/battle01/enemy_ai_controller.gd" id="15_enemy_ai"]
+[ext_resource type="Resource" path="res://resources/formations/logistics.tres" id="16_logistics_def"]
+[ext_resource type="Script" path="res://scripts/battle01/player_war_flow.gd" id="17_war_flow"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
@@ -31,6 +33,20 @@ script = ExtResource("11_visibility")
 [node name="CentralBridgehead" type="Node2D" parent="."]
 position = Vector2(1600, 900)
 script = ExtResource("4_objective")
+objective_id = "CENTRAL_BRIDGEHEAD"
+capture_radius = 150.0
+capture_time = 15.0
+initial_owner = "AI"
+player_capture_locked = false
+
+[node name="IndustrialObjective" type="Node2D" parent="."]
+position = Vector2(2720, 840)
+script = ExtResource("4_objective")
+objective_id = "INDUSTRIAL_OBJECTIVE"
+capture_radius = 150.0
+capture_time = 15.0
+initial_owner = "AI"
+player_capture_locked = true
 
 [node name="BlueFormation" type="Node2D" parent="."]
 position = Vector2(520, 900)
@@ -50,10 +66,28 @@ faction = "BLUE"
 selectable = true
 body_color = Color(0.18, 0.78, 0.92, 1)
 
+[node name="BlueInfantry" type="Node2D" parent="."]
+position = Vector2(620, 1080)
+script = ExtResource("3_formation")
+definition = ExtResource("8_infantry_def")
+display_name = "BLUE INF-01"
+faction = "BLUE"
+selectable = true
+body_color = Color(0.16, 0.62, 0.92, 1)
+
+[node name="BlueSupply" type="Node2D" parent="."]
+position = Vector2(420, 1080)
+script = ExtResource("3_formation")
+definition = ExtResource("16_logistics_def")
+display_name = "BLUE SUPPLY-01"
+faction = "BLUE"
+selectable = true
+body_color = Color(0.20, 0.72, 0.82, 1)
+
 [node name="RedFormation" type="Node2D" parent="."]
 position = Vector2(1370, 900)
 script = ExtResource("3_formation")
-definition = ExtResource("8_red_def")
+definition = ExtResource("8_infantry_def")
 display_name = "RED INF-01"
 faction = "RED"
 selectable = false
@@ -64,6 +98,9 @@ script = ExtResource("14_roster")
 
 [node name="EnemyAIController" type="Node" parent="."]
 script = ExtResource("15_enemy_ai")
+
+[node name="PlayerWarFlow" type="Node2D" parent="."]
+script = ExtResource("17_war_flow")
 
 [node name="SelectionController" type="Node2D" parent="."]
 script = ExtResource("12_selection")
@@ -92,8 +129,8 @@ mouse_filter = 2
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
-offset_right = 760.0
-offset_bottom = 365.0
+offset_right = 1180.0
+offset_bottom = 560.0
 theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="HUD/Root/TopLeft"]
@@ -104,7 +141,7 @@ text = "FRONTLINE / BATTLE01"
 [node name="Task" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "MISSION: Scout with Recon, maneuver IFV, destroy enemy, secure bridgehead"
+text = "MISSION: Take Central Bridgehead, survive counterattack, resupply/reinforce, secure Industrial Objective"
 
 [node name="Selected" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
@@ -116,7 +153,7 @@ text = "Current Orders: --"
 
 [node name="BlueHealth" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "Friendly: IFV 0/0 | RECON 0/0"
+text = "Friendly Core: IFV 0/0 | RECON 0/0"
 
 [node name="EnemyHealth" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
@@ -129,17 +166,17 @@ text = "Enemy Intel: UNSEEN"
 
 [node name="Objective" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "Central Bridgehead: NEUTRAL"
+text = "OBJECTIVES — Central: AI | Industrial: LOCKED / AI"
 
 [node name="Controls" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.8, 0.84, 1)
-text = "LMB select | Shift+LMB add/toggle | Drag box multi-select | RMB move | WASD / Wheel"
+text = "LMB/Shift/Box select | RMB Move | F Supply | X Withdraw | Shift+X West | 1 Reserve INF | 2 Reserve Armor"
 
 [node name="PrototypeNotice" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.82, 1.0, 1)
-text = "NAVIGATION ROUTES + MULTI-FORMATION + RECON/LOS V1"
+text = "WAR FLOW V1 — SUPPLY / RESERVE / DUAL OBJECTIVE"
 
 [node name="VictoryPanel" type="PanelContainer" parent="HUD/Root"]
 layout_mode = 0
@@ -161,7 +198,7 @@ horizontal_alignment = 1
 
 [node name="Message" type="Label" parent="HUD/Root/VictoryPanel/VBox"]
 layout_mode = 2
-text = "Central Bridgehead secured."
+text = "Central Bridgehead and Industrial Objective secured."
 horizontal_alignment = 1
 
 [node name="Restart" type="Button" parent="HUD/Root/VictoryPanel/VBox"]
