@@ -14,9 +14,15 @@ var _drag_start: Vector2 = Vector2.ZERO
 var _drag_current: Vector2 = Vector2.ZERO
 
 func configure(formations: Array[BattleFormation]) -> void:
-	_formations = formations
+	_formations = formations.duplicate()
 	_clear_selection(false)
 	queue_redraw()
+
+func register_formation(formation: BattleFormation) -> void:
+	if formation == null or not is_instance_valid(formation):
+		return
+	if formation not in _formations:
+		_formations.append(formation)
 
 func handle_input(event: InputEvent, world_point: Vector2) -> bool:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -72,6 +78,7 @@ func clear_selection() -> void:
 	_clear_selection(true)
 
 func get_selected() -> Array[BattleFormation]:
+	_prune_selection()
 	return _selected
 
 func issue_move(world_target: Vector2, spacing: float = -1.0) -> int:
