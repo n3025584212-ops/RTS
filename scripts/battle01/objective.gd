@@ -3,7 +3,7 @@ extends Node2D
 
 signal state_changed(state: String, progress: float)
 signal captured
-signal ownership_changed(owner: String, previous_owner: String)
+signal ownership_changed(owner_value: String, previous_owner: String)
 signal contest_changed(contested: bool)
 signal capture_completed(new_owner: String, previous_owner: String)
 signal unlock_changed(player_capture_locked: bool)
@@ -19,7 +19,7 @@ const OWNER_AI: String = "AI"
 @export var player_capture_locked: bool = false
 @export var emit_legacy_captured_signal: bool = false
 
-var owner: String = OWNER_NEUTRAL
+var control_owner: String = OWNER_NEUTRAL
 var state: String = "NEUTRAL"
 var progress: float = 0.0
 var contested: bool = false
@@ -29,7 +29,7 @@ var _tracked_formations: Array[BattleFormation] = []
 var _capture_blocked: bool = false
 
 func _ready() -> void:
-	owner = initial_owner
+	control_owner = initial_owner
 	_refresh_state(false)
 	queue_redraw()
 	state_changed.emit(state, progress)
@@ -68,8 +68,8 @@ func unlock_player_capture() -> void:
 func is_player_capture_locked() -> bool:
 	return player_capture_locked
 
-func get_owner() -> String:
-	return owner
+func get_control_owner() -> String:
+	return control_owner
 
 func is_contested() -> bool:
 	return contested
@@ -78,14 +78,14 @@ func force_owner_for_test(new_owner: String) -> void:
 	if new_owner != OWNER_NEUTRAL and new_owner != OWNER_PLAYER and new_owner != OWNER_AI:
 		push_error("Invalid objective owner: %s" % new_owner)
 		return
-	var previous_owner: String = owner
-	owner = new_owner
+	var previous_owner: String = control_owner
+	control_owner = new_owner
 	contested = false
 	capturing_faction = ""
 	progress = 0.0
 	_refresh_state()
-	if previous_owner != owner:
-		ownership_changed.emit(owner, previous_owner)
+	if previous_owner != control_owner:
+		ownership_changed.emit(control_owner, previous_owner)
 	queue_redraw()
 
 func _process(delta: float) -> void:
@@ -111,7 +111,7 @@ func _process(delta: float) -> void:
 		active_faction = "RED"
 		active_owner = OWNER_AI
 
-	if _capture_blocked or active_faction.is_empty() or active_owner == owner:
+	if _capture_blocked or active_faction.is_empty() or active_owner == control_owner:
 		_reset_capture_progress()
 		_refresh_state()
 		return
@@ -127,17 +127,17 @@ func _process(delta: float) -> void:
 		_complete_capture(active_owner)
 
 func _complete_capture(new_owner: String) -> void:
-	var previous_owner: String = owner
-	owner = new_owner
+	var previous_owner: String = control_owner
+	control_owner = new_owner
 	capturing_faction = ""
 	progress = 0.0
 	contested = false
 	_refresh_state()
-	ownership_changed.emit(owner, previous_owner)
-	capture_completed.emit(owner, previous_owner)
+	ownership_changed.emit(control_owner, previous_owner)
+	capture_completed.emit(control_owner, previous_owner)
 	if emit_legacy_captured_signal:
 		captured.emit()
-	print("FRONTLINE_OBJECTIVE_CAPTURED objective=%s owner=%s previous=%s" % [objective_id, owner, previous_owner])
+	print("FRONTLINE_OBJECTIVE_CAPTURED objective=%s owner=%s previous=%s" % [objective_id, control_owner, previous_owner])
 	queue_redraw()
 
 func _has_capture_presence(faction: String) -> bool:
@@ -176,11 +176,11 @@ func _refresh_state(emit_signal: bool = true) -> void:
 		next_state = "CONTESTED"
 	elif not capturing_faction.is_empty() and progress > 0.0:
 		next_state = "CAPTURING"
-	elif owner == OWNER_PLAYER:
+	elif control_owner == OWNER_PLAYER:
 		# Keep CAPTURED as the stable PLAYER-owned state so the already-frozen RED AI
 		# objective-loss interface continues to receive the same semantic signal.
 		next_state = "CAPTURED"
-	elif owner == OWNER_AI:
+	elif control_owner == OWNER_AI:
 		next_state = "AI_CONTROLLED"
 	else:
 		next_state = "NEUTRAL"
@@ -194,10 +194,10 @@ func _refresh_state(emit_signal: bool = true) -> void:
 func _draw() -> void:
 	var fill: Color = Color(0.85, 0.67, 0.18, 0.14)
 	var edge: Color = Color(0.95, 0.80, 0.28, 0.90)
-	if owner == OWNER_PLAYER:
+	if control_owner == OWNER_PLAYER:
 		fill = Color(0.10, 0.45, 0.82, 0.22)
 		edge = Color(0.30, 0.80, 1.0, 1.0)
-	elif owner == OWNER_AI:
+	elif control_owner == OWNER_AI:
 		fill = Color(0.72, 0.16, 0.12, 0.18)
 		edge = Color(0.95, 0.30, 0.22, 0.95)
 
@@ -212,5 +212,5 @@ func _draw() -> void:
 
 	var lock_text: String = " LOCKED" if player_capture_locked else ""
 	var contest_text: String = " CONTESTED" if contested else ""
-	var label: String = "%s [%s]%s%s" % [objective_id, owner, lock_text, contest_text]
+	var label: String = "%s [%s]%s%s" % [objective_id, control_owner, lock_text, contest_text]
 	draw_string(ThemeDB.fallback_font, Vector2(-120.0, -capture_radius - 18.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 15, Color.WHITE)
