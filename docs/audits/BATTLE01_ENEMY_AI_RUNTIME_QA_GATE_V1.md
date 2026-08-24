@@ -1,57 +1,51 @@
 # BATTLE01 Enemy AI Runtime QA Gate V1
 
 TASK_ID=VERIFY_BATTLE01_ENEMY_AI_RUNTIME_V1
+CLOSURE_TASK_ID=CLOSE_BATTLE01_ENEMY_AI_QA_GATE_V1
 OWNER_WINDOW=WINDOW_07_INTEGRATION_QA
-STATUS=BLOCKED_PRODUCT_BEHAVIOR_EVIDENCE
+STATUS=FROZEN_QA_GATE
 GOVERNANCE=FRONTLINE_PROJECT_EXECUTION_GOVERNANCE_V1
 ENGINE=4.7.1.stable.official.a13da4feb
 VERIFIED_SHA=0cef3a9b1e1dd2078d9eb25966949c8dc96b1929
 INPUT_CONTRACT=docs/BATTLE01_ENEMY_AI_CONTRACT_V2.md
-SOURCE_AUDIT=docs/audits/BATTLE01_ENEMY_AI_RUNTIME_AUDIT_V1.md
-SOURCE_AUDIT_COMMIT=935b09ef0c6bce7f0958ff9ff88a296182ef1b38
+SOURCE_RUNTIME_AUDIT=docs/audits/BATTLE01_ENEMY_AI_RUNTIME_AUDIT_V1.md
+SOURCE_RUNTIME_AUDIT_COMMIT=935b09ef0c6bce7f0958ff9ff88a296182ef1b38
+SOURCE_PLAYER_BEHAVIOR_EVIDENCE=docs/audits/BATTLE01_ENEMY_AI_PLAYER_BEHAVIOR_EVIDENCE_V1.md
+SOURCE_PLAYER_BEHAVIOR_EVIDENCE_COMMIT=c01e927d7ba533226494956f9e61dcedcefdd26b
 
 ## Independent QA findings
 
-- Version identity is proven: runtime executed in a detached worktree at the exact verified SHA.
+- Version identity is proven: runtime executed against the exact verified game commit.
 - Godot 4.7.1 identity, commands, exit codes, blocking-error scan and tracked-worktree integrity are proven.
 - Enemy AI smoke passed with the required state/intel/objective/route/pursuit/supply/reinforcement/dead-target/determinism markers.
 - Navigation, Recon/LOS, Combat, Objective, Victory and multi-formation related regressions passed.
-- The audit publication commit adds only the audit document and does not modify gameplay code or assets.
 - Static contract-to-code traceability confirms the seven-state controller, fog-limited knowledge, 4.0s INVESTIGATE, 350 world-unit pursuit leash, objective defense, armor reserve logic, Supply SUPPORT/EVADE, deterministic route/target tie-break and one-shot reinforcement guard.
+- Focused player-visible evidence proves bounded pursuit and recentering without hidden-position tracking.
+- Focused player-visible evidence proves RED ARMOR-01 begins in reserve, commits under legitimate objective pressure, and returns to reserve posture after the local threat ends.
+- Focused player-visible evidence proves RED SUPPLY-01 remains non-combat/non-capture and performs real EVADE displacement away from a legitimately confirmed threat.
+- Focused player-visible evidence proves an initially unseen North flank causes no pre-detection reaction, while legitimate confirmation makes RED INF-02 the preferred local responder without omniscient map-wide reaction.
+- The player-behavior publication adds only a standalone QA runner under `tests/` and the audit document; no production gameplay file was changed.
 
 ## Gate judgment
 
 CONSTRUCTION_CORRECTNESS=PASS
 RUNTIME_EXECUTION=PASS
-AI_BEHAVIOR_SMOKE=PASS
-FOG_KNOWLEDGE_PASS=PASS_TECHNICAL
-OBJECTIVE_DEFENSE_PASS=PASS_TECHNICAL
-ARMOR_ROLE_PASS=PRODUCT_EVIDENCE_PENDING
-SUPPLY_ROLE_PASS=PRODUCT_EVIDENCE_PENDING
-REINFORCEMENT_PASS=PASS_TECHNICAL
-ROUTE_RESPONSE_PASS=PRODUCT_EVIDENCE_PENDING
-PURSUIT_ANTI_EXPLOIT_PASS=PRODUCT_EVIDENCE_PENDING
+AI_BEHAVIOR_PASS=PASS
+FOG_KNOWLEDGE_PASS=PASS
+OBJECTIVE_DEFENSE_PASS=PASS
+ARMOR_ROLE_PASS=PASS
+SUPPLY_ROLE_PASS=PASS
+REINFORCEMENT_PASS=PASS
+ROUTE_RESPONSE_PASS=PASS
+PURSUIT_ANTI_EXPLOIT_PASS=PASS
 DETERMINISM_PASS=PASS
 RELEVANT_REGRESSION_PASS=PASS
-PRODUCT_CORRECTNESS_PASS=PENDING_FOCUSED_PLAYER_VISIBLE_EVIDENCE
-QA_GATE_RESULT=BLOCKED
-READY_FOR_NEXT_STAGE=NO
-BLOCKER=FOCUSED_PLAYER_VISIBLE_AI_BEHAVIOR_EVIDENCE_REQUIRED
+PRODUCT_CORRECTNESS_PASS=PASS
+EVIDENCE_SUFFICIENCY=PASS
+QA_GATE_RESULT=PASS
+READY_FOR_NEXT_STAGE=YES
+BLOCKER=NONE
 
-## Minimum remaining evidence
+## Closure
 
-Do not rerun the whole audit suite and do not upload a full project archive.
-
-One compact focused runtime evidence item is sufficient if it persuasively demonstrates the four player-visible behaviors that boolean smoke markers alone do not reconstruct:
-
-1. bait/pursuit reaches the leash or loses confirmation, then the defender returns/recenters instead of following hidden BLUE;
-2. armor starts in reserve, commits on legitimate bridgehead pressure, then returns to reserve/defense posture after the local threat ends;
-3. Supply Truck visibly cancels unsafe support movement and EVADES a legitimately confirmed threat while remaining non-combat/non-capture;
-4. an initially unseen North or South flank causes no pre-detection reaction, then after legitimate confirmation INF-02 becomes the preferred local responder without omniscient map-wide reaction.
-
-Acceptable proof may be either:
-
-- one short focused runtime capture covering these behaviors; or
-- concise runtime telemetry containing actual state transitions, unit identity, route/mission changes and return/evade endpoints sufficient to reconstruct the same behaviors.
-
-No unrelated regression rerun, large log bundle, duplicate screenshots or full-project ZIP is required.
+The evidence is sufficient under `FRONTLINE_PROJECT_EXECUTION_GOVERNANCE_V1`. No additional full-project archive, long recording, duplicate screenshots, unrelated regression rerun, or expanded audit package is required for this gate.
