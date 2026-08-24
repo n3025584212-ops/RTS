@@ -101,6 +101,7 @@ func _scenario_withdraw_supply_reenter() -> void:
 	var battle: Node2D = await _spawn_battle()
 	var flow: BattlePlayerWarFlow = battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
 	var selection: BattleSelectionController = battle.get_node("SelectionController") as BattleSelectionController
+	var navigation: BattleNavigation = battle.get_node("Navigation") as BattleNavigation
 	var infantry: BattleFormation = battle.get_node("BlueInfantry") as BattleFormation
 	var supply: BattleFormation = battle.get_node("BlueSupply") as BattleFormation
 
@@ -109,16 +110,17 @@ func _scenario_withdraw_supply_reenter() -> void:
 	selection.select_only(infantry)
 	var withdraw_issued: int = flow.withdraw_selected(false)
 	_advance_formation(infantry)
-	var rear_distance: float = infantry.global_position.distance_to(BattlePlayerWarFlow.WEST_REAR_RALLY)
+	var expected_rally: Vector2 = navigation.clamp_to_walkable(BattlePlayerWarFlow.WEST_REAR_RALLY)
+	var rear_distance: float = infantry.global_position.distance_to(expected_rally)
 
-	supply.global_position = BattlePlayerWarFlow.WEST_REAR_RALLY + Vector2(-100.0, 0.0)
+	supply.global_position = expected_rally + Vector2(-100.0, 0.0)
 	supply.stop()
 	infantry.stop()
 	var supplied: bool = flow.start_supply(supply, infantry)
 	flow._update_supply(4.01)
 	var ammo_after: int = infantry.current_ammo
 	var reenter: bool = infantry.issue_move(Vector2(1200.0, 900.0))
-	_require(withdraw_issued == 1 and rear_distance <= 20.0 and supplied and ammo_after > 0 and reenter and infantry.get_order() == "MOVE", "WITHDRAW_SUPPLY_REENTER_PASS")
+	_require(withdraw_issued == 1 and rear_distance <= 4.0 and supplied and ammo_after > 0 and reenter and infantry.get_order() == "MOVE", "WITHDRAW_SUPPLY_REENTER_PASS")
 
 	await _dispose_battle(battle)
 
