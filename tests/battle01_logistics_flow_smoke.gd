@@ -44,11 +44,17 @@ func _scenario_supply_success_and_interrupt() -> void:
 	var flow: BattlePlayerWarFlow = battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
 	var supply: BattleFormation = battle.get_node("BlueSupply") as BattleFormation
 	var infantry: BattleFormation = battle.get_node("BlueInfantry") as BattleFormation
+	_require(flow.get_friendlies().size() == 4, "PLAYER_ACTIVE_FORCE_PASS")
+	_require(not supply.can_attack and not supply.can_capture and supply.supply_capacity == 2 and supply.get_supply_charges() == 2, "BLUE_SUPPLY_ROLE_PASS")
 
 	supply.global_position = Vector2(520.0, 1080.0)
 	infantry.global_position = Vector2(620.0, 1080.0)
 	supply.stop()
 	infantry.stop()
+	var initial_charges: int = supply.get_supply_charges()
+	var invalid_full_target: bool = not flow.start_supply(supply, infantry)
+	_require(invalid_full_target and supply.get_supply_charges() == initial_charges, "SUPPLY_INVALID_TARGET_PASS")
+
 	infantry.current_ammo = 0
 	var hp_before: int = infantry.current_hp
 	var started: bool = flow.start_supply(supply, infantry)
@@ -132,7 +138,9 @@ func _scenario_objective_reserve_victory() -> void:
 	var infantry: BattleFormation = battle.get_node("BlueInfantry") as BattleFormation
 	var red: BattleFormation = battle.get_node("RedFormation") as BattleFormation
 	var navigation: BattleNavigation = battle.get_node("Navigation") as BattleNavigation
+	var ai: BattleEnemyAIController = battle.get_node("EnemyAIController") as BattleEnemyAIController
 
+	infantry.current_ammo = 0
 	infantry.global_position = central.global_position
 	infantry.stop()
 	central._process(14.90)
@@ -140,9 +148,11 @@ func _scenario_objective_reserve_victory() -> void:
 	central._process(0.20)
 	var reserve_status: Dictionary = flow.get_reserve_status()
 	_require(owner_before_full == BattleObjective.OWNER_AI and central.get_control_owner() == BattleObjective.OWNER_PLAYER, "BRIDGEHEAD_15S_CAPTURE_PASS")
+	_require(infantry.current_ammo == 0 and central.get_control_owner() == BattleObjective.OWNER_PLAYER, "ZERO_AMMO_CAPTURE_PASS")
 	_require(bool(reserve_status["unlocked"]) and not industrial.is_player_capture_locked() and flow.is_forward_rally_active(), "BRIDGEHEAD_STAGE_CHANGE_PASS")
 	_require(bool(reserve_status["unlocked"]), "RESERVE_UNLOCK_PASS")
 	_require(not industrial.is_player_capture_locked(), "INDUSTRIAL_UNLOCK_PASS")
+	_require(bool(ai._reinforcements_active), "BRIDGEHEAD_RED_REINFORCEMENT_TRIGGER_PASS")
 	_require(not flow.is_match_finished(), "CENTRAL_ALONE_NO_VICTORY_PASS")
 
 	var reserve: BattleFormation = flow.deploy_reserve("ARMOR")
