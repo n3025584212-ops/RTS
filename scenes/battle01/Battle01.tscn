@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/battlefield.gd" id="2_field"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/battle01/selection_controller.gd" id="12_selection"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_navigation.gd" id="13_nav"]
 [ext_resource type="Script" path="res://scripts/battle01/formal_combat_roster.gd" id="14_roster"]
+[ext_resource type="Script" path="res://scripts/battle01/enemy_ai_controller.gd" id="15_enemy_ai"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
@@ -60,6 +61,9 @@ body_color = Color(0.88, 0.18, 0.15, 1)
 
 [node name="FormalCombatRoster" type="Node" parent="."]
 script = ExtResource("14_roster")
+
+[node name="EnemyAIController" type="Node" parent="."]
+script = ExtResource("15_enemy_ai")
 
 [node name="SelectionController" type="Node2D" parent="."]
 script = ExtResource("12_selection")
