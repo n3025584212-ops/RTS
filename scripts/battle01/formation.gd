@@ -20,6 +20,7 @@ var is_alive: bool = true
 var current_order: String = "HOLD"
 var current_hp: int = 0
 var current_ammo: int = 0
+var current_supply_charges: int = 0
 var intel_state: String = "CONFIRMED"
 
 var move_speed: float = 100.0
@@ -42,11 +43,14 @@ var _navigation: BattleNavigation
 var _combat_target: BattleFormation
 var _visibility_field: BattleVisibilityField
 var _fire_cooldown: float = 0.0
+var _damage_serial: int = 0
+var _fire_serial: int = 0
 
 func _ready() -> void:
 	_apply_definition()
 	current_hp = max_hp
 	current_ammo = ammo_capacity
+	current_supply_charges = supply_capacity
 	_move_target = global_position
 	health_changed.emit(current_hp, max_hp)
 	ammo_changed.emit(current_ammo, ammo_capacity)
@@ -94,20 +98,27 @@ func set_navigation(navigation: BattleNavigation) -> void:
 	_navigation = navigation
 
 func issue_move(world_target: Vector2) -> bool:
+	return _issue_navigation_order(world_target, "MOVE")
+
+func issue_withdraw(world_target: Vector2) -> bool:
+	clear_combat_target()
+	return _issue_navigation_order(world_target, "WITHDRAW")
+
+func _issue_navigation_order(world_target: Vector2, order_name: String) -> bool:
 	if not is_alive:
 		return false
 	if _navigation == null:
-		push_error("%s cannot MOVE without BattleNavigation." % name)
+		push_error("%s cannot %s without BattleNavigation." % [name, order_name])
 		return false
 	var new_path: PackedVector2Array = _navigation.find_path(global_position, world_target)
 	if new_path.is_empty():
-		push_warning("%s MOVE rejected: no legal navigation path." % name)
+		push_warning("%s %s rejected: no legal navigation path." % [name, order_name])
 		return false
 	_move_path = new_path
 	_path_index = 1 if _move_path.size() > 1 else 0
 	_move_target = _move_path[_move_path.size() - 1]
 	_has_move_target = true
-	_set_order("MOVE")
+	_set_order(order_name)
 	queue_redraw()
 	return true
 
@@ -139,11 +150,42 @@ func set_intel_state(value: String) -> void:
 func take_damage(amount: int) -> void:
 	if not is_alive or amount <= 0:
 		return
+	_damage_serial += 1
 	current_hp = maxi(0, current_hp - amount)
 	health_changed.emit(current_hp, max_hp)
 	queue_redraw()
 	if current_hp <= 0:
 		_die()
+
+func restore_ammo(amount: int) -> int:
+	if not is_alive or amount <= 0 or ammo_capacity <= 0:
+		return 0
+	var before: int = current_ammo
+	current_ammo = mini(ammo_capacity, current_ammo + amount)
+	var restored: int = current_ammo - before
+	if restored > 0:
+		ammo_changed.emit(current_ammo, ammo_capacity)
+		queue_redraw()
+	return restored
+
+func consume_supply_charge() -> bool:
+	if not is_alive or not is_supply_truck() or current_supply_charges <= 0:
+		return false
+	current_supply_charges -= 1
+	queue_redraw()
+	return true
+
+func get_supply_charges() -> int:
+	return current_supply_charges
+
+func is_supply_truck() -> bool:
+	return supply_capacity > 0 and not can_attack and not can_capture
+
+func get_damage_serial() -> int:
+	return _damage_serial
+
+func get_fire_serial() -> int:
+	return _fire_serial
 
 func get_order() -> String:
 	return current_order
@@ -206,6 +248,7 @@ func _update_combat() -> void:
 		return
 	_fire_cooldown = fire_interval
 	current_ammo = maxi(0, current_ammo - 1)
+	_fire_serial += 1
 	ammo_changed.emit(current_ammo, ammo_capacity)
 	attack_fired.emit(self, _combat_target, attack_damage)
 	_combat_target.take_damage(attack_damage)
@@ -218,6 +261,8 @@ func _die() -> void:
 	_move_path = PackedVector2Array()
 	_path_index = 0
 	_combat_target = null
+	if is_supply_truck():
+		current_supply_charges = 0
 	if is_selected:
 		is_selected = false
 		selection_changed.emit(false)
@@ -255,6 +300,9 @@ func _draw() -> void:
 	var hp_ratio: float = float(current_hp) / float(maxi(1, max_hp))
 	draw_rect(Rect2(-30.0, -44.0, 60.0, 6.0), Color(0.08, 0.08, 0.08, 0.9))
 	draw_rect(Rect2(-30.0, -44.0, 60.0 * hp_ratio, 6.0), Color(0.25, 0.9, 0.35, 0.95))
+
+	if is_supply_truck():
+		draw_string(ThemeDB.fallback_font, Vector2(-28.0, 54.0), "SUP %d/%d" % [current_supply_charges, supply_capacity], HORIZONTAL_ALIGNMENT_LEFT, -1.0, 13, Color(0.55, 0.92, 1.0))
 
 	if is_selected:
 		draw_arc(Vector2.ZERO, 38.0, 0.0, TAU, 48, Color(0.35, 0.95, 1.0), 3.0)
