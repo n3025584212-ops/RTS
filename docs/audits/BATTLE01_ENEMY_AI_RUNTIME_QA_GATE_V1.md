@@ -2,49 +2,56 @@
 
 TASK_ID=VERIFY_BATTLE01_ENEMY_AI_RUNTIME_V1
 OWNER_WINDOW=WINDOW_07_INTEGRATION_QA
-STATUS=PENDING_RUNTIME_EVIDENCE
+STATUS=BLOCKED_PRODUCT_BEHAVIOR_EVIDENCE
 GOVERNANCE=FRONTLINE_PROJECT_EXECUTION_GOVERNANCE_V1
-ENGINE=Godot 4.7.1
+ENGINE=4.7.1.stable.official.a13da4feb
 VERIFIED_SHA=0cef3a9b1e1dd2078d9eb25966949c8dc96b1929
 INPUT_CONTRACT=docs/BATTLE01_ENEMY_AI_CONTRACT_V2.md
+SOURCE_AUDIT=docs/audits/BATTLE01_ENEMY_AI_RUNTIME_AUDIT_V1.md
+SOURCE_AUDIT_COMMIT=935b09ef0c6bce7f0958ff9ff88a296182ef1b38
 
 ## Independent QA findings
 
-- Main is exactly `0cef3a9b1e1dd2078d9eb25966949c8dc96b1929` at this gate review.
-- The frozen enemy AI contract is present and defines fog-limited knowledge, deterministic decisions, 4.0s INVESTIGATE, 350 world-unit pursuit leash, objective defense, infantry/armor/supply roles, deterministic route handling, and one-shot reinforcement behavior.
-- `scripts/battle01/enemy_ai_controller.gd` implements the seven-state controller, 0.25s decision cadence, CONTACT/CONFIRMED/LAST_KNOWN semantics, legitimate LOS/range observation, static LAST_KNOWN, objective priority, armor reserve conditions, Supply Truck SUPPORT/EVADE, 150s/objective-loss reinforcement activation guard, dead-target cleanup, deterministic target tie-break, and deterministic route tie-break.
-- Battle01 scene integrates `EnemyAIController`.
-- The runtime workflow contains an enemy-AI smoke command and assertions for the required AI markers.
-- The provided Window 04 marker list matches actual smoke assertions embedded in the current controller implementation.
-- No readable CI status or workflow run is attached to the verified SHA, and no repository audit currently binds the local Godot 4.7.1 run to the exact SHA with command/exit-code evidence.
+- Version identity is proven: runtime executed in a detached worktree at the exact verified SHA.
+- Godot 4.7.1 identity, commands, exit codes, blocking-error scan and tracked-worktree integrity are proven.
+- Enemy AI smoke passed with the required state/intel/objective/route/pursuit/supply/reinforcement/dead-target/determinism markers.
+- Navigation, Recon/LOS, Combat, Objective, Victory and multi-formation related regressions passed.
+- The audit publication commit adds only the audit document and does not modify gameplay code or assets.
+- Static contract-to-code traceability confirms the seven-state controller, fog-limited knowledge, 4.0s INVESTIGATE, 350 world-unit pursuit leash, objective defense, armor reserve logic, Supply SUPPORT/EVADE, deterministic route/target tie-break and one-shot reinforcement guard.
 
 ## Gate judgment
 
-CONSTRUCTION_CORRECTNESS=PASS_STATIC_AND_TRACEABILITY
-AI_BEHAVIOR_PASS=RUNTIME_EVIDENCE_PENDING
-FOG_KNOWLEDGE_PASS=STATIC_PASS_RUNTIME_UNVERIFIED
-OBJECTIVE_DEFENSE_PASS=STATIC_PASS_RUNTIME_UNVERIFIED
-ARMOR_ROLE_PASS=STATIC_PASS_RUNTIME_UNVERIFIED
-SUPPLY_ROLE_PASS=STATIC_PASS_RUNTIME_UNVERIFIED
-REINFORCEMENT_PASS=STATIC_PASS_RUNTIME_UNVERIFIED
-ROUTE_RESPONSE_PASS=STATIC_PASS_RUNTIME_UNVERIFIED
-PURSUIT_ANTI_EXPLOIT_PASS=STATIC_PASS_RUNTIME_UNVERIFIED
-DETERMINISM_PASS=STATIC_PASS_RUNTIME_UNVERIFIED
-RELEVANT_REGRESSION_PASS=RUNTIME_EVIDENCE_PENDING
-PRODUCT_CORRECTNESS_PASS=RUNTIME_EVIDENCE_PENDING
+CONSTRUCTION_CORRECTNESS=PASS
+RUNTIME_EXECUTION=PASS
+AI_BEHAVIOR_SMOKE=PASS
+FOG_KNOWLEDGE_PASS=PASS_TECHNICAL
+OBJECTIVE_DEFENSE_PASS=PASS_TECHNICAL
+ARMOR_ROLE_PASS=PRODUCT_EVIDENCE_PENDING
+SUPPLY_ROLE_PASS=PRODUCT_EVIDENCE_PENDING
+REINFORCEMENT_PASS=PASS_TECHNICAL
+ROUTE_RESPONSE_PASS=PRODUCT_EVIDENCE_PENDING
+PURSUIT_ANTI_EXPLOIT_PASS=PRODUCT_EVIDENCE_PENDING
+DETERMINISM_PASS=PASS
+RELEVANT_REGRESSION_PASS=PASS
+PRODUCT_CORRECTNESS_PASS=PENDING_FOCUSED_PLAYER_VISIBLE_EVIDENCE
 QA_GATE_RESULT=BLOCKED
 READY_FOR_NEXT_STAGE=NO
-BLOCKER=MINIMUM_VERSION_BOUND_RUNTIME_EVIDENCE_NOT_YET_PUBLISHED_FOR_0cef3a9b1e1dd2078d9eb25966949c8dc96b1929
+BLOCKER=FOCUSED_PLAYER_VISIBLE_AI_BEHAVIOR_EVIDENCE_REQUIRED
 
-## Minimum evidence needed to close the gate
+## Minimum remaining evidence
 
-A compact repository audit is sufficient. It must bind the run to the exact verified SHA and include:
+Do not rerun the whole audit suite and do not upload a full project archive.
 
-1. `git rev-parse HEAD` showing the verified SHA;
-2. Godot `--version` showing 4.7.1;
-3. the actual enemy-AI smoke command and exit code;
-4. the required AI PASS markers, including reinforcement one-shot and deterministic replay;
-5. the relevant Navigation / Recon / LOS / Combat / Objective / Victory regression commands, exit codes, and final PASS markers;
-6. tracked worktree status before/after validation.
+One compact focused runtime evidence item is sufficient if it persuasively demonstrates the four player-visible behaviors that boolean smoke markers alone do not reconstruct:
 
-No full-project archive, full raw logs, redundant screenshots, or unrelated regression evidence is required.
+1. bait/pursuit reaches the leash or loses confirmation, then the defender returns/recenters instead of following hidden BLUE;
+2. armor starts in reserve, commits on legitimate bridgehead pressure, then returns to reserve/defense posture after the local threat ends;
+3. Supply Truck visibly cancels unsafe support movement and EVADES a legitimately confirmed threat while remaining non-combat/non-capture;
+4. an initially unseen North or South flank causes no pre-detection reaction, then after legitimate confirmation INF-02 becomes the preferred local responder without omniscient map-wide reaction.
+
+Acceptable proof may be either:
+
+- one short focused runtime capture covering these behaviors; or
+- concise runtime telemetry containing actual state transitions, unit identity, route/mission changes and return/evade endpoints sufficient to reconstruct the same behaviors.
+
+No unrelated regression rerun, large log bundle, duplicate screenshots or full-project ZIP is required.
