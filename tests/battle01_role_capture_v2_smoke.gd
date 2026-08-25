@@ -20,6 +20,7 @@ func _run() -> void:
 	var ifv: BattleFormation = battle.get_node("BlueFormation") as BattleFormation
 	var supply: BattleFormation = battle.get_node("BlueSupply") as BattleFormation
 	var central: BattleObjective = battle.get_node("CentralBridgehead") as BattleObjective
+	var flow: BattlePlayerWarFlow = battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
 	var roster: BattleFormalCombatRoster = battle.get_node("FormalCombatRoster") as BattleFormalCombatRoster
 	var red_infantry: BattleFormation = roster.enemy_infantry[0]
 	var red_armor: BattleFormation = roster.enemy_armor[0]
@@ -64,6 +65,7 @@ func _run() -> void:
 	infantry.global_position = central.global_position
 	central._process(15.1)
 	_require(central.get_control_owner() == BattleObjective.OWNER_PLAYER, "INFANTRY_CAPTURE_OWNERSHIP_PASS")
+	_require(bool(flow.get_reserve_status()["unlocked"]), "GROUND_CONTROL_RESERVE_UNLOCK_PASS")
 
 	_move_all_away(battle, roster)
 	central.force_owner_for_test(BattleObjective.OWNER_PLAYER)
@@ -77,6 +79,20 @@ func _run() -> void:
 	red_armor.global_position = central.global_position
 	central._process(1.0)
 	_require(central.is_contested() and central.progress == 0.0 and central.get_control_owner() == BattleObjective.OWNER_AI, "ARMOR_DENIES_ENEMY_CAPTURE_PASS")
+
+	# Losing all current ground-control formations is still recoverable while the
+	# unlocked reserve can be committed to Infantry.
+	infantry.take_damage(infantry.max_hp + 1)
+	ifv.take_damage(ifv.max_hp + 1)
+	flow.force_evaluate_match_state()
+	_require(not flow.is_match_finished() and bool(flow.get_reserve_status()["deployable"]), "UNUSED_INFANTRY_OPTION_PREVENTS_GROUND_CONTROL_DEFEAT_PASS")
+
+	# If the one reserve choice is instead spent on Armor, Recon/Armor/Logistics can
+	# still fight or contest but cannot establish the ownership needed for Victory.
+	var reserve_armor: BattleFormation = flow.deploy_reserve("ARMOR")
+	flow.force_evaluate_match_state()
+	_require(reserve_armor != null and not reserve_armor.can_capture and reserve_armor.can_contest, "RESERVE_ARMOR_CONTEST_ONLY_PASS")
+	_require(flow.is_match_finished() and not flow.is_victory(), "NO_GROUND_CONTROL_SOFTLOCK_DEFEAT_PASS")
 
 	if _failures.is_empty():
 		print("FRONTLINE_ROLE_CAPTURE_V2_SMOKE_PASS")
