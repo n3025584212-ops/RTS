@@ -7,7 +7,11 @@ ENGINE=Godot 4.7.1.stable.official.a13da4feb
 SOURCE_OF_TRUTH=GITHUB_MAIN
 
 START_COMMIT=164e355a3aa346695c6139d9885a4edbec14929c
+FULL_REGRESSION_GAMEPLAY_COMMIT=0cef8a5c26ef44efea79e29fbec1fe48f6fcdc72
 FINAL_GAMEPLAY_COMMIT=f64144ab955346357661e29ce4f973eb110455fe
+FINAL_DELTA_CHANGE=SOUTH_SCREEN RED INF-02 authored/home anchor (1320,1380) -> legal Navigation grid center (1340,1380)
+FINAL_DELTA_REVALIDATION=PASS
+REGRESSION_REUSE_JUSTIFICATION=All non-seeded-posture regression smokes use default seed 0 / BRIDGE_LOCK and therefore do not exercise the seed 2 SOUTH_SCREEN coordinate changed after the full suite. Final seed 2 boot plus full seeded-posture smoke were rerun on FINAL_GAMEPLAY_COMMIT.
 
 SEED_INPUT_IMPLEMENTED=YES
 SEED_INPUTS=--battle01-seed=<int>;BATTLE01_SEED;exported battle01_seed fallback
