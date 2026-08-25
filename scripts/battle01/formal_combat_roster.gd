@@ -172,7 +172,9 @@ func _deployment_for_posture(posture: String) -> Dictionary:
 		POSTURE_C:
 			return {
 				"RED INF-01": Vector2(1380.0, 900.0),
-				"RED INF-02": Vector2(1320.0, 1380.0),
+				# Keep the authored South screen on a legal navigation-cell center so
+				# RETURN terminates at the exact selected-posture home anchor.
+				"RED INF-02": Vector2(1340.0, 1380.0),
 				"RED ARMOR-01": Vector2(1900.0, 700.0),
 				"RED SUPPLY-01": Vector2(2260.0, 1340.0),
 			}
@@ -188,26 +190,24 @@ func _validate_posture_deployment(deployment: Dictionary) -> bool:
 	var central: BattleObjective = get_parent().get_node_or_null("CentralBridgehead") as BattleObjective
 	var industrial: BattleObjective = get_parent().get_node_or_null("IndustrialObjective") as BattleObjective
 	if central == null or industrial == null:
-		push_error("Seeded RED posture validation requires both Battle01 objectives.")
+		push_error("Seeded RED posture requires both Battle01 objectives.")
 		return false
-
-	var required_names: Array[String] = ["RED INF-01", "RED INF-02", "RED ARMOR-01", "RED SUPPLY-01"]
-	for unit_name: String in required_names:
+	for unit_name: String in ["RED INF-01", "RED INF-02", "RED ARMOR-01", "RED SUPPLY-01"]:
 		if not deployment.has(unit_name):
-			push_error("Seeded RED posture missing authored position for %s." % unit_name)
+			push_error("Seeded RED posture missing deployment for %s." % unit_name)
 			return false
 		var point: Vector2 = Vector2(deployment[unit_name])
 		if not _navigation.is_world_walkable(point):
-			push_error("Seeded RED posture point is not walkable unit=%s point=%s" % [unit_name, point])
+			push_error("Seeded RED posture point is not walkable: %s=%s" % [unit_name, point])
 			return false
 		if point.distance_to(central.global_position) <= central.capture_radius:
-			push_error("Seeded RED posture point illegally occupies Central objective core unit=%s point=%s" % [unit_name, point])
+			push_error("Seeded RED posture point illegally occupies Central objective core: %s" % unit_name)
 			return false
 		if point.distance_to(industrial.global_position) <= industrial.capture_radius:
-			push_error("Seeded RED posture point illegally occupies Industrial objective core unit=%s point=%s" % [unit_name, point])
+			push_error("Seeded RED posture point illegally occupies Industrial objective core: %s" % unit_name)
 			return false
 		if _navigation.find_path(point, central.global_position).is_empty():
-			push_error("Seeded RED posture point is disconnected unit=%s point=%s" % [unit_name, point])
+			push_error("Seeded RED posture point has no legal Battle01 path: %s=%s" % [unit_name, point])
 			return false
 	return true
 
