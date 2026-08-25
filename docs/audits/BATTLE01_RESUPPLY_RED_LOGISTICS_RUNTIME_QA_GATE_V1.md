@@ -3,116 +3,129 @@
 TASK_ID=RUN_AND_QA_BATTLE01_RESUPPLY_RED_LOGISTICS_GODOT_4_7_1_V1
 OWNER_WINDOW=WINDOW_07_INTEGRATION_QA_PERFORMANCE
 PROJECT=FRONTLINE
-STATUS=BLOCKED_REAL_GODOT_RUNTIME_REQUIRED
-ENGINE_REQUIRED=Godot 4.7.1
+STATUS=FROZEN_QA_GATE_PASS
+ENGINE=4.7.1.stable.official.a13da4feb
 SOURCE_OF_TRUTH=GITHUB_MAIN
 VERIFIED_GAMEPLAY_COMMIT=5db464f931733c0d61025f9bbe602a0a68f69a04
 SOURCE_IMPLEMENTATION_AUDIT=docs/audits/BATTLE01_RESUPPLY_RED_LOGISTICS_IMPLEMENTATION_AUDIT_V1.md
 SOURCE_IMPLEMENTATION_AUDIT_COMMIT=781a8e99959c2ee26097da5be268f02460441547
+SOURCE_RUNTIME_AUDIT=docs/audits/BATTLE01_RESUPPLY_RED_LOGISTICS_RUNTIME_AUDIT_V1.md
+SOURCE_RUNTIME_AUDIT_COMMIT=72a211dbc2b2374be0fb9b5a26dde603f3e81ee9
 
-## Independent QA preflight
+## Independent QA conclusion
 
-Window 07 independently confirmed that the implementation commit is present and that current main at gate start is `781a8e99959c2ee26097da5be268f02460441547`, whose parent is the gameplay commit.
+Window 07 independently reviewed the real-local Godot 4.7.1 runtime audit bound to gameplay commit `5db464f931733c0d61025f9bbe602a0a68f69a04`.
 
-The implementation scope is narrow and appropriate for this feature: BLUE Formation-level RESUPPLY controller, RED logistics AI subclass, real Battle01 scene wiring, focused runtime smoke, and focused workflow. Static scope review does not show changes to frozen Formation values, role damage matrix, Objective implementation, formal RED roster, accepted Enemy AI base controller, or the accepted low-level BLUE supply primitive.
+The runtime evidence was produced with Godot `4.7.1.stable.official.a13da4feb` from a detached worktree pinned exactly to the gameplay commit. Project import/editor parse, real Battle01 boot, the focused RESUPPLY / RED logistics smoke, and all required regressions completed successfully.
 
-## Runtime execution status
+The first focused-smoke run exposed two QA-harness failures: the harness placed units at the raw West Rally constant while the production rendezvous uses the clamped walkable grid point, so transfer had not actually begun before the damage/fire interruption assertions. This was corrected only in the QA smoke. No production gameplay file was changed during QA.
 
-Two GitHub Actions workflows associated with gameplay commit `5db464f931733c0d61025f9bbe602a0a68f69a04` were independently checked:
-
-- generic `Godot 4.7.1 Runtime Verify` run `32830732711`;
-- focused `Battle01 Resupply and RED Logistics Verify` run `32830732693`.
-
-Both completed with failure before any workflow step executed. Their jobs report `steps=null`; there is no Checkout, no Godot version output, no parse/import output, no Battle01 boot output, and no smoke output. These are infrastructure non-executions, not evidence of gameplay failure and not acceptable as runtime PASS.
-
-Window 07 in the current cloud session has no access to the user's Windows-local Godot executable or local FRONTLINE checkout, so the required real-local Godot 4.7.1 commands cannot be executed from this window.
-
-## Focused smoke traceability preflight
-
-`tests/battle01_resupply_red_logistics_smoke.gd` does instantiate the real `res://scenes/battle01/Battle01.tscn` and statically contains strong coverage for:
-
-- BLUE single-Formation RESUPPLY intent and automatic Logistics assignment;
-- West rally and Forward rally selection;
-- actual movement to rendezvous;
-- 4-second transfer, 50% max-ammo restoration, finite charge consumption, no HP restoration;
-- direct MOVE override;
-- damage and firing interruption with progress reset / no charge;
-- zero-charge rejection and BLUE Supply destruction;
-- RED Armor priority;
-- most-depleted Infantry selection and stable tie-break;
-- actual RED rendezvous movement and transfer;
-- confirmed-threat cancellation into EVADE;
-- RED Supply destruction removing future sustain.
-
-However the current focused smoke source does not independently assert every acceptance item in this gate. Before PASS, real local QA must also explicitly prove, using the existing production behavior plus minimal QA-only assertions/telemetry if necessary:
-
-1. BLUE direct WITHDRAW overrides active RESUPPLY;
-2. a non-direct movement/range loss during transfer resets without charge consumption (the existing low-level logistics regression may be reused if it proves the same accepted primitive);
-3. dormant RED reinforcement is excluded before activation;
-4. RED resupply is prevented during a non-lull condition such as objective emergency / active ENGAGE / legitimate local threat;
-5. RED resupply targeting does not react to hidden/unconfirmed BLUE information.
-
-These are evidence gaps, not authorization to redesign gameplay. If a QA-only assertion is needed, it must instantiate the real Battle01 and must not modify frozen gameplay semantics.
+The extended focused smoke then completed with exit code 0 and explicitly closed all five evidence gaps identified by the prior blocked gate.
 
 ## Gate judgment
 
-PROJECT_PARSE=NOT_EXECUTED_LOCAL
-BATTLE01_REAL_RUNTIME=NOT_EXECUTED_LOCAL
-BLUE_RESUPPLY=NOT_EXECUTED_LOCAL
-FORMATION_RENDEZVOUS=NOT_EXECUTED_LOCAL
-WEST_RALLY=NOT_EXECUTED_LOCAL
-FORWARD_RALLY=NOT_EXECUTED_LOCAL
-TRANSFER_4S=NOT_EXECUTED_LOCAL
-AMMO_RESTORE_50_PERCENT=NOT_EXECUTED_LOCAL
-HP_RESTORE_DISABLED=NOT_EXECUTED_LOCAL
-DIRECT_ORDER_OVERRIDE=NOT_EXECUTED_LOCAL
-INTERRUPT_RESET=NOT_EXECUTED_LOCAL
-RED_RESUPPLY=NOT_EXECUTED_LOCAL
-RED_ARMOR_PRIORITY=NOT_EXECUTED_LOCAL
-RED_INFANTRY_PRIORITY=NOT_EXECUTED_LOCAL
-RED_LOCAL_LULL=NOT_EXECUTED_LOCAL
-RED_EVADE_OVERRIDE=NOT_EXECUTED_LOCAL
-RED_FINITE_CHARGES=NOT_EXECUTED_LOCAL
-RED_SUPPLY_DESTRUCTION_EFFECT=NOT_EXECUTED_LOCAL
-RED_HIDDEN_INFO_VIOLATION=UNVERIFIED
-ROLE_CAPTURE_REGRESSION=NOT_EXECUTED_LOCAL
-FORMAL_ROSTER_REGRESSION=NOT_EXECUTED_LOCAL
-LOGISTICS_REGRESSION=NOT_EXECUTED_LOCAL
-ENEMY_AI_REGRESSION=NOT_EXECUTED_LOCAL
-3D_FOUNDATION_REGRESSION=NOT_EXECUTED_LOCAL
-BLOCKING_RUNTIME_ERRORS=UNKNOWN_REAL_RUNTIME_NOT_EXECUTED
+VERSION_IDENTITY=PASS
+REAL_GODOT_EXECUTION=PASS
+PROJECT_PARSE=PASS
+BATTLE01_REAL_RUNTIME=PASS
+CHANGE_SCOPE=PASS
+FROZEN_GAMEPLAY_PRESERVED=PASS
 
-QA_GATE_RESULT=BLOCKED
-READY_FOR_NEXT_STAGE=NO
-BLOCKER=REAL_LOCAL_GODOT_4_7_1_RUNTIME_NOT_AVAILABLE_TO_WINDOW_07_AND_FOCUSED_EVIDENCE_GAPS_REMAIN
+BLUE_RESUPPLY=PASS
+FORMATION_RENDEZVOUS=PASS
+WEST_RALLY=PASS
+FORWARD_RALLY=PASS
+TRANSFER_4S=PASS
+AMMO_RESTORE_50_PERCENT=PASS
+HP_RESTORE_DISABLED=PASS
+DIRECT_MOVE_OVERRIDE=PASS
+DIRECT_WITHDRAW_OVERRIDE=PASS
+MOVEMENT_RANGE_INTERRUPT_RESET=PASS
 
-## Minimum action to close
+RED_RESUPPLY=PASS
+RED_ARMOR_PRIORITY=PASS
+RED_INFANTRY_PRIORITY=PASS
+RED_STABLE_TIE_BREAK=PASS
+RED_DORMANT_REINFORCEMENT_EXCLUDED=PASS
+RED_LOCAL_LULL_REQUIRED=PASS
+RED_EVADE_OVERRIDE=PASS
+RED_FINITE_CHARGES=PASS
+RED_SUPPLY_DESTRUCTION_EFFECT=PASS
+RED_HIDDEN_INFO_VIOLATION=NO
 
-Run against gameplay commit `5db464f931733c0d61025f9bbe602a0a68f69a04` (or a descendant proven to add QA/audit-only changes) using real local Godot 4.7.1:
+ROLE_CAPTURE_REGRESSION=PASS
+FORMAL_ROSTER_REGRESSION=PASS
+LOGISTICS_REGRESSION=PASS
+ENEMY_AI_REGRESSION=PASS
+3D_FOUNDATION_REGRESSION=PASS
 
-1. `Godot --version`;
-2. parse/import;
-3. real Battle01 boot;
-4. `tests/battle01_resupply_red_logistics_smoke.gd`;
-5. `tests/battle01_role_capture_v2_smoke.gd`;
-6. `tests/formal_combat_roster_smoke.gd`;
-7. `tests/battle01_logistics_flow_smoke.gd`;
-8. `tests/battle01_enemy_ai_final_objective_smoke.gd`;
-9. `tests/battle01_3d_foundation_smoke.gd`;
-10. explicit QA-only proof for the five evidence gaps listed above if the existing regression suite does not already prove them;
-11. blocking-error scan and tracked-worktree integrity check.
+BLOCKING_RUNTIME_ERRORS=NONE
+QA_ONLY_TEST_CHANGED=YES
+PRODUCTION_GAMEPLAY_CHANGED_DURING_QA=NO
+CONSTRUCTION_CORRECTNESS=PASS
+PRODUCT_CORRECTNESS_FOR_RESUPPLY_RED_LOGISTICS_SLICE=PASS
 
-If all pass, update this gate to `QA_GATE_RESULT=PASS`. If real Godot exposes a production blocker, perform only the task-authorized minimal runtime/wiring correction, rerun the full focused gate, and record the exact blocker if it still cannot close.
+QA_GATE_RESULT=PASS
+READY_FOR_NEXT_STAGE=YES
+BLOCKER=NONE
+
+## Runtime behavior confirmed
+
+BLUE:
+- a depleted selected Formation can issue RESUPPLY;
+- living BLUE Logistics with charges is assigned automatically;
+- West Rear Rally is used before Bridgehead Forward Rally is available;
+- Forward Rally becomes a legal rendezvous after Bridgehead activation;
+- both Formation and Logistics physically rendezvous;
+- continuous 4-second transfer restores 50% maximum ammunition and consumes one finite charge;
+- HP is not restored;
+- MOVE and WITHDRAW direct orders override automation;
+- movement/range loss, damage, or target firing interrupts and resets unfinished transfer without consuming a charge;
+- zero charges and destroyed Logistics prevent future BLUE resupply.
+
+RED:
+- Armor at or below 50% ammo has priority;
+- otherwise the most-depleted eligible Infantry is selected, with stable identity tie-break;
+- dormant reinforcement is excluded before formal activation;
+- resupply starts only during a legitimate local lull;
+- RED combat Formation and Supply physically rendezvous and complete the same finite 4-second / 50%-ammo transfer concept;
+- confirmed local threat cancels unfinished resupply and returns Supply to EVADE;
+- destroyed RED Supply removes remaining sustain capability;
+- hidden / unconfirmed BLUE information does not alter RED resupply decision behavior.
+
+## Frozen behavior preserved
+
+- BLUE / RED Supply charges = 2;
+- restore per completed charge = 50% max ammo;
+- transfer duration = 4.0 seconds;
+- HP restore = NO;
+- Recon / Infantry / IFV / Armor ammo = 18 / 24 / 28 / 16;
+- Capture / Contest = Recon NO/NO, Infantry YES/YES, IFV YES/YES, Armor NO/YES, Logistics NO/NO;
+- Objective ownership transfer remains 15 seconds;
+- Formal RED roster remains Infantry x2, Armor x1, Supply Truck x1, dormant Infantry x1 and Armor x1;
+- role damage matrix, Enemy AI FOW principles, pursuit bounds, Reserve semantics, Objective rules and 3D foundation remain unchanged.
+
+## Scope of this PASS
+
+This gate closes only the revised BLUE Formation-level RESUPPLY and RED finite ammunition-resupply slice plus its directly affected regressions. It does not mean Battle01 as a whole is complete.
+
+Still downstream:
+- three seeded RED defense postures;
+- real North / Central / South route-identity terrain / LOS / access differences;
+- ADVANCE / HOLD FIRE revised command closure;
+- pre-battle staging;
+- downstream final art / VFX after revised runtime playtest gates.
 
 ## Cleanup / active state
 
-Window 07 made no gameplay change. No ZIP, duplicate project checkout, generated cache, large log bundle, screenshot bundle, or redundant evidence was retained by this cloud QA review. This gate document is the only durable output of the present review.
+The local verifier removed the detached runtime worktree, temporary logs and generated caches. No ZIP, duplicate project copy, screenshot bundle or production gameplay modification was retained by QA. The QA-only smoke improvements remain as durable regression coverage.
 
 ACTIVE_PROJECT_STATE_IS_CLEAN=YES
-TASK_RESULT_IS_CREDIBLY_AUDITED=YES_BLOCKED_STATE
+TASK_RESULT_IS_CREDIBLY_AUDITED=YES
 
 ## Next action
 
-NEXT_ACTION=RUN_LOCAL_BATTLE01_RESUPPLY_RED_LOGISTICS_RUNTIME_AND_CLOSE_GAPS_V1
-NEXT_OWNER=QODER_CN_IDE_OR_OTHER_AVAILABLE_LOCAL_GODOT_4_7_1_RUNNER
-RETURN_TO=WINDOW_07_INTEGRATION_QA_PERFORMANCE
+NEXT_ACTION=IMPLEMENT_BATTLE01_SEEDED_RED_DEFENSE_POSTURES_V1
+NEXT_OWNER=WINDOW_04_AI_COMMAND
+
+Do not reopen this RESUPPLY / RED logistics slice unless a downstream change plausibly regresses it.
