@@ -34,7 +34,9 @@ const ROUTE_EPSILON: float = 0.001
 var _navigation: BattleNavigation
 var _visibility: BattleVisibilityField
 var _objective: BattleObjective
+var _industrial_objective: BattleObjective
 var _roster: BattleFormalCombatRoster
+var _war_flow: BattlePlayerWarFlow
 var _blue: Array[BattleFormation] = []
 var _combat_units: Array[BattleFormation] = []
 var _supply_units: Array[BattleFormation] = []
@@ -74,11 +76,13 @@ func _initialize() -> void:
 	_navigation = battle.get_node_or_null("Navigation") as BattleNavigation
 	_visibility = battle.get_node_or_null("VisibilityField") as BattleVisibilityField
 	_objective = battle.get_node_or_null("CentralBridgehead") as BattleObjective
+	_industrial_objective = battle.get_node_or_null("IndustrialObjective") as BattleObjective
 	_roster = battle.get_node_or_null("FormalCombatRoster") as BattleFormalCombatRoster
+	_war_flow = battle.get_node_or_null("PlayerWarFlow") as BattlePlayerWarFlow
 	var blue_main: BattleFormation = battle.get_node_or_null("BlueFormation") as BattleFormation
 	var blue_recon: BattleFormation = battle.get_node_or_null("BlueRecon") as BattleFormation
 
-	if _navigation == null or _visibility == null or _objective == null or _roster == null or blue_main == null or blue_recon == null:
+	if _navigation == null or _visibility == null or _objective == null or _industrial_objective == null or _roster == null or _war_flow == null or blue_main == null or blue_recon == null:
 		push_error("Enemy AI initialization failed: Battle01 dependencies are incomplete.")
 		return
 
@@ -86,7 +90,14 @@ func _initialize() -> void:
 		print("FRONTLINE_ENEMY_AI_LEGACY_CI_BYPASS")
 		return
 
-	_blue = [blue_main, blue_recon]
+	_register_blue_target(blue_main)
+	_register_blue_target(blue_recon)
+	for target: BattleFormation in _war_flow.get_friendlies():
+		_register_blue_target(target)
+	_war_flow.friendlies_changed.connect(_on_friendlies_changed)
+	_war_flow.victory.connect(_on_match_finished)
+	_war_flow.defeat.connect(_on_match_finished)
+
 	_combat_units = _roster.get_initial_enemy_combat_formations()
 	_supply_units = _roster.get_initial_supply_trucks()
 	_reinforcements = _roster.get_reinforcement_formations()
@@ -94,17 +105,6 @@ func _initialize() -> void:
 	if _combat_units.size() != 3 or _supply_units.size() != 1 or _reinforcements.size() != 2:
 		push_error("Enemy AI requires frozen roster 3 combat + 1 supply + 2 dormant reinforcements.")
 		return
-
-	for target: BattleFormation in _blue:
-		_intel[target] = {
-			"state": UNSEEN,
-			"last_known": Vector2.ZERO,
-			"confirm_progress": 0.0,
-			"forced_reveal": 0.0,
-			"generation": 0,
-		}
-		target.attack_fired.connect(_on_blue_attack_fired)
-		target.died.connect(_on_blue_died)
 
 	for unit: BattleFormation in _combat_units:
 		_register_agent(unit, _role_for(unit), true, HOLD)
@@ -124,11 +124,34 @@ func _initialize() -> void:
 
 	_objective.state_changed.connect(_on_objective_state_changed)
 	_objective.captured.connect(_on_objective_captured)
+	_industrial_objective.state_changed.connect(_on_industrial_objective_state_changed)
+	_industrial_objective.capture_completed.connect(_on_industrial_capture_completed)
+	_industrial_objective.unlock_changed.connect(_on_industrial_unlock_changed)
 
 	print("FRONTLINE_ENEMY_AI_READY states=7 combat=%d supply=%d dormant=%d" % [_combat_units.size(), _supply_units.size(), _reinforcements.size()])
+	print("FRONTLINE_ENEMY_AI_FINAL_OBJECTIVE_INTERFACE_READY objective=%s" % _industrial_objective.objective_id)
 
 	if _ci_smoke:
 		_run_ci_smoke()
+
+func _register_blue_target(target: BattleFormation) -> void:
+	if target == null or not is_instance_valid(target) or target in _blue:
+		return
+	_blue.append(target)
+	_intel[target] = {
+		"state": UNSEEN,
+		"last_known": Vector2.ZERO,
+		"confirm_progress": 0.0,
+		"forced_reveal": 0.0,
+		"generation": 0,
+	}
+	target.attack_fired.connect(_on_blue_attack_fired)
+	target.died.connect(_on_blue_died)
+
+func _on_friendlies_changed(formations: Array[BattleFormation]) -> void:
+	for target: BattleFormation in formations:
+		_register_blue_target(target)
+	_decision_accumulator = DECISION_INTERVAL
 
 func _register_agent(unit: BattleFormation, role: String, active: bool, initial_state: String) -> void:
 	if unit == null:
@@ -226,13 +249,88 @@ func _active_red_observers() -> Array[BattleFormation]:
 func _decision_tick() -> void:
 	_cleanup_dead_targets()
 	var objective_emergency: bool = _is_objective_emergency()
+	var final_pressure: bool = _is_final_objective_pressure()
+	var final_responder: BattleFormation = _select_final_objective_responder(objective_emergency) if final_pressure else null
 	for unit: BattleFormation in _combat_units:
-		_decide_combat_unit(unit, objective_emergency)
+		if unit == final_responder:
+			_decide_final_objective_responder(unit)
+		else:
+			_decide_combat_unit(unit, objective_emergency)
 	if _reinforcements_active:
 		for unit: BattleFormation in _reinforcements:
-			_decide_combat_unit(unit, objective_emergency)
+			if unit == final_responder:
+				_decide_final_objective_responder(unit)
+			else:
+				_decide_combat_unit(unit, objective_emergency)
 	for truck: BattleFormation in _supply_units:
 		_decide_supply(truck)
+
+func _decide_final_objective_responder(unit: BattleFormation) -> void:
+	if not _is_active_agent(unit) or _industrial_objective == null:
+		return
+	var target: BattleFormation = _choose_final_objective_target(unit)
+	if target != null and unit.global_position.distance_to(target.global_position) <= MAX_PURSUIT_DISTANCE:
+		_engage_target(unit, target)
+		return
+	_move_mission(unit, _industrial_objective.global_position)
+
+func _choose_final_objective_target(unit: BattleFormation) -> BattleFormation:
+	var best: BattleFormation = null
+	var best_priority: int = 999
+	var best_distance: float = INF
+	for candidate: BattleFormation in _blue:
+		if candidate == null or not candidate.is_alive or not _intel.has(candidate):
+			continue
+		if str((_intel[candidate] as Dictionary)["state"]) != CONFIRMED:
+			continue
+		var priority: int = 999
+		if candidate.is_capture_capable() and candidate.global_position.distance_to(_industrial_objective.global_position) <= _industrial_objective.capture_radius:
+			priority = 1
+		else:
+			var agent: Dictionary = _agents[unit]
+			var recent_attacker: BattleFormation = agent["recent_attacker"] as BattleFormation
+			if recent_attacker == candidate and _elapsed - float(agent["recent_attacker_time"]) <= 3.0:
+				priority = 2
+			elif candidate.global_position.distance_to(_industrial_objective.global_position) <= DEFENSE_RADIUS:
+				priority = 3
+		if priority >= 999:
+			continue
+		var distance: float = _path_distance(unit.global_position, candidate.global_position)
+		if distance >= INF:
+			continue
+		if best == null or priority < best_priority or (priority == best_priority and distance < best_distance - ROUTE_EPSILON) or (priority == best_priority and absf(distance - best_distance) <= ROUTE_EPSILON and candidate.display_name < best.display_name):
+			best = candidate
+			best_priority = priority
+			best_distance = distance
+	return best
+
+func _select_final_objective_responder(central_emergency: bool) -> BattleFormation:
+	var preferred_names: Array[String] = [
+		"RED INF-02",
+		"RED REINFORCEMENT INF-01",
+		"RED REINFORCEMENT ARMOR-01",
+		"RED ARMOR-01",
+	]
+	if not central_emergency:
+		preferred_names.append("RED INF-01")
+	for display_name: String in preferred_names:
+		var unit: BattleFormation = _find_red(display_name)
+		if _is_active_agent(unit):
+			return unit
+	return null
+
+func _is_final_objective_pressure() -> bool:
+	if _industrial_objective == null or _industrial_objective.is_player_capture_locked():
+		return false
+	if _industrial_objective.is_contested():
+		return true
+	if _industrial_objective.get_control_owner() == BattleObjective.OWNER_PLAYER:
+		return true
+	return (
+		_industrial_objective.state == "CAPTURING"
+		and _industrial_objective.capturing_faction == "BLUE"
+		and _industrial_objective.progress > 0.0
+	)
 
 func _decide_combat_unit(unit: BattleFormation, objective_emergency: bool) -> void:
 	if not _is_active_agent(unit):
@@ -434,7 +532,7 @@ func _decide_supply(truck: BattleFormation) -> void:
 	var from_home: Vector2 = protected.global_position - Vector2(agent["home"])
 	var direction: Vector2 = from_home.normalized() if from_home.length() > 0.001 else Vector2.LEFT
 	var destination: Vector2 = protected.global_position - direction * SUPPLY_TRAILING_DISTANCE
-	if destination.distance_to(_objective.global_position) < OBJECTIVE_SUPPLY_EXCLUSION:
+	if _is_supply_objective_excluded(destination):
 		_set_state(truck, SUPPORT)
 		return
 	var danger: BattleFormation = _nearest_confirmed_threat(destination, SUPPLY_THREAT_RADIUS)
@@ -442,6 +540,11 @@ func _decide_supply(truck: BattleFormation) -> void:
 		_evade_supply(truck, danger)
 		return
 	_issue_move(truck, destination, MOVE)
+
+func _is_supply_objective_excluded(destination: Vector2) -> bool:
+	if destination.distance_to(_objective.global_position) < OBJECTIVE_SUPPLY_EXCLUSION:
+		return true
+	return _industrial_objective != null and destination.distance_to(_industrial_objective.global_position) < OBJECTIVE_SUPPLY_EXCLUSION
 
 func _evade_supply(truck: BattleFormation, threat: BattleFormation) -> void:
 	truck.clear_combat_target()
@@ -459,6 +562,13 @@ func _evade_supply(truck: BattleFormation, threat: BattleFormation) -> void:
 		if away_objective.length() < 0.001:
 			away_objective = Vector2(agent["home"]) - _objective.global_position
 		destination = _objective.global_position + away_objective.normalized() * OBJECTIVE_SUPPLY_EXCLUSION
+	if _industrial_objective != null and destination.distance_to(_industrial_objective.global_position) < OBJECTIVE_SUPPLY_EXCLUSION:
+		var away_industrial: Vector2 = destination - _industrial_objective.global_position
+		if away_industrial.length() < 0.001:
+			away_industrial = Vector2(agent["home"]) - _industrial_objective.global_position
+		if away_industrial.length() < 0.001:
+			away_industrial = Vector2.LEFT
+		destination = _industrial_objective.global_position + away_industrial.normalized() * OBJECTIVE_SUPPLY_EXCLUSION
 	_issue_move(truck, destination, EVADE)
 
 func _protected_supply_unit() -> BattleFormation:
@@ -560,6 +670,19 @@ func _on_objective_captured() -> void:
 	_objective_lost = true
 	if not _reinforcements_active:
 		_activate_reinforcements("objective_loss")
+	_decision_accumulator = DECISION_INTERVAL
+
+func _on_industrial_objective_state_changed(_state: String, _progress: float) -> void:
+	_decision_accumulator = DECISION_INTERVAL
+
+func _on_industrial_capture_completed(new_owner: String, previous_owner: String) -> void:
+	print("FRONTLINE_AI_FINAL_OBJECTIVE_CAPTURE_EVENT owner=%s previous=%s" % [new_owner, previous_owner])
+	_decision_accumulator = DECISION_INTERVAL
+
+func _on_industrial_unlock_changed(_player_capture_locked: bool) -> void:
+	_decision_accumulator = DECISION_INTERVAL
+
+func _on_match_finished() -> void:
 	_match_finished = true
 
 func _on_blue_attack_fired(attacker: BattleFormation, target: BattleFormation, _damage: int) -> void:
@@ -586,8 +709,6 @@ func _on_blue_died(formation: BattleFormation) -> void:
 		if agent["target"] == formation:
 			_clear_agent_target(unit)
 			unit.clear_combat_target()
-	if formation == get_parent().get_node_or_null("BlueFormation"):
-		_match_finished = true
 
 func _on_red_health_changed(current_hp: int, _max_hp: int, unit: BattleFormation) -> void:
 	if not _agents.has(unit):
