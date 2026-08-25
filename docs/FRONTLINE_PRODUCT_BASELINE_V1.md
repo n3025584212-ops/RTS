@@ -31,6 +31,17 @@ FRONTLINE / 《战线》是一款现代战争题材、俯视斜视角、以 Form
 
 不要求像素复刻，但信息结构、现代战争氛围、战场密度、Formation识别与指挥感必须保持同一产品方向。
 
+Battle01 final runtime direction is now frozen as:
+
+- WORLD=3D
+- HUD=2D Control
+- DESKTOP_RENDERER_TARGET=Forward+
+- MATERIAL_TARGET=PBR
+- PRODUCT_GOAL=FULL_PLAYABLE_RTS
+- VISUAL_TARGET_IMAGES=LIVE_GAME_APPEARANCE_TRUTH, not standalone beauty-scene targets
+
+The migration contract is `docs/BATTLE01_FULL_PLAYABLE_3D_RUNTIME_MIGRATION_V1.md`.
+
 ## Default scope exclusions for Battle01
 
 首阶段默认不做：
