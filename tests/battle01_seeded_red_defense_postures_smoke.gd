@@ -50,11 +50,13 @@ func _run() -> void:
 	var return_pass: bool = _exercise_posture_return(posture_c)
 	_require(return_pass, "RED_POSTURE_RETURN_ANCHOR_PASS")
 
-	var lock_pass: bool = _exercise_posture_lock(posture_b)
-	_require(lock_pass, "RED_POSTURE_LOCKED_AFTER_START_PASS")
-
+	# Exercise RED finite-ammo logistics before the posture-lock scenario introduces
+	# an intentional objective emergency into POSTURE_B.
 	var logistics_pass: bool = _exercise_logistics_compatibility(posture_b) and _exercise_logistics_compatibility(posture_c)
 	_require(logistics_pass, "RED_POSTURE_LOGISTICS_COMPATIBILITY_PASS")
+
+	var lock_pass: bool = _exercise_posture_lock(posture_b)
+	_require(lock_pass, "RED_POSTURE_LOCKED_AFTER_START_PASS")
 
 	await _dispose_battle(posture_a["battle"] as Node)
 	await _dispose_battle(posture_b["battle"] as Node)
