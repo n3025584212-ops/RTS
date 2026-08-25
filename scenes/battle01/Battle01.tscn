@@ -1,10 +1,8 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
-[ext_resource type="Script" path="res://scripts/battle01/battlefield.gd" id="2_field"]
 [ext_resource type="Script" path="res://scripts/battle01/formation.gd" id="3_formation"]
 [ext_resource type="Script" path="res://scripts/battle01/objective.gd" id="4_objective"]
-[ext_resource type="Script" path="res://scripts/battle01/battle_camera.gd" id="5_camera"]
 [ext_resource type="Script" path="res://scripts/battle01/hud.gd" id="6_hud"]
 [ext_resource type="Resource" path="res://resources/formations/ifv.tres" id="7_blue_def"]
 [ext_resource type="Resource" path="res://resources/formations/infantry.tres" id="8_infantry_def"]
@@ -17,20 +15,33 @@
 [ext_resource type="Script" path="res://scripts/battle01/enemy_ai_controller.gd" id="15_enemy_ai"]
 [ext_resource type="Resource" path="res://resources/formations/logistics.tres" id="16_logistics_def"]
 [ext_resource type="Script" path="res://scripts/battle01/player_war_flow.gd" id="17_war_flow"]
+[ext_resource type="Script" path="res://scripts/battle01/battle_3d_world.gd" id="18_world3d"]
+[ext_resource type="Script" path="res://scripts/battle01/battle_camera_3d.gd" id="19_camera3d"]
+[ext_resource type="Script" path="res://scripts/battle01/battle_3d_presentation.gd" id="20_presentation3d"]
+[ext_resource type="Script" path="res://scripts/battle01/battle_3d_input.gd" id="21_input3d"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
 
-[node name="Battlefield" type="Node2D" parent="."]
-script = ExtResource("2_field")
+[node name="World3D" type="Node3D" parent="."]
+script = ExtResource("18_world3d")
+
+[node name="BattleCamera3D" type="Camera3D" parent="World3D"]
+script = ExtResource("19_camera3d")
+
+[node name="Presentation3D" type="Node3D" parent="World3D"]
+script = ExtResource("20_presentation3d")
 
 [node name="Navigation" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 script = ExtResource("13_nav")
 
 [node name="VisibilityField" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 script = ExtResource("11_visibility")
 
 [node name="CentralBridgehead" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 position = Vector2(1600, 900)
 script = ExtResource("4_objective")
 objective_id = "CENTRAL_BRIDGEHEAD"
@@ -40,6 +51,7 @@ initial_owner = "AI"
 player_capture_locked = false
 
 [node name="IndustrialObjective" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 position = Vector2(2720, 840)
 script = ExtResource("4_objective")
 objective_id = "INDUSTRIAL_OBJECTIVE"
@@ -49,6 +61,7 @@ initial_owner = "AI"
 player_capture_locked = true
 
 [node name="BlueFormation" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 position = Vector2(520, 900)
 script = ExtResource("3_formation")
 definition = ExtResource("7_blue_def")
@@ -58,6 +71,7 @@ selectable = true
 body_color = Color(0.12, 0.55, 0.92, 1)
 
 [node name="BlueRecon" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 position = Vector2(760, 600)
 script = ExtResource("3_formation")
 definition = ExtResource("10_recon_def")
@@ -67,6 +81,7 @@ selectable = true
 body_color = Color(0.18, 0.78, 0.92, 1)
 
 [node name="BlueInfantry" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 position = Vector2(620, 1080)
 script = ExtResource("3_formation")
 definition = ExtResource("8_infantry_def")
@@ -76,6 +91,7 @@ selectable = true
 body_color = Color(0.16, 0.62, 0.92, 1)
 
 [node name="BlueSupply" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 position = Vector2(420, 1080)
 script = ExtResource("3_formation")
 definition = ExtResource("16_logistics_def")
@@ -85,6 +101,7 @@ selectable = true
 body_color = Color(0.20, 0.72, 0.82, 1)
 
 [node name="RedFormation" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 position = Vector2(1370, 900)
 script = ExtResource("3_formation")
 definition = ExtResource("8_infantry_def")
@@ -100,18 +117,19 @@ script = ExtResource("14_roster")
 script = ExtResource("15_enemy_ai")
 
 [node name="PlayerWarFlow" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 script = ExtResource("17_war_flow")
 
 [node name="SelectionController" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 script = ExtResource("12_selection")
 
 [node name="IntelTracker" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
 script = ExtResource("9_intel")
 
-[node name="BattleCamera" type="Camera2D" parent="."]
-script = ExtResource("5_camera")
-position_smoothing_enabled = true
-position_smoothing_speed = 8.0
+[node name="Input3D" type="Node" parent="."]
+script = ExtResource("21_input3d")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("6_hud")
@@ -172,12 +190,12 @@ text = "OBJECTIVES — Central: AI | Industrial: LOCKED / AI"
 [node name="Controls" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.8, 0.84, 1)
-text = "LMB/Shift/Box select | RMB Move | F Supply | X Withdraw | Shift+X West | 1 Reserve INF | 2 Reserve Armor"
+text = "3D: LMB/Shift/Drag select | RMB Move | Wheel Zoom | WASD Pan | F Supply | X Withdraw | 1/2 Reserve"
 
 [node name="PrototypeNotice" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.82, 1.0, 1)
-text = "WAR FLOW V1 — SUPPLY / RESERVE / DUAL OBJECTIVE"
+text = "3D FOUNDATION — LIVE BATTLE01 SIMULATION"
 
 [node name="VictoryPanel" type="PanelContainer" parent="HUD/Root"]
 layout_mode = 0
