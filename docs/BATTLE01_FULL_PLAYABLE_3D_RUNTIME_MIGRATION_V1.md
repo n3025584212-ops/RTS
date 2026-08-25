@@ -18,174 +18,101 @@ SCOPE_EXPANSION=NO
 
 ## 1. Purpose
 
-This contract governs the migration of the existing playable Battle01 from its current 2D world representation to the final 3D world + 2D HUD runtime.
+This contract governs migration of the real playable Battle01 into the final 3D world + 2D HUD game. It is not a screenshot project, model viewer, beauty-scene project, or disconnected prototype.
 
-The migration exists to make the approved visual targets become the look of the real playable RTS. It is not a screenshot project, model viewer, beauty-scene project, or disconnected prototype.
-
-The product remains the complete Battle01 loop:
+The intended complete loop remains:
 
 Recon / incomplete information -> formation selection and movement -> route choice -> contact -> combined-arms combat -> Central Bridgehead -> enemy counterattack -> supply / withdrawal / reserve commitment -> Industrial Objective -> victory / defeat -> restart.
 
-A migration stage may prove one technical axis, but no isolated view or visual demo may be treated as product completion.
+The visual target images define the required runtime image quality and visual language when those gameplay states actually occur.
 
-## 2. Preserve the accepted game; replace the world representation
+## 2. Preserve the game while changing representation
 
-The migration must preserve current frozen/accepted gameplay semantics unless Window 00 explicitly authorizes a separate design change.
+Preserve accepted gameplay semantics unless Window 00 explicitly authorizes a design revision:
 
-Preserve and reuse where technically practical:
-
-- FormationDefinition data and unit roles;
+- FormationDefinition data and roles;
 - HP / damage / range / attack interval / ammo / speed constants;
-- selection and Formation-level command semantics;
-- Recon / CONTACT / CONFIRMED / LAST_KNOWN behavior;
-- LOS and smoke gameplay semantics;
-- objective capture and ownership rules;
-- enemy AI behavior and limited-information rules;
-- logistics, reinforcement, withdrawal and reserve flow;
-- victory / defeat and restart flow;
-- 2D HUD information architecture that remains valid.
+- Formation-level selection and command semantics;
+- Recon / CONTACT / CONFIRMED / LAST_KNOWN;
+- LOS / smoke meaning;
+- objectives;
+- enemy limited-information AI;
+- logistics / reinforcement / withdrawal;
+- victory / defeat / restart;
+- valid 2D HUD information architecture.
 
-The migration must not become an excuse to redesign Battle01.
+The migration should separate simulation from presentation where practical. Existing planar simulation may map to the 3D XZ world through an explicit adapter rather than forcing a total gameplay rewrite.
 
-## 3. Migration architecture principle
+## 3. Mandatory real-game integration
 
-The safest default migration is to separate GAMEPLAY_SIMULATION from WORLD_PRESENTATION rather than rewriting accepted gameplay at the same time as the renderer.
+Every migration stage must live in or directly advance the actual Battle01 main runtime.
 
-During the transition, existing planar Battle01 simulation coordinates may remain authoritative and map into the 3D XZ plane through a small explicit adapter:
+Forbidden as product substitutes:
 
-`Vector2(sim_x, sim_y) -> Vector3(world_x, terrain_height, world_z)`
+- standalone vehicle viewers;
+- detached bridge or terrain beauty scenes;
+- screenshot-only staging scenes;
+- separate maps not driven by actual Battle01 state;
+- target images used as backgrounds;
+- declaring success because one camera angle looks good.
 
-This allows accepted Combat, AI, Objective, Recon and Formation data to continue operating while the visible world becomes 3D. Terrain height / surface contact may be resolved by the 3D world presentation/navigation layer without changing frozen gameplay meaning.
+## 4. Migration stages and current state
 
-A later subsystem may move to a native 3D implementation only when required and independently verified. Do not rewrite every system merely because Node3D exists.
-
-## 4. Mandatory real-game integration
-
-Every migration stage must work toward the actual Battle01 main runtime.
-
-The following are forbidden as substitutes for integration:
-
-- a standalone IFV viewer;
-- a detached bridge beauty scene;
-- a staged screenshot scene without the real command loop;
-- a separate map that does not use the actual Battle01 gameplay state;
-- using FINAL-01 as a background image;
-- declaring success because one camera view resembles a target image.
-
-A temporary technical scene may exist only when needed to diagnose an engine feature. It is disposable and cannot satisfy a formal product gate.
-
-## 5. Migration stages
-
-### STAGE_1 — 3D foundation inside the real Battle01
+### STAGE_1 — 3D foundation inside real Battle01
 
 TASK_ID=MIGRATE_BATTLE01_3D_FOUNDATION_INTEGRATED_V1
 OWNER_WINDOW=WINDOW_02_GODOT_ARCHITECTURE
+STATUS=IMPLEMENTED_ON_MAIN_PENDING_BROADER_PRODUCT_VALIDATION
+IMPLEMENTATION_COMMIT=a197372ab5021a5acb0bb6124d734eb84dc7aa35
 
-Goal: put the real Battle01 on the 3D runtime foundation without breaking the existing complete gameplay loop.
+The current main includes Forward+, Node3D world structure, Camera3D, 3D input mapping/presentation adapter work and keeps the real Battle01 simulation as the underlying gameplay state.
 
-Required outcome:
+This foundation is retained as technical infrastructure. It is not final visual quality and is not proof that the game design itself is sufficiently mature.
 
-- project renderer moved to Forward+ where supported by the accepted desktop target;
-- real Battle01 main runtime gains a Node3D world root and Camera3D RTS camera;
-- existing 2D Control HUD remains operational above the 3D world;
-- explicit simulation-to-3D coordinate adapter exists;
-- Battle01 terrain footprint, river, central bridgehead area, village region and industrial region exist in the real world scene as 3D spatial structure at implementation-quality placeholder level;
-- current playable formations are represented by 3D world actors or integrated 3D proxies bound to the real Formation state;
-- player can select formations and issue movement in the real Battle01;
-- screen-to-world input uses the real 3D camera/ground intersection rather than a disconnected demo;
-- real combat state, objectives, AI, logistics/reinforcement and victory/defeat remain reachable and functioning, even if some presentation remains transitional;
-- no new gameplay systems are introduced;
-- old 2D world presentation is removed only when its runtime dependency is replaced.
+### INTERMEDIATE PRODUCT DESIGN GATE — REQUIRED BEFORE STAGE 2/3 EXPANSION
 
-Stage 1 is a construction milestone, not final visual acceptance.
+TASK_ID=PRESSURE_TEST_BATTLE01_PRODUCT_DESIGN_V1
+OWNER_WINDOW=WINDOW_01_GAME_DESIGN
+CONTRACT=docs/BATTLE01_PRODUCT_DESIGN_PRESSURE_TEST_V1.md
+STATUS=CURRENT_AUTHORIZED_TASK
+
+Purpose: pressure-test the whole Battle01 as a game before expensive 3D gameplay closure, final-art production, large asset work or broader implementation continues.
+
+Until this gate closes:
+
+- keep the landed 3D foundation;
+- allow focused fixes needed to keep the build bootable/testable;
+- do not mass-produce final 3D assets/VFX;
+- do not broadly expand Stage 2/3 based on unreviewed design assumptions;
+- do not add gameplay scope merely to make the current implementation feel fuller.
 
 ### STAGE_2 — 3D gameplay representation closure
 
 Owners: WINDOW_02 + WINDOW_03 + WINDOW_04 as applicable.
+STATUS=BLOCKED_BY_PRODUCT_DESIGN_GATE
 
-Goal: make all player-facing Battle01 gameplay actions spatially coherent in the 3D world while preserving accepted rules.
+After the product-design gate passes or its required revisions are formally adjudicated, close 3D representation for formation orientation/movement, selection/commands, navigation, LOS/smoke, combat effects, AI movement/engagement, objectives and logistics in the same live game world.
 
-Must close:
+### STAGE_3 — full Battle01 world art and combat presentation
 
-- Formation orientation and movement presentation;
-- selection / drag selection / command feedback in 3D;
-- route/navigation representation;
-- LOS / smoke world interaction;
-- combat fire/impact spatial presentation;
-- enemy AI movement/engagement/return/reinforcement in the same 3D world;
-- objective and logistics interactions in the same 3D world.
+Owners: WINDOW_06_UI_VISUAL + WINDOW_08_VISUAL_TARGET_ASSETS with WINDOW_02 support.
+STATUS=BLOCKED_BY_PRODUCT_DESIGN_GATE
 
-### STAGE_3 — full Battle01 3D world art and combat presentation
+After the product design is strong enough, bring the whole live Battle01 world to target-image strength: terrain/material layering, roads/river/bridge, village/industrial regions, vegetation, formal unit visual identity, PBR, lighting/shadows, muzzle flash, tracer, impact, explosion, smoke, wrecks, decals, LOD/readability and integrated 2D HUD.
 
-Owners: WINDOW_06_UI_VISUAL + WINDOW_08_VISUAL_TARGET_ASSETS with WINDOW_02 implementation support.
-
-Goal: convert the integrated playable world from implementation-quality geometry/assets to target-aligned final Battle01 presentation.
-
-Must cover the real Battle01 world, not one view:
-
-- terrain and material layering;
-- roads / river / bridge;
-- village and industrial objective areas;
-- vegetation and battlefield detail;
-- Recon / Infantry / IFV / Supply Truck / Armor visual identity;
-- PBR materials, lighting and shadows;
-- muzzle flash, tracer, impact, explosion, smoke, wreck and decals;
-- readable near/mid/far Formation presentation;
-- 2D HUD integrated with the 3D battle.
-
-Approved visual targets, especially FINAL-01, P0-05, P1-06 and P1-07, are visual truth for this stage.
-
-### STAGE_4 — integrated product QA and visual closure
+### STAGE_4 — integrated product QA
 
 OWNER_WINDOW=WINDOW_07_INTEGRATION_QA
 
-Final acceptance requires actual playable runtime evidence across the real Battle01 loop.
+Final acceptance evaluates together:
 
-The final gate must evaluate together:
+PLAYABLE / FULL_BATTLE01_LOOP / MEANINGFUL_DECISIONS / RECON_FOW / FORMATION_COMMAND / COMBAT / ENEMY_AI / OBJECTIVES / LOGISTICS_REINFORCEMENT / VICTORY_DEFEAT_RESTART / VISUAL_READABILITY / TARGET_ALIGNMENT / TECHNICAL_HEALTH / PERFORMANCE.
 
-- PLAYABLE;
-- FULL_BATTLE01_LOOP;
-- MEANINGFUL_DECISIONS;
-- RECON_FOW;
-- FORMATION_COMMAND;
-- COMBAT;
-- ENEMY_AI;
-- OBJECTIVES;
-- LOGISTICS_REINFORCEMENT;
-- VICTORY_DEFEAT_RESTART;
-- VISUAL_READABILITY;
-- TARGET_ALIGNMENT;
-- TECHNICAL_HEALTH;
-- PERFORMANCE.
+A pretty screenshot cannot cover broken gameplay, and a mechanically correct game cannot cover failed target-image quality.
 
-A pretty screenshot cannot cover a broken gameplay gate, and a mechanically passing game cannot cover failed final target alignment.
+## 5. Current authorized next task
 
-## 6. Visual-target interpretation
+AUTHORIZED_NEXT_TASK=PRESSURE_TEST_BATTLE01_PRODUCT_DESIGN_V1
+AUTHORIZED_NEXT_OWNER=WINDOW_01_GAME_DESIGN
 
-The correct interpretation of "build from the target images" is:
-
-The target image should become the appearance of the live playable game when the corresponding gameplay state actually occurs.
-
-Do not abstract the image into line art, debug geometry, simplified tactical symbols or low-fidelity sprite replacement and call that target alignment.
-
-UI symbols may remain stylized 2D where appropriate. World objects shown as physical vehicles, terrain, bridges, buildings, smoke, explosions or environmental depth in the visual truth must be represented as a coherent 3D game world at final visual closure.
-
-## 7. Completion discipline and cleanup
-
-Every stage obeys `FRONTLINE_TASK_CLOSEOUT_AUDIT_AND_CLEANUP_V1`.
-
-At every closeout:
-
-- report in plain language what the player can now actually do and see;
-- say plainly what still remains transitional;
-- remove rejected/disposable assets, evidence and obsolete implementation once no longer required;
-- do not accumulate duplicate project copies or full-project ZIP backups;
-- retain Git history as the normal recovery path;
-- do not claim the overall 3D migration complete until Stage 4 passes.
-
-## 8. Current authorized next task
-
-AUTHORIZED_NEXT_TASK=MIGRATE_BATTLE01_3D_FOUNDATION_INTEGRATED_V1
-AUTHORIZED_NEXT_OWNER=WINDOW_02_GODOT_ARCHITECTURE
-
-The next task is not to build a beauty sample. It is to start converting the real playable Battle01 itself to the 3D runtime foundation while keeping the accepted RTS loop alive.
+In plain language: stop spending heavily for a moment and rigorously test whether the current Battle01 loop is actually interesting, readable, replayable and worth building to final quality. Keep the new 3D foundation, but do not let technical momentum outrun game design again.
