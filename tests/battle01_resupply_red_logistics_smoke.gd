@@ -13,6 +13,11 @@ func _run() -> void:
 	await _scenario_blue_interrupts_no_charge_and_destroyed()
 	await _scenario_blue_forward_rally()
 	await _scenario_red_priority_transfer_evade_and_destroyed()
+	await _scenario_blue_withdraw_override()
+	await _scenario_blue_movement_or_range_interrupt()
+	await _scenario_red_dormant_reinforcement_excluded()
+	await _scenario_red_local_lull_required()
+	await _scenario_red_no_hidden_blue_info()
 
 	if _failures.is_empty():
 		print("FRONTLINE_RESUPPLY_RED_LOGISTICS_SMOKE_PASS")
@@ -235,6 +240,9 @@ func _prepare_blue_transfer(controller: BattleResupplyController, target: Battle
 		target.current_ammo = 0
 	controller.start_resupply(target)
 	controller.force_update_for_test(0.0)
+	# The actual rendezvous is the clamped walkable grid point, not the raw rally constant.
+	# Advance real movement until the transfer actually starts, like gameplay does.
+	_advance_blue_to_transfer(controller, target, supply)
 
 func _advance_blue_to_transfer(controller: BattleResupplyController, target: BattleFormation, supply: BattleFormation) -> void:
 	for _step: int in range(360):
@@ -251,6 +259,169 @@ func _advance_red_to_transfer(ai: BattleEnemyAILogisticsController, target: Batt
 		target._update_movement(0.10)
 		supply._update_movement(0.10)
 		ai.advance_red_resupply_for_test(0.10)
+
+func _scenario_blue_withdraw_override() -> void:
+	var battle: Node2D = await _spawn_battle()
+	var controller: BattleResupplyController = battle.get_node("ResupplyController") as BattleResupplyController
+	var flow: BattlePlayerWarFlow = battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
+	var selection: BattleSelectionController = battle.get_node("SelectionController") as BattleSelectionController
+	var infantry: BattleFormation = battle.get_node("BlueInfantry") as BattleFormation
+	var supply: BattleFormation = battle.get_node("BlueSupply") as BattleFormation
+
+	# BLUE target + Logistics inside a real TRANSFERRING resupply; player issues WITHDRAW.
+	_prepare_blue_transfer(controller, infantry, supply)
+	flow._update_supply(1.0)
+	selection.select_only(infantry)
+	var charge_before: int = supply.get_supply_charges()
+	var withdrawn: int = flow.withdraw_selected(false)
+	flow._update_supply(0.01)
+	controller.force_update_for_test(0.0)
+	var cancelled: bool = not controller.is_resupply_active() and flow.get_supply_progress() == 0.0 and supply.get_supply_charges() == charge_before and infantry.get_order() == "WITHDRAW"
+	# The WITHDRAW order must survive: resupply automation must not grab the formation back.
+	controller.force_update_for_test(0.25)
+	controller.force_update_for_test(0.25)
+	controller.force_update_for_test(0.25)
+	var order_kept: bool = not controller.is_resupply_active() and infantry.get_order() == "WITHDRAW"
+	_require(withdrawn == 1 and cancelled and order_kept, "BLUE_RESUPPLY_DIRECT_WITHDRAW_OVERRIDE_PASS")
+
+	await _dispose_battle(battle)
+
+func _scenario_blue_movement_or_range_interrupt() -> void:
+	var battle: Node2D = await _spawn_battle()
+	var controller: BattleResupplyController = battle.get_node("ResupplyController") as BattleResupplyController
+	var flow: BattlePlayerWarFlow = battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
+	var infantry: BattleFormation = battle.get_node("BlueInfantry") as BattleFormation
+	var supply: BattleFormation = battle.get_node("BlueSupply") as BattleFormation
+
+	# Interrupt A: target moves during a live transfer -> cancel/reset, no charge spent.
+	_prepare_blue_transfer(controller, infantry, supply)
+	flow._update_supply(1.0)
+	var charge_before_move: int = supply.get_supply_charges()
+	infantry.issue_move(Vector2(720.0, 1200.0))
+	flow._update_supply(0.01)
+	controller.force_update_for_test(0.0)
+	var move_interrupt: bool = not controller.is_resupply_active() and flow.get_supply_progress() == 0.0 and supply.get_supply_charges() == charge_before_move
+
+	# Interrupt B: supplier is displaced beyond legal transfer range -> cancel/reset, no charge spent.
+	_prepare_blue_transfer(controller, infantry, supply)
+	flow._update_supply(1.0)
+	var charge_before_range: int = supply.get_supply_charges()
+	supply.global_position = infantry.global_position + Vector2(300.0, 0.0)
+	flow._update_supply(0.01)
+	controller.force_update_for_test(0.0)
+	var range_interrupt: bool = not controller.is_resupply_active() and flow.get_supply_progress() == 0.0 and supply.get_supply_charges() == charge_before_range
+	_require(move_interrupt and range_interrupt, "BLUE_RESUPPLY_MOVEMENT_OR_RANGE_INTERRUPT_PASS")
+
+	await _dispose_battle(battle)
+
+func _scenario_red_dormant_reinforcement_excluded() -> void:
+	var battle: Node2D = await _spawn_battle()
+	var ai: BattleEnemyAILogisticsController = battle.get_node("EnemyAIController") as BattleEnemyAILogisticsController
+	var roster: BattleFormalCombatRoster = battle.get_node("FormalCombatRoster") as BattleFormalCombatRoster
+	var armor: BattleFormation = roster.enemy_armor[0]
+	var inf1: BattleFormation = roster.enemy_infantry[0]
+	var inf2: BattleFormation = roster.enemy_infantry[1]
+	var reinf_inf: BattleFormation = roster.reinforcement_infantry[0]
+	var reinf_armor: BattleFormation = roster.reinforcement_armor[0]
+
+	# Dormant reinforcements are NOT candidates even at the lowest ammo.
+	armor.current_ammo = armor.ammo_capacity
+	inf1.current_ammo = inf1.ammo_capacity
+	inf2.current_ammo = inf2.ammo_capacity
+	reinf_inf.current_ammo = 0
+	reinf_armor.current_ammo = reinf_armor.ammo_capacity
+	ai.force_red_resupply_decision_for_test()
+	var excluded: bool = ai.get_red_resupply_target() == null and ai.get_red_resupply_phase() == "IDLE"
+
+	# After formal activation they enter the ordinary candidate rules.
+	ai._activate_reinforcements("qa_dormant_exclusion_test")
+	ai.force_red_resupply_decision_for_test()
+	var now_candidate: bool = ai.get_red_resupply_target() == reinf_inf
+	_require(excluded and now_candidate, "RED_RESUPPLY_DORMANT_REINFORCEMENT_EXCLUDED_PASS")
+
+	await _dispose_battle(battle)
+
+func _scenario_red_local_lull_required() -> void:
+	var battle: Node2D = await _spawn_battle()
+	var ai: BattleEnemyAILogisticsController = battle.get_node("EnemyAIController") as BattleEnemyAILogisticsController
+	var roster: BattleFormalCombatRoster = battle.get_node("FormalCombatRoster") as BattleFormalCombatRoster
+	var armor: BattleFormation = roster.enemy_armor[0]
+	var inf1: BattleFormation = roster.enemy_infantry[0]
+	var inf2: BattleFormation = roster.enemy_infantry[1]
+	var truck: BattleFormation = roster.enemy_supply_trucks[0]
+	var objective: BattleObjective = battle.get_node("CentralBridgehead") as BattleObjective
+	var blue: BattleFormation = battle.get_node("BlueFormation") as BattleFormation
+
+	# Isolate the Supply truck so a local threat cannot drive EVADE instead of the lull gate.
+	truck.global_position = Vector2(500.0, 300.0)
+
+	# Reject A: recent damage on the candidate is NOT a local lull.
+	armor.current_ammo = 8
+	inf1.current_ammo = inf1.ammo_capacity
+	inf2.current_ammo = inf2.ammo_capacity
+	armor.take_damage(1)
+	ai.force_red_resupply_decision_for_test()
+	var damage_reject: bool = ai.get_red_resupply_target() == null and ai.get_red_resupply_phase() == "IDLE"
+
+	# Reject B: target actively ENGAGEing a legitimately CONFIRMED BLUE is NOT a local lull.
+	armor.current_ammo = armor.ammo_capacity
+	inf1.current_ammo = 0
+	blue.global_position = inf1.global_position + Vector2(0.0, 150.0)
+	ai._update_red_intel(0.01)
+	ai._update_red_intel(0.80)
+	ai._decision_tick()
+	var engaged: bool = ai._find_red("RED INF-01") != null
+	ai.force_red_resupply_decision_for_test()
+	var engage_reject: bool = ai.get_red_resupply_target() == null and ai.get_red_resupply_phase() == "IDLE"
+
+	# Reject C: objective emergency is NOT a local lull.
+	objective.state = "CONTESTED"
+	ai.force_red_resupply_decision_for_test()
+	var emergency_reject: bool = ai.get_red_resupply_target() == null and ai.get_red_resupply_phase() == "IDLE"
+	_require(engaged and damage_reject and engage_reject and emergency_reject, "RED_RESUPPLY_LOCAL_LULL_REQUIRED_PASS")
+
+	await _dispose_battle(battle)
+
+func _scenario_red_no_hidden_blue_info() -> void:
+	var battle: Node2D = await _spawn_battle()
+	var ai: BattleEnemyAILogisticsController = battle.get_node("EnemyAIController") as BattleEnemyAILogisticsController
+	var roster: BattleFormalCombatRoster = battle.get_node("FormalCombatRoster") as BattleFormalCombatRoster
+	var armor: BattleFormation = roster.enemy_armor[0]
+	var inf1: BattleFormation = roster.enemy_infantry[0]
+	var inf2: BattleFormation = roster.enemy_infantry[1]
+	var truck: BattleFormation = roster.enemy_supply_trucks[0]
+	var blue: BattleFormation = battle.get_node("BlueFormation") as BattleFormation
+
+	armor.current_ammo = 8
+	inf1.current_ammo = inf1.ammo_capacity
+	inf2.current_ammo = inf2.ammo_capacity
+
+	# Hidden BLUE far away (UNSEEN by RED): baseline decision.
+	blue.global_position = Vector2(400.0, 400.0)
+	ai.force_red_resupply_decision_for_test()
+	var baseline_target: BattleFormation = ai.get_red_resupply_target()
+	var baseline_rendezvous: Vector2 = ai.get_red_resupply_rendezvous()
+	var baseline_started: bool = ai.is_red_resupply_active()
+	ai.cancel_red_resupply_for_test()
+
+	# Move the hidden BLUE right next to the Supply truck while still UNSEEN:
+	# candidate, rendezvous and startup decision must not change.
+	blue.global_position = truck.global_position + Vector2(50.0, 0.0)
+	ai.force_red_resupply_decision_for_test()
+	var unchanged: bool = (
+		ai.get_red_resupply_target() == baseline_target
+		and ai.get_red_resupply_rendezvous().is_equal_approx(baseline_rendezvous)
+		and ai.is_red_resupply_active() == baseline_started
+	)
+
+	# Only the legal Intel pipeline (detect -> CONTACT -> CONFIRMED) may flip RED behavior.
+	ai._update_red_intel(0.01)
+	ai._update_red_intel(0.80)
+	ai._decision_tick()
+	var revealed: bool = not ai.is_red_resupply_active() and ai.get_red_supply_state_for_test() == BattleEnemyAIController.EVADE
+	_require(unchanged and revealed, "RED_RESUPPLY_NO_HIDDEN_BLUE_INFO_PASS")
+
+	await _dispose_battle(battle)
 
 func _require(condition: bool, marker: String) -> void:
 	if condition:
