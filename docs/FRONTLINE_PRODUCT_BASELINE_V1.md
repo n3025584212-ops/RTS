@@ -52,5 +52,7 @@ FRONTLINE / 《战线》是一款现代战争题材、俯视斜视角、以 Form
 - GPT cloud windows 00–08 retain design/review ownership by domain.
 - Codex/Qwen/other coding agents are temporary construction executors, not project authorities.
 - Project-wide design-to-implementation, implementation freedom, acceptance authority, minimum-sufficient-evidence, risk-scaled audit, anti-over-audit, and project hygiene/retention rules are defined by `docs/FRONTLINE_PROJECT_EXECUTION_GOVERNANCE_V1.md`.
-- All registered FRONTLINE windows and external construction executors inherit that governance by default unless Window 00 explicitly freezes a narrower task-specific override.
-- Project hygiene is system-wide mandatory: default cleanup instead of indefinite retention; Git history is the primary recovery mechanism; redundant backups, stale temporary branches, reproducible caches/builds, obsolete CI artifacts, and duplicate evidence must not be accumulated without a specific retention reason.
+- Task-closeout audit, cleanup of wrong/superseded active content, and mandatory human-readable result reporting are defined by `docs/FRONTLINE_TASK_CLOSEOUT_AUDIT_AND_CLEANUP_V1.md`.
+- All registered FRONTLINE windows and external construction executors inherit both project-level rules by default unless Window 00 explicitly freezes a narrower task-specific override.
+- Project hygiene is system-wide mandatory: default cleanup instead of indefinite retention; Git history is the primary recovery mechanism; redundant backups, stale temporary branches, reproducible caches/builds, obsolete CI artifacts, duplicate evidence, and rejected-direction outputs must not be accumulated without a specific retention reason.
+- Every formal task must end with a focused closeout audit and a user-facing plain-language explanation of what was done, what changed in the game, what was actually checked, the result, what was cleaned, what remains, and the single next step.
