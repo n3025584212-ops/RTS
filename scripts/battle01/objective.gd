@@ -52,8 +52,6 @@ func add_tracked_formation(formation: BattleFormation) -> void:
 		_tracked_formations.append(formation)
 
 func set_capture_blocked(blocked: bool) -> void:
-	# Compatibility hook for older Battle01 callers/tests. Formal objectives normally
-	# leave this false and derive contest/capture pressure from actual formations.
 	_capture_blocked = blocked
 	if blocked:
 		_reset_capture_progress()
@@ -92,10 +90,12 @@ func force_owner_for_test(new_owner: String) -> void:
 
 func _process(delta: float) -> void:
 	_prune_tracked_formations()
-	var player_present: bool = _has_capture_presence("BLUE") and not player_capture_locked
-	var ai_present: bool = _has_capture_presence("RED")
+	var player_capture_present: bool = _has_capture_presence("BLUE") and not player_capture_locked
+	var ai_capture_present: bool = _has_capture_presence("RED")
+	var player_contest_present: bool = _has_contest_presence("BLUE") and not player_capture_locked
+	var ai_contest_present: bool = _has_contest_presence("RED")
 
-	var next_contested: bool = player_present and ai_present
+	var next_contested: bool = player_contest_present and ai_contest_present
 	if next_contested:
 		_set_contested(true)
 		_reset_capture_progress()
@@ -106,10 +106,10 @@ func _process(delta: float) -> void:
 
 	var active_faction: String = ""
 	var active_owner: String = OWNER_NEUTRAL
-	if player_present:
+	if player_capture_present:
 		active_faction = "BLUE"
 		active_owner = OWNER_PLAYER
-	elif ai_present:
+	elif ai_capture_present:
 		active_faction = "RED"
 		active_owner = OWNER_AI
 
@@ -144,19 +144,28 @@ func _complete_capture(new_owner: String) -> void:
 
 func _has_capture_presence(faction: String) -> bool:
 	for formation: BattleFormation in _tracked_formations:
-		if formation == null or not is_instance_valid(formation):
+		if not _formation_is_active_in_radius(formation, faction):
 			continue
-		if not formation.is_alive or formation.faction != faction:
-			continue
-		# Dormant reinforcement nodes exist in the formal roster but are not battlefield
-		# capture/contest presence until the existing Enemy AI activates them.
-		if formation.process_mode == Node.PROCESS_MODE_DISABLED or not formation.visible:
-			continue
-		if not formation.is_capture_capable():
-			continue
-		if global_position.distance_to(formation.global_position) <= capture_radius:
+		if formation.is_capture_capable():
 			return true
 	return false
+
+func _has_contest_presence(faction: String) -> bool:
+	for formation: BattleFormation in _tracked_formations:
+		if not _formation_is_active_in_radius(formation, faction):
+			continue
+		if formation.is_contest_capable():
+			return true
+	return false
+
+func _formation_is_active_in_radius(formation: BattleFormation, faction: String) -> bool:
+	if formation == null or not is_instance_valid(formation):
+		return false
+	if not formation.is_alive or formation.faction != faction:
+		return false
+	if formation.process_mode == Node.PROCESS_MODE_DISABLED or not formation.visible:
+		return false
+	return global_position.distance_to(formation.global_position) <= capture_radius
 
 func _prune_tracked_formations() -> void:
 	for index: int in range(_tracked_formations.size() - 1, -1, -1):
@@ -183,8 +192,6 @@ func _refresh_state(emit_signal: bool = true) -> void:
 	elif not capturing_faction.is_empty() and progress > 0.0:
 		next_state = "CAPTURING"
 	elif control_owner == OWNER_PLAYER:
-		# Keep CAPTURED as the stable PLAYER-owned state so the already-frozen RED AI
-		# objective-loss interface continues to receive the same semantic signal.
 		next_state = "CAPTURED"
 	elif control_owner == OWNER_AI:
 		next_state = "AI_CONTROLLED"
@@ -198,8 +205,8 @@ func _refresh_state(emit_signal: bool = true) -> void:
 	queue_redraw()
 
 # =====================================================================
-# Presentation layer (reworked per REWORK_V1 pair 7).
-# Gameplay above this point is untouched.
+# Transitional objective presentation. Gameplay state above remains authoritative
+# while Battle01 is presented through the integrated 3D runtime.
 # =====================================================================
 
 func _draw() -> void:
@@ -216,7 +223,6 @@ func _draw() -> void:
 		fill = Color(1.0, 0.78, 0.34, 0.13)
 		edge = Color("ffc857")
 
-	# Stable capture footprints remain subdued; capture/contest makes the full area legible.
 	draw_circle(Vector2.ZERO, capture_radius, fill)
 	var boundary_alpha: float = 0.92 if contested or progress > 0.0 else 0.36
 	for index: int in range(24):
@@ -233,7 +239,6 @@ func _draw() -> void:
 		for offset: float in [-24.0, -8.0, 8.0, 24.0]:
 			draw_line(Vector2(offset - 12.0, -34.0), Vector2(offset + 18.0, 34.0), Color(1.0, 0.78, 0.34, 0.36), 2.0)
 
-	# Central is the tactical hinge; Industrial is the stronger decisive square.
 	var decisive: bool = objective_id == "INDUSTRIAL_OBJECTIVE"
 	var glyph_size: float = 60.0 if decisive else 50.0
 	var texture: Texture2D = Battle01UIStyle.icon(Battle01UIStyle.ICON_OBJECTIVE_INDUSTRIAL if decisive else Battle01UIStyle.ICON_OBJECTIVE_BRIDGE)
