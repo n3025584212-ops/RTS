@@ -43,7 +43,6 @@ var _vehicle_solid_cells: Dictionary = {}
 func _ready() -> void:
 	_configure_grid(_foot_grid)
 	_configure_grid(_vehicle_grid)
-
 	for y: int in range(GRID_SIZE.y):
 		for x: int in range(GRID_SIZE.x):
 			var id := Vector2i(x, y)
@@ -57,17 +56,9 @@ func _ready() -> void:
 			elif BattleRouteTerrain.is_vehicle_clearance_blocked(world_point):
 				_vehicle_solid_cells[id] = true
 				_vehicle_grid.set_point_solid(id, true)
-
 	queue_redraw()
-	print("FRONTLINE_NAVIGATION_GRID_READY cells=%d foot_blocked=%d vehicle_blocked=%d mobility_profiles=2" % [
-		GRID_SIZE.x * GRID_SIZE.y,
-		_foot_solid_cells.size(),
-		_vehicle_solid_cells.size(),
-	])
-	print("FRONTLINE_NORTH_FOOT_LINK_READY entry=%s exit=%s" % [
-		BattleRouteTerrain.NORTH_FOOT_LINK_ENTRY,
-		BattleRouteTerrain.NORTH_FOOT_LINK_EXIT,
-	])
+	print("FRONTLINE_NAVIGATION_GRID_READY cells=%d foot_blocked=%d vehicle_blocked=%d mobility_profiles=2" % [GRID_SIZE.x * GRID_SIZE.y, _foot_solid_cells.size(), _vehicle_solid_cells.size()])
+	print("FRONTLINE_NORTH_FOOT_LINK_READY entry=%s exit=%s" % [BattleRouteTerrain.NORTH_FOOT_LINK_ENTRY, BattleRouteTerrain.NORTH_FOOT_LINK_EXIT])
 
 func _configure_grid(grid: AStarGrid2D) -> void:
 	grid.region = Rect2i(Vector2i.ZERO, GRID_SIZE)
@@ -79,7 +70,7 @@ func _configure_grid(grid: AStarGrid2D) -> void:
 func find_path(from_world: Vector2, to_world: Vector2) -> PackedVector2Array:
 	return find_path_for_mobility(from_world, to_world, _resolve_mobility_for_origin(from_world))
 
-func find_path_for_formation(formation: BattleFormation, to_world: Vector2) -> PackedVector2Array:
+func find_path_for_formation(formation: Node2D, to_world: Vector2) -> PackedVector2Array:
 	if formation == null or not is_instance_valid(formation):
 		return PackedVector2Array()
 	return find_path_for_mobility(formation.global_position, to_world, mobility_for_formation(formation))
@@ -93,10 +84,10 @@ func find_path_for_mobility(from_world: Vector2, to_world: Vector2, mobility: St
 		return PackedVector2Array()
 	return grid.get_point_path(from_id, to_id)
 
-func mobility_for_formation(formation: BattleFormation) -> String:
-	if formation == null or not is_instance_valid(formation):
+func mobility_for_formation(formation: Node) -> String:
+	if formation == null or not is_instance_valid(formation) or not formation.has_method("get_role"):
 		return BattleRouteTerrain.MOBILITY_VEHICLE
-	return BattleRouteTerrain.mobility_for_role(formation.get_role())
+	return BattleRouteTerrain.mobility_for_role(str(formation.call("get_role")))
 
 func clamp_to_walkable(world_point: Vector2) -> Vector2:
 	return clamp_to_walkable_for_mobility(world_point, BattleRouteTerrain.MOBILITY_VEHICLE)
@@ -119,12 +110,9 @@ func get_named_route(route_name: StringName) -> PackedVector2Array:
 
 func get_named_route_for_mobility(route_name: StringName, mobility: String) -> PackedVector2Array:
 	match route_name:
-		&"central":
-			return _get_route_via(CENTRAL_ROUTE_GUIDES, mobility)
-		&"north":
-			return _get_route_via(NORTH_ROUTE_GUIDES, mobility)
-		&"south":
-			return _get_route_via(SOUTH_ROUTE_GUIDES, mobility)
+		&"central": return _get_route_via(CENTRAL_ROUTE_GUIDES, mobility)
+		&"north": return _get_route_via(NORTH_ROUTE_GUIDES, mobility)
+		&"south": return _get_route_via(SOUTH_ROUTE_GUIDES, mobility)
 	return PackedVector2Array()
 
 func get_path_length(path: PackedVector2Array) -> float:
@@ -135,14 +123,12 @@ func get_path_length(path: PackedVector2Array) -> float:
 
 func path_crosses_bridge(path: PackedVector2Array) -> bool:
 	for point: Vector2 in path:
-		if BattleRouteTerrain.BRIDGE_RECT.has_point(point):
-			return true
+		if BattleRouteTerrain.BRIDGE_RECT.has_point(point): return true
 	return false
 
 func path_crosses_river_outside_bridge(path: PackedVector2Array) -> bool:
 	for point: Vector2 in path:
-		if BattleRouteTerrain.RIVER_RECT.has_point(point) and not BattleRouteTerrain.BRIDGE_RECT.has_point(point):
-			return true
+		if BattleRouteTerrain.RIVER_RECT.has_point(point) and not BattleRouteTerrain.BRIDGE_RECT.has_point(point): return true
 	return false
 
 func path_uses_north_foot_link(path: PackedVector2Array) -> bool:
@@ -159,73 +145,57 @@ func get_north_foot_link_exit() -> Vector2:
 
 func _get_route_via(guides: Array[Vector2], mobility: String) -> PackedVector2Array:
 	var result := PackedVector2Array()
-	if guides.size() < 2:
-		return result
+	if guides.size() < 2: return result
 	for i: int in range(1, guides.size()):
 		var segment: PackedVector2Array = find_path_for_mobility(guides[i - 1], guides[i], mobility)
-		if segment.is_empty():
-			return PackedVector2Array()
+		if segment.is_empty(): return PackedVector2Array()
 		var start_index: int = 1 if not result.is_empty() else 0
-		for j: int in range(start_index, segment.size()):
-			result.append(segment[j])
+		for j: int in range(start_index, segment.size()): result.append(segment[j])
 	return result
 
 func _world_to_id(world_point: Vector2) -> Vector2i:
-	var clamped := Vector2(
-		clampf(world_point.x, 0.0, MAP_SIZE.x - 0.001),
-		clampf(world_point.y, 0.0, MAP_SIZE.y - 0.001)
-	)
+	var clamped := Vector2(clampf(world_point.x, 0.0, MAP_SIZE.x - 0.001), clampf(world_point.y, 0.0, MAP_SIZE.y - 0.001))
 	return Vector2i(int(floor(clamped.x / CELL_SIZE.x)), int(floor(clamped.y / CELL_SIZE.y)))
 
 func _nearest_walkable_id(origin: Vector2i, mobility: String) -> Vector2i:
-	if _is_walkable_id(origin, mobility):
-		return origin
+	if _is_walkable_id(origin, mobility): return origin
 	for radius: int in range(1, NEAREST_SEARCH_RADIUS + 1):
 		for y: int in range(origin.y - radius, origin.y + radius + 1):
 			for x: int in range(origin.x - radius, origin.x + radius + 1):
-				if abs(x - origin.x) != radius and abs(y - origin.y) != radius:
-					continue
+				if abs(x - origin.x) != radius and abs(y - origin.y) != radius: continue
 				var candidate := Vector2i(x, y)
-				if _is_walkable_id(candidate, mobility):
-					return candidate
+				if _is_walkable_id(candidate, mobility): return candidate
 	return origin
 
 func _is_walkable_id(id: Vector2i, mobility: String) -> bool:
-	if id.x < 0 or id.y < 0 or id.x >= GRID_SIZE.x or id.y >= GRID_SIZE.y:
-		return false
+	if id.x < 0 or id.y < 0 or id.x >= GRID_SIZE.x or id.y >= GRID_SIZE.y: return false
 	var solid_cells: Dictionary = _foot_solid_cells if mobility == BattleRouteTerrain.MOBILITY_FOOT else _vehicle_solid_cells
 	return not solid_cells.has(id)
 
 func _is_hard_blocked_position(world_point: Vector2) -> bool:
-	if BattleRouteTerrain.RIVER_RECT.has_point(world_point) and not BattleRouteTerrain.BRIDGE_RECT.has_point(world_point):
-		return true
+	if BattleRouteTerrain.RIVER_RECT.has_point(world_point) and not BattleRouteTerrain.BRIDGE_RECT.has_point(world_point): return true
 	return BattleRouteTerrain.is_hard_blocked(world_point)
 
 func _grid_for_mobility(mobility: String) -> AStarGrid2D:
 	return _foot_grid if mobility == BattleRouteTerrain.MOBILITY_FOOT else _vehicle_grid
 
 func _normalize_mobility(mobility: String) -> String:
-	if mobility == BattleRouteTerrain.MOBILITY_FOOT:
-		return BattleRouteTerrain.MOBILITY_FOOT
-	return BattleRouteTerrain.MOBILITY_VEHICLE
+	return BattleRouteTerrain.MOBILITY_FOOT if mobility == BattleRouteTerrain.MOBILITY_FOOT else BattleRouteTerrain.MOBILITY_VEHICLE
 
 func _resolve_mobility_for_origin(from_world: Vector2) -> String:
-	var matches: Array[BattleFormation] = []
+	var matches: Array[Node2D] = []
 	_collect_formations_at(get_parent(), from_world, matches)
-	if matches.is_empty():
-		return BattleRouteTerrain.MOBILITY_VEHICLE
-	for formation: BattleFormation in matches:
-		if mobility_for_formation(formation) == BattleRouteTerrain.MOBILITY_VEHICLE:
-			return BattleRouteTerrain.MOBILITY_VEHICLE
+	if matches.is_empty(): return BattleRouteTerrain.MOBILITY_VEHICLE
+	for formation: Node2D in matches:
+		if mobility_for_formation(formation) == BattleRouteTerrain.MOBILITY_VEHICLE: return BattleRouteTerrain.MOBILITY_VEHICLE
 	return BattleRouteTerrain.MOBILITY_FOOT
 
-func _collect_formations_at(node: Node, world_point: Vector2, result: Array[BattleFormation]) -> void:
-	if node == null:
-		return
-	if node is BattleFormation:
-		var formation: BattleFormation = node as BattleFormation
-		if is_instance_valid(formation) and formation.is_alive and formation.global_position.distance_to(world_point) <= FORMATION_ORIGIN_TOLERANCE:
-			result.append(formation)
+func _collect_formations_at(node: Node, world_point: Vector2, result: Array[Node2D]) -> void:
+	if node == null: return
+	if node is Node2D and node.has_method("get_role"):
+		var candidate: Node2D = node as Node2D
+		if candidate.global_position.distance_to(world_point) <= FORMATION_ORIGIN_TOLERANCE:
+			result.append(candidate)
 	for child: Node in node.get_children():
 		_collect_formations_at(child, world_point, result)
 
