@@ -32,6 +32,8 @@ var fire_interval: float = 1.0
 var ammo_capacity: int = 0
 var detection_range: float = 250.0
 var can_capture: bool = true
+var can_contest: bool = true
+var target_class: String = "SOFT"
 var indirect_fire: bool = false
 var supply_capacity: int = 0
 
@@ -89,6 +91,8 @@ func _apply_definition() -> void:
 	ammo_capacity = definition.ammo_capacity
 	detection_range = definition.detection_range
 	can_capture = definition.can_capture
+	can_contest = definition.can_contest
+	target_class = definition.target_class
 	indirect_fire = definition.indirect_fire
 	supply_capacity = definition.supply_capacity
 
@@ -191,7 +195,7 @@ func get_supply_charges() -> int:
 	return current_supply_charges
 
 func is_supply_truck() -> bool:
-	return supply_capacity > 0 and not can_attack and not can_capture
+	return supply_capacity > 0 and not can_attack and not can_capture and not can_contest
 
 func get_damage_serial() -> int:
 	return _damage_serial
@@ -205,8 +209,48 @@ func get_order() -> String:
 func get_role() -> String:
 	return definition.role if definition != null else "UNDEFINED"
 
+func get_target_class() -> String:
+	return target_class
+
 func is_capture_capable() -> bool:
 	return is_alive and can_capture
+
+func is_contest_capable() -> bool:
+	return is_alive and can_contest
+
+func get_damage_multiplier_against(target: BattleFormation) -> float:
+	if target == null or not is_instance_valid(target):
+		return 1.0
+	var target_type: String = target.get_target_class()
+	match get_role():
+		"RECON":
+			match target_type:
+				"SOFT": return 1.00
+				"LIGHT_ARMOR": return 0.40
+				"HEAVY_ARMOR": return 0.20
+				"LOGISTICS": return 0.75
+		"INFANTRY":
+			match target_type:
+				"SOFT": return 1.00
+				"LIGHT_ARMOR": return 0.70
+				"HEAVY_ARMOR": return 0.35
+				"LOGISTICS": return 1.00
+		"IFV":
+			match target_type:
+				"SOFT": return 1.25
+				"LIGHT_ARMOR": return 1.00
+				"HEAVY_ARMOR": return 0.55
+				"LOGISTICS": return 1.00
+		"TANK", "ARMOR":
+			match target_type:
+				"SOFT": return 0.90
+				"LIGHT_ARMOR": return 1.35
+				"HEAVY_ARMOR": return 1.00
+				"LOGISTICS": return 1.00
+	return 1.0
+
+func calculate_attack_damage(target: BattleFormation) -> int:
+	return maxi(1, int(round(float(attack_damage) * get_damage_multiplier_against(target))))
 
 func has_active_navigation_path() -> bool:
 	return _has_move_target and not _move_path.is_empty()
@@ -263,9 +307,10 @@ func _update_combat() -> void:
 	_fire_serial += 1
 	_shot_fx_target = to_local(_combat_target.global_position)
 	_shot_fx_remaining = 0.18 if get_role() == "TANK" else 0.12
+	var resolved_damage: int = calculate_attack_damage(_combat_target)
 	ammo_changed.emit(current_ammo, ammo_capacity)
-	attack_fired.emit(self, _combat_target, attack_damage)
-	_combat_target.take_damage(attack_damage)
+	attack_fired.emit(self, _combat_target, resolved_damage)
+	_combat_target.take_damage(resolved_damage)
 
 func _die() -> void:
 	if not is_alive:
@@ -292,8 +337,8 @@ func _set_order(value: String) -> void:
 	order_changed.emit(current_order)
 
 # =====================================================================
-# Presentation layer (reworked per BATTLE01_VISUAL_TARGET_ALIGNMENT_REWORK_V1).
-# Gameplay above this point is untouched.
+# Transitional 2D presentation layer. The live gameplay state remains authoritative
+# while Battle01 is migrated into the integrated 3D runtime.
 # =====================================================================
 
 func _draw() -> void:
@@ -584,12 +629,10 @@ func _draw_combat_fx(scale_factor: float) -> void:
 		draw_line(Vector2.ZERO, _shot_fx_target, shot_color, width)
 		draw_line(Vector2.ZERO, _shot_fx_target, Color(shot_color, ratio * 0.45), width * 2.4)
 		var direction: Vector2 = _shot_fx_target.normalized() if _shot_fx_target.length() > 0.01 else Vector2.RIGHT
-		# Muzzle flash at the firing unit.
 		var flash_radius: float = (13.0 if heavy else 9.0 if ifv else 6.0) * scale_factor
 		draw_circle(direction * 12.0 * scale_factor, flash_radius * ratio, Color(1.0, 0.80, 0.35, ratio * 0.85))
 		draw_line(direction * 8.0 * scale_factor + direction.orthogonal() * 8.0 * scale_factor, direction * 12.0 * scale_factor, Color(1.0, 0.88, 0.50, ratio), 2.2 * scale_factor)
 		draw_line(direction * 8.0 * scale_factor - direction.orthogonal() * 8.0 * scale_factor, direction * 12.0 * scale_factor, Color(1.0, 0.88, 0.50, ratio), 2.2 * scale_factor)
-		# Impact burst at the target.
 		var impact := _shot_fx_target - direction * 8.0 * scale_factor
 		draw_circle(impact, (11.0 if heavy else 7.0 if ifv else 4.0) * scale_factor * ratio, Color(1.0, 0.48, 0.15, ratio * 0.72))
 		draw_circle(impact, (4.0 if heavy else 3.0) * scale_factor, Color(1.0, 0.85, 0.40, ratio * 0.95))
