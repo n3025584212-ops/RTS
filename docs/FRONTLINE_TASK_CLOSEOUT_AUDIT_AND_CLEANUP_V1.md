@@ -9,6 +9,8 @@ ACTIVE_STATE_CLEANUP_REQUIRED=YES
 HUMAN_READABLE_RESULT_REQUIRED=YES
 MACHINE_ONLY_RESULT_IS_INSUFFICIENT=YES
 GIT_HISTORY_IS_PRIMARY_RECOVERY=YES
+PLAYABLE_RUNTIME_INTEGRATION_REQUIRED=YES
+BEAUTY_SCENE_IS_NOT_PRODUCT_COMPLETION=YES
 
 ## 1. Purpose
 
@@ -94,7 +96,31 @@ When a task fails product direction or is killed:
 
 A technically successful build is not a successful task if the product result is wrong.
 
-## 6. Completion condition
+## 6. Visual work must remain part of the playable RTS
+
+The product target is the complete playable FRONTLINE / Battle01 RTS, not a screenshot, isolated camera composition, disconnected visual demo, or standalone beauty scene.
+
+Visual target images define how the real game should look when its actual gameplay is running. They must be translated into the live Battle01 runtime rather than reproduced as a separate showcase that does not contain the real command and combat loop.
+
+For any visual/runtime migration task:
+
+- the work must live in, or be directly integrated toward, the real playable Battle01 runtime;
+- selection, movement, combat, reconnaissance/FOW, objectives, enemy AI, logistics/reinforcement flow, victory/defeat, and HUD remain the product context that the visual layer must support;
+- a visual checkpoint may validate one area or state, but it is only a checkpoint inside the full-game migration, not the project destination;
+- screenshot similarity alone cannot produce `TASK_RESULT=PASS` when the playable RTS loop is absent or broken;
+- a standalone beauty scene may be used only for isolated technical experimentation and must never be mistaken for product completion or final acceptance;
+- each migration stage should leave a real playable build whenever technically feasible, so visual quality and gameplay integration advance together rather than diverge;
+- final acceptance asks whether the target images have effectively become the playable game world, not whether one staged view resembles a target image.
+
+The correct relationship is:
+
+`FULL_PLAYABLE_RTS = PRODUCT_GOAL`
+
+`VISUAL_TARGET_CHECKPOINT = ONE_ACCEPTANCE_AXIS`
+
+`BEAUTY_SCENE = NOT_PRODUCT_COMPLETION`
+
+## 7. Completion condition
 
 A formal task is not fully closed until both are true:
 
