@@ -36,12 +36,10 @@ func _initialize_roster() -> void:
 		push_error("Formal combat roster requires existing RedFormation as RED INF-01.")
 		return
 
-	# Preserve the already-verified Recon/LOS target as the first frozen enemy Infantry.
 	_primary_infantry.display_name = "RED INF-01"
 	_primary_infantry.set_intel_state(BattleIntelTracker.UNSEEN)
 	enemy_infantry.append(_primary_infantry)
 
-	# Restore only the frozen Battle01 enemy composition around the existing start.
 	var base_position: Vector2 = _primary_infantry.global_position
 	enemy_infantry.append(_spawn_active_enemy(
 		"RedInfantry2",
@@ -62,7 +60,6 @@ func _initialize_roster() -> void:
 		base_position + Vector2(120.0, 180.0)
 	))
 
-	# Frozen reinforcements are instantiated but dormant. Window 04 owns activation/AI.
 	reinforcement_infantry.append(_spawn_dormant_reinforcement(
 		"ReinforcementInfantry1",
 		"RED REINFORCEMENT INF-01",
@@ -128,21 +125,22 @@ func _spawn_dormant_reinforcement(
 
 func _validate_frozen_roster() -> bool:
 	var valid: bool = true
-	valid = _validate_unit(enemy_infantry[0], INFANTRY_DEFINITION, true, true) and valid
-	valid = _validate_unit(enemy_infantry[1], INFANTRY_DEFINITION, true, true) and valid
-	valid = _validate_unit(enemy_armor[0], ARMOR_DEFINITION, true, true) and valid
-	valid = _validate_unit(enemy_supply_trucks[0], SUPPLY_TRUCK_DEFINITION, false, false) and valid
-	valid = _validate_unit(reinforcement_infantry[0], INFANTRY_DEFINITION, true, true) and valid
-	valid = _validate_unit(reinforcement_armor[0], ARMOR_DEFINITION, true, true) and valid
+	valid = _validate_unit(enemy_infantry[0], INFANTRY_DEFINITION, true, true, true) and valid
+	valid = _validate_unit(enemy_infantry[1], INFANTRY_DEFINITION, true, true, true) and valid
+	valid = _validate_unit(enemy_armor[0], ARMOR_DEFINITION, true, false, true) and valid
+	valid = _validate_unit(enemy_supply_trucks[0], SUPPLY_TRUCK_DEFINITION, false, false, false) and valid
+	valid = _validate_unit(reinforcement_infantry[0], INFANTRY_DEFINITION, true, true, true) and valid
+	valid = _validate_unit(reinforcement_armor[0], ARMOR_DEFINITION, true, false, true) and valid
 	if not valid:
-		push_error("Frozen Battle01 formal combat roster validation failed.")
+		push_error("Revised Battle01 formal combat roster validation failed.")
 	return valid
 
 func _validate_unit(
 	formation: BattleFormation,
 	expected_definition: FormationDefinition,
 	expected_can_attack: bool,
-	expected_can_capture: bool
+	expected_can_capture: bool,
+	expected_can_contest: bool
 ) -> bool:
 	return (
 		formation != null
@@ -150,6 +148,7 @@ func _validate_unit(
 		and formation.faction == "RED"
 		and formation.can_attack == expected_can_attack
 		and formation.can_capture == expected_can_capture
+		and formation.can_contest == expected_can_contest
 	)
 
 func get_roster_counts() -> Dictionary:
