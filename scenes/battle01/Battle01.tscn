@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/formation.gd" id="3_formation"]
@@ -12,13 +12,14 @@
 [ext_resource type="Script" path="res://scripts/battle01/selection_controller.gd" id="12_selection"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_navigation.gd" id="13_nav"]
 [ext_resource type="Script" path="res://scripts/battle01/formal_combat_roster.gd" id="14_roster"]
-[ext_resource type="Script" path="res://scripts/battle01/enemy_ai_controller.gd" id="15_enemy_ai"]
+[ext_resource type="Script" path="res://scripts/battle01/enemy_ai_logistics_controller.gd" id="15_enemy_ai"]
 [ext_resource type="Resource" path="res://resources/formations/logistics.tres" id="16_logistics_def"]
 [ext_resource type="Script" path="res://scripts/battle01/player_war_flow.gd" id="17_war_flow"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_world.gd" id="18_world3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_camera_3d.gd" id="19_camera3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_presentation.gd" id="20_presentation3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_input.gd" id="21_input3d"]
+[ext_resource type="Script" path="res://scripts/battle01/battle01_resupply_controller.gd" id="22_resupply"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
@@ -120,6 +121,9 @@ script = ExtResource("15_enemy_ai")
 modulate = Color(1, 1, 1, 0)
 script = ExtResource("17_war_flow")
 
+[node name="ResupplyController" type="Node" parent="."]
+script = ExtResource("22_resupply")
+
 [node name="SelectionController" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
 script = ExtResource("12_selection")
@@ -190,7 +194,7 @@ text = "OBJECTIVES — Central: AI | Industrial: LOCKED / AI"
 [node name="Controls" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.8, 0.84, 1)
-text = "3D: LMB/Shift/Drag select | RMB Move | Wheel Zoom | WASD Pan | F Supply | X Withdraw | 1/2 Reserve"
+text = "3D: LMB/Shift/Drag select | RMB Move | Wheel Zoom | WASD Pan | F Resupply | X Withdraw | 1/2 Reserve"
 
 [node name="PrototypeNotice" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
