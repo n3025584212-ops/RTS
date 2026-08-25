@@ -410,9 +410,14 @@ func _evaluate_match_state() -> void:
 		_finish_match(false)
 
 func _should_defeat() -> bool:
+	# Revised Battle01 ownership rules require a capture-capable Formation to finish
+	# the mission. Recon and Armor may still fight/contest, but cannot establish
+	# objective ownership and therefore must not keep an unwinnable match alive.
 	for formation: BattleFormation in _friendlies:
 		if _formation_can_progress_mission(formation):
 			return false
+	# An unlocked, unused reserve still contains the Infantry option, so the player
+	# can recover ground-control capability until the one reserve choice is spent.
 	if _reserve_unlocked and not _reserve_committed:
 		return false
 	return true
@@ -420,15 +425,7 @@ func _should_defeat() -> bool:
 func _formation_can_progress_mission(formation: BattleFormation) -> bool:
 	if formation == null or not is_instance_valid(formation) or not formation.is_alive:
 		return false
-	if formation.is_supply_truck():
-		return false
-	if formation.can_capture:
-		return true
-	if formation.can_attack and formation.current_ammo > 0:
-		return true
-	if formation.can_attack and _can_supply_restore(formation):
-		return true
-	return false
+	return formation.is_capture_capable()
 
 func _can_supply_restore(target: BattleFormation) -> bool:
 	for formation: BattleFormation in _friendlies:
