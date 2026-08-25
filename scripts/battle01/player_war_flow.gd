@@ -501,25 +501,45 @@ func _feedback(message: String) -> void:
 	_refresh_hud()
 
 func _draw() -> void:
-	var west := to_local(WEST_REAR_RALLY)
-	draw_circle(west, 34.0, Color(0.30, 0.55, 1.0, 0.07))
-	for index: int in range(8):
-		var a0: float = TAU * float(index) / 8.0
-		draw_arc(west, 34.0, a0, a0 + TAU / 16.0, 4, Color(0.35, 0.65, 1.0, 0.66), 2.0)
-	draw_string(ThemeDB.fallback_font, west + Vector2(-70.0, -43.0), "WEST REAR  /  RALLY", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, Color(0.55, 0.76, 1.0))
-
+	_draw_rally_marker(WEST_REAR_RALLY, "WEST REAR  /  RALLY", Color("4d8cff"), Battle01UIStyle.ICON_RALLY_WEST)
 	if _forward_rally_active:
-		var forward := to_local(BRIDGEHEAD_FORWARD_RALLY)
-		draw_circle(forward, 30.0, Color(0.30, 0.82, 0.72, 0.08))
-		draw_arc(forward, 30.0, 0.0, TAU, 32, Color("4dd0e1"), 2.0)
-		draw_string(ThemeDB.fallback_font, forward + Vector2(-82.0, -39.0), "BRIDGEHEAD RALLY  /  ACTIVE", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, Color("4dd0e1"))
+		_draw_rally_marker(BRIDGEHEAD_FORWARD_RALLY, "BRIDGEHEAD RALLY  /  ACTIVE", Color("4dd0e1"), Battle01UIStyle.ICON_RALLY_FORWARD)
 
 	if _supply_truck != null and _supply_target != null:
 		var truck_point := to_local(_supply_truck.global_position)
 		var target_point := to_local(_supply_target.global_position)
 		draw_line(truck_point, target_point, Color("4dd0e1"), 4.0)
+		draw_line(truck_point, target_point, Color(0.30, 0.82, 0.88, 0.35), 9.0)
 		draw_arc(truck_point, SUPPLY_RANGE, 0.0, TAU, 64, Color(0.30, 0.82, 0.88, 0.18), 1.5)
+		var truck_texture: Texture2D = Battle01UIStyle.icon(Battle01UIStyle.ICON_ROLE_LOGISTICS)
+		if truck_texture != null:
+			draw_texture_rect(truck_texture, Rect2(truck_point - Vector2(19.0, 19.0), Vector2(38.0, 38.0)), false, Color(0.30, 0.82, 0.88, 0.95))
+		var target_texture: Texture2D = Battle01UIStyle.icon(Battle01UIStyle.ICON_COMMAND_SUPPLY)
+		if target_texture != null:
+			draw_texture_rect(target_texture, Rect2(target_point - Vector2(16.0, 16.0), Vector2(32.0, 32.0)), false, Color(0.30, 0.82, 0.88, 0.85))
 		var midpoint: Vector2 = to_local((_supply_truck.global_position + _supply_target.global_position) * 0.5)
-		draw_rect(Rect2(midpoint + Vector2(-42.0, -15.0), Vector2(84.0, 9.0)), Color(0.02, 0.05, 0.06, 0.92), true)
-		draw_rect(Rect2(midpoint + Vector2(-42.0, -15.0), Vector2(84.0 * _supply_progress / SUPPLY_DURATION, 9.0)), Color("4dd0e1"), true)
-		draw_string(ThemeDB.fallback_font, midpoint + Vector2(-46.0, -22.0), "AMMO %.1f / 4.0s" % _supply_progress, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, Color.WHITE)
+		var ratio: float = _supply_progress / SUPPLY_DURATION
+		draw_rect(Rect2(midpoint + Vector2(-44.0, -16.0), Vector2(88.0, 11.0)), Color(0.02, 0.05, 0.06, 0.92), true)
+		draw_rect(Rect2(midpoint + Vector2(-44.0, -16.0), Vector2(88.0 * ratio, 11.0)), Color("4dd0e1"), true)
+		draw_rect(Rect2(midpoint + Vector2(-44.0, -16.0), Vector2(88.0, 11.0)), Color(0.30, 0.82, 0.88, 0.60), false, 1.0)
+		var supply_icon: Texture2D = Battle01UIStyle.icon(Battle01UIStyle.ICON_COMMAND_SUPPLY)
+		if supply_icon != null:
+			draw_texture_rect(supply_icon, Rect2(midpoint + Vector2(-54.0, -22.0), Vector2(22.0, 22.0)), false, Color("4dd0e1"))
+		draw_string(ThemeDB.fallback_font, midpoint + Vector2(-30.0, -21.0), "AMMO %.1f / 4.0s" % _supply_progress, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, Color.WHITE)
+
+func _draw_rally_marker(world_position: Vector2, label: String, color: Color, icon_name: String) -> void:
+	var marker_position := to_local(world_position)
+	draw_circle(marker_position, 34.0, Color(color, 0.07))
+	for index: int in range(8):
+		var a0: float = TAU * float(index) / 8.0
+		draw_arc(marker_position, 34.0, a0, a0 + TAU / 16.0, 4, Color(color, 0.66), 2.0)
+	var texture: Texture2D = Battle01UIStyle.icon(icon_name)
+	if texture != null:
+		draw_texture_rect(texture, Rect2(marker_position - Vector2(22.0, 22.0), Vector2(44.0, 44.0)), false, Color(color, 0.95))
+	var font := ThemeDB.fallback_font
+	var font_size := 12
+	var text_width: float = font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+	var rect := Rect2(marker_position + Vector2(-text_width * 0.5 - 7.0, -64.0), Vector2(text_width + 14.0, 20.0))
+	draw_rect(rect, Color(0.025, 0.050, 0.065, 0.90), true)
+	draw_rect(rect, Color(color, 0.75), false, 1.0)
+	draw_string(font, rect.position + Vector2(7.0, 15.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size, Color(color, 0.95))

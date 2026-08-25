@@ -167,4 +167,14 @@ func _draw() -> void:
 			var a1: float = a0 + TAU / 24.0
 			draw_arc(marker, 25.0, a0, a1, 3, Color(0.76, 0.62, 0.42, 0.82), 2.2)
 		draw_line(marker + Vector2(-8.0, 0.0), marker + Vector2(8.0, 0.0), Color(0.76, 0.62, 0.42, 0.72), 1.5)
-		draw_string(ThemeDB.fallback_font, marker + Vector2(-38.0, -32.0), "LAST KNOWN", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 11, Color(0.80, 0.68, 0.50, 0.92))
+		var texture: Texture2D = Battle01UIStyle.icon(Battle01UIStyle.ICON_LAST_KNOWN)
+		if texture != null:
+			draw_texture_rect(texture, Rect2(marker - Vector2(20.0, 20.0), Vector2(40.0, 40.0)), false, Color(0.80, 0.68, 0.50, 0.95))
+		var font := ThemeDB.fallback_font
+		var label := "LAST KNOWN"
+		var font_size := 11
+		var text_width: float = font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size).x
+		var rect := Rect2(marker + Vector2(-text_width * 0.5 - 7.0, -52.0), Vector2(text_width + 14.0, 19.0))
+		draw_rect(rect, Color(0.025, 0.050, 0.065, 0.90), true)
+		draw_rect(rect, Color(0.76, 0.62, 0.42, 0.80), false, 1.0)
+		draw_string(font, rect.position + Vector2(7.0, 14.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size, Color(0.80, 0.68, 0.50, 0.95))
