@@ -1,7 +1,7 @@
 class_name FormationDefinition
 extends Resource
 
-const VALID_TARGET_CLASSES := PackedStringArray([
+static var VALID_TARGET_CLASSES: PackedStringArray = PackedStringArray([
 	"SOFT",
 	"LIGHT_ARMOR",
 	"HEAVY_ARMOR",
