@@ -8,18 +8,13 @@ const CLEAR: String = "CLEAR"
 const TERRAIN: String = "TERRAIN"
 const SMOKE: String = "SMOKE"
 
-const TERRAIN_BLOCKERS: Array[Rect2] = [
-	Rect2(Vector2(1120.0, 820.0), Vector2(160.0, 160.0)),
-	Rect2(Vector2(1190.0, 300.0), Vector2(190.0, 180.0)),
-	Rect2(Vector2(1510.0, 310.0), Vector2(210.0, 190.0)),
-]
-
 var _smoke_centers: Array[Vector2] = []
 var _smoke_radii: Array[float] = []
 var _smoke_remaining: Array[float] = []
 
 func _ready() -> void:
 	queue_redraw()
+	print("FRONTLINE_TERRAIN_LOS_AUTHORITY_READY blockers=%d" % BattleRouteTerrain.get_hard_blockers().size())
 
 func _process(delta: float) -> void:
 	var changed: bool = false
@@ -53,13 +48,16 @@ func has_line_of_sight(from_world: Vector2, to_world: Vector2) -> bool:
 	return get_block_reason(from_world, to_world) == CLEAR
 
 func get_block_reason(from_world: Vector2, to_world: Vector2) -> String:
-	for blocker: Rect2 in TERRAIN_BLOCKERS:
+	for blocker: Rect2 in BattleRouteTerrain.get_hard_blockers():
 		if _segment_intersects_rect(from_world, to_world, blocker):
 			return TERRAIN
 	for i: int in range(_smoke_centers.size()):
 		if _segment_intersects_circle(from_world, to_world, _smoke_centers[i], _smoke_radii[i]):
 			return SMOKE
 	return CLEAR
+
+func get_terrain_blockers() -> Array[Rect2]:
+	return BattleRouteTerrain.get_hard_blockers()
 
 func _segment_intersects_rect(a: Vector2, b: Vector2, rect: Rect2) -> bool:
 	if rect.has_point(a) or rect.has_point(b):
@@ -80,7 +78,7 @@ func _segment_intersects_circle(a: Vector2, b: Vector2, center: Vector2, radius:
 	return closest.distance_to(center) <= radius
 
 func _draw() -> void:
-	for blocker: Rect2 in TERRAIN_BLOCKERS:
+	for blocker: Rect2 in BattleRouteTerrain.get_hard_blockers():
 		draw_rect(blocker, Color(0.30, 0.25, 0.18, 0.18), true)
 		draw_rect(blocker, Color(0.65, 0.56, 0.38, 0.55), false, 2.0)
 	for i: int in range(_smoke_centers.size()):
