@@ -11,7 +11,12 @@ const POSTURE_B: String = "VILLAGE_SCREEN"
 const POSTURE_C: String = "SOUTH_SCREEN"
 const REINFORCEMENT_ENTRY: Vector2 = Vector2(1380.0, 900.0)
 
-@export var battle01_seed: int = 0
+static var _session_battle01_run_index: int = 0
+
+# -1 means normal player session sequencing. Any non-negative value is an explicit
+# editor/debug override and, like CLI/environment overrides, does not consume the
+# normal replay counter.
+@export var battle01_seed: int = -1
 
 var enemy_infantry: Array[BattleFormation] = []
 var enemy_armor: Array[BattleFormation] = []
@@ -29,6 +34,12 @@ var _test_seed_value: int = 0
 @onready var _navigation: BattleNavigation = get_parent().get_node("Navigation") as BattleNavigation
 @onready var _visibility: BattleVisibilityField = get_parent().get_node("VisibilityField") as BattleVisibilityField
 @onready var _primary_infantry: BattleFormation = get_parent().get_node("RedFormation") as BattleFormation
+
+static func reset_normal_run_sequence_for_test() -> void:
+	_session_battle01_run_index = 0
+
+static func get_normal_run_index_for_test() -> int:
+	return _session_battle01_run_index
 
 func _ready() -> void:
 	var battle: Node = get_parent()
@@ -158,7 +169,24 @@ func _resolve_battle01_seed() -> int:
 			return int(raw_env)
 		push_warning("Ignoring invalid BATTLE01_SEED environment value: %s" % raw_env)
 
-	return battle01_seed
+	if battle01_seed >= 0:
+		return battle01_seed
+
+	# Only a real current Battle01 scene consumes the normal-player replay counter.
+	# Programmatic scene instances used by focused regression tests keep the legacy
+	# deterministic seed-0 compatibility fallback unless they explicitly request a seed.
+	if _is_normal_player_scene_instance():
+		var run_index: int = _session_battle01_run_index
+		var seed: int = run_index % 3
+		_session_battle01_run_index = (run_index + 1) % 3
+		print("FRONTLINE_RED_NORMAL_RUN_SEED run=%d seed=%d" % [run_index + 1, seed])
+		return seed
+
+	return 0
+
+func _is_normal_player_scene_instance() -> bool:
+	var tree: SceneTree = get_tree()
+	return tree != null and tree.current_scene == get_parent()
 
 func _deployment_for_posture(posture: String) -> Dictionary:
 	match posture:
