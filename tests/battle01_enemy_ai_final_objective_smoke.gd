@@ -61,7 +61,7 @@ func _run() -> void:
 	var simultaneous_responder: BattleFormation = ai._select_final_objective_responder(true)
 	var central_preserved: bool = (
 		simultaneous_responder != inf1
-		and (str((ai._agents[inf1]] as Dictionary)["state"]) == BattleEnemyAIController.MOVE or str((ai._agents[inf1] as Dictionary)["state"]) == BattleEnemyAIController.ENGAGE or inf1.global_position.distance_to(central.global_position) <= BattleEnemyAIController.ARRIVAL_TOLERANCE)
+		and (str((ai._agents[inf1] as Dictionary)["state"]) == BattleEnemyAIController.MOVE or str((ai._agents[inf1] as Dictionary)["state"]) == BattleEnemyAIController.ENGAGE or inf1.global_position.distance_to(central.global_position) <= BattleEnemyAIController.ARRIVAL_TOLERANCE)
 	)
 	_require(central_preserved, "AI_FINAL_OBJECTIVE_CENTRAL_DEFENSE_PRESERVED_PASS")
 
