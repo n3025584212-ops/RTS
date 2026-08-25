@@ -6,12 +6,25 @@ const INFANTRY_DEFINITION: FormationDefinition = preload("res://resources/format
 const ARMOR_DEFINITION: FormationDefinition = preload("res://resources/formations/tank.tres")
 const SUPPLY_TRUCK_DEFINITION: FormationDefinition = preload("res://resources/formations/logistics.tres")
 
+const POSTURE_A: String = "BRIDGE_LOCK"
+const POSTURE_B: String = "VILLAGE_SCREEN"
+const POSTURE_C: String = "SOUTH_SCREEN"
+const REINFORCEMENT_ENTRY: Vector2 = Vector2(1380.0, 900.0)
+
+@export var battle01_seed: int = 0
+
 var enemy_infantry: Array[BattleFormation] = []
 var enemy_armor: Array[BattleFormation] = []
 var enemy_supply_trucks: Array[BattleFormation] = []
 var reinforcement_infantry: Array[BattleFormation] = []
 var reinforcement_armor: Array[BattleFormation] = []
 var _initialized: bool = false
+var _selected_seed: int = 0
+var _selected_posture: String = POSTURE_A
+var _posture_locked: bool = false
+var _posture_deployment: Dictionary = {}
+var _test_seed_forced: bool = false
+var _test_seed_value: int = 0
 
 @onready var _navigation: BattleNavigation = get_parent().get_node("Navigation") as BattleNavigation
 @onready var _visibility: BattleVisibilityField = get_parent().get_node("VisibilityField") as BattleVisibilityField
@@ -27,6 +40,37 @@ func _ready() -> void:
 	else:
 		battle.ready.connect(_initialize_roster, CONNECT_ONE_SHOT)
 
+func force_seed_for_test(seed: int) -> void:
+	if _initialized:
+		push_error("Battle01 posture seed cannot change after roster initialization.")
+		return
+	_test_seed_forced = true
+	_test_seed_value = seed
+
+func get_battle01_seed() -> int:
+	return _selected_seed
+
+func get_selected_posture() -> String:
+	return _selected_posture
+
+func is_posture_locked() -> bool:
+	return _posture_locked
+
+func get_posture_deployment() -> Dictionary:
+	return _posture_deployment.duplicate(true)
+
+func posture_for_seed(seed: int) -> String:
+	var index: int = seed % 3
+	if index < 0:
+		index += 3
+	match index:
+		0:
+			return POSTURE_A
+		1:
+			return POSTURE_B
+		_:
+			return POSTURE_C
+
 func _initialize_roster() -> void:
 	if _initialized:
 		return
@@ -36,46 +80,56 @@ func _initialize_roster() -> void:
 		push_error("Formal combat roster requires existing RedFormation as RED INF-01.")
 		return
 
+	_selected_seed = _resolve_battle01_seed()
+	_selected_posture = posture_for_seed(_selected_seed)
+	_posture_deployment = _deployment_for_posture(_selected_posture)
+	if not _validate_posture_deployment(_posture_deployment):
+		return
+
+	_primary_infantry.global_position = Vector2(_posture_deployment["RED INF-01"])
 	_primary_infantry.display_name = "RED INF-01"
 	_primary_infantry.set_intel_state(BattleIntelTracker.UNSEEN)
 	enemy_infantry.append(_primary_infantry)
 
-	var base_position: Vector2 = _primary_infantry.global_position
 	enemy_infantry.append(_spawn_active_enemy(
 		"RedInfantry2",
 		"RED INF-02",
 		INFANTRY_DEFINITION,
-		base_position + Vector2(0.0, -120.0)
+		Vector2(_posture_deployment["RED INF-02"])
 	))
 	enemy_armor.append(_spawn_active_enemy(
 		"RedArmor1",
 		"RED ARMOR-01",
 		ARMOR_DEFINITION,
-		base_position + Vector2(0.0, 120.0)
+		Vector2(_posture_deployment["RED ARMOR-01"])
 	))
 	enemy_supply_trucks.append(_spawn_active_enemy(
 		"RedSupplyTruck1",
 		"RED SUPPLY-01",
 		SUPPLY_TRUCK_DEFINITION,
-		base_position + Vector2(120.0, 180.0)
+		Vector2(_posture_deployment["RED SUPPLY-01"])
 	))
 
+	# Reinforcement entry/timing is not seeded. The existing Enemy AI later binds
+	# activated reinforcement assignments to the selected active posture anchors.
 	reinforcement_infantry.append(_spawn_dormant_reinforcement(
 		"ReinforcementInfantry1",
 		"RED REINFORCEMENT INF-01",
 		INFANTRY_DEFINITION,
-		base_position
+		REINFORCEMENT_ENTRY
 	))
 	reinforcement_armor.append(_spawn_dormant_reinforcement(
 		"ReinforcementArmor1",
 		"RED REINFORCEMENT ARMOR-01",
 		ARMOR_DEFINITION,
-		base_position
+		REINFORCEMENT_ENTRY
 	))
 
 	if not _validate_frozen_roster():
 		return
 
+	_posture_locked = true
+	print("FRONTLINE_RED_POSTURE_SELECTED seed=%d posture=%s" % [_selected_seed, _selected_posture])
 	print(
 		"FRONTLINE_FORMAL_COMBAT_ROSTER_READY enemy_infantry=%d enemy_armor=%d enemy_supply_truck=%d reinforcement_infantry=%d reinforcement_armor=%d"
 		% [
@@ -86,6 +140,76 @@ func _initialize_roster() -> void:
 			reinforcement_armor.size(),
 		]
 	)
+
+func _resolve_battle01_seed() -> int:
+	if _test_seed_forced:
+		return _test_seed_value
+
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--battle01-seed="):
+			var raw_cli: String = argument.trim_prefix("--battle01-seed=")
+			if raw_cli.is_valid_int():
+				return int(raw_cli)
+			push_warning("Ignoring invalid --battle01-seed value: %s" % raw_cli)
+
+	if OS.has_environment("BATTLE01_SEED"):
+		var raw_env: String = OS.get_environment("BATTLE01_SEED")
+		if raw_env.is_valid_int():
+			return int(raw_env)
+		push_warning("Ignoring invalid BATTLE01_SEED environment value: %s" % raw_env)
+
+	return battle01_seed
+
+func _deployment_for_posture(posture: String) -> Dictionary:
+	match posture:
+		POSTURE_B:
+			return {
+				"RED INF-01": Vector2(1340.0, 900.0),
+				"RED INF-02": Vector2(1060.0, 660.0),
+				"RED ARMOR-01": Vector2(1900.0, 1060.0),
+				"RED SUPPLY-01": Vector2(2300.0, 1180.0),
+			}
+		POSTURE_C:
+			return {
+				"RED INF-01": Vector2(1380.0, 900.0),
+				"RED INF-02": Vector2(1320.0, 1380.0),
+				"RED ARMOR-01": Vector2(1900.0, 700.0),
+				"RED SUPPLY-01": Vector2(2260.0, 1340.0),
+			}
+		_:
+			return {
+				"RED INF-01": Vector2(1380.0, 900.0),
+				"RED INF-02": Vector2(1420.0, 700.0),
+				"RED ARMOR-01": Vector2(1900.0, 900.0),
+				"RED SUPPLY-01": Vector2(2180.0, 1060.0),
+			}
+
+func _validate_posture_deployment(deployment: Dictionary) -> bool:
+	var central: BattleObjective = get_parent().get_node_or_null("CentralBridgehead") as BattleObjective
+	var industrial: BattleObjective = get_parent().get_node_or_null("IndustrialObjective") as BattleObjective
+	if central == null or industrial == null:
+		push_error("Seeded RED posture validation requires both Battle01 objectives.")
+		return false
+
+	var required_names: Array[String] = ["RED INF-01", "RED INF-02", "RED ARMOR-01", "RED SUPPLY-01"]
+	for unit_name: String in required_names:
+		if not deployment.has(unit_name):
+			push_error("Seeded RED posture missing authored position for %s." % unit_name)
+			return false
+		var point: Vector2 = Vector2(deployment[unit_name])
+		if not _navigation.is_world_walkable(point):
+			push_error("Seeded RED posture point is not walkable unit=%s point=%s" % [unit_name, point])
+			return false
+		if point.distance_to(central.global_position) <= central.capture_radius:
+			push_error("Seeded RED posture point illegally occupies Central objective core unit=%s point=%s" % [unit_name, point])
+			return false
+		if point.distance_to(industrial.global_position) <= industrial.capture_radius:
+			push_error("Seeded RED posture point illegally occupies Industrial objective core unit=%s point=%s" % [unit_name, point])
+			return false
+		if _navigation.find_path(point, central.global_position).is_empty():
+			push_error("Seeded RED posture point is disconnected unit=%s point=%s" % [unit_name, point])
+			return false
+	return true
 
 func _spawn_active_enemy(
 	node_name: String,
