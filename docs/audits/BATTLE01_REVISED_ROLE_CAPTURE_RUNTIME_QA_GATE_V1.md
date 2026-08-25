@@ -1,90 +1,122 @@
 # BATTLE01 Revised Role / Capture Runtime QA Gate V1
 
-TASK_ID=RUNTIME_VERIFY_REVISED_ROLE_CAPTURE_V1
+TASK_ID=RERUN_REVISED_ROLE_CAPTURE_RUNTIME_GATE_V1
 OWNER_WINDOW=WINDOW_07_INTEGRATION_QA_PERFORMANCE
 PROJECT=FRONTLINE
-STATUS=FROZEN_QA_FAIL
+STATUS=BLOCKED_RUNTIME_EXECUTION_UNAVAILABLE_AFTER_FIX
 GOVERNANCE=FRONTLINE_PROJECT_EXECUTION_GOVERNANCE_V1
-ENGINE=4.7.1.stable.official.a13da4feb
-VERIFIED_TARGET_SHA=88a50429a8e7b5d7a56cde2eb291925b32470ed0
-SOURCE_RUNTIME_AUDIT=docs/audits/BATTLE01_REVISED_ROLE_CAPTURE_RUNTIME_AUDIT_V1.md
-SOURCE_RUNTIME_AUDIT_COMMIT=4cdd057c1cbf8112f31f3d3a5cd944ccb7a0b747
-UPSTREAM=IMPLEMENT_BATTLE01_REVISED_ROLE_CAPTURE_RUNTIME_V1=IMPLEMENTED_RUNTIME_VERIFICATION_BLOCKED
+ENGINE_REQUIRED=Godot 4.7.1
+TARGET_COMMIT=8d9014472892912230f5b2137f15eefb05d58573
+SOURCE_OF_TRUTH=GITHUB_MAIN
+UPSTREAM=FIX_REVISED_ROLE_CAPTURE_RUNTIME_BLOCKERS_V1=BLOCKED_RUNTIME_NOT_EXECUTED
+PRIOR_FAILED_GAMEPLAY_SHA=88a50429a8e7b5d7a56cde2eb291925b32470ed0
+PRIOR_RUNTIME_AUDIT=docs/audits/BATTLE01_REVISED_ROLE_CAPTURE_RUNTIME_AUDIT_V1.md
+PRIOR_RUNTIME_AUDIT_COMMIT=4cdd057c1cbf8112f31f3d3a5cd944ccb7a0b747
 
-## Independent QA conclusion
+## Independent QA summary
 
-Window 07 independently reviewed the version-bound Godot 4.7.1 runtime audit produced against the exact gameplay commit `88a50429a8e7b5d7a56cde2eb291925b32470ed0`.
+Window 07 independently verified that `8d9014472892912230f5b2137f15eefb05d58573` is the current `main` head at the start of this rerun gate.
 
-The runtime evidence is sufficient to establish a real production-code blocker before Battle01 scene startup:
+The fix commit changes exactly one production file:
 
-```text
-SCRIPT ERROR: Parse Error: Assigned value for constant "VALID_TARGET_CLASSES" isn't a constant expression.
-at: GDScript::reload (res://scripts/battle01/formation_definition.gd:4)
-```
+- `scripts/battle01/formation_definition.gd`
 
-The blocking source is:
+The change is limited to replacing the Godot-4.7.1-invalid constant construction:
 
 ```gdscript
-const VALID_TARGET_CLASSES := PackedStringArray([
-    "SOFT",
-    "LIGHT_ARMOR",
-    "HEAVY_ARMOR",
-    "LOGISTICS",
-])
+const VALID_TARGET_CLASSES := PackedStringArray([...])
 ```
 
-Godot 4.7.1 does not accept this constructor call as a constant expression. `FormationDefinition` therefore fails to compile and the dependent BattleFormation / Battle01 script chain cannot load.
+with typed static runtime data:
 
-Window 07 also confirmed that the same invalid declaration remains present on current `main` after publication of the audit, so the defect is still active and is not limited to the detached verification worktree.
+```gdscript
+static var VALID_TARGET_CLASSES: PackedStringArray = PackedStringArray([...])
+```
 
-The source runtime-audit commit adds only the audit Markdown file; it does not modify production gameplay code.
+No ammo, damage matrix, capture/contest rule, reserve rule, Enemy AI behavior, 3D foundation, or RESUPPLY implementation is changed by the fix commit.
+
+## Runtime execution attempt
+
+The exact target commit automatically triggered:
+
+- workflow: `Godot 4.7.1 Runtime Verify`
+- run id: `32826486427`
+- head SHA: `8d9014472892912230f5b2137f15eefb05d58573`
+- initial conclusion: `failure`
+
+Window 07 then explicitly re-ran the failed job for this exact run/commit.
+
+The rerun was accepted by GitHub, but the replacement job again completed with:
+
+- job name: `Headless parse and runtime smoke`
+- job steps: empty / none
+- no executed Godot command
+- no Godot version output
+- no parse/import output
+- no Battle01 boot output
+- no smoke-test output
+
+Therefore the rerun still did not execute Godot. This is non-diagnostic for the repaired game code: it is not evidence that the repair failed, but it also cannot satisfy a runtime QA gate.
+
+## Static scope / semantics preflight
+
+CHANGE_SCOPE=PASS
+FROZEN_GAMEPLAY_PRESERVED_STATICALLY=PASS
+TARGET_COMMIT_IS_CURRENT_MAIN_AT_GATE_START=YES
+
+Frozen semantics remain the requested authority:
+
+- Ammo: Recon 18 / Infantry 24 / IFV 28 / Armor 16
+- Representative damage: Recon->Heavy 2; Infantry->Heavy 5; IFV->Soft 30; IFV->Heavy 13; Armor->Light 61
+- Capture/Contest: Recon NO/NO; Infantry YES/YES; IFV YES/YES; Armor NO/YES; Logistics NO/NO
+- Capture time: 15 seconds
+
+Static inspection cannot replace the required Godot execution.
 
 ## Gate judgment
 
-VERSION_IDENTITY=PASS
-REAL_GODOT_EXECUTION=PASS
-GODOT_VERSION=4.7.1.stable.official.a13da4feb
-CONSTRUCTION_CORRECTNESS=FAIL
+PROJECT_PARSE=NOT_EXECUTED
+BATTLE01_BOOT=NOT_EXECUTED
+ROLE_DAMAGE_RUNTIME=NOT_EXECUTED
+OBJECTIVE_CAPTURE_CONTEST_RUNTIME=NOT_EXECUTED
+SOFTLOCK_REGRESSION=NOT_EXECUTED
+FORMAL_ROSTER_REGRESSION=NOT_EXECUTED
+LOGISTICS_REGRESSION=NOT_EXECUTED
+ENEMY_AI_REGRESSION=NOT_EXECUTED
+3D_FOUNDATION_REGRESSION=NOT_EXECUTED
+BLOCKING_RUNTIME_ERRORS=UNKNOWN_RUNTIME_NOT_EXECUTED
 
-BATTLE01_REAL_RUNTIME=FAIL
-ROLE_DAMAGE_RUNTIME=BLOCKED_BY_PARSE_FAILURE
-OBJECTIVE_CAPTURE_CONTEST_RUNTIME=BLOCKED_BY_PARSE_FAILURE
-SOFTLOCK_REGRESSION=BLOCKED_BY_PARSE_FAILURE
-FORMAL_ROSTER_REGRESSION=BLOCKED_BY_PARSE_FAILURE
-LOGISTICS_REGRESSION=BLOCKED_BY_PARSE_FAILURE
-ENEMY_AI_REGRESSION=BLOCKED_BY_PARSE_FAILURE
-3D_FOUNDATION_REGRESSION=BLOCKED_BY_PARSE_FAILURE
-REAL_PLAYER_FLOW=BLOCKED_BY_PARSE_FAILURE
-
-BLOCKING_RUNTIME_ERRORS=FORMATION_DEFINITION_CONST_PARSE_ERROR
-QA_GATE_RESULT=FAIL
+QA_GATE_RESULT=BLOCKED
 READY_FOR_NEXT_STAGE=NO
-BLOCKER=FORMATION_DEFINITION_GD_LINE_4_PACKEDSTRINGARRAY_CONST_NOT_VALID_IN_GODOT_4_7_1
+BLOCKER=NO_REAL_GODOT_4_7_1_EXECUTION_OCCURRED_FOR_8d9014472892912230f5b2137f15eefb05d58573
 
-## Failure ownership and correction boundary
+## What is required to close
 
-The defect is inside `scripts/battle01/formation_definition.gd`, part of the revised Formation / role-capture implementation domain.
+Use any available real Godot 4.7.1 runner against the exact target commit (or a descendant proven to contain only QA documentation changes) and execute:
 
-NEXT_ACTION=FIX_REVISED_ROLE_CAPTURE_RUNTIME_BLOCKERS_V1
-NEXT_OWNER=WINDOW_03_COMBAT_FORMATIONS
+1. `Godot --version`
+2. `Godot --headless --editor --path . --quit`
+3. `Godot --headless --path . --quit-after 300`
+4. `tests/battle01_role_capture_v2_smoke.gd`
+5. `tests/formal_combat_roster_smoke.gd`
+6. `tests/battle01_logistics_flow_smoke.gd`
+7. `tests/battle01_enemy_ai_final_objective_smoke.gd`
+8. `tests/battle01_3d_foundation_smoke.gd`
 
-The correction task is authorized only to remove the Godot 4.7.1 parse/runtime blocker and any directly exposed wiring errors required to make the frozen V2 behavior executable.
-
-The correction must not redesign or change:
-
-- Recon / Infantry / IFV / Armor ammo values 18 / 24 / 28 / 16;
-- target-class damage matrix or deterministic rounding semantics;
-- Capture / Contest semantics;
-- 15-second ownership transfer;
-- Reserve choice semantics;
-- Enemy AI product behavior;
-- 3D visual foundation.
-
-After the minimal correction lands, the same focused Godot 4.7.1 runtime gate must be rerun. Do not advance to RESUPPLY / RED logistics implementation until this QA gate passes.
+Only if all required runtime checks pass may this gate become PASS.
 
 ## Cleanup / active state
 
-The runtime verifier removed its temporary worktree and did not retain redundant ZIPs, large logs, screenshot bundles, or generated build artifacts. Window 07 modified only this QA gate record and did not alter production gameplay code.
+Window 07 did not modify gameplay code. No project ZIP, duplicate checkout, generated cache, screenshot bundle, or large duplicate log package was retained. This gate document is the only durable output of this rerun review.
 
 ACTIVE_PROJECT_STATE_IS_CLEAN=YES
 TASK_RESULT_IS_CREDIBLY_AUDITED=YES
+
+## Next action
+
+NEXT_ACTION=RUN_FIXED_REVISED_ROLE_CAPTURE_GODOT_4_7_1_RUNTIME_V1
+NEXT_OWNER=AVAILABLE_GODOT_4_7_1_RUNNER
+RETURN_TO=WINDOW_07_INTEGRATION_QA_PERFORMANCE
+
+If that real run passes, Window 07 may close this gate and route to `IMPLEMENT_BATTLE01_RESUPPLY_AND_RED_LOGISTICS_V1` / `WINDOW_05_RESOURCES_WAR`.
+If that real run exposes another production blocker, Window 07 will return the smallest blocker-fix task to the responsible implementation window.
