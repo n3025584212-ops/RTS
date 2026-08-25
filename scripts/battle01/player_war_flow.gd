@@ -149,6 +149,7 @@ func start_supply(truck: BattleFormation, target: BattleFormation) -> bool:
 	_supply_target_fire_serial = target.get_fire_serial()
 	_supply_feedback = "SUPPLY ACTIVE — hold position 4.0s"
 	feedback_changed.emit(_supply_feedback)
+	_hud.show_command_feedback("AMMO SUPPLY  ·  HOLD POSITION 4.0s", "INFO")
 	_refresh_hud()
 	queue_redraw()
 	print("FRONTLINE_SUPPLY_STARTED truck=%s target=%s charges=%d" % [truck.display_name, target.display_name, truck.get_supply_charges()])
@@ -226,6 +227,7 @@ func _update_supply(delta: float) -> void:
 			return
 		var remaining: int = _supply_truck.get_supply_charges()
 		_supply_feedback = "SUPPLY COMPLETE — %s +%d ammo" % [target_name, restored]
+		_hud.show_command_feedback("AMMO RESTORED  ·  %s +%d" % [target_name, restored], "INFO")
 		print("FRONTLINE_SUPPLY_COMPLETE truck=%s target=%s ammo=%d->%d restored=%d charges=%d" % [
 			truck_name,
 			target_name,
@@ -242,6 +244,7 @@ func _cancel_supply(reason: String) -> void:
 	if _supply_truck != null:
 		print("FRONTLINE_SUPPLY_INTERRUPTED reason=%s progress=%.2f charges=%d" % [reason, _supply_progress, _supply_truck.get_supply_charges()])
 	_supply_feedback = "SUPPLY INTERRUPTED — %s" % reason
+	_hud.show_command_feedback(_supply_feedback, "TACTICAL")
 	_clear_supply_state(false)
 	_refresh_hud()
 	queue_redraw()
@@ -259,6 +262,7 @@ func _clear_supply_state(reset_feedback: bool = true) -> void:
 func _reject_supply(reason: String) -> bool:
 	_supply_feedback = "SUPPLY INVALID — %s" % reason
 	feedback_changed.emit(_supply_feedback)
+	_hud.show_command_feedback(_supply_feedback, "TACTICAL")
 	_refresh_hud()
 	print("FRONTLINE_SUPPLY_REJECTED reason=%s" % reason)
 	return false
@@ -279,6 +283,7 @@ func withdraw_selected(prefer_forward: bool = true) -> int:
 				issued += 1
 	if issued > 0:
 		_supply_feedback = "WITHDRAW → %s" % destination_name
+		_hud.show_command_feedback("WITHDRAW  ·  %d FORMATION%s  ·  %s" % [issued, "S" if issued != 1 else "", "BRIDGEHEAD RALLY" if destination_name == "BRIDGEHEAD_FORWARD_RALLY" else "WEST REAR"], "INFO")
 		print("FRONTLINE_WITHDRAW_ISSUED count=%d rally=%s" % [issued, destination_name])
 	_refresh_hud()
 	return issued
@@ -319,6 +324,7 @@ func deploy_reserve(kind: String) -> BattleFormation:
 	_industrial.add_tracked_formation(formation)
 	friendlies_changed.emit(_friendlies)
 	_feedback("Reserve COMMITTED — %s entering from WEST_REAR_ENTRY" % formation.display_name)
+	_hud.push_alert("TACTICAL", "RESERVE ARRIVED  ·  WEST REAR", "reserve_arrival")
 	print("FRONTLINE_PLAYER_RESERVE_COMMITTED choice=%s unit=%s entry=%s" % [kind, formation.display_name, formation.global_position])
 	_refresh_hud()
 	return formation
@@ -362,6 +368,7 @@ func _on_central_capture_completed(new_owner: String, _previous_owner: String) -
 		print("FRONTLINE_PLAYER_RESERVE_UNLOCKED")
 		print("FRONTLINE_INDUSTRIAL_OBJECTIVE_UNLOCKED")
 		_feedback("Bridgehead secured — Reserve and Industrial Objective unlocked")
+		_hud.push_alert("TACTICAL", "CENTRAL SECURED  ·  RESERVE / INDUSTRIAL UNLOCKED", "bridgehead_hinge")
 	_update_forward_rally()
 	_evaluate_match_state()
 
@@ -382,6 +389,8 @@ func _update_forward_rally() -> void:
 	if active == _forward_rally_active:
 		return
 	_forward_rally_active = active
+	if _hud != null:
+		_hud.push_alert("TACTICAL", "BRIDGEHEAD FORWARD RALLY  ·  %s" % ("ACTIVE" if active else "INACTIVE"), "forward_rally")
 	print("FRONTLINE_FORWARD_RALLY state=%s" % ("ACTIVE" if active else "INACTIVE"))
 	_refresh_hud()
 	queue_redraw()
@@ -492,16 +501,25 @@ func _feedback(message: String) -> void:
 	_refresh_hud()
 
 func _draw() -> void:
-	draw_circle(to_local(WEST_REAR_RALLY), 34.0, Color(0.20, 0.72, 1.0, 0.12))
-	draw_arc(to_local(WEST_REAR_RALLY), 34.0, 0.0, TAU, 32, Color(0.35, 0.85, 1.0, 0.72), 2.0)
-	draw_string(ThemeDB.fallback_font, to_local(WEST_REAR_RALLY) + Vector2(-70.0, -42.0), "WEST REAR RALLY", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 14, Color(0.55, 0.88, 1.0))
+	var west := to_local(WEST_REAR_RALLY)
+	draw_circle(west, 34.0, Color(0.30, 0.55, 1.0, 0.07))
+	for index: int in range(8):
+		var a0: float = TAU * float(index) / 8.0
+		draw_arc(west, 34.0, a0, a0 + TAU / 16.0, 4, Color(0.35, 0.65, 1.0, 0.66), 2.0)
+	draw_string(ThemeDB.fallback_font, west + Vector2(-70.0, -43.0), "WEST REAR  /  RALLY", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, Color(0.55, 0.76, 1.0))
 
 	if _forward_rally_active:
-		draw_circle(to_local(BRIDGEHEAD_FORWARD_RALLY), 30.0, Color(0.20, 0.82, 0.62, 0.12))
-		draw_arc(to_local(BRIDGEHEAD_FORWARD_RALLY), 30.0, 0.0, TAU, 32, Color(0.35, 1.0, 0.72, 0.85), 2.0)
-		draw_string(ThemeDB.fallback_font, to_local(BRIDGEHEAD_FORWARD_RALLY) + Vector2(-80.0, -38.0), "FORWARD RALLY", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 14, Color(0.55, 1.0, 0.75))
+		var forward := to_local(BRIDGEHEAD_FORWARD_RALLY)
+		draw_circle(forward, 30.0, Color(0.30, 0.82, 0.72, 0.08))
+		draw_arc(forward, 30.0, 0.0, TAU, 32, Color("4dd0e1"), 2.0)
+		draw_string(ThemeDB.fallback_font, forward + Vector2(-82.0, -39.0), "BRIDGEHEAD RALLY  /  ACTIVE", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, Color("4dd0e1"))
 
 	if _supply_truck != null and _supply_target != null:
-		draw_line(to_local(_supply_truck.global_position), to_local(_supply_target.global_position), Color(0.55, 0.92, 1.0, 0.90), 4.0)
+		var truck_point := to_local(_supply_truck.global_position)
+		var target_point := to_local(_supply_target.global_position)
+		draw_line(truck_point, target_point, Color("4dd0e1"), 4.0)
+		draw_arc(truck_point, SUPPLY_RANGE, 0.0, TAU, 64, Color(0.30, 0.82, 0.88, 0.18), 1.5)
 		var midpoint: Vector2 = to_local((_supply_truck.global_position + _supply_target.global_position) * 0.5)
-		draw_string(ThemeDB.fallback_font, midpoint + Vector2(-34.0, -12.0), "%.1fs" % _supply_progress, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 16, Color.WHITE)
+		draw_rect(Rect2(midpoint + Vector2(-42.0, -15.0), Vector2(84.0, 9.0)), Color(0.02, 0.05, 0.06, 0.92), true)
+		draw_rect(Rect2(midpoint + Vector2(-42.0, -15.0), Vector2(84.0 * _supply_progress / SUPPLY_DURATION, 9.0)), Color("4dd0e1"), true)
+		draw_string(ThemeDB.fallback_font, midpoint + Vector2(-46.0, -22.0), "AMMO %.1f / 4.0s" % _supply_progress, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, Color.WHITE)

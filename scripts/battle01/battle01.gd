@@ -23,6 +23,7 @@ const FORMATION_DEFINITION_PATHS := [
 @onready var industrial_objective: BattleObjective = $IndustrialObjective
 @onready var war_flow: BattlePlayerWarFlow = $PlayerWarFlow
 @onready var hud: BattleHUD = $HUD
+@onready var roster: BattleFormalCombatRoster = $FormalCombatRoster
 
 var _friendlies: Array[BattleFormation] = []
 var _combat_started: bool = false
@@ -37,6 +38,7 @@ var _ci_recon_target: Vector2 = Vector2.ZERO
 var _ci_blue_target: Vector2 = Vector2.ZERO
 var _ci_group_blue_target: Vector2 = Vector2.ZERO
 var _ci_group_recon_target: Vector2 = Vector2.ZERO
+var _player_intel_transition_memory: Dictionary = {}
 
 func _ready() -> void:
 	if _validate_formation_definitions():
@@ -63,6 +65,7 @@ func _ready() -> void:
 	selection.move_order_issued.connect(_on_move_order_issued)
 
 	intel.intel_state_changed.connect(_on_intel_state_changed)
+	intel.intel_record_changed.connect(_on_intel_record_changed)
 	hud.restart_requested.connect(_on_restart_requested)
 
 	# Preserve the already-accepted player Recon/LOS observation baseline. The new
@@ -75,6 +78,7 @@ func _ready() -> void:
 	war_flow.victory.connect(_on_war_flow_victory)
 	war_flow.defeat.connect(_on_war_flow_defeat)
 	war_flow.configure(_friendlies)
+	call_deferred("_complete_intel_presentation_targets")
 
 	_refresh_friendly_health()
 	hud.set_enemy_health(red.current_hp, red.max_hp, red.is_alive)
@@ -120,6 +124,14 @@ func _ready() -> void:
 	print("FRONTLINE_MULTI_FORMATION_COMMAND_READY")
 	print("FRONTLINE_NAVIGATION_ROUTE_READY")
 	print("FRONTLINE_LOGISTICS_OBJECTIVE_FLOW_READY")
+
+func _complete_intel_presentation_targets() -> void:
+	var presentation_targets: Array[BattleFormation] = []
+	presentation_targets.append_array(roster.get_initial_enemy_combat_formations())
+	presentation_targets.append_array(roster.get_initial_supply_trucks())
+	presentation_targets.append_array(roster.get_reinforcement_formations())
+	intel.add_targets(presentation_targets)
+	print("FRONTLINE_INTEL_PRESENTATION_READY targets=%d" % presentation_targets.size())
 
 func _process(_delta: float) -> void:
 	if _ci_navigation_smoke:
@@ -287,6 +299,7 @@ func _on_selection_changed(formations: Array[BattleFormation]) -> void:
 
 func _on_move_order_issued(formations: Array[BattleFormation], _target: Vector2) -> void:
 	hud.set_order_summary(formations)
+	hud.show_command_feedback("MOVE  ·  %d FORMATION%s" % [formations.size(), "S" if formations.size() != 1 else ""], "INFO")
 
 func _on_friendly_order_changed(_order_name: String) -> void:
 	hud.set_order_summary(selection.get_selected())
@@ -345,6 +358,24 @@ func _on_intel_state_changed(state: String, last_known_position: Vector2) -> voi
 				_ci_los_phase = 4
 	else:
 		blue.clear_combat_target()
+
+func _on_intel_record_changed(target: BattleFormation, next_state: String, _last_known: Vector2) -> void:
+	if target == null:
+		return
+	var memory: Dictionary = _player_intel_transition_memory.get(target, {"state": BattleIntelTracker.UNSEEN, "was_lost": false})
+	var was_lost: bool = bool(memory["was_lost"])
+	if next_state == BattleIntelTracker.LAST_KNOWN:
+		memory["was_lost"] = true
+	elif next_state == BattleIntelTracker.CONFIRMED:
+		if was_lost:
+			hud.push_alert("TACTICAL", "RECONFIRMED  ·  %s" % target.display_name, "reconfirmed_%s" % target.get_instance_id())
+		memory["was_lost"] = false
+		if target.display_name.begins_with("RED REINFORCEMENT"):
+			hud.push_alert("TACTICAL", "ENEMY REINFORCEMENT CONFIRMED", "enemy_reinforcement")
+	elif next_state == BattleIntelTracker.CONTACT and target.display_name.begins_with("RED REINFORCEMENT"):
+		hud.push_alert("TACTICAL", "ENEMY REINFORCEMENT CONTACT", "enemy_reinforcement")
+	memory["state"] = next_state
+	_player_intel_transition_memory[target] = memory
 
 func _on_any_friendly_health_changed(_current_hp: int, _max_hp_value: int) -> void:
 	_refresh_friendly_health()

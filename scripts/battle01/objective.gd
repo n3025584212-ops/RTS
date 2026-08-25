@@ -196,25 +196,61 @@ func _refresh_state(emit_signal: bool = true) -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	var fill: Color = Color(0.85, 0.67, 0.18, 0.14)
-	var edge: Color = Color(0.95, 0.80, 0.28, 0.90)
+	var fill: Color = Color(0.69, 0.69, 0.69, 0.055)
+	var edge: Color = Color(0.69, 0.69, 0.69, 0.48)
 	if control_owner == OWNER_PLAYER:
-		fill = Color(0.10, 0.45, 0.82, 0.22)
-		edge = Color(0.30, 0.80, 1.0, 1.0)
+		fill = Color(0.30, 0.55, 1.0, 0.075)
+		edge = Color("4d8cff")
 	elif control_owner == OWNER_AI:
-		fill = Color(0.72, 0.16, 0.12, 0.18)
-		edge = Color(0.95, 0.30, 0.22, 0.95)
+		fill = Color(1.0, 0.30, 0.30, 0.065)
+		edge = Color("ff4d4d")
 
 	if contested:
-		fill = Color(0.85, 0.50, 0.10, 0.22)
-		edge = Color(1.0, 0.72, 0.20, 1.0)
+		fill = Color(1.0, 0.78, 0.34, 0.13)
+		edge = Color("ffc857")
 
+	# Stable capture footprints remain subdued; capture/contest makes the full area legible.
 	draw_circle(Vector2.ZERO, capture_radius, fill)
-	draw_arc(Vector2.ZERO, capture_radius, 0.0, TAU, 96, edge, 5.0)
+	var boundary_alpha: float = 0.92 if contested or progress > 0.0 else 0.36
+	for index: int in range(24):
+		if not contested and index % 2 == 1:
+			continue
+		var a0: float = TAU * float(index) / 24.0
+		var a1: float = a0 + TAU / 36.0
+		draw_arc(Vector2.ZERO, capture_radius, a0, a1, 5, Color(edge, boundary_alpha), 2.5 if contested else 1.6)
 	if not capturing_faction.is_empty() and progress > 0.0:
-		draw_arc(Vector2.ZERO, capture_radius - 12.0, -PI / 2.0, -PI / 2.0 + TAU * progress, 64, Color.WHITE, 7.0)
+		var capture_color: Color = Color("4d8cff") if capturing_faction == "BLUE" else Color("ff4d4d")
+		draw_arc(Vector2.ZERO, 45.0, -PI / 2.0, -PI / 2.0 + TAU * progress, 48, capture_color, 7.0)
+	if contested:
+		for offset: float in [-24.0, -8.0, 8.0, 24.0]:
+			draw_line(Vector2(offset - 12.0, -34.0), Vector2(offset + 18.0, 34.0), Color(1.0, 0.78, 0.34, 0.36), 2.0)
 
-	var lock_text: String = " LOCKED" if player_capture_locked else ""
-	var contest_text: String = " CONTESTED" if contested else ""
-	var label: String = "%s [%s]%s%s" % [objective_id, control_owner, lock_text, contest_text]
-	draw_string(ThemeDB.fallback_font, Vector2(-120.0, -capture_radius - 18.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 15, Color.WHITE)
+	# Central is the tactical hinge; Industrial is the stronger decisive square.
+	var decisive: bool = objective_id == "INDUSTRIAL_OBJECTIVE"
+	if decisive:
+		draw_rect(Rect2(-27.0, -27.0, 54.0, 54.0), Color(edge, 0.17), true)
+		draw_rect(Rect2(-27.0, -27.0, 54.0, 54.0), edge, false, 3.0)
+		draw_line(Vector2(-13.0, 10.0), Vector2(-13.0, -9.0), Color.WHITE, 3.0)
+		draw_line(Vector2(-13.0, -9.0), Vector2(0.0, -2.0), Color.WHITE, 3.0)
+		draw_line(Vector2(0.0, -2.0), Vector2(13.0, -10.0), Color.WHITE, 3.0)
+		draw_line(Vector2(13.0, -10.0), Vector2(13.0, 10.0), Color.WHITE, 3.0)
+	else:
+		draw_circle(Vector2.ZERO, 25.0, Color(edge, 0.14))
+		draw_arc(Vector2.ZERO, 25.0, 0.0, TAU, 32, edge, 3.0)
+		draw_line(Vector2(-14.0, -6.0), Vector2(14.0, -6.0), Color.WHITE, 3.0)
+		draw_line(Vector2(-14.0, 6.0), Vector2(14.0, 6.0), Color.WHITE, 3.0)
+		draw_line(Vector2(-9.0, -10.0), Vector2(-9.0, 10.0), Color.WHITE, 2.0)
+		draw_line(Vector2(9.0, -10.0), Vector2(9.0, 10.0), Color.WHITE, 2.0)
+
+	if player_capture_locked:
+		draw_rect(Rect2(12.0, -36.0, 24.0, 22.0), Color(0.16, 0.19, 0.21, 0.95), true)
+		draw_arc(Vector2(24.0, -36.0), 8.0, PI, TAU, 12, Color(0.72, 0.76, 0.78), 2.0)
+		draw_string(ThemeDB.fallback_font, Vector2(-58.0, 64.0), "LOCKED", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 13, Color(0.68, 0.72, 0.74))
+
+	var title: String = "INDUSTRIAL OBJECTIVE" if decisive else "CENTRAL BRIDGEHEAD"
+	var role: String = "FINAL / DECISIVE" if decisive else "INTERMEDIATE / TACTICAL HINGE"
+	var state_text: String = "CONTESTED" if contested else "%s CONTROL" % control_owner
+	draw_string(ThemeDB.fallback_font, Vector2(-92.0, -64.0), title, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 15, Color.WHITE)
+	draw_string(ThemeDB.fallback_font, Vector2(-92.0, -47.0), "%s  ·  %s" % [role, state_text], HORIZONTAL_ALIGNMENT_LEFT, -1.0, 11, edge.lightened(0.18))
+	if progress > 0.0:
+		draw_string(ThemeDB.fallback_font, Vector2(-30.0, 6.0), "%d%%" % int(round(progress * 100.0)), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 16, Color.WHITE)

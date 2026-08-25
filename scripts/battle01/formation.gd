@@ -45,6 +45,12 @@ var _visibility_field: BattleVisibilityField
 var _fire_cooldown: float = 0.0
 var _damage_serial: int = 0
 var _fire_serial: int = 0
+var _visual_lod: int = 1
+var _command_feedback_remaining: float = 0.0
+var _shot_fx_remaining: float = 0.0
+var _shot_fx_target: Vector2 = Vector2.ZERO
+var _under_fire_remaining: float = 0.0
+var _death_fx_remaining: float = 0.0
 
 func _ready() -> void:
 	_apply_definition()
@@ -57,6 +63,7 @@ func _ready() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
+	_update_visual_presentation(delta)
 	if not is_alive:
 		return
 	_fire_cooldown = maxf(0.0, _fire_cooldown - delta)
@@ -119,6 +126,7 @@ func _issue_navigation_order(world_target: Vector2, order_name: String) -> bool:
 	_move_target = _move_path[_move_path.size() - 1]
 	_has_move_target = true
 	_set_order(order_name)
+	_command_feedback_remaining = 1.5
 	queue_redraw()
 	return true
 
@@ -151,6 +159,7 @@ func take_damage(amount: int) -> void:
 	if not is_alive or amount <= 0:
 		return
 	_damage_serial += 1
+	_under_fire_remaining = 0.65
 	current_hp = maxi(0, current_hp - amount)
 	health_changed.emit(current_hp, max_hp)
 	queue_redraw()
@@ -249,6 +258,8 @@ func _update_combat() -> void:
 	_fire_cooldown = fire_interval
 	current_ammo = maxi(0, current_ammo - 1)
 	_fire_serial += 1
+	_shot_fx_target = to_local(_combat_target.global_position)
+	_shot_fx_remaining = 0.18 if get_role() == "TANK" else 0.12
 	ammo_changed.emit(current_ammo, ammo_capacity)
 	attack_fired.emit(self, _combat_target, attack_damage)
 	_combat_target.take_damage(attack_damage)
@@ -267,6 +278,7 @@ func _die() -> void:
 		is_selected = false
 		selection_changed.emit(false)
 	_set_order("DESTROYED")
+	_death_fx_remaining = 1.6
 	queue_redraw()
 	died.emit(self)
 
@@ -277,38 +289,203 @@ func _set_order(value: String) -> void:
 	order_changed.emit(current_order)
 
 func _draw() -> void:
+	var scale_factor: float = _marker_scale()
 	if faction == "RED":
 		if intel_state == "UNSEEN" or intel_state == "LAST_KNOWN":
 			return
 		if intel_state == "CONTACT":
-			draw_circle(Vector2.ZERO, 24.0, Color(0.95, 0.60, 0.18, 0.16))
-			draw_arc(Vector2.ZERO, 26.0, 0.0, TAU, 32, Color(0.95, 0.60, 0.18, 0.9), 3.0)
-			draw_string(ThemeDB.fallback_font, Vector2(-7.0, 7.0), "?", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 22, Color(1.0, 0.82, 0.35))
+			_draw_contact_marker(scale_factor)
 			return
 
 	if not is_alive:
-		draw_circle(Vector2.ZERO, 26.0, Color(0.12, 0.12, 0.12))
-		draw_line(Vector2(-18.0, -18.0), Vector2(18.0, 18.0), Color(0.8, 0.2, 0.2), 5.0)
-		draw_line(Vector2(18.0, -18.0), Vector2(-18.0, 18.0), Color(0.8, 0.2, 0.2), 5.0)
+		_draw_destroyed(scale_factor)
 		return
 
-	draw_circle(Vector2.ZERO, 26.0, body_color)
-	draw_circle(Vector2.ZERO, 18.0, body_color.darkened(0.55))
-	draw_line(Vector2(-10.0, 0.0), Vector2(10.0, 0.0), Color.WHITE, 3.0)
-	draw_line(Vector2(0.0, -10.0), Vector2(0.0, 10.0), Color.WHITE, 3.0)
+	var faction_color: Color = Color("4d8cff") if faction == "BLUE" else Color("ff4d4d")
+	_draw_formation_body(scale_factor, faction_color)
+	_draw_role_glyph(scale_factor, Color.WHITE)
 
 	var hp_ratio: float = float(current_hp) / float(maxi(1, max_hp))
-	draw_rect(Rect2(-30.0, -44.0, 60.0, 6.0), Color(0.08, 0.08, 0.08, 0.9))
-	draw_rect(Rect2(-30.0, -44.0, 60.0 * hp_ratio, 6.0), Color(0.25, 0.9, 0.35, 0.95))
+	var damaged: bool = current_hp < max_hp
+	var may_show_hp: bool = is_selected or _under_fire_remaining > 0.0 or (damaged and _visual_lod != 2)
+	if faction == "RED" and intel_state != "CONFIRMED":
+		may_show_hp = false
+	if may_show_hp:
+		_draw_hp_bar(scale_factor, hp_ratio)
 
-	if is_supply_truck():
-		draw_string(ThemeDB.fallback_font, Vector2(-28.0, 54.0), "SUP %d/%d" % [current_supply_charges, supply_capacity], HORIZONTAL_ALIGNMENT_LEFT, -1.0, 13, Color(0.55, 0.92, 1.0))
+	var low_ammo: bool = ammo_capacity > 0 and current_ammo <= int(floor(float(ammo_capacity) * 0.25))
+	if low_ammo and (is_selected or _visual_lod != 0):
+		var ammo_text: String = "EMPTY" if current_ammo == 0 else "LOW AMMO"
+		draw_string(ThemeDB.fallback_font, Vector2(-30.0, 52.0) * scale_factor, ammo_text, HORIZONTAL_ALIGNMENT_LEFT, -1.0, int(11.0 * scale_factor), Color("ffc857"))
+	if is_supply_truck() and (is_selected or current_supply_charges == 0):
+		draw_string(ThemeDB.fallback_font, Vector2(-34.0, 52.0) * scale_factor, "AMMO %d/%d" % [current_supply_charges, supply_capacity], HORIZONTAL_ALIGNMENT_LEFT, -1.0, int(11.0 * scale_factor), Color("4dd0e1") if current_supply_charges > 0 else Color("ff5544"))
 
 	if is_selected:
-		draw_arc(Vector2.ZERO, 38.0, 0.0, TAU, 48, Color(0.35, 0.95, 1.0), 3.0)
-	if _has_move_target and _path_index < _move_path.size():
-		var local_path := PackedVector2Array([Vector2.ZERO])
-		for i: int in range(_path_index, _move_path.size()):
-			local_path.append(to_local(_move_path[i]))
-		if local_path.size() >= 2:
-			draw_polyline(local_path, Color(0.35, 0.95, 1.0, 0.65), 2.0)
+		draw_arc(Vector2.ZERO, 40.0 * scale_factor, 0.0, TAU, 48, Color(0.65, 0.88, 1.0), 3.0 * scale_factor)
+		draw_arc(Vector2.ZERO, 34.0 * scale_factor, -PI * 0.20, PI * 0.20, 12, faction_color.lightened(0.25), 4.0 * scale_factor)
+
+	if _visual_lod == 0 and (is_selected or damaged or low_ammo):
+		draw_string(ThemeDB.fallback_font, Vector2(-46.0, -52.0) * scale_factor, _abbreviated_name(), HORIZONTAL_ALIGNMENT_LEFT, -1.0, int(12.0 * scale_factor), Color.WHITE)
+	elif _visual_lod == 1 and is_selected:
+		draw_string(ThemeDB.fallback_font, Vector2(-46.0, -52.0) * scale_factor, _abbreviated_name(), HORIZONTAL_ALIGNMENT_LEFT, -1.0, int(12.0 * scale_factor), Color.WHITE)
+
+	if is_selected or (_visual_lod == 1 and current_order != "HOLD"):
+		_draw_order_glyph(scale_factor)
+	if _is_capturing():
+		draw_string(ThemeDB.fallback_font, Vector2(28.0, -28.0) * scale_factor, "CAP", HORIZONTAL_ALIGNMENT_LEFT, -1.0, int(10.0 * scale_factor), Color("ffc857"))
+
+	_draw_command_path(scale_factor)
+	_draw_combat_fx(scale_factor)
+
+func _update_visual_presentation(delta: float) -> void:
+	_command_feedback_remaining = maxf(0.0, _command_feedback_remaining - delta)
+	_shot_fx_remaining = maxf(0.0, _shot_fx_remaining - delta)
+	_under_fire_remaining = maxf(0.0, _under_fire_remaining - delta)
+	_death_fx_remaining = maxf(0.0, _death_fx_remaining - delta)
+	var camera: Camera2D = get_viewport().get_camera_2d()
+	if camera != null:
+		var zoom_value: float = camera.zoom.x
+		var previous_lod: int = _visual_lod
+		if _visual_lod == 2 and zoom_value > 0.82:
+			_visual_lod = 1
+		elif _visual_lod == 1:
+			if zoom_value < 0.72:
+				_visual_lod = 2
+			elif zoom_value > 1.22:
+				_visual_lod = 0
+		elif _visual_lod == 0 and zoom_value < 1.10:
+			_visual_lod = 1
+		if previous_lod != _visual_lod:
+			queue_redraw()
+	if _command_feedback_remaining > 0.0 or _shot_fx_remaining > 0.0 or _under_fire_remaining > 0.0 or _death_fx_remaining > 0.0:
+		queue_redraw()
+
+func _marker_scale() -> float:
+	var camera: Camera2D = get_viewport().get_camera_2d()
+	if camera == null:
+		return 1.0
+	return clampf(1.0 / maxf(0.1, camera.zoom.x), 0.72, 1.65)
+
+func _draw_contact_marker(scale_factor: float) -> void:
+	var radius: float = 27.0 * scale_factor
+	draw_circle(Vector2.ZERO, radius, Color(0.95, 0.60, 0.18, 0.09))
+	draw_arc(Vector2.ZERO, radius, 0.18, PI - 0.18, 20, Color(0.95, 0.66, 0.24, 0.92), 3.0 * scale_factor)
+	draw_arc(Vector2.ZERO, radius, PI + 0.18, TAU - 0.18, 20, Color(0.95, 0.66, 0.24, 0.92), 3.0 * scale_factor)
+	draw_string(ThemeDB.fallback_font, Vector2(-7.0, 7.0) * scale_factor, "?", HORIZONTAL_ALIGNMENT_LEFT, -1.0, int(22.0 * scale_factor), Color(1.0, 0.82, 0.35))
+
+func _draw_destroyed(scale_factor: float) -> void:
+	var radius: float = 27.0 * scale_factor
+	draw_circle(Vector2.ZERO, radius, Color(0.10, 0.11, 0.11, 0.92))
+	draw_line(Vector2(-17.0, -17.0) * scale_factor, Vector2(17.0, 17.0) * scale_factor, Color(0.76, 0.18, 0.16), 4.0 * scale_factor)
+	draw_line(Vector2(17.0, -17.0) * scale_factor, Vector2(-17.0, 17.0) * scale_factor, Color(0.76, 0.18, 0.16), 4.0 * scale_factor)
+	if _death_fx_remaining > 0.0:
+		var fade: float = clampf(_death_fx_remaining / 1.6, 0.0, 1.0)
+		draw_circle(Vector2.ZERO, (42.0 + (1.0 - fade) * 24.0) * scale_factor, Color(1.0, 0.38, 0.10, fade * 0.18))
+		draw_circle(Vector2(8.0, -22.0) * scale_factor, 13.0 * scale_factor, Color(0.18, 0.18, 0.17, fade * 0.55))
+
+func _draw_formation_body(scale_factor: float, color: Color) -> void:
+	var radius: float = (23.0 if _visual_lod == 0 else 26.0 if _visual_lod == 1 else 29.0) * scale_factor
+	if _visual_lod == 0:
+		draw_circle(Vector2.ZERO, radius, color.darkened(0.28))
+		draw_circle(Vector2.ZERO, radius - 6.0 * scale_factor, color.darkened(0.58))
+	else:
+		draw_circle(Vector2.ZERO, radius, Color(color, 0.22))
+		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 32, color, (3.0 if _visual_lod == 1 else 4.5) * scale_factor)
+	if faction == "RED":
+		draw_rect(Rect2(Vector2(-15.0, -15.0) * scale_factor, Vector2(30.0, 30.0) * scale_factor), Color(color, 0.18), false, 2.0 * scale_factor)
+
+func _draw_role_glyph(scale_factor: float, color: Color) -> void:
+	var s: float = scale_factor
+	match get_role():
+		"RECON":
+			draw_arc(Vector2.ZERO, 10.0 * s, PI * 0.15, PI * 0.85, 12, color, 2.2 * s)
+			draw_circle(Vector2.ZERO, 3.0 * s, color)
+		"INFANTRY":
+			draw_circle(Vector2(0.0, -5.0) * s, 3.0 * s, color)
+			draw_line(Vector2(0.0, -1.0) * s, Vector2(0.0, 9.0) * s, color, 2.4 * s)
+			draw_line(Vector2(-7.0, 3.0) * s, Vector2(7.0, 3.0) * s, color, 2.0 * s)
+		"IFV":
+			draw_rect(Rect2(Vector2(-11.0, -7.0) * s, Vector2(22.0, 14.0) * s), color, false, 2.2 * s)
+			draw_circle(Vector2.ZERO, 4.0 * s, color)
+		"TANK", "ARMOR":
+			draw_rect(Rect2(Vector2(-10.0, -8.0) * s, Vector2(20.0, 16.0) * s), color, false, 2.4 * s)
+			draw_line(Vector2.ZERO, Vector2(14.0, 0.0) * s, color, 3.0 * s)
+		"LOGISTICS":
+			draw_rect(Rect2(Vector2(-10.0, -8.0) * s, Vector2(20.0, 16.0) * s), color, false, 2.2 * s)
+			draw_line(Vector2(-6.0, 0.0) * s, Vector2(6.0, 0.0) * s, color, 2.0 * s)
+			draw_line(Vector2.ZERO, Vector2(0.0, -5.0) * s, color, 2.0 * s)
+
+func _draw_hp_bar(scale_factor: float, ratio: float) -> void:
+	var width: float = 62.0 * scale_factor
+	var origin := Vector2(-31.0, -43.0) * scale_factor
+	var hp_color := Color("6ccb6c") if ratio > 0.55 else Color("ffc857") if ratio > 0.25 else Color("ff5544")
+	draw_rect(Rect2(origin, Vector2(width, 6.0 * scale_factor)), Color(0.02, 0.03, 0.03, 0.92))
+	draw_rect(Rect2(origin, Vector2(width * ratio, 6.0 * scale_factor)), hp_color)
+
+func _draw_order_glyph(scale_factor: float) -> void:
+	var color := Color("6ccb6c") if current_order == "MOVE" else Color("ffc857") if current_order == "WITHDRAW" else Color("4d8cff")
+	var text: String = "MOV" if current_order == "MOVE" else "WD" if current_order == "WITHDRAW" else "HLD" if current_order == "HOLD" else current_order.left(3)
+	draw_string(ThemeDB.fallback_font, Vector2(-15.0, 70.0) * scale_factor, text, HORIZONTAL_ALIGNMENT_LEFT, -1.0, int(10.0 * scale_factor), color)
+
+func _draw_command_path(scale_factor: float) -> void:
+	if not _has_move_target or _path_index >= _move_path.size():
+		return
+	var retain_terminal: bool = is_selected and _command_feedback_remaining <= 0.0
+	if _command_feedback_remaining <= 0.0 and not retain_terminal:
+		return
+	var color := Color("ffc857") if current_order == "WITHDRAW" else Color("6ccb6c")
+	var alpha: float = 0.28 if retain_terminal else clampf(_command_feedback_remaining / 1.5, 0.25, 0.82)
+	var local_path := PackedVector2Array([Vector2.ZERO])
+	for index: int in range(_path_index, _move_path.size()):
+		local_path.append(to_local(_move_path[index]))
+	if local_path.size() >= 2 and not retain_terminal:
+		if current_order == "WITHDRAW":
+			_draw_dashed_path(local_path, Color(color, alpha), 11.0 * scale_factor, 2.3 * scale_factor)
+		else:
+			draw_polyline(local_path, Color(color, alpha), 2.3 * scale_factor)
+	var destination: Vector2 = to_local(_move_target)
+	draw_arc(destination, 15.0 * scale_factor, 0.0, TAU, 24, Color(color, alpha + 0.15), 2.0 * scale_factor)
+	if current_order == "WITHDRAW":
+		draw_line(destination + Vector2(-8.0, -4.0) * scale_factor, destination, color, 2.0 * scale_factor)
+		draw_line(destination + Vector2(-8.0, 4.0) * scale_factor, destination, color, 2.0 * scale_factor)
+
+func _draw_dashed_path(points: PackedVector2Array, color: Color, dash: float, width: float) -> void:
+	for index: int in range(1, points.size()):
+		var from_point: Vector2 = points[index - 1]
+		var to_point: Vector2 = points[index]
+		var length: float = from_point.distance_to(to_point)
+		if length <= 0.001: continue
+		var direction: Vector2 = (to_point - from_point) / length
+		var cursor: float = 0.0
+		while cursor < length:
+			var end_distance: float = minf(length, cursor + dash)
+			draw_line(from_point + direction * cursor, from_point + direction * end_distance, color, width)
+			cursor += dash * 1.8
+
+func _draw_combat_fx(scale_factor: float) -> void:
+	if _shot_fx_remaining > 0.0:
+		var ratio: float = _shot_fx_remaining / (0.18 if get_role() == "TANK" else 0.12)
+		var heavy: bool = get_role() == "TANK" or get_role() == "ARMOR"
+		var ifv: bool = get_role() == "IFV"
+		var shot_color: Color = Color(1.0, 0.70, 0.28, ratio) if heavy else Color(1.0, 0.86, 0.42, ratio)
+		var width: float = (5.0 if heavy else 3.0 if ifv else 1.5) * scale_factor
+		draw_line(Vector2.ZERO, _shot_fx_target, shot_color, width)
+		var direction: Vector2 = _shot_fx_target.normalized() if _shot_fx_target.length() > 0.01 else Vector2.RIGHT
+		draw_circle(direction * 25.0 * scale_factor, (11.0 if heavy else 7.0 if ifv else 4.0) * scale_factor, Color(1.0, 0.48, 0.15, ratio * 0.72))
+	if _under_fire_remaining > 0.0:
+		var fade: float = _under_fire_remaining / 0.65
+		draw_arc(Vector2.ZERO, 33.0 * scale_factor, -PI * 0.85, -PI * 0.15, 16, Color(1.0, 0.24, 0.16, fade), 3.5 * scale_factor)
+		draw_circle(Vector2(17.0, 12.0) * scale_factor, 5.0 * scale_factor, Color(1.0, 0.48, 0.18, fade * 0.66))
+
+func _is_capturing() -> bool:
+	if not can_capture or get_parent() == null:
+		return false
+	for child: Node in get_parent().get_children():
+		if child is BattleObjective:
+			var objective := child as BattleObjective
+			if objective.state == "CAPTURING" and global_position.distance_to(objective.global_position) <= objective.capture_radius:
+				return true
+	return false
+
+func _abbreviated_name() -> String:
+	return display_name.replace("BLUE ", "").replace("RED ", "")
