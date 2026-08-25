@@ -51,6 +51,53 @@ jobs:
             exit 1
           fi
 
+      - name: Run revised role capture smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --script tests/battle01_role_capture_v2_smoke.gd 2>&1 | tee godot-role-capture-v2.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access|ROLE_CAPTURE_V2_SMOKE_FAILURE' godot-role-capture-v2.log; then
+            echo 'Revised role/capture smoke reported a blocking error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_ROLE_CAPTURE_V2_SMOKE_PASS' godot-role-capture-v2.log
+          grep -q 'LIVE_ROLE_DAMAGE_APPLIED_PASS' godot-role-capture-v2.log
+          grep -q 'ARMOR_DENIES_ENEMY_CAPTURE_PASS' godot-role-capture-v2.log
+          grep -q 'NO_GROUND_CONTROL_SOFTLOCK_DEFEAT_PASS' godot-role-capture-v2.log
+
+      - name: Run formal roster revised-role regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --script tests/formal_combat_roster_smoke.gd 2>&1 | tee godot-formal-roster.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access|FORMAL_ROSTER_SMOKE_FAIL' godot-formal-roster.log; then
+            echo 'Formal roster regression reported a blocking error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_FORMAL_COMBAT_ROSTER_SMOKE_PASS' godot-formal-roster.log
+
+      - name: Run logistics and match-flow regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --script tests/battle01_logistics_flow_smoke.gd 2>&1 | tee godot-logistics-flow.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access|LOGISTICS_FLOW_SMOKE_FAILURE' godot-logistics-flow.log; then
+            echo 'Logistics/match-flow regression reported a blocking error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_LOGISTICS_FLOW_SMOKE_PASS' godot-logistics-flow.log
+
+      - name: Run final-objective AI regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --script tests/battle01_enemy_ai_final_objective_smoke.gd 2>&1 | tee godot-final-objective-ai.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access|FINAL_OBJECTIVE_AI_SMOKE_FAILURE' godot-final-objective-ai.log; then
+            echo 'Final-objective AI regression reported a blocking error.'
+            exit 1
+          fi
+          grep -q 'FRONTLINE_ENEMY_AI_FINAL_OBJECTIVE_SMOKE_PASS' godot-final-objective-ai.log
+
       - name: Run terrain LOS and combat regression smoke
         shell: bash
         run: |
@@ -166,6 +213,8 @@ jobs:
             grep -q 'FRONTLINE_OBJECTIVE_CAPTURED' godot-runtime.log && echo OBJECTIVE_CAPTURE_PASS
             grep -q 'FRONTLINE_VICTORY' godot-runtime.log && echo VICTORY_PASS
             grep -q 'FRONTLINE_ENEMY_AI_SMOKE_PASS' godot-enemy-ai.log && echo ENEMY_AI_SMOKE_PASS
+            grep -q 'FRONTLINE_ROLE_CAPTURE_V2_SMOKE_PASS' godot-role-capture-v2.log && echo REVISED_ROLE_CAPTURE_PASS
+            grep -q 'FRONTLINE_LOGISTICS_FLOW_SMOKE_PASS' godot-logistics-flow.log && echo LOGISTICS_FLOW_PASS
             echo FRONTLINE_NAVIGATION_ROUTE_READY
             echo FRONTLINE_CENTRAL_ROUTE_PASS
             echo FRONTLINE_NORTH_ROUTE_PASS
@@ -181,6 +230,10 @@ jobs:
           path: |
             godot-version.log
             godot-editor.log
+            godot-role-capture-v2.log
+            godot-formal-roster.log
+            godot-logistics-flow.log
+            godot-final-objective-ai.log
             godot-runtime.log
             godot-multi-command.log
             godot-navigation.log
