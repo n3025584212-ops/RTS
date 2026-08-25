@@ -61,7 +61,7 @@ func _run() -> void:
 	var simultaneous_responder: BattleFormation = ai._select_final_objective_responder(true)
 	var central_preserved: bool = (
 		simultaneous_responder != inf1
-		and (str((ai._agents[inf1] as Dictionary)["state"]) == BattleEnemyAIController.MOVE or str((ai._agents[inf1] as Dictionary)["state"]) == BattleEnemyAIController.ENGAGE or inf1.global_position.distance_to(central.global_position) <= ai.ARRIVAL_TOLERANCE)
+		and (str((ai._agents[inf1]] as Dictionary)["state"]) == BattleEnemyAIController.MOVE or str((ai._agents[inf1] as Dictionary)["state"]) == BattleEnemyAIController.ENGAGE or inf1.global_position.distance_to(central.global_position) <= BattleEnemyAIController.ARRIVAL_TOLERANCE)
 	)
 	_require(central_preserved, "AI_FINAL_OBJECTIVE_CENTRAL_DEFENSE_PRESERVED_PASS")
 
@@ -86,7 +86,7 @@ func _run() -> void:
 	)
 	_require(supply_excluded, "AI_FINAL_OBJECTIVE_SUPPLY_EXCLUDED_PASS")
 
-	var fixed_trigger_unchanged: bool = ai._reinforcement_trigger_reason(ai.REINFORCEMENT_TIME, false, false) == "fixed_time"
+	var fixed_trigger_unchanged: bool = ai._reinforcement_trigger_reason(BattleEnemyAIController.REINFORCEMENT_TIME, false, false) == "fixed_time"
 	var central_loss_trigger_unchanged: bool = ai._reinforcement_trigger_reason(0.0, true, false) == "objective_loss"
 	ai._activate_reinforcements("final_objective_smoke_existing_trigger")
 	var inf2_saved: Dictionary = ai._agents[inf2]
