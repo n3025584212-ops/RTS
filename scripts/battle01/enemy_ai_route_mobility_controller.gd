@@ -1,5 +1,5 @@
 class_name BattleEnemyAIRouteMobilityController
-extends BattleEnemyAILogisticsController
+extends BattleEnemyAIPreReserveProgressionController
 
 # Route-identity correction: all gameplay-critical navigation decisions in the live
 # Enemy AI bind mobility to the Formation issuing the move. Generic Navigation
