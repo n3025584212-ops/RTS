@@ -8,15 +8,17 @@ const AMBER := Color("ffc857")
 const CYAN := Color("4dd0e1")
 
 var _battle: Node2D
-var _camera: Camera2D
+var _camera_3d: BattleCamera3D
 var _central: BattleObjective
 var _industrial: BattleObjective
 var _intel: BattleIntelTracker
 var _war_flow: BattlePlayerWarFlow
+var _navigation_dragging: bool = false
+var _last_gui_event_consumed: bool = false
 
 func configure(battle: Node2D) -> void:
 	_battle = battle
-	_camera = battle.get_node_or_null("BattleCamera") as Camera2D
+	_camera_3d = battle.get_node_or_null("World3D/BattleCamera3D") as BattleCamera3D
 	_central = battle.get_node_or_null("CentralBridgehead") as BattleObjective
 	_industrial = battle.get_node_or_null("IndustrialObjective") as BattleObjective
 	_intel = battle.get_node_or_null("IntelTracker") as BattleIntelTracker
@@ -61,7 +63,7 @@ func _draw() -> void:
 	_draw_rallies()
 	_draw_formations()
 	_draw_selected_paths()
-	_draw_camera_viewport()
+	_draw_camera_indicator()
 
 	_draw_map_text(Vector2(8.0, 15.0), "N", Color(0.75, 0.86, 0.92), 12)
 	_draw_map_text(Vector2(8.0, size.y - 8.0), "WEST REAR", Color(0.38, 0.68, 1.0), 10)
@@ -177,13 +179,17 @@ func _draw_selected_paths() -> void:
 		if mapped.size() >= 2:
 			draw_polyline(mapped, Color(0.42, 0.80, 0.42, 0.55), 1.2)
 
-func _draw_camera_viewport() -> void:
-	if _camera == null or _camera.get_viewport() == null:
+func _draw_camera_indicator() -> void:
+	if _camera_3d == null or not is_instance_valid(_camera_3d):
 		return
-	var viewport_size: Vector2 = _camera.get_viewport_rect().size / _camera.zoom
-	var world_rect := Rect2(_camera.get_screen_center_position() - viewport_size * 0.5, viewport_size)
-	var mapped := Rect2(_to_map(world_rect.position), world_rect.size / MAP_SIZE * size)
-	draw_rect(mapped, Color(0.84, 0.92, 1.0, 0.65), false, 1.0)
+	var point: Vector2 = _to_map(_camera_3d.focus_sim)
+	var color := Color(0.84, 0.92, 1.0, 0.92)
+	draw_circle(point, 7.0, color, false, 1.6)
+	draw_line(point + Vector2(-10.0, 0.0), point + Vector2(-3.0, 0.0), color, 1.4)
+	draw_line(point + Vector2(3.0, 0.0), point + Vector2(10.0, 0.0), color, 1.4)
+	draw_line(point + Vector2(0.0, -10.0), point + Vector2(0.0, -3.0), color, 1.4)
+	draw_line(point + Vector2(0.0, 3.0), point + Vector2(0.0, 10.0), color, 1.4)
+	_draw_map_text(point + Vector2(10.0, -8.0), "CAM", color, 9)
 
 func _draw_world_rect(world_rect: Rect2, color: Color) -> void:
 	draw_rect(Rect2(_to_map(world_rect.position), world_rect.size / MAP_SIZE * size), color, true)
@@ -204,12 +210,91 @@ func _to_map(world: Vector2) -> Vector2:
 func _to_world(local: Vector2) -> Vector2:
 	return Vector2(local.x / maxf(1.0, size.x) * MAP_SIZE.x, local.y / maxf(1.0, size.y) * MAP_SIZE.y)
 
-func _on_gui_input(event: InputEvent) -> void:
-	if _camera == null:
+func _focus_camera_from_local(local_position: Vector2) -> void:
+	if _camera_3d == null or not is_instance_valid(_camera_3d):
 		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		_camera.position = _to_world(event.position)
+	_camera_3d.focus_on_sim(_to_world(local_position))
+	queue_redraw()
+
+func _on_gui_input(event: InputEvent) -> void:
+	_last_gui_event_consumed = false
+	if _camera_3d == null or not is_instance_valid(_camera_3d):
+		return
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if mouse_event.pressed:
+			_navigation_dragging = true
+			_focus_camera_from_local(mouse_event.position)
+		elif _navigation_dragging:
+			_focus_camera_from_local(mouse_event.position)
+			_navigation_dragging = false
+		else:
+			return
+		_last_gui_event_consumed = true
 		accept_event()
-	elif event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		_camera.position = _to_world(event.position)
+	elif event is InputEventMouseMotion and _navigation_dragging:
+		_focus_camera_from_local((event as InputEventMouseMotion).position)
+		_last_gui_event_consumed = true
 		accept_event()
+
+func is_camera3d_bound_for_test() -> bool:
+	return _camera_3d != null and is_instance_valid(_camera_3d)
+
+func get_camera3d_for_test() -> BattleCamera3D:
+	return _camera_3d
+
+func get_camera_focus_for_test() -> Vector2:
+	return _camera_3d.focus_sim if is_camera3d_bound_for_test() else Vector2.ZERO
+
+func has_camera_indicator_for_test() -> bool:
+	return is_camera3d_bound_for_test()
+
+func did_consume_last_gui_event_for_test() -> bool:
+	return _last_gui_event_consumed
+
+func get_drawable_red_count_for_test() -> int:
+	if _battle == null:
+		return 0
+	var count: int = 0
+	for child: Node in _battle.get_children():
+		if not child is BattleFormation:
+			continue
+		var formation := child as BattleFormation
+		if formation.faction != "RED" or not formation.is_alive or not formation.visible or formation.process_mode == Node.PROCESS_MODE_DISABLED:
+			continue
+		if formation.intel_state == BattleIntelTracker.UNSEEN:
+			continue
+		count += 1
+	return count
+
+func simulate_click_for_test(local_position: Vector2) -> bool:
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = local_position
+	_on_gui_input(press)
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	release.position = local_position
+	_on_gui_input(release)
+	return _last_gui_event_consumed
+
+func simulate_drag_for_test(from_local: Vector2, to_local: Vector2) -> bool:
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = from_local
+	_on_gui_input(press)
+	var motion := InputEventMouseMotion.new()
+	motion.position = to_local
+	motion.button_mask = MOUSE_BUTTON_MASK_LEFT
+	_on_gui_input(motion)
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	release.position = to_local
+	_on_gui_input(release)
+	return _last_gui_event_consumed
