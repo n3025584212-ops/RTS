@@ -107,6 +107,7 @@ func _run() -> void:
 			break
 	_require(anchors_ok, "SEEDED_POSTURE_ANCHORS_ROUTE_GEOMETRY_PASS")
 
+	# Existing isolated real-Formation movement checks remain as baseline coverage.
 	recon.global_position = foot_entry
 	recon.stop()
 	var recon_issued: bool = recon.issue_move(foot_exit)
@@ -144,6 +145,57 @@ func _run() -> void:
 	_advance_formation(ifv)
 	_require(central_issued and ifv.global_position.distance_to(navigation.clamp_to_walkable_for_mobility(central_target, BattleRouteTerrain.MOBILITY_VEHICLE)) <= 6.0, "FORMATION_VEHICLE_CENTRAL_MOVEMENT_PASS")
 	_require(navigation.mobility_for_formation(logistics) == BattleRouteTerrain.MOBILITY_VEHICLE, "LOGISTICS_VEHICLE_PROFILE_PASS")
+
+	# Formation-aware mobility regression A: Recon + IFV exact overlap.
+	recon.global_position = foot_entry
+	ifv.global_position = foot_entry
+	recon.stop()
+	ifv.stop()
+	var overlap_recon_issued: bool = recon.issue_move(foot_exit)
+	var overlap_recon_path: PackedVector2Array = recon.get_navigation_path()
+	var overlap_ifv_issued: bool = ifv.issue_move(foot_exit)
+	var overlap_ifv_path: PackedVector2Array = ifv.get_navigation_path()
+	var overlap_recon_ok: bool = overlap_recon_issued and not overlap_recon_path.is_empty() and navigation.path_uses_north_foot_link(overlap_recon_path)
+	var overlap_ifv_ok: bool = overlap_ifv_issued and not overlap_ifv_path.is_empty() and not navigation.path_uses_north_foot_link(overlap_ifv_path)
+	_advance_formation(recon)
+	_advance_formation(ifv)
+	overlap_recon_ok = overlap_recon_ok and recon.global_position.distance_to(foot_exit) <= 6.0
+	overlap_ifv_ok = overlap_ifv_ok and ifv.global_position.distance_to(foot_exit) <= 6.0
+	_require(overlap_recon_ok, "FORMATION_RECON_FOOT_ACCESS_WITH_VEHICLE_OVERLAP_PASS")
+	_require(overlap_ifv_ok, "FORMATION_IFV_VEHICLE_ACCESS_WITH_FOOT_OVERLAP_PASS")
+
+	# Formation-aware mobility regression B: Infantry + Armor within the old 3-unit inference tolerance.
+	infantry.global_position = foot_entry
+	armor.global_position = foot_entry + Vector2(2.0, 0.0)
+	infantry.stop()
+	armor.stop()
+	var near_infantry_issued: bool = infantry.issue_move(foot_exit)
+	var near_infantry_path: PackedVector2Array = infantry.get_navigation_path()
+	var near_armor_issued: bool = armor.issue_move(foot_exit)
+	var near_armor_path: PackedVector2Array = armor.get_navigation_path()
+	var near_infantry_ok: bool = near_infantry_issued and not near_infantry_path.is_empty() and navigation.path_uses_north_foot_link(near_infantry_path)
+	var near_armor_ok: bool = near_armor_issued and not near_armor_path.is_empty() and not navigation.path_uses_north_foot_link(near_armor_path)
+	_advance_formation(infantry)
+	_advance_formation(armor)
+	near_infantry_ok = near_infantry_ok and infantry.global_position.distance_to(foot_exit) <= 6.0
+	near_armor_ok = near_armor_ok and armor.global_position.distance_to(foot_exit) <= 6.0
+	_require(near_infantry_ok, "FORMATION_INFANTRY_FOOT_ACCESS_NEAR_ARMOR_PASS")
+	_require(near_armor_ok, "FORMATION_ARMOR_VEHICLE_ACCESS_NEAR_INFANTRY_PASS")
+
+	# Formation-aware mobility regression C: Logistics + Recon exact overlap.
+	logistics.global_position = foot_entry
+	recon.global_position = foot_entry
+	logistics.stop()
+	recon.stop()
+	var logistics_overlap_issued: bool = logistics.issue_move(foot_exit)
+	var logistics_overlap_path: PackedVector2Array = logistics.get_navigation_path()
+	var logistics_overlap_ok: bool = logistics_overlap_issued and not logistics_overlap_path.is_empty() and not navigation.path_uses_north_foot_link(logistics_overlap_path)
+	_advance_formation(logistics)
+	logistics_overlap_ok = logistics_overlap_ok and logistics.global_position.distance_to(foot_exit) <= 6.0
+	_require(logistics_overlap_ok, "FORMATION_LOGISTICS_VEHICLE_ACCESS_WITH_RECON_OVERLAP_PASS")
+
+	var formation_aware_binding_ok: bool = overlap_recon_ok and overlap_ifv_ok and near_infantry_ok and near_armor_ok and logistics_overlap_ok
+	_require(formation_aware_binding_ok, "FORMATION_AWARE_MOBILITY_BINDING_PASS")
 
 	print("ROUTE_LENGTHS central=%.1f north=%.1f south=%.1f foot_link=%.1f vehicle_detour=%.1f" % [
 		central_length, north_length, south_length, foot_length, vehicle_detour_length
