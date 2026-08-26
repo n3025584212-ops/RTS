@@ -9,9 +9,12 @@ var _camera: BattleCamera3D
 var _selection: BattleSelectionController
 var _presentation: Battle3DPresentation
 var _war_flow: BattlePlayerWarFlow
+var _staging: BattlePreBattleStagingController
 var _dragging: bool = false
 var _drag_start: Vector2 = Vector2.ZERO
 var _drag_current: Vector2 = Vector2.ZERO
+var _placement_candidate: BattleFormation
+var _placement_dragging: bool = false
 
 func _ready() -> void:
 	call_deferred("_initialize")
@@ -22,6 +25,7 @@ func _initialize() -> void:
 	_selection = _battle.get_node("SelectionController") as BattleSelectionController
 	_presentation = _battle.get_node("World3D/Presentation3D") as Battle3DPresentation
 	_war_flow = _battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
+	_staging = _battle.get_node_or_null("PreBattleStaging") as BattlePreBattleStagingController
 	print("FRONTLINE_3D_INPUT_READY")
 
 func _input(event: InputEvent) -> void:
@@ -31,6 +35,8 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
+		if _staging != null and _staging.is_ui_point(mouse_event.position):
+			return
 		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_camera.adjust_zoom(1)
 			get_viewport().set_input_as_handled()
@@ -40,19 +46,7 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			if mouse_event.pressed:
-				_dragging = true
-				_drag_start = mouse_event.position
-				_drag_current = mouse_event.position
-			else:
-				if _dragging:
-					_drag_current = mouse_event.position
-					var additive := Input.is_key_pressed(KEY_SHIFT)
-					if _drag_start.distance_to(_drag_current) >= drag_threshold_px:
-						_select_box(_drag_start, _drag_current, additive)
-					else:
-						_select_click(mouse_event.position, additive)
-				_dragging = false
+			_handle_left_mouse(mouse_event)
 			get_viewport().set_input_as_handled()
 			return
 		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_RIGHT:
@@ -63,11 +57,61 @@ func _input(event: InputEvent) -> void:
 				var issued: int = _selection.issue_advance(target) if advance else _selection.issue_move(target)
 				if issued > 0:
 					_presentation.show_command_marker(target)
-					print("FRONTLINE_3D_%s_ORDER issued=%d target=%s" % ["ADVANCE" if advance else "MOVE", issued, target])
+					var staged: bool = _staging != null and _staging.is_staging_active()
+					print("FRONTLINE_3D_%s_%s issued=%d target=%s" % ["INITIAL" if staged else "LIVE", "ADVANCE" if advance else "MOVE", issued, target])
 			get_viewport().set_input_as_handled()
 			return
-	elif event is InputEventMouseMotion and _dragging:
-		_drag_current = (event as InputEventMouseMotion).position
+	elif event is InputEventMouseMotion:
+		var motion := event as InputEventMouseMotion
+		if _placement_candidate != null:
+			_drag_current = motion.position
+			if not _placement_dragging and _drag_start.distance_to(_drag_current) >= drag_threshold_px:
+				_placement_dragging = _staging != null and _staging.begin_placement_drag(_placement_candidate)
+			if _placement_dragging:
+				var sim_hit: Variant = screen_to_sim(motion.position)
+				if sim_hit != null:
+					_staging.update_placement_drag(Battle3DAdapter.clamp_sim(sim_hit as Vector2))
+				get_viewport().set_input_as_handled()
+			return
+		if _dragging:
+			_drag_current = motion.position
+
+func _handle_left_mouse(mouse_event: InputEventMouseButton) -> void:
+	if mouse_event.pressed:
+		_drag_start = mouse_event.position
+		_drag_current = mouse_event.position
+		if _staging != null and _staging.is_staging_active():
+			_placement_candidate = _pick_formation_at_screen(mouse_event.position)
+			if _placement_candidate != null:
+				if mouse_event.shift_pressed:
+					_selection.add_to_selection(_placement_candidate)
+				else:
+					_selection.select_only(_placement_candidate)
+				print("FRONTLINE_3D_STAGING_SELECTION unit=%s" % _placement_candidate.display_name)
+				return
+		_dragging = true
+		return
+
+	if _placement_candidate != null:
+		if _placement_dragging:
+			var sim_hit: Variant = screen_to_sim(mouse_event.position)
+			if sim_hit != null:
+				_staging.end_placement_drag(Battle3DAdapter.clamp_sim(sim_hit as Vector2))
+			else:
+				_staging.cancel_placement_drag()
+		_placement_candidate = null
+		_placement_dragging = false
+		_dragging = false
+		return
+
+	if _dragging:
+		_drag_current = mouse_event.position
+		var additive := Input.is_key_pressed(KEY_SHIFT)
+		if _drag_start.distance_to(_drag_current) >= drag_threshold_px:
+			_select_box(_drag_start, _drag_current, additive)
+		else:
+			_select_click(mouse_event.position, additive)
+	_dragging = false
 
 func screen_to_sim(screen_position: Vector2) -> Variant:
 	if _camera == null:
@@ -79,7 +123,7 @@ func screen_to_sim(screen_position: Vector2) -> Variant:
 		return null
 	return Battle3DAdapter.world_to_sim(hit as Vector3)
 
-func _select_click(screen_position: Vector2, additive: bool) -> void:
+func _pick_formation_at_screen(screen_position: Vector2) -> BattleFormation:
 	var picked: BattleFormation = null
 	var best_distance := click_radius_px
 	for formation: BattleFormation in _presentation.get_player_selectable_formations():
@@ -91,6 +135,10 @@ func _select_click(screen_position: Vector2, additive: bool) -> void:
 		if distance <= best_distance:
 			best_distance = distance
 			picked = formation
+	return picked
+
+func _select_click(screen_position: Vector2, additive: bool) -> void:
+	var picked: BattleFormation = _pick_formation_at_screen(screen_position)
 	if picked == null:
 		if not additive:
 			_selection.clear_selection()
