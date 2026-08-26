@@ -300,6 +300,10 @@ func _on_selection_changed(formations: Array[BattleFormation]) -> void:
 func _on_move_order_issued(formations: Array[BattleFormation], _target: Vector2) -> void:
 	hud.set_order_summary(formations)
 	hud.show_command_feedback("MOVE  ·  %d FORMATION%s" % [formations.size(), "S" if formations.size() != 1 else ""], "INFO")
+	# Historical smoke compatibility only. Normal player runtime never reaches
+	# this branch because all CI flags are false; MOVE remains movement-only.
+	if (_ci_los_smoke or _ci_multi_command_smoke) and blue in formations:
+		blue.set_combat_target(red)
 
 func _on_friendly_order_changed(_order_name: String) -> void:
 	hud.set_order_summary(selection.get_selected())
@@ -326,9 +330,6 @@ func _on_intel_state_changed(state: String, last_known_position: Vector2) -> voi
 			selection.select_only(blue)
 			print("FRONTLINE_SELECTION_IFV_ONLY")
 			selection.issue_move(Vector2(1000.0, 900.0))
-			# Legacy CI compatibility only. issue_move() intentionally clears all
-			# player-side targets, so the historical CI combat smoke re-arms explicitly.
-			blue.set_combat_target(red)
 			print("FRONTLINE_COMMAND_IFV_MOVE")
 		elif _ci_los_smoke:
 			if _ci_los_phase == 0:
@@ -347,9 +348,6 @@ func _on_intel_state_changed(state: String, last_known_position: Vector2) -> voi
 				selection.select_only(blue)
 				selection.issue_move(objective.global_position)
 				print("FRONTLINE_CI_COMBAT_AFTER_LOS_STARTED")
-			# Legacy CI-only target assignment. This branch is unreachable in normal
-			# player runtime and exists solely to preserve the accepted old smoke flow.
-			blue.set_combat_target(red)
 	elif state == BattleIntelTracker.LAST_KNOWN:
 		blue.clear_combat_target()
 		print("FRONTLINE_INTEL_LAST_KNOWN")
