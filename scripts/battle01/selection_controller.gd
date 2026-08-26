@@ -150,6 +150,9 @@ func issue_move(world_target: Vector2, spacing: float = -1.0) -> int:
 	var issued_count: int = 0
 	for i: int in range(count):
 		var formation: BattleFormation = _selected[i]
+		# Plain player MOVE is movement-only. Clear any player-side target that may
+		# have been inherited from legacy primary-IFV auto-target wiring or ADVANCE.
+		formation.clear_combat_target()
 		var lateral: float = (float(i) - float(count - 1) * 0.5) * actual_spacing
 		if formation.issue_move(world_target + Vector2(0.0, lateral)):
 			issued_count += 1
