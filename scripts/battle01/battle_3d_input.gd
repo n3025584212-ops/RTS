@@ -15,6 +15,7 @@ var _drag_start: Vector2 = Vector2.ZERO
 var _drag_current: Vector2 = Vector2.ZERO
 var _placement_candidate: BattleFormation
 var _placement_dragging: bool = false
+var _world_input_serial: int = 0
 
 func _ready() -> void:
 	call_deferred("_initialize")
@@ -26,17 +27,23 @@ func _initialize() -> void:
 	_presentation = _battle.get_node("World3D/Presentation3D") as Battle3DPresentation
 	_war_flow = _battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
 	_staging = _battle.get_node_or_null("PreBattleStaging") as BattlePreBattleStagingController
-	print("FRONTLINE_3D_INPUT_READY")
+	print("FRONTLINE_3D_INPUT_READY routing=GUI_FIRST_UNHANDLED_INPUT")
 
-func _input(event: InputEvent) -> void:
+# World interaction intentionally lives in _unhandled_input rather than _input.
+# Godot GUI Controls therefore receive _gui_input first and can consume events via
+# accept_event(). Only mouse events left unhandled by the HUD reach the 3D world.
+func _unhandled_input(event: InputEvent) -> void:
 	if _camera == null or _selection == null or _presentation == null or _war_flow == null:
 		return
 	if _war_flow.is_match_finished():
 		return
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
+		# The staging panel check remains as defense-in-depth. GUI-first routing is the
+		# authoritative protection for all other HUD Controls, including the minimap.
 		if _staging != null and _staging.is_ui_point(mouse_event.position):
 			return
+		_world_input_serial += 1
 		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_camera.adjust_zoom(1)
 			get_viewport().set_input_as_handled()
@@ -64,6 +71,7 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion:
 		var motion := event as InputEventMouseMotion
 		if _placement_candidate != null:
+			_world_input_serial += 1
 			_drag_current = motion.position
 			if not _placement_dragging and _drag_start.distance_to(_drag_current) >= drag_threshold_px:
 				_placement_dragging = _staging != null and _staging.begin_placement_drag(_placement_candidate)
@@ -74,6 +82,7 @@ func _input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 			return
 		if _dragging:
+			_world_input_serial += 1
 			_drag_current = motion.position
 
 func _handle_left_mouse(mouse_event: InputEventMouseButton) -> void:
@@ -176,3 +185,9 @@ func issue_advance_for_test(formation: BattleFormation, target_sim: Vector2) -> 
 		return false
 	_selection.select_only(formation)
 	return _selection.issue_advance(target_sim) == 1
+
+func get_world_input_serial_for_test() -> int:
+	return _world_input_serial
+
+func is_world_pointer_interaction_active_for_test() -> bool:
+	return _dragging or _placement_candidate != null or _placement_dragging
