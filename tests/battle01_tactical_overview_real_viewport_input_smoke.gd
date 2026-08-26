@@ -173,7 +173,7 @@ func _run() -> void:
 
 	selection.select_only(ifv)
 	var ifv_before: Vector2 = ifv.global_position
-	var advance_target := Vector2(1160.0, 900.0)
+	var advance_target := Vector2(1360.0, 900.0)
 	var advance_screen: Vector2 = camera.unproject_position(Battle3DAdapter.sim_to_world(advance_target, 0.0))
 	await _mouse_click(advance_screen, MOUSE_BUTTON_RIGHT, true)
 	_require(
@@ -229,51 +229,65 @@ func _run() -> void:
 	_finish(battle)
 
 func _mouse_click(screen_position: Vector2, button_index: int, shift_pressed: bool) -> void:
+	var input_position: Vector2 = _to_window_input_position(screen_position)
 	var press := InputEventMouseButton.new()
 	press.button_index = button_index
 	press.pressed = true
-	press.position = screen_position
+	press.position = input_position
+	press.global_position = input_position
 	press.shift_pressed = shift_pressed
 	Input.parse_input_event(press)
 	await process_frame
 	var release := InputEventMouseButton.new()
 	release.button_index = button_index
 	release.pressed = false
-	release.position = screen_position
+	release.position = input_position
+	release.global_position = input_position
 	release.shift_pressed = shift_pressed
 	Input.parse_input_event(release)
 	await process_frame
 
 func _mouse_drag(from_screen: Vector2, to_screen: Vector2) -> void:
+	var from_input: Vector2 = _to_window_input_position(from_screen)
 	var press := InputEventMouseButton.new()
 	press.button_index = MOUSE_BUTTON_LEFT
 	press.pressed = true
-	press.position = from_screen
+	press.position = from_input
+	press.global_position = from_input
 	Input.parse_input_event(press)
 	await process_frame
-	var previous: Vector2 = from_screen
+	var previous_input: Vector2 = from_input
 	for point: Vector2 in [from_screen.lerp(to_screen, 0.5), to_screen]:
+		var input_point: Vector2 = _to_window_input_position(point)
 		var motion := InputEventMouseMotion.new()
-		motion.position = point
-		motion.relative = point - previous
+		motion.position = input_point
+		motion.global_position = input_point
+		motion.relative = input_point - previous_input
 		motion.button_mask = MOUSE_BUTTON_MASK_LEFT
 		Input.parse_input_event(motion)
-		previous = point
+		previous_input = input_point
 		await process_frame
+	var to_input: Vector2 = _to_window_input_position(to_screen)
 	var release := InputEventMouseButton.new()
 	release.button_index = MOUSE_BUTTON_LEFT
 	release.pressed = false
-	release.position = to_screen
+	release.position = to_input
+	release.global_position = to_input
 	Input.parse_input_event(release)
 	await process_frame
 
 func _mouse_wheel(screen_position: Vector2, wheel_button: int) -> void:
+	var input_position: Vector2 = _to_window_input_position(screen_position)
 	var wheel := InputEventMouseButton.new()
 	wheel.button_index = wheel_button
 	wheel.pressed = true
-	wheel.position = screen_position
+	wheel.position = input_position
+	wheel.global_position = input_position
 	Input.parse_input_event(wheel)
 	await process_frame
+
+func _to_window_input_position(viewport_position: Vector2) -> Vector2:
+	return root.get_screen_transform() * viewport_position
 
 func _key_hold(keycode: int, frames: int) -> void:
 	var press := InputEventKey.new()
