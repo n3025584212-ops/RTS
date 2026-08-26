@@ -22,6 +22,7 @@ var current_hp: int = 0
 var current_ammo: int = 0
 var current_supply_charges: int = 0
 var intel_state: String = "CONFIRMED"
+var hold_fire_enabled: bool = false
 
 var move_speed: float = 100.0
 var max_hp: int = 100
@@ -112,7 +113,12 @@ func set_navigation(navigation: BattleNavigation) -> void:
 	_navigation = navigation
 
 func issue_move(world_target: Vector2) -> bool:
+	clear_combat_target()
 	return _issue_navigation_order(world_target, "MOVE")
+
+func issue_advance(world_target: Vector2) -> bool:
+	clear_combat_target()
+	return _issue_navigation_order(world_target, "ADVANCE")
 
 func issue_withdraw(world_target: Vector2) -> bool:
 	clear_combat_target()
@@ -142,6 +148,7 @@ func stop() -> void:
 	_move_path = PackedVector2Array()
 	_path_index = 0
 	_move_target = global_position
+	clear_combat_target()
 	_set_order("HOLD")
 	queue_redraw()
 
@@ -152,6 +159,21 @@ func set_combat_target(target: BattleFormation) -> void:
 
 func clear_combat_target() -> void:
 	_combat_target = null
+
+func set_hold_fire_enabled(value: bool) -> void:
+	if hold_fire_enabled == value:
+		return
+	hold_fire_enabled = value
+	if hold_fire_enabled:
+		clear_combat_target()
+	queue_redraw()
+
+func toggle_hold_fire() -> bool:
+	set_hold_fire_enabled(not hold_fire_enabled)
+	return hold_fire_enabled
+
+func is_hold_fire_enabled() -> bool:
+	return hold_fire_enabled
 
 func set_visibility_field(field: BattleVisibilityField) -> void:
 	_visibility_field = field
@@ -285,10 +307,15 @@ func _finish_move() -> void:
 	_move_path = PackedVector2Array()
 	_path_index = 0
 	_move_target = global_position
+	clear_combat_target()
 	_set_order("HOLD")
 	queue_redraw()
 
 func _update_combat() -> void:
+	# HOLD FIRE is a persistent fire-discipline state and the final firing veto.
+	# It does not mutate FormationDefinition or any frozen weapon statistic.
+	if hold_fire_enabled:
+		return
 	if not can_attack or current_ammo <= 0:
 		return
 	if _combat_target == null:
@@ -556,7 +583,8 @@ func _draw_callsign_badge(scale_factor: float) -> void:
 	draw_string(font, rect.position + Vector2(pad, font_size + 1.0 * scale_factor), value, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size, text_color)
 
 func _draw_order_glyph(scale_factor: float) -> void:
-	var order_color: Color = Battle01UIStyle.order_color(current_order)
+	var color_order: String = "MOVE" if current_order == "ADVANCE" else current_order
+	var order_color: Color = Battle01UIStyle.order_color(color_order)
 	var icon_name: String = Battle01UIStyle.ICON_COMMAND_MOVE
 	if current_order == "WITHDRAW":
 		icon_name = Battle01UIStyle.ICON_COMMAND_WITHDRAW
@@ -566,7 +594,7 @@ func _draw_order_glyph(scale_factor: float) -> void:
 	if _draw_icon(icon_name, glyph_pos * scale_factor, 22.0 * scale_factor, order_color):
 		return
 	var s: float = scale_factor
-	if current_order == "MOVE":
+	if current_order == "MOVE" or current_order == "ADVANCE":
 		draw_polyline(PackedVector2Array([Vector2(-8.0, 3.0) * s, Vector2(0.0, -6.0) * s, Vector2(8.0, 3.0) * s]), order_color, 2.4 * s)
 	elif current_order == "WITHDRAW":
 		draw_polyline(PackedVector2Array([Vector2(8.0, 3.0) * s, Vector2(0.0, -6.0) * s, Vector2(-8.0, 3.0) * s]), order_color, 2.4 * s)
