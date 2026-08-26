@@ -25,6 +25,7 @@ func _run() -> void:
 	var navigation: BattleNavigation = battle.get_node("Navigation") as BattleNavigation
 	var selection: BattleSelectionController = battle.get_node("SelectionController") as BattleSelectionController
 	var war_flow: BattlePlayerWarFlow = battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
+	var resupply_controller: BattleResupplyController = battle.get_node("ResupplyController") as BattleResupplyController
 	var enemy_ai: Node = battle.get_node("EnemyAIController")
 	var intel: BattleIntelTracker = battle.get_node("IntelTracker") as BattleIntelTracker
 	var central: BattleObjective = battle.get_node("CentralBridgehead") as BattleObjective
@@ -46,6 +47,7 @@ func _run() -> void:
 	_require(staging.is_staging_active() and is_equal_approx(staging.get_battle_elapsed_for_test(), 0.0), "STAGING_RUNTIME_ACTIVE_PASS")
 	_require(not enemy_ai.is_processing() and not intel.is_processing() and not central.is_processing() and not industrial.is_processing() and not war_flow.is_processing(), "STAGING_SIMULATION_SYSTEMS_FROZEN_PASS")
 	_require(not recon.is_processing() and not infantry.is_processing() and not ifv.is_processing() and not supply.is_processing(), "STAGING_FRIENDLY_EXECUTION_FROZEN_PASS")
+	_require(not resupply_controller.is_processing_input(), "STAGING_RESUPPLY_INPUT_FROZEN_PASS")
 	_require(staging.all_staged_positions_valid(), "STAGING_DEFAULT_BLUE_POSITIONS_VALID_PASS")
 	_require(staging.has_staging_boundary_visual_for_test(), "STAGING_BOUNDARY_VISIBLE_PASS")
 	_require(_find_button_by_text(battle, "START BATTLE") != null, "START_BATTLE_MOUSE_BUTTON_PASS")
@@ -133,6 +135,7 @@ func _run() -> void:
 	_require(ifv.is_hold_fire_enabled(), "STAGING_HOLD_FIRE_CARRYOVER_PASS")
 	_require(posture_after_start == posture_before and seed_after_start == seed_before, "STAGING_START_NO_RED_REROLL_PASS")
 	_require(enemy_ai.is_processing() and intel.is_processing() and central.is_processing() and industrial.is_processing() and war_flow.is_processing(), "STAGING_SIMULATION_ACTIVATED_AT_T0_PASS")
+	_require(resupply_controller.is_processing_input(), "STAGING_RESUPPLY_INPUT_RESTORED_PASS")
 
 	await process_frame
 	await process_frame

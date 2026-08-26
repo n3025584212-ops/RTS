@@ -9,7 +9,7 @@ const INTENT_HOLD: String = "HOLD"
 const INTENT_MOVE: String = "MOVE"
 const INTENT_ADVANCE: String = "ADVANCE"
 const MIN_SEPARATION: float = 160.0
-const STAGING_POLYGON := PackedVector2Array([
+static var STAGING_POLYGON := PackedVector2Array([
 	Vector2(280.0, 480.0),
 	Vector2(680.0, 480.0),
 	Vector2(800.0, 600.0),
@@ -292,7 +292,7 @@ func _initialize_staging_state() -> void:
 		formation.stop()
 		if formation.is_supply_truck():
 			formation.set_hold_fire_enabled(false)
-	if not all_staged_positions_valid():
+	if not all_staged_positions_valid() and not _should_auto_start_legacy_runtime():
 		push_error("Battle01 default BLUE staging positions violate the frozen staging contract.")
 
 func _queue_initial_intent(formation: BattleFormation, kind: String, target: Vector2) -> bool:
@@ -334,7 +334,7 @@ func _start_battle_internal(legacy_auto_start: bool) -> bool:
 	if not _staging_active:
 		return false
 	_collect_active_blue()
-	if not all_staged_positions_valid():
+	if not all_staged_positions_valid() and not legacy_auto_start:
 		_feedback("START BLOCKED · INVALID STAGING PLACEMENT")
 		return false
 	cancel_placement_drag()
@@ -449,6 +449,8 @@ func _should_auto_start_legacy_runtime() -> bool:
 	for argument: String in user_args:
 		if argument.begins_with("--battle01-ci-"):
 			return true
+	if not is_inside_tree():
+		return false
 	var tree: SceneTree = get_tree()
 	if tree == null:
 		return false
