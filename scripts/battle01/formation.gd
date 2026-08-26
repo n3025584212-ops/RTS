@@ -124,7 +124,7 @@ func _issue_navigation_order(world_target: Vector2, order_name: String) -> bool:
 	if _navigation == null:
 		push_error("%s cannot %s without BattleNavigation." % [name, order_name])
 		return false
-	var new_path: PackedVector2Array = _navigation.find_path(global_position, world_target)
+	var new_path: PackedVector2Array = _navigation.find_path_for_formation(self, world_target)
 	if new_path.is_empty():
 		push_warning("%s %s rejected: no legal navigation path." % [name, order_name])
 		return false
