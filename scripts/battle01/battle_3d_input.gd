@@ -59,10 +59,11 @@ func _input(event: InputEvent) -> void:
 			var sim_hit: Variant = screen_to_sim(mouse_event.position)
 			if sim_hit != null:
 				var target := Battle3DAdapter.clamp_sim(sim_hit as Vector2)
-				var issued := _selection.issue_move(target)
+				var advance: bool = mouse_event.shift_pressed
+				var issued: int = _selection.issue_advance(target) if advance else _selection.issue_move(target)
 				if issued > 0:
 					_presentation.show_command_marker(target)
-					print("FRONTLINE_3D_MOVE_ORDER issued=%d target=%s" % [issued, target])
+					print("FRONTLINE_3D_%s_ORDER issued=%d target=%s" % ["ADVANCE" if advance else "MOVE", issued, target])
 			get_viewport().set_input_as_handled()
 			return
 	elif event is InputEventMouseMotion and _dragging:
@@ -121,3 +122,9 @@ func issue_move_for_test(formation: BattleFormation, target_sim: Vector2) -> boo
 		return false
 	_selection.select_only(formation)
 	return _selection.issue_move(target_sim) == 1
+
+func issue_advance_for_test(formation: BattleFormation, target_sim: Vector2) -> bool:
+	if formation == null or _selection == null:
+		return false
+	_selection.select_only(formation)
+	return _selection.issue_advance(target_sim) == 1
