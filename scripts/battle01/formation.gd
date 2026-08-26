@@ -113,7 +113,6 @@ func set_navigation(navigation: BattleNavigation) -> void:
 	_navigation = navigation
 
 func issue_move(world_target: Vector2) -> bool:
-	clear_combat_target()
 	return _issue_navigation_order(world_target, "MOVE")
 
 func issue_advance(world_target: Vector2) -> bool:
@@ -148,7 +147,6 @@ func stop() -> void:
 	_move_path = PackedVector2Array()
 	_path_index = 0
 	_move_target = global_position
-	clear_combat_target()
 	_set_order("HOLD")
 	queue_redraw()
 
@@ -307,7 +305,6 @@ func _finish_move() -> void:
 	_move_path = PackedVector2Array()
 	_path_index = 0
 	_move_target = global_position
-	clear_combat_target()
 	_set_order("HOLD")
 	queue_redraw()
 
