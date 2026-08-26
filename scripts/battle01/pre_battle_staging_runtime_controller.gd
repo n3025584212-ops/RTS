@@ -1,6 +1,8 @@
 class_name BattlePreBattleStagingRuntimeController
 extends BattlePreBattleStagingController
 
+var _live_reserve_panel: Control
+
 func _ready() -> void:
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--battle01-ci-"):
@@ -51,3 +53,42 @@ func _restore_simulation_processes() -> void:
 		node.set_process_unhandled_key_input(bool(state.get("unhandled_key", false)))
 		node.set_process_shortcut_input(bool(state.get("shortcut_input", false)))
 	_saved_process_state.clear()
+
+func _build_staging_ui() -> void:
+	super._build_staging_ui()
+	_live_reserve_panel = _battle.get_node_or_null("HUD/Root/Reserve") as Control
+	if _live_reserve_panel != null:
+		_live_reserve_panel.visible = false
+	_refresh_staging_ui()
+
+func _refresh_staging_ui() -> void:
+	if _roster_label == null:
+		return
+	var lines: PackedStringArray = []
+	for formation: BattleFormation in _active_blue:
+		var intent: String = get_initial_intent_for(formation)
+		var target_text: String = ""
+		if intent != INTENT_HOLD:
+			var target: Vector2 = get_initial_target_for(formation)
+			target_text = " -> (%d,%d)" % [int(target.x), int(target.y)]
+		var fire_text: String = "HOLD FIRE=N/A"
+		if formation.can_attack:
+			fire_text = "HOLD FIRE=%s" % ("ON" if formation.is_hold_fire_enabled() else "OFF")
+		lines.append("%s · ROLE=%s · (%d,%d) · %s%s · %s" % [
+			formation.display_name,
+			formation.get_role(),
+			int(formation.global_position.x),
+			int(formation.global_position.y),
+			intent,
+			target_text,
+			fire_text,
+		])
+	_roster_label.text = "\n".join(lines)
+	if _start_button != null:
+		_start_button.disabled = not all_staged_positions_valid()
+
+func _start_battle_internal(legacy_auto_start: bool) -> bool:
+	var started: bool = super._start_battle_internal(legacy_auto_start)
+	if started and _live_reserve_panel != null:
+		_live_reserve_panel.visible = true
+	return started
