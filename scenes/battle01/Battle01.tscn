@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/formation.gd" id="3_formation"]
@@ -9,17 +9,18 @@
 [ext_resource type="Script" path="res://scripts/battle01/intel_tracker.gd" id="9_intel"]
 [ext_resource type="Resource" path="res://resources/formations/recon.tres" id="10_recon_def"]
 [ext_resource type="Script" path="res://scripts/battle01/visibility_field.gd" id="11_visibility"]
-[ext_resource type="Script" path="res://scripts/battle01/selection_controller.gd" id="12_selection"]
+[ext_resource type="Script" path="res://scripts/battle01/staging_selection_controller.gd" id="12_selection"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_navigation.gd" id="13_nav"]
 [ext_resource type="Script" path="res://scripts/battle01/formal_combat_roster.gd" id="14_roster"]
 [ext_resource type="Script" path="res://scripts/battle01/enemy_ai_route_mobility_controller.gd" id="15_enemy_ai"]
 [ext_resource type="Resource" path="res://resources/formations/logistics.tres" id="16_logistics_def"]
-[ext_resource type="Script" path="res://scripts/battle01/player_war_flow.gd" id="17_war_flow"]
+[ext_resource type="Script" path="res://scripts/battle01/staging_player_war_flow.gd" id="17_war_flow"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_world.gd" id="18_world3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_camera_3d.gd" id="19_camera3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_presentation.gd" id="20_presentation3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_input.gd" id="21_input3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle01_resupply_controller.gd" id="22_resupply"]
+[ext_resource type="Script" path="res://scripts/battle01/pre_battle_staging_controller.gd" id="23_staging"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
@@ -131,6 +132,9 @@ script = ExtResource("12_selection")
 [node name="IntelTracker" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
 script = ExtResource("9_intel")
+
+[node name="PreBattleStaging" type="Node" parent="."]
+script = ExtResource("23_staging")
 
 [node name="Input3D" type="Node" parent="."]
 script = ExtResource("21_input3d")
