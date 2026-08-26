@@ -317,7 +317,8 @@ func _on_intel_state_changed(state: String, last_known_position: Vector2) -> voi
 		blue.clear_combat_target()
 		print("FRONTLINE_INTEL_CONTACT")
 	elif state == BattleIntelTracker.CONFIRMED:
-		blue.set_combat_target(red)
+		# Normal player runtime deliberately does not assign BLUE IFV-01 a combat
+		# target here. Opportunistic fire belongs to ADVANCE through SelectionController.
 		print("FRONTLINE_INTEL_CONFIRMED")
 		if _ci_multi_command_smoke and _ci_multi_phase == 0:
 			_ci_multi_phase = 1
@@ -325,6 +326,9 @@ func _on_intel_state_changed(state: String, last_known_position: Vector2) -> voi
 			selection.select_only(blue)
 			print("FRONTLINE_SELECTION_IFV_ONLY")
 			selection.issue_move(Vector2(1000.0, 900.0))
+			# Legacy CI compatibility only. issue_move() intentionally clears all
+			# player-side targets, so the historical CI combat smoke re-arms explicitly.
+			blue.set_combat_target(red)
 			print("FRONTLINE_COMMAND_IFV_MOVE")
 		elif _ci_los_smoke:
 			if _ci_los_phase == 0:
@@ -343,6 +347,9 @@ func _on_intel_state_changed(state: String, last_known_position: Vector2) -> voi
 				selection.select_only(blue)
 				selection.issue_move(objective.global_position)
 				print("FRONTLINE_CI_COMBAT_AFTER_LOS_STARTED")
+			# Legacy CI-only target assignment. This branch is unreachable in normal
+			# player runtime and exists solely to preserve the accepted old smoke flow.
+			blue.set_combat_target(red)
 	elif state == BattleIntelTracker.LAST_KNOWN:
 		blue.clear_combat_target()
 		print("FRONTLINE_INTEL_LAST_KNOWN")
