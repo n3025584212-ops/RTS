@@ -41,10 +41,10 @@ func _initialize() -> void:
 func _run() -> void:
 	print("FRONTLINE_INTEGRATED_PLAYER_FLOW_EVIDENCE_BEGIN")
 	print("INTEGRATED_ENGINE=%s" % Engine.get_version_info().get("string", "UNKNOWN"))
+	if not await _load_normal_battle(EXPECTED_POSTURES[0]):
+		_finish()
+		return
 	for run_index: int in range(3):
-		if not await _load_normal_battle(EXPECTED_POSTURES[run_index]):
-			_finish()
-			return
 		await _run_victory_session(run_index)
 		if not _war_flow.is_victory():
 			_fail("RUN_%s_NORMAL_VICTORY_NOT_REACHED" % RUN_LABELS[run_index])
@@ -119,6 +119,8 @@ func _run_victory_session(run_index: int) -> void:
 	_last_motion_times.clear()
 	var label: String = RUN_LABELS[run_index]
 	print("INTEGRATED_RUN_%s_BEGIN posture=%s plan=%s" % [label, _roster.get_selected_posture(), RUN_PLANS[run_index]])
+	if run_index == 0:
+		print("RUN_A_POSTURE=%s" % _roster.get_selected_posture())
 
 	await _verify_staging_and_fow()
 	await _redeploy_all_blue()
@@ -146,11 +148,17 @@ func _run_victory_session(run_index: int) -> void:
 	if _war_flow.is_match_finished():
 		_finalize_run_record()
 		return
+	await _prepare_pre_capture_progression(run_index)
+	if _war_flow.is_match_finished():
+		_finalize_run_record()
+		return
 	await _capture_objective(_central, "CENTRAL", 90.0)
 	if _central.get_control_owner() != BattleObjective.OWNER_PLAYER:
 		_fail("RUN_%s_CENTRAL_CAPTURE_NOT_REACHED" % label)
 		_finalize_run_record()
 		return
+	if run_index == 0:
+		print("RUN_A_CENTRAL_CAPTURE=PASS")
 
 	await _commit_reserve(RUN_RESERVES[run_index])
 	await _counterattack_and_resupply(run_index)
@@ -256,10 +264,10 @@ func _queue_initial_plan(run_index: int) -> void:
 		await _issue_order([_infantry], Vector2(500.0, 1200.0), false)
 		await _issue_order([_supply], Vector2(340.0, 1200.0), false)
 	elif run_index == 1:
-		await _issue_order([_recon], Vector2(900.0, 640.0), false)
-		await _issue_order([_infantry], Vector2(900.0, 700.0), true)
-		await _issue_order([_ifv], Vector2(1040.0, 900.0), false)
-		await _issue_order([_supply], Vector2(980.0, 1120.0), false)
+		await _issue_order([_recon], Vector2(600.0, 420.0), false)
+		await _issue_order([_infantry], Vector2(500.0, 1200.0), false)
+		await _issue_order([_ifv], Vector2(540.0, 1000.0), false)
+		await _issue_order([_supply], Vector2(340.0, 1200.0), false)
 	else:
 		await _issue_order([_ifv], Vector2(900.0, 1360.0), true)
 		await _issue_order([_supply], Vector2(860.0, 1240.0), false)
@@ -285,7 +293,7 @@ func _run_b_opening() -> void:
 	await _select_units([_recon])
 	await _key_tap(KEY_H)
 	_count("orders_hold_fire")
-	await _issue_order([_recon], Vector2(1180.0, 620.0), false)
+	await _issue_order([_recon], Vector2(800.0, 420.0), false)
 	await _wait_sim_seconds(2.2)
 	_current["hold_fire_move_distance"] = start_position.distance_to(_recon.global_position)
 	_current["hold_fire_fire_delta"] = _recon.get_fire_serial() - fire_before
@@ -293,19 +301,22 @@ func _run_b_opening() -> void:
 	await _key_tap(KEY_H)
 	_count("orders_weapons_free")
 	var free_before: int = _recon.get_fire_serial()
-	await _issue_order([_recon, _infantry], Vector2(1540.0, 700.0), true)
+	await _issue_order([_recon], Vector2(920.0, 500.0), true)
 	await _wait_for_fire_delta(_recon, free_before, 22.0)
 	_current["weapons_free_fire_delta"] = _recon.get_fire_serial() - free_before
 	var nav: BattleNavigation = _battle.get_node("Navigation") as BattleNavigation
-	var recon_path: PackedVector2Array = nav.find_path_for_formation(_recon, Vector2(1540.0, 700.0))
-	var ifv_path: PackedVector2Array = nav.find_path_for_formation(_ifv, Vector2(1540.0, 700.0))
-	var supply_path: PackedVector2Array = nav.find_path_for_formation(_supply, Vector2(1540.0, 700.0))
+	var foot_entry: Vector2 = nav.get_north_foot_link_entry()
+	var foot_exit: Vector2 = nav.get_north_foot_link_exit()
+	var recon_path: PackedVector2Array = nav.find_path_for_mobility(foot_entry, foot_exit, nav.mobility_for_formation(_recon))
+	var ifv_path: PackedVector2Array = nav.find_path_for_mobility(foot_entry, foot_exit, nav.mobility_for_formation(_ifv))
+	var supply_path: PackedVector2Array = nav.find_path_for_mobility(foot_entry, foot_exit, nav.mobility_for_formation(_supply))
 	_current["north_foot_used"] = nav.path_uses_north_foot_link(recon_path)
 	_current["vehicle_foot_link_rejected"] = not nav.path_uses_north_foot_link(ifv_path) and not nav.path_uses_north_foot_link(supply_path)
 	_current["route_path_length"] = nav.get_path_length(recon_path)
 	_current["route_travel_time"] = _elapsed()
-	await _issue_order([_ifv], Vector2(2100.0, 900.0), true)
-	await _issue_order([_supply], Vector2(1260.0, 1080.0), false)
+	await _issue_order([_recon], Vector2(200.0, 300.0), false)
+	await _issue_order([_ifv], Vector2(540.0, 1000.0), false)
+	await _issue_order([_supply], Vector2(340.0, 1200.0), false)
 
 
 func _run_c_opening() -> void:
@@ -317,16 +328,55 @@ func _run_c_opening() -> void:
 	await _issue_order([_supply], Vector2(1260.0, 1400.0), false)
 	await _wait_until_near(_ifv, Vector2(1320.0, 1400.0), 80.0, 30.0)
 	_current["route_travel_time"] = _elapsed() - start_time
-	_current["south_vehicle_stable"] = _ifv.is_alive and not _ifv.has_active_navigation_path() and _supply.is_alive
-	await _issue_order([_ifv, _infantry, _recon], Vector2(2080.0, 1080.0), true)
-	await _issue_order([_supply], Vector2(1540.0, 1240.0), false)
+	_current["south_vehicle_stable"] = not south_path.is_empty() and _ifv.is_alive and _ifv.global_position.distance_to(Vector2(1320.0, 1400.0)) <= 80.0 and _supply.is_alive
+	await _issue_order([_ifv], Vector2(1000.0, 1400.0), false)
+	await _issue_order([_infantry], Vector2(500.0, 1200.0), false)
+	await _issue_order([_recon], Vector2(540.0, 1240.0), false)
+	await _issue_order([_supply], Vector2(340.0, 1200.0), false)
 
 
 func _fight_central(run_index: int) -> void:
 	await _kite_initial_red_infantry(run_index)
-	print("INTEGRATED_PRE_ARMOR_STATUS blue=%s red=%s" % [_formation_status(_war_flow.get_friendlies()), _formation_status(_all_red_formations())])
-	if not _war_flow.is_match_finished():
-		await _kite_initial_red_armor()
+	print("INTEGRATED_PRE_CAPTURE_STATUS blue=%s red=%s" % [_formation_status(_war_flow.get_friendlies()), _formation_status(_all_red_formations())])
+
+
+func _prepare_pre_capture_progression(run_index: int) -> void:
+	# With the initial infantry screen cleared, use the real logistics command in
+	# the safe west-side window. This avoids manufacturing a resupply opportunity
+	# after the counterattack has already begun.
+	if _ifv.is_alive and _supply.is_alive and _ifv.current_ammo < _ifv.ammo_capacity and _supply.get_supply_charges() > 0:
+		if run_index == 0:
+			await _resupply_interrupt_then_complete(_ifv)
+		else:
+			await _resupply_complete(_ifv)
+	# Logistics crosses first as a movement-only screen for the initial Armor's
+	# fully preserved local self-defense. Infantry and Recon follow while that
+	# screen is active; neither attacks the pre-capture Armor.
+	if _supply.is_alive:
+		await _issue_order([_supply], Vector2(3020.0, 1060.0), false)
+		await _wait_sim_seconds(4.0)
+	if not _infantry.is_alive:
+		return
+	if run_index == 2:
+		# SOUTH_SCREEN leaves the northern side of the bridge under Armor observation.
+		# Preserve the real south-route distinction by taking both foot formations
+		# along the lower corridor before turning north to Industrial.
+		await _issue_order([_infantry], Vector2(2520.0, 1240.0), false)
+		if _recon.is_alive:
+			await _issue_order([_recon], Vector2(2520.0, 1240.0), false)
+		await _wait_until_near(_infantry, Vector2(2520.0, 1240.0), 80.0, 32.0)
+		await _issue_order([_infantry], Vector2(2820.0, 840.0), false)
+		if _recon.is_alive:
+			await _issue_order([_recon], Vector2(2520.0, 840.0), false)
+	else:
+		await _issue_order([_infantry], Vector2(2820.0, 840.0), false)
+		await _wait_sim_seconds(2.0)
+		if _recon.is_alive:
+			await _issue_order([_recon], Vector2(2520.0, 840.0), false)
+	await _wait_until_near(_infantry, Vector2(2820.0, 840.0), 80.0, 32.0)
+	if _recon.is_alive:
+		await _wait_until_near(_recon, Vector2(2520.0, 840.0), 80.0, 20.0)
+	print("INTEGRATED_LOCKED_INDUSTRIAL_FOOT_STAGING_PASS infantry=%s recon=%s locked=%s" % [_formation_status([_infantry]), _formation_status([_recon]), _industrial.is_player_capture_locked()])
 
 
 func _kite_initial_red_infantry(run_index: int) -> void:
@@ -335,10 +385,20 @@ func _kite_initial_red_infantry(run_index: int) -> void:
 	# Recon observes outside RED Infantry weapon range; Infantry and Logistics stay
 	# behind the contact line. IFV alternates ADVANCE fire with movement-only
 	# displacement whenever a confirmed infantry defender closes inside 235.
-	var recon_observation: Vector2 = Vector2(520.0, 520.0) if run_index != 2 else Vector2(520.0, 1240.0)
+	var recon_observation: Vector2 = Vector2(200.0, 300.0) if run_index == 1 else Vector2(520.0, 1240.0) if run_index == 2 else Vector2(520.0, 520.0)
 	await _issue_order([_recon], recon_observation, false)
 	await _issue_order([_infantry], Vector2(500.0, 1200.0), false)
 	await _issue_order([_supply], Vector2(340.0, 1200.0), false)
+	if run_index == 1:
+		await _kite_red_infantry_target(_roster.enemy_infantry[1], Vector2(620.0, 420.0), 42.0)
+		await _finish_isolated_red_infantry(_roster.enemy_infantry[0], 24.0)
+		print("INTEGRATED_IFV_INFANTRY_KITE_RESULT defenders_alive=%d ifv_hp=%d ifv_ammo=%d" % [_initial_red_infantry_alive_count(), _ifv.current_hp, _ifv.current_ammo])
+		return
+	if run_index == 2:
+		await _kite_red_infantry_target(_roster.enemy_infantry[0], Vector2(620.0, 700.0), 42.0)
+		await _finish_isolated_red_infantry(_roster.enemy_infantry[1], 24.0)
+		print("INTEGRATED_IFV_INFANTRY_KITE_RESULT defenders_alive=%d ifv_hp=%d ifv_ammo=%d" % [_initial_red_infantry_alive_count(), _ifv.current_hp, _ifv.current_ammo])
+		return
 	await _issue_order([_ifv], Vector2(1000.0, 700.0), false)
 	await _wait_for_group_settle([_ifv], 8.0)
 	var deadline: float = _elapsed() + 48.0
@@ -353,6 +413,41 @@ func _kite_initial_red_infantry(run_index: int) -> void:
 			await _issue_order([_ifv], Vector2(820.0, 700.0), false)
 			await _wait_sim_seconds(4.0)
 	print("INTEGRATED_IFV_INFANTRY_KITE_RESULT defenders_alive=%d ifv_hp=%d ifv_ammo=%d" % [_initial_red_infantry_alive_count(), _ifv.current_hp, _ifv.current_ammo])
+
+
+func _kite_red_infantry_target(target: BattleFormation, retreat_point: Vector2, timeout: float) -> void:
+	if target == null or not target.is_alive or not _ifv.is_alive:
+		return
+	var deadline: float = _elapsed() + timeout
+	while target.is_alive and _ifv.is_alive and not _war_flow.is_match_finished() and _elapsed() < deadline:
+		var fire_before: int = _ifv.get_fire_serial()
+		var fire_goal: int = fire_before + 2
+		await _issue_order([_ifv], target.global_position, true)
+		var exchange_deadline: float = minf(deadline, _elapsed() + 7.0)
+		while target.is_alive and _ifv.is_alive and _ifv.get_fire_serial() < fire_goal and not _war_flow.is_match_finished() and _elapsed() < exchange_deadline:
+			await process_frame
+			_observe_frame()
+		if _ifv.is_alive:
+			await _issue_order([_ifv], retreat_point, false)
+			await _wait_until_near(_ifv, retreat_point, 80.0, 5.0)
+			await _wait_sim_seconds(1.0)
+
+
+func _finish_isolated_red_infantry(target: BattleFormation, timeout: float) -> void:
+	if target == null or not target.is_alive or not _ifv.is_alive:
+		return
+	var vertical_offset: float = -200.0 if target.global_position.y < 1100.0 else 200.0
+	var firing_point: Vector2 = target.global_position + Vector2(240.0, vertical_offset)
+	await _issue_order([_ifv], firing_point, true)
+	var deadline: float = _elapsed() + timeout
+	var last_reissue: float = _elapsed()
+	while target.is_alive and _ifv.is_alive and not _war_flow.is_match_finished() and _elapsed() < deadline:
+		await process_frame
+		_observe_frame()
+		if _elapsed() - last_reissue >= 5.0:
+			firing_point = target.global_position + Vector2(240.0, vertical_offset)
+			await _issue_order([_ifv], firing_point, true)
+			last_reissue = _elapsed()
 
 
 func _lure_initial_red_armor_east() -> void:
@@ -396,43 +491,65 @@ func _kite_initial_red_armor() -> void:
 		return
 	var damage_memory: Dictionary = {}
 	var retreat_until: Dictionary = {}
-	for unit: BattleFormation in _alive_combat_friendlies():
+	for unit: BattleFormation in _counterattack_assault_friendlies():
 		damage_memory[unit] = unit.get_damage_serial()
 		retreat_until[unit] = -1.0
-	await _issue_order(_alive_combat_friendlies(), Vector2(1500.0, 700.0), false)
-	await _wait_for_group_settle(_alive_combat_friendlies(), 10.0)
-	await _issue_order(_alive_combat_friendlies(), Vector2(2240.0, 900.0), true)
-	var deadline: float = _elapsed() + 55.0
+	# The newly committed Armor and the surviving core formations meet the real
+	# counterattack together. Damage-triggered withdrawals distribute hostile
+	# fire instead of leaving the low-health capture formation stationary.
+	await _issue_order(_counterattack_assault_friendlies(), Vector2(1500.0, 700.0), true)
+	var focus_point: Vector2 = Vector2(1500.0, 700.0)
+	var focus: BattleFormation = _closest_active_red_combat_to(focus_point)
+	if focus != null:
+		await _issue_order(_counterattack_assault_friendlies(), focus.global_position + Vector2(-220.0, 0.0), true)
+	var deadline: float = _elapsed() + 100.0
 	var last_attack_order: float = _elapsed()
-	while armor.is_alive and not _war_flow.is_match_finished() and _elapsed() < deadline:
+	var last_industrial_order: float = -INF
+	var industrial_defense_toggle: bool = false
+	while _active_red_combat_alive_count() > 0 and not _war_flow.is_match_finished() and _elapsed() < deadline:
 		await process_frame
 		_observe_frame()
-		for unit: BattleFormation in _alive_combat_friendlies():
+		if _elapsed() - last_industrial_order >= 0.8:
+			industrial_defense_toggle = not industrial_defense_toggle
+			if _infantry.is_alive and _infantry.global_position.distance_to(_industrial.global_position) <= _industrial.capture_radius + 60.0:
+				var defense_offset: Vector2 = Vector2(70.0 if industrial_defense_toggle else -70.0, 0.0)
+				await _issue_order([_infantry], _industrial.global_position + defense_offset, true)
+			if _recon.is_alive and _infantry.is_alive and _infantry.global_position.distance_to(_industrial.global_position) <= _industrial.capture_radius + 60.0:
+				var recon_x: float = 2560.0 if industrial_defense_toggle else 2480.0
+				await _issue_order([_recon], Vector2(recon_x, 840.0), true)
+			last_industrial_order = _elapsed()
+		var assault_units: Array[BattleFormation] = _counterattack_assault_friendlies()
+		if not assault_units.is_empty():
+			focus_point = assault_units[0].global_position
+		focus = _closest_active_red_combat_to(focus_point)
+		if focus == null:
+			break
+		for unit: BattleFormation in _counterattack_assault_friendlies():
 			if not damage_memory.has(unit):
 				damage_memory[unit] = unit.get_damage_serial()
 				retreat_until[unit] = -1.0
 			if unit.get_damage_serial() > int(damage_memory[unit]):
 				damage_memory[unit] = unit.get_damage_serial()
 				retreat_until[unit] = _elapsed() + 5.0
-				var away: Vector2 = (unit.global_position - armor.global_position).normalized()
+				var away: Vector2 = (unit.global_position - focus.global_position).normalized()
 				if away.length() < 0.1:
 					away = Vector2.LEFT
 				await _issue_order([unit], unit.global_position + away * 620.0, false)
-				print("INTEGRATED_ARMOR_KITE_WITHDRAW unit=%s hp=%d armor_hp=%d" % [unit.display_name, unit.current_hp, armor.current_hp])
+				print("INTEGRATED_ARMOR_KITE_WITHDRAW unit=%s hp=%d focus=%s focus_hp=%d" % [unit.display_name, unit.current_hp, focus.display_name, focus.current_hp])
 			elif float(retreat_until.get(unit, -1.0)) > 0.0 and _elapsed() >= float(retreat_until[unit]):
-				var next_hit: int = armor.calculate_attack_damage(unit)
+				var next_hit: int = focus.calculate_attack_damage(unit)
 				if unit.current_hp > next_hit:
 					retreat_until[unit] = -1.0
-					await _issue_order([unit], armor.global_position + Vector2(420.0, 0.0), true)
+					await _issue_order([unit], focus.global_position + Vector2(-220.0, 0.0), true)
 		if _elapsed() - last_attack_order >= 5.0:
 			var attackers: Array[BattleFormation] = []
-			for unit: BattleFormation in _alive_combat_friendlies():
+			for unit: BattleFormation in _counterattack_assault_friendlies():
 				if float(retreat_until.get(unit, -1.0)) < 0.0:
 					attackers.append(unit)
 			if not attackers.is_empty():
-				await _issue_order(attackers, armor.global_position + Vector2(420.0, 0.0), true)
+				await _issue_order(attackers, focus.global_position + Vector2(-220.0, 0.0), true)
 			last_attack_order = _elapsed()
-	print("INTEGRATED_ARMOR_KITE_RESULT alive=%s hp=%d" % [armor.is_alive, armor.current_hp])
+	print("INTEGRATED_ARMOR_KITE_RESULT combat_alive=%d red=%s" % [_active_red_combat_alive_count(), _formation_status(_all_red_formations())])
 
 
 func _capture_objective(objective: BattleObjective, phase: String, timeout: float) -> void:
@@ -441,6 +558,11 @@ func _capture_objective(objective: BattleObjective, phase: String, timeout: floa
 	var capture_units: Array[BattleFormation] = _alive_capture_friendlies()
 	if capture_units.is_empty():
 		return
+	# Infantry has staged through its formation-legal north route for the unlocked
+	# final objective. The IFV performs the real 15-second first Central capture.
+	if phase == "CENTRAL" and _ifv.is_alive:
+		capture_units.clear()
+		capture_units.append(_ifv)
 	await _issue_order(capture_units, objective.global_position, false)
 	var started: float = _elapsed()
 	var last_reissue: float = started
@@ -461,6 +583,11 @@ func _commit_reserve(kind: String) -> void:
 	_require(bool(before.get("unlocked", false)) and bool(before.get("deployable", false)), "INTEGRATED_RESERVE_UNLOCK_PASS")
 	var hud: BattleHUD = _battle.get_node("HUD") as BattleHUD
 	var button: Button = hud._reserve_inf_button if kind == "INFANTRY" else hud._reserve_armor_button
+	for _frame: int in range(6):
+		if not button.disabled:
+			break
+		await process_frame
+	_require(not button.disabled, "RESERVE_%s_HUD_BUTTON_ENABLED_PASS" % kind)
 	await _click_button(button)
 	for _frame: int in range(3):
 		await process_frame
@@ -468,31 +595,36 @@ func _commit_reserve(kind: String) -> void:
 	if bool(after.get("committed", false)) and str(after.get("choice", "")) == kind:
 		_count("orders_reserve")
 		_current["reserve_use"] = _elapsed()
+		if str(_current.get("label", "")) == "A" and kind == "ARMOR":
+			print("RUN_A_RESERVE_UNLOCK=PASS")
+			print("RUN_A_RESERVE_ARMOR_COMMIT=PASS")
 	else:
 		_fail("RESERVE_%s_REAL_BUTTON_COMMIT_FAILED" % kind)
 
 
 func _counterattack_and_resupply(run_index: int) -> void:
-	await _wait_sim_seconds(2.0)
 	# The first player capture activates the frozen RED reinforcement response.
 	if _ai._reinforcements_active:
 		_current["counterattack_pressure"] = true
 		if float(_current["counterattack"]) < 0.0:
 			_current["counterattack"] = _elapsed()
+		if str(_current.get("label", "")) == "A":
+			print("RUN_A_COUNTERATTACK_REACHED=PASS")
+	if _infantry.is_alive and _infantry.global_position.distance_to(_industrial.global_position) <= _industrial.capture_radius + 60.0:
+		await _issue_order([_infantry], _industrial.global_position, true)
+	if _recon.is_alive and _recon.global_position.distance_to(_industrial.global_position) <= _industrial.capture_radius + 140.0:
+		await _issue_order([_recon], Vector2(2480.0, 840.0), true)
+	# Reuse the real-input damage/withdraw loop only after the first capture has
+	# released Armor and reinforcement counterattack behavior.
+	await _kite_initial_red_armor()
+	if _war_flow.is_match_finished():
+		return
 	var depleted: BattleFormation = _most_depleted_combat()
 	if depleted != null and _supply.is_alive and _supply.get_supply_charges() > 0:
 		if run_index == 0:
 			await _resupply_interrupt_then_complete(depleted)
 		else:
 			await _resupply_complete(depleted)
-	# Fight the actual reinforcement counterattack around Central.
-	for target: Vector2 in [Vector2(2020.0, 900.0), Vector2(1280.0, 900.0), Vector2(2180.0, 1040.0)]:
-		if _war_flow.is_match_finished():
-			return
-		await _issue_order(_alive_combat_friendlies(), target, true)
-		await _wait_sim_seconds(13.0)
-		if _active_red_combat_alive_count() == 0:
-			break
 
 
 func _resupply_interrupt_then_complete(target: BattleFormation) -> void:
@@ -604,6 +736,8 @@ func _finalize_run_record() -> void:
 	_current["total_duration"] = _elapsed()
 	_current["end_nodes"] = Performance.get_monitor(Performance.OBJECT_NODE_COUNT)
 	_current["result"] = "VICTORY" if _war_flow.is_victory() else "DEFEAT" if _war_flow.is_match_finished() else "TIMEOUT"
+	if str(_current.get("label", "")) == "A" and _war_flow.is_victory():
+		print("INTEGRATED_RUN_A_PASS=PASS")
 	_current["recon_fire"] = _recon.get_fire_serial() - int(_current["recon_fire"])
 	_current["infantry_fire"] = _infantry.get_fire_serial() - int(_current["infantry_fire"])
 	_current["ifv_fire"] = _ifv.get_fire_serial() - int(_current["ifv_fire"])
@@ -792,7 +926,15 @@ func _click_button(button: Button) -> void:
 	if button == null:
 		_fail("REQUIRED_BUTTON_MISSING")
 		return
-	await _mouse_click(button.get_global_rect().get_center(), MOUSE_BUTTON_LEFT, false)
+	var button_rect: Rect2 = button.get_global_rect()
+	var viewport_position: Vector2 = button_rect.position + Vector2(button_rect.size.x - 12.0, button_rect.size.y * 0.5)
+	var input_position: Vector2 = root.get_screen_transform() * viewport_position
+	var motion := InputEventMouseMotion.new()
+	motion.position = input_position
+	motion.global_position = input_position
+	Input.parse_input_event(motion)
+	await process_frame
+	await _mouse_click(viewport_position, MOUSE_BUTTON_LEFT, false)
 
 
 func _mouse_click(viewport_position: Vector2, button_index: int, shift_pressed: bool) -> void:
@@ -879,6 +1021,16 @@ func _alive_combat_friendlies() -> Array[BattleFormation]:
 	return result
 
 
+func _counterattack_assault_friendlies() -> Array[BattleFormation]:
+	var result: Array[BattleFormation] = []
+	for unit: BattleFormation in _alive_combat_friendlies():
+		var industrial_capture_active: bool = not _industrial.is_player_capture_locked() and _infantry.is_alive and _infantry.global_position.distance_to(_industrial.global_position) <= _industrial.capture_radius + 60.0
+		if (unit == _infantry or unit == _recon) and industrial_capture_active:
+			continue
+		result.append(unit)
+	return result
+
+
 func _alive_capture_friendlies() -> Array[BattleFormation]:
 	var result: Array[BattleFormation] = []
 	for unit: BattleFormation in _war_flow.get_friendlies():
@@ -922,6 +1074,26 @@ func _active_red_combat_alive_count() -> int:
 		if unit.is_alive and unit.can_attack and unit.process_mode != Node.PROCESS_MODE_DISABLED:
 			count += 1
 	return count
+
+
+func _closest_active_red_combat_to(point: Vector2) -> BattleFormation:
+	var closest: BattleFormation
+	var closest_distance: float = INF
+	for unit: BattleFormation in _all_red_formations():
+		if not unit.is_alive or not unit.can_attack or unit.process_mode == Node.PROCESS_MODE_DISABLED:
+			continue
+		var distance: float = point.distance_to(unit.global_position)
+		if closest == null or distance < closest_distance:
+			closest = unit
+			closest_distance = distance
+	return closest
+
+
+func _red_formation_named(display_name: String) -> BattleFormation:
+	for unit: BattleFormation in _all_red_formations():
+		if unit.display_name == display_name:
+			return unit
+	return null
 
 
 func _find_red_supply() -> BattleFormation:

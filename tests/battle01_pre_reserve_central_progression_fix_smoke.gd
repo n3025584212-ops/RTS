@@ -39,14 +39,14 @@ func _scenario_capturing_does_not_commit_armor() -> void:
 	objective.progress = 0.5
 	ai._decision_tick()
 	var agent: Dictionary = ai._agents[armor]
-	var pass: bool = (
+	var scenario_pass: bool = (
 		ai.is_pre_first_central_armor_gate_active_for_test()
 		and agent["target"] == null
 		and (str(agent["state"]) == ai.HOLD or str(agent["state"]) == ai.RETURN)
 		and armor.global_position.distance_to(objective.global_position) > objective.capture_radius
 		and not ai._armor_commit_allowed(armor)
 	)
-	_require(pass, "PRE_CAPTURE_CAPTURING_NO_ARMOR_DENIAL_PASS")
+	_require(scenario_pass, "PRE_CAPTURE_CAPTURING_NO_ARMOR_DENIAL_PASS")
 	await _dispose_battle(c)
 
 func _scenario_contested_does_not_commit_armor() -> void:
@@ -62,13 +62,13 @@ func _scenario_contested_does_not_commit_armor() -> void:
 	objective.contested = true
 	ai._decision_tick()
 	var agent: Dictionary = ai._agents[armor]
-	var pass: bool = (
+	var scenario_pass: bool = (
 		agent["target"] == null
 		and (str(agent["state"]) == ai.HOLD or str(agent["state"]) == ai.RETURN)
 		and armor.global_position.distance_to(objective.global_position) > objective.capture_radius
 		and not ai._armor_commit_allowed(armor)
 	)
-	_require(pass, "PRE_CAPTURE_CONTESTED_NO_ARMOR_DENIAL_PASS")
+	_require(scenario_pass, "PRE_CAPTURE_CONTESTED_NO_ARMOR_DENIAL_PASS")
 	await _dispose_battle(c)
 
 func _scenario_infantry_loss_does_not_bypass_gate() -> void:
@@ -91,12 +91,12 @@ func _scenario_infantry_loss_does_not_bypass_gate() -> void:
 	objective.state = "AI_CONTROLLED"
 	ai._decision_tick()
 	var armor_agent: Dictionary = ai._agents[armor]
-	var pass: bool = (
+	var scenario_pass: bool = (
 		armor_agent["target"] == null
 		and (str(armor_agent["state"]) == ai.HOLD or str(armor_agent["state"]) == ai.RETURN)
 		and not ai._armor_commit_allowed(armor)
 	)
-	_require(pass, "PRE_CAPTURE_INFANTRY_LOSS_NO_ARMOR_DENIAL_PASS")
+	_require(scenario_pass, "PRE_CAPTURE_INFANTRY_LOSS_NO_ARMOR_DENIAL_PASS")
 	await _dispose_battle(c)
 
 func _scenario_direct_self_defense() -> void:
@@ -125,7 +125,7 @@ func _scenario_direct_self_defense() -> void:
 	armor._fire_cooldown = 0.0
 	armor._update_combat()
 	armor_agent = ai._agents[armor]
-	var pass: bool = (
+	var scenario_pass: bool = (
 		str(armor_agent["state"]) == ai.ENGAGE
 		and armor_agent["target"] == blue
 		and armor.global_position.is_equal_approx(armor_position_before)
@@ -133,7 +133,7 @@ func _scenario_direct_self_defense() -> void:
 		and armor.current_ammo == ammo_before - 1
 		and blue.current_hp < hp_before
 	)
-	_require(pass, "ARMOR_LOCAL_SELF_DEFENSE_PASS")
+	_require(scenario_pass, "ARMOR_LOCAL_SELF_DEFENSE_PASS")
 	await _dispose_battle(c)
 
 func _scenario_rear_security() -> void:
@@ -151,13 +151,13 @@ func _scenario_rear_security() -> void:
 	objective.progress = 0.3
 	ai._decision_tick()
 	var agent: Dictionary = ai._agents[armor]
-	var pass: bool = (
+	var scenario_pass: bool = (
 		str(agent["state"]) == ai.ENGAGE
 		and agent["target"] == blue
 		and blue.global_position.distance_to(supply.global_position) <= ai.SUPPLY_THREAT_RADIUS + 100.0
 		and blue.global_position.distance_to(objective.global_position) > objective.capture_radius
 	)
-	_require(pass, "ARMOR_REAR_SECURITY_PASS")
+	_require(scenario_pass, "ARMOR_REAR_SECURITY_PASS")
 	await _dispose_battle(c)
 
 func _scenario_pursuit_leash() -> void:
