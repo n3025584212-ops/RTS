@@ -152,6 +152,10 @@ func _scenario_objective_reserve_victory() -> void:
 	_require(bool(reserve_status["unlocked"]) and not industrial.is_player_capture_locked() and flow.is_forward_rally_active(), "BRIDGEHEAD_STAGE_CHANGE_PASS")
 	_require(bool(reserve_status["unlocked"]), "RESERVE_UNLOCK_PASS")
 	_require(not industrial.is_player_capture_locked(), "INDUSTRIAL_UNLOCK_PASS")
+	_require(not bool(ai._reinforcements_active), "BRIDGEHEAD_RED_REINFORCEMENT_DELAY_STARTED_PASS")
+	ai._process(14.99)
+	_require(not bool(ai._reinforcements_active), "BRIDGEHEAD_RED_REINFORCEMENT_14_99_DORMANT_PASS")
+	ai._process(0.01)
 	_require(bool(ai._reinforcements_active), "BRIDGEHEAD_RED_REINFORCEMENT_TRIGGER_PASS")
 	_require(not flow.is_match_finished(), "CENTRAL_ALONE_NO_VICTORY_PASS")
 
