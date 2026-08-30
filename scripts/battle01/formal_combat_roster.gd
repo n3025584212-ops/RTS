@@ -3,26 +3,27 @@ extends Node
 
 const FORMATION_SCRIPT: Script = preload("res://scripts/battle01/formation.gd")
 const INFANTRY_DEFINITION: FormationDefinition = preload("res://resources/formations/infantry.tres")
+const IFV_DEFINITION: FormationDefinition = preload("res://resources/formations/ifv.tres")
 const ARMOR_DEFINITION: FormationDefinition = preload("res://resources/formations/tank.tres")
-const SUPPLY_TRUCK_DEFINITION: FormationDefinition = preload("res://resources/formations/logistics.tres")
 
 const POSTURE_A: String = "BRIDGE_LOCK"
-const POSTURE_B: String = "VILLAGE_SCREEN"
-const POSTURE_C: String = "SOUTH_SCREEN"
-const REINFORCEMENT_ENTRY: Vector2 = Vector2(1380.0, 900.0)
+const POSTURE_B: String = "VILLAGE_WEIGHT"
+const POSTURE_C: String = "SOUTHERN_TRAP"
 
 static var _session_battle01_run_index: int = 0
 
-# -1 means normal player session sequencing. Any non-negative value is an explicit
-# editor/debug override and, like CLI/environment overrides, does not consume the
-# normal replay counter.
 @export var battle01_seed: int = -1
 
 var enemy_infantry: Array[BattleFormation] = []
+var enemy_ifv: Array[BattleFormation] = []
 var enemy_armor: Array[BattleFormation] = []
+
+# Legacy compatibility containers remain empty in M2. No Supply or reinforcement
+# formation is created by the active Battle01 roster.
 var enemy_supply_trucks: Array[BattleFormation] = []
 var reinforcement_infantry: Array[BattleFormation] = []
 var reinforcement_armor: Array[BattleFormation] = []
+
 var _initialized: bool = false
 var _selected_seed: int = 0
 var _selected_posture: String = POSTURE_A
@@ -88,7 +89,7 @@ func _initialize_roster() -> void:
 	_initialized = true
 
 	if _primary_infantry == null:
-		push_error("Formal combat roster requires existing RedFormation as RED INF-01.")
+		push_error("M2 roster requires existing RedFormation as RED INF-01.")
 		return
 
 	_selected_seed = _resolve_battle01_seed()
@@ -99,6 +100,8 @@ func _initialize_roster() -> void:
 
 	_primary_infantry.global_position = Vector2(_posture_deployment["RED INF-01"])
 	_primary_infantry.display_name = "RED INF-01"
+	_primary_infantry.set_navigation(_navigation)
+	_primary_infantry.set_visibility_field(_visibility)
 	_primary_infantry.set_intel_state(BattleIntelTracker.UNSEEN)
 	enemy_infantry.append(_primary_infantry)
 
@@ -108,49 +111,29 @@ func _initialize_roster() -> void:
 		INFANTRY_DEFINITION,
 		Vector2(_posture_deployment["RED INF-02"])
 	))
+	enemy_ifv.append(_spawn_active_enemy(
+		"RedIFV1",
+		"RED IFV-01",
+		IFV_DEFINITION,
+		Vector2(_posture_deployment["RED IFV-01"])
+	))
 	enemy_armor.append(_spawn_active_enemy(
 		"RedArmor1",
 		"RED ARMOR-01",
 		ARMOR_DEFINITION,
 		Vector2(_posture_deployment["RED ARMOR-01"])
 	))
-	enemy_supply_trucks.append(_spawn_active_enemy(
-		"RedSupplyTruck1",
-		"RED SUPPLY-01",
-		SUPPLY_TRUCK_DEFINITION,
-		Vector2(_posture_deployment["RED SUPPLY-01"])
-	))
-
-	# Reinforcement entry/timing is not seeded. The existing Enemy AI later binds
-	# activated reinforcement assignments to the selected active posture anchors.
-	reinforcement_infantry.append(_spawn_dormant_reinforcement(
-		"ReinforcementInfantry1",
-		"RED REINFORCEMENT INF-01",
-		INFANTRY_DEFINITION,
-		REINFORCEMENT_ENTRY
-	))
-	reinforcement_armor.append(_spawn_dormant_reinforcement(
-		"ReinforcementArmor1",
-		"RED REINFORCEMENT ARMOR-01",
-		ARMOR_DEFINITION,
-		REINFORCEMENT_ENTRY
-	))
 
 	if not _validate_frozen_roster():
 		return
 
 	_posture_locked = true
-	print("FRONTLINE_RED_POSTURE_SELECTED seed=%d posture=%s" % [_selected_seed, _selected_posture])
-	print(
-		"FRONTLINE_FORMAL_COMBAT_ROSTER_READY enemy_infantry=%d enemy_armor=%d enemy_supply_truck=%d reinforcement_infantry=%d reinforcement_armor=%d"
-		% [
-			enemy_infantry.size(),
-			enemy_armor.size(),
-			enemy_supply_trucks.size(),
-			reinforcement_infantry.size(),
-			reinforcement_armor.size(),
-		]
-	)
+	print("FRONTLINE_RED_PLAN_SELECTED seed=%d plan=%s" % [_selected_seed, _selected_posture])
+	print("FRONTLINE_M2_RED_ROSTER_READY infantry=%d ifv=%d armor=%d supply=0 reinforcement=0" % [
+		enemy_infantry.size(),
+		enemy_ifv.size(),
+		enemy_armor.size(),
+	])
 
 func _resolve_battle01_seed() -> int:
 	if _test_seed_forced:
@@ -172,14 +155,11 @@ func _resolve_battle01_seed() -> int:
 	if battle01_seed >= 0:
 		return battle01_seed
 
-	# Only a real current Battle01 scene consumes the normal-player replay counter.
-	# Programmatic scene instances used by focused regression tests keep the legacy
-	# deterministic seed-0 compatibility fallback unless they explicitly request a seed.
 	if _is_normal_player_scene_instance():
 		var run_index: int = _session_battle01_run_index
 		var seed: int = run_index % 3
 		_session_battle01_run_index = (run_index + 1) % 3
-		print("FRONTLINE_RED_NORMAL_RUN_SEED run=%d seed=%d" % [run_index + 1, seed])
+		print("FRONTLINE_RED_NORMAL_RUN_PLAN run=%d seed=%d" % [run_index + 1, seed])
 		return seed
 
 	return 0
@@ -192,50 +172,44 @@ func _deployment_for_posture(posture: String) -> Dictionary:
 	match posture:
 		POSTURE_B:
 			return {
-				"RED INF-01": Vector2(1340.0, 900.0),
-				"RED INF-02": Vector2(1060.0, 660.0),
-				"RED ARMOR-01": Vector2(1900.0, 1060.0),
-				"RED SUPPLY-01": Vector2(2300.0, 1180.0),
+				"RED INF-01": Vector2(1060.0, 660.0),
+				"RED INF-02": Vector2(1340.0, 900.0),
+				"RED IFV-01": Vector2(1900.0, 700.0),
+				"RED ARMOR-01": Vector2(2180.0, 1060.0),
 			}
 		POSTURE_C:
 			return {
 				"RED INF-01": Vector2(1380.0, 900.0),
-				# Keep the authored South screen on a legal navigation-cell center so
-				# RETURN terminates at the exact selected-posture home anchor.
 				"RED INF-02": Vector2(1340.0, 1380.0),
-				"RED ARMOR-01": Vector2(1900.0, 700.0),
-				"RED SUPPLY-01": Vector2(2260.0, 1340.0),
+				"RED IFV-01": Vector2(1900.0, 1060.0),
+				"RED ARMOR-01": Vector2(2260.0, 1340.0),
 			}
 		_:
 			return {
 				"RED INF-01": Vector2(1380.0, 900.0),
 				"RED INF-02": Vector2(1420.0, 700.0),
-				"RED ARMOR-01": Vector2(1900.0, 900.0),
-				"RED SUPPLY-01": Vector2(2180.0, 1060.0),
+				"RED IFV-01": Vector2(1900.0, 900.0),
+				"RED ARMOR-01": Vector2(2180.0, 1060.0),
 			}
 
 func _validate_posture_deployment(deployment: Dictionary) -> bool:
-	var central: BattleObjective = get_parent().get_node_or_null("CentralBridgehead") as BattleObjective
-	var industrial: BattleObjective = get_parent().get_node_or_null("IndustrialObjective") as BattleObjective
-	if central == null or industrial == null:
-		push_error("Seeded RED posture requires both Battle01 objectives.")
+	var command_area: BattleObjective = get_parent().get_node_or_null("CommandArea") as BattleObjective
+	if command_area == null:
+		push_error("M2 RED plan requires CommandArea.")
 		return false
-	for unit_name: String in ["RED INF-01", "RED INF-02", "RED ARMOR-01", "RED SUPPLY-01"]:
+	for unit_name: String in ["RED INF-01", "RED INF-02", "RED IFV-01", "RED ARMOR-01"]:
 		if not deployment.has(unit_name):
-			push_error("Seeded RED posture missing deployment for %s." % unit_name)
+			push_error("M2 RED plan missing deployment for %s." % unit_name)
 			return false
 		var point: Vector2 = Vector2(deployment[unit_name])
 		if not _navigation.is_world_walkable(point):
-			push_error("Seeded RED posture point is not walkable: %s=%s" % [unit_name, point])
+			push_error("M2 RED plan point is not walkable: %s=%s" % [unit_name, point])
 			return false
-		if point.distance_to(central.global_position) <= central.capture_radius:
-			push_error("Seeded RED posture point illegally occupies Central objective core: %s" % unit_name)
+		if point.distance_to(command_area.global_position) <= command_area.capture_radius:
+			push_error("M2 RED plan illegally starts inside CommandArea capture footprint: %s" % unit_name)
 			return false
-		if point.distance_to(industrial.global_position) <= industrial.capture_radius:
-			push_error("Seeded RED posture point illegally occupies Industrial objective core: %s" % unit_name)
-			return false
-		if _navigation.find_path(point, central.global_position).is_empty():
-			push_error("Seeded RED posture point has no legal Battle01 path: %s=%s" % [unit_name, point])
+		if _navigation.find_path(point, command_area.global_position).is_empty():
+			push_error("M2 RED plan point has no legal path to CommandArea: %s=%s" % [unit_name, point])
 			return false
 	return true
 
@@ -259,32 +233,17 @@ func _spawn_active_enemy(
 	formation.set_intel_state(BattleIntelTracker.UNSEEN)
 	return formation
 
-func _spawn_dormant_reinforcement(
-	node_name: String,
-	unit_display_name: String,
-	unit_definition: FormationDefinition,
-	spawn_position: Vector2
-) -> BattleFormation:
-	var formation: BattleFormation = _spawn_active_enemy(
-		node_name,
-		unit_display_name,
-		unit_definition,
-		spawn_position
-	)
-	formation.visible = false
-	formation.process_mode = Node.PROCESS_MODE_DISABLED
-	return formation
-
 func _validate_frozen_roster() -> bool:
+	if enemy_infantry.size() != 2 or enemy_ifv.size() != 1 or enemy_armor.size() != 1:
+		push_error("M2 RED roster count mismatch.")
+		return false
 	var valid: bool = true
 	valid = _validate_unit(enemy_infantry[0], INFANTRY_DEFINITION, true, true, true) and valid
 	valid = _validate_unit(enemy_infantry[1], INFANTRY_DEFINITION, true, true, true) and valid
-	valid = _validate_unit(enemy_armor[0], ARMOR_DEFINITION, true, false, true) and valid
-	valid = _validate_unit(enemy_supply_trucks[0], SUPPLY_TRUCK_DEFINITION, false, false, false) and valid
-	valid = _validate_unit(reinforcement_infantry[0], INFANTRY_DEFINITION, true, true, true) and valid
-	valid = _validate_unit(reinforcement_armor[0], ARMOR_DEFINITION, true, false, true) and valid
+	valid = _validate_unit(enemy_ifv[0], IFV_DEFINITION, true, true, true) and valid
+	valid = _validate_unit(enemy_armor[0], ARMOR_DEFINITION, true, true, true) and valid
 	if not valid:
-		push_error("Revised Battle01 formal combat roster validation failed.")
+		push_error("M2 RED formal combat roster validation failed.")
 	return valid
 
 func _validate_unit(
@@ -306,23 +265,22 @@ func _validate_unit(
 func get_roster_counts() -> Dictionary:
 	return {
 		"enemy_infantry": enemy_infantry.size(),
+		"enemy_ifv": enemy_ifv.size(),
 		"enemy_armor": enemy_armor.size(),
-		"enemy_supply_truck": enemy_supply_trucks.size(),
-		"reinforcement_infantry": reinforcement_infantry.size(),
-		"reinforcement_armor": reinforcement_armor.size(),
+		"enemy_supply_truck": 0,
+		"reinforcement_infantry": 0,
+		"reinforcement_armor": 0,
 	}
 
 func get_initial_enemy_combat_formations() -> Array[BattleFormation]:
 	var result: Array[BattleFormation] = []
 	result.append_array(enemy_infantry)
+	result.append_array(enemy_ifv)
 	result.append_array(enemy_armor)
 	return result
 
 func get_initial_supply_trucks() -> Array[BattleFormation]:
-	return enemy_supply_trucks.duplicate()
+	return []
 
 func get_reinforcement_formations() -> Array[BattleFormation]:
-	var result: Array[BattleFormation] = []
-	result.append_array(reinforcement_infantry)
-	result.append_array(reinforcement_armor)
-	return result
+	return []

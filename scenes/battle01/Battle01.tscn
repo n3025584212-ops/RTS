@@ -1,26 +1,23 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle01/battle01.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/battle01/formation.gd" id="3_formation"]
 [ext_resource type="Script" path="res://scripts/battle01/objective.gd" id="4_objective"]
 [ext_resource type="Script" path="res://scripts/battle01/hud.gd" id="6_hud"]
-[ext_resource type="Resource" path="res://resources/formations/ifv.tres" id="7_blue_def"]
+[ext_resource type="Resource" path="res://resources/formations/ifv.tres" id="7_ifv_def"]
 [ext_resource type="Resource" path="res://resources/formations/infantry.tres" id="8_infantry_def"]
 [ext_resource type="Script" path="res://scripts/battle01/intel_tracker.gd" id="9_intel"]
 [ext_resource type="Resource" path="res://resources/formations/recon.tres" id="10_recon_def"]
 [ext_resource type="Script" path="res://scripts/battle01/visibility_field.gd" id="11_visibility"]
-[ext_resource type="Script" path="res://scripts/battle01/staging_selection_controller.gd" id="12_selection"]
+[ext_resource type="Script" path="res://scripts/battle01/selection_controller.gd" id="12_selection"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_navigation.gd" id="13_nav"]
 [ext_resource type="Script" path="res://scripts/battle01/formal_combat_roster.gd" id="14_roster"]
-[ext_resource type="Script" path="res://scripts/battle01/enemy_ai_route_mobility_controller.gd" id="15_enemy_ai"]
-[ext_resource type="Resource" path="res://resources/formations/logistics.tres" id="16_logistics_def"]
-[ext_resource type="Script" path="res://scripts/battle01/staging_player_war_flow.gd" id="17_war_flow"]
+[ext_resource type="Script" path="res://scripts/battle01/player_war_flow.gd" id="17_war_flow"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_world.gd" id="18_world3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_camera_3d.gd" id="19_camera3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_presentation.gd" id="20_presentation3d"]
 [ext_resource type="Script" path="res://scripts/battle01/battle_3d_input.gd" id="21_input3d"]
-[ext_resource type="Script" path="res://scripts/battle01/battle01_resupply_controller.gd" id="22_resupply"]
-[ext_resource type="Script" path="res://scripts/battle01/pre_battle_staging_runtime_controller.gd" id="23_staging"]
+[ext_resource type="Resource" path="res://resources/formations/tank.tres" id="24_tank_def"]
 
 [node name="Battle01" type="Node2D"]
 script = ExtResource("1_battle")
@@ -42,31 +39,21 @@ script = ExtResource("13_nav")
 modulate = Color(1, 1, 1, 0)
 script = ExtResource("11_visibility")
 
-[node name="CentralBridgehead" type="Node2D" parent="."]
+[node name="CommandArea" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
-position = Vector2(1600, 900)
+position = Vector2(2720, 840)
 script = ExtResource("4_objective")
-objective_id = "CENTRAL_BRIDGEHEAD"
+objective_id = "RED_COMMAND_AREA"
 capture_radius = 150.0
 capture_time = 15.0
 initial_owner = "AI"
 player_capture_locked = false
 
-[node name="IndustrialObjective" type="Node2D" parent="."]
-modulate = Color(1, 1, 1, 0)
-position = Vector2(2720, 840)
-script = ExtResource("4_objective")
-objective_id = "INDUSTRIAL_OBJECTIVE"
-capture_radius = 150.0
-capture_time = 15.0
-initial_owner = "AI"
-player_capture_locked = true
-
 [node name="BlueFormation" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
 position = Vector2(520, 900)
 script = ExtResource("3_formation")
-definition = ExtResource("7_blue_def")
+definition = ExtResource("7_ifv_def")
 display_name = "BLUE IFV-01"
 faction = "BLUE"
 selectable = true
@@ -92,19 +79,29 @@ faction = "BLUE"
 selectable = true
 body_color = Color(0.16, 0.62, 0.92, 1)
 
-[node name="BlueSupply" type="Node2D" parent="."]
+[node name="BlueInfantry2" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
-position = Vector2(420, 1080)
+position = Vector2(620, 720)
 script = ExtResource("3_formation")
-definition = ExtResource("16_logistics_def")
-display_name = "BLUE SUPPLY-01"
+definition = ExtResource("8_infantry_def")
+display_name = "BLUE INF-02"
 faction = "BLUE"
 selectable = true
-body_color = Color(0.20, 0.72, 0.82, 1)
+body_color = Color(0.16, 0.62, 0.92, 1)
+
+[node name="BlueArmor" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(420, 1200)
+script = ExtResource("3_formation")
+definition = ExtResource("24_tank_def")
+display_name = "BLUE ARMOR-01"
+faction = "BLUE"
+selectable = true
+body_color = Color(0.10, 0.48, 0.88, 1)
 
 [node name="RedFormation" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
-position = Vector2(1370, 900)
+position = Vector2(1380, 900)
 script = ExtResource("3_formation")
 definition = ExtResource("8_infantry_def")
 display_name = "RED INF-01"
@@ -115,15 +112,9 @@ body_color = Color(0.88, 0.18, 0.15, 1)
 [node name="FormalCombatRoster" type="Node" parent="."]
 script = ExtResource("14_roster")
 
-[node name="EnemyAIController" type="Node" parent="."]
-script = ExtResource("15_enemy_ai")
-
 [node name="PlayerWarFlow" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
 script = ExtResource("17_war_flow")
-
-[node name="ResupplyController" type="Node" parent="."]
-script = ExtResource("22_resupply")
 
 [node name="SelectionController" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
@@ -132,9 +123,6 @@ script = ExtResource("12_selection")
 [node name="IntelTracker" type="Node2D" parent="."]
 modulate = Color(1, 1, 1, 0)
 script = ExtResource("9_intel")
-
-[node name="PreBattleStaging" type="Node" parent="."]
-script = ExtResource("23_staging")
 
 [node name="Input3D" type="Node" parent="."]
 script = ExtResource("21_input3d")
@@ -152,23 +140,22 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TopLeft" type="VBoxContainer" parent="HUD/Root"]
-visible = false
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
-offset_right = 1180.0
-offset_bottom = 560.0
+offset_right = 1120.0
+offset_bottom = 430.0
 theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
-text = "DEBUG MODE ONLY / F10"
+text = "FRONTLINE · BATTLE01 · FIRST CONTACT"
 
 [node name="Task" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "MISSION: Take Central Bridgehead, survive counterattack, resupply/reinforce, secure Industrial Objective"
+text = "MISSION: Reconnoiter, commit combat power, secure the RED Command Area."
 
 [node name="Selected" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
@@ -180,30 +167,27 @@ text = "Current Orders: --"
 
 [node name="BlueHealth" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "Friendly Core: IFV 0/0 | RECON 0/0"
+text = "BLUE FORCE: initializing"
 
 [node name="EnemyHealth" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "Enemy Strength: NO CONTACT"
+text = "Enemy Strength: HIDDEN"
 
 [node name="Intel" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1.0, 0.78, 0.30, 1)
 text = "Enemy Intel: UNSEEN"
 
 [node name="Objective" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-text = "OBJECTIVES — Central: AI | Industrial: LOCKED / AI"
+text = "RED COMMAND AREA: AI CONTROLLED"
 
 [node name="Controls" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.8, 0.84, 1)
-text = "3D: LMB/Shift/Drag select | RMB Move | Wheel Zoom | WASD Pan | F Resupply | X Withdraw | 1/2 Reserve"
+text = "LMB/Shift/Drag Select | RMB Move | Shift+RMB Advance | X Withdraw | H Hold Fire / Weapons Free | Wheel Zoom | WASD Pan"
 
 [node name="PrototypeNotice" type="Label" parent="HUD/Root/TopLeft"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.82, 1.0, 1)
-text = "3D FOUNDATION — LIVE BATTLE01 SIMULATION"
+text = "M2 CONNECTED PLAYABLE · GREYBOX RUNTIME SHELL"
 
 [node name="VictoryPanel" type="PanelContainer" parent="HUD/Root"]
 layout_mode = 0
@@ -225,7 +209,7 @@ horizontal_alignment = 1
 
 [node name="Message" type="Label" parent="HUD/Root/VictoryPanel/VBox"]
 layout_mode = 2
-text = "Central Bridgehead and Industrial Objective secured."
+text = "RED Command Area secured."
 horizontal_alignment = 1
 
 [node name="Restart" type="Button" parent="HUD/Root/VictoryPanel/VBox"]

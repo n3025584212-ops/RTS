@@ -5,9 +5,9 @@ var _battle: Node
 var _intel: BattleIntelTracker
 var _visibility: BattleVisibilityField
 var _war_flow: BattlePlayerWarFlow
+var _command_area: BattleObjective
 var _proxies: Dictionary = {}
 var _last_known_markers: Dictionary = {}
-var _objective_visuals: Dictionary = {}
 var _scan_accumulator: float = 0.0
 var _initialized: bool = false
 
@@ -20,7 +20,9 @@ var _last_known_material: StandardMaterial3D
 var _objective_blue_material: StandardMaterial3D
 var _objective_red_material: StandardMaterial3D
 var _objective_contested_material: StandardMaterial3D
-var _objective_locked_material: StandardMaterial3D
+var _counterattack_material: StandardMaterial3D
+var _objective_visual: MeshInstance3D
+var _counterattack_ring: MeshInstance3D
 
 func _ready() -> void:
 	call_deferred("_initialize")
@@ -30,15 +32,14 @@ func _initialize() -> void:
 	_intel = _battle.get_node("IntelTracker") as BattleIntelTracker
 	_visibility = _battle.get_node("VisibilityField") as BattleVisibilityField
 	_war_flow = _battle.get_node("PlayerWarFlow") as BattlePlayerWarFlow
+	_command_area = _battle.get_node("CommandArea") as BattleObjective
 	_build_materials()
-	_create_objective_visual(_battle.get_node("CentralBridgehead") as BattleObjective)
-	_create_objective_visual(_battle.get_node("IndustrialObjective") as BattleObjective)
-	_create_rally_visuals()
+	_create_command_area_visual()
 	if not _visibility.smoke_deployed.is_connected(_on_smoke_deployed):
 		_visibility.smoke_deployed.connect(_on_smoke_deployed)
 	_sync_formations()
 	_initialized = true
-	print("FRONTLINE_3D_PRESENTATION_READY bound=%d objectives=2" % _proxies.size())
+	print("FRONTLINE_3D_PRESENTATION_READY bound=%d objectives=1" % _proxies.size())
 
 func _process(delta: float) -> void:
 	if not _initialized:
@@ -48,9 +49,8 @@ func _process(delta: float) -> void:
 		_scan_accumulator = 0.0
 		_sync_formations()
 	_update_formation_proxies()
-	_update_objectives()
+	_update_command_area()
 	_update_last_known_markers()
-	_update_rallies()
 
 func _build_materials() -> void:
 	_blue_material = _make_material(Color(0.16, 0.48, 0.92), 0.30, 0.50)
@@ -62,7 +62,7 @@ func _build_materials() -> void:
 	_objective_blue_material = _make_material(Color(0.12, 0.48, 0.92), 0.10, 0.62)
 	_objective_red_material = _make_material(Color(0.78, 0.16, 0.12), 0.10, 0.62)
 	_objective_contested_material = _make_material(Color(0.95, 0.52, 0.08), 0.08, 0.68)
-	_objective_locked_material = _make_material(Color(0.28, 0.30, 0.32), 0.06, 0.82)
+	_counterattack_material = _make_transparent_material(Color(0.95, 0.25, 0.16, 0.28))
 
 func _sync_formations() -> void:
 	var discovered: Array[BattleFormation] = []
@@ -112,7 +112,6 @@ func _mesh_for_role(role: String) -> PrimitiveMesh:
 		"RECON": box.size = Vector3(0.52, 0.24, 0.34)
 		"IFV": box.size = Vector3(0.72, 0.30, 0.42)
 		"TANK", "ARMOR": box.size = Vector3(0.78, 0.32, 0.46)
-		"LOGISTICS": box.size = Vector3(0.74, 0.28, 0.40)
 		_: box.size = Vector3(0.58, 0.26, 0.38)
 	return box
 
@@ -126,9 +125,12 @@ func _update_formation_proxies() -> void:
 		var body := proxy.get_node("Body") as MeshInstance3D
 		var ring := proxy.get_node("Selection") as MeshInstance3D
 		proxy.position = Battle3DAdapter.sim_to_world(formation.global_position, 0.18)
-		var presentation_visible := formation.visible
+		var presentation_visible: bool = formation.visible
 		if formation.faction == "RED":
-			presentation_visible = presentation_visible and (formation.intel_state == BattleIntelTracker.CONTACT or formation.intel_state == BattleIntelTracker.CONFIRMED)
+			presentation_visible = presentation_visible and (
+				formation.intel_state == BattleIntelTracker.CONTACT
+				or formation.intel_state == BattleIntelTracker.CONFIRMED
+			)
 		proxy.visible = presentation_visible
 		if not presentation_visible:
 			continue
@@ -142,32 +144,42 @@ func _update_formation_proxies() -> void:
 			body.material_override = _red_material
 		ring.visible = formation.is_selected and formation.is_alive
 
-func _create_objective_visual(objective: BattleObjective) -> void:
-	var node := MeshInstance3D.new()
-	node.name = "Objective_%s" % objective.objective_id
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = Battle3DAdapter.sim_length_to_world(objective.capture_radius)
-	mesh.bottom_radius = mesh.top_radius
-	mesh.height = 0.035
-	node.mesh = mesh
-	node.position = Battle3DAdapter.sim_to_world(objective.global_position, 0.055)
-	add_child(node)
-	_objective_visuals[objective] = node
-	objective.modulate = Color(1.0, 1.0, 1.0, 0.0)
+func _create_command_area_visual() -> void:
+	_objective_visual = MeshInstance3D.new()
+	_objective_visual.name = "Objective_RED_COMMAND_AREA"
+	var objective_mesh := CylinderMesh.new()
+	objective_mesh.top_radius = Battle3DAdapter.sim_length_to_world(_command_area.capture_radius)
+	objective_mesh.bottom_radius = objective_mesh.top_radius
+	objective_mesh.height = 0.035
+	_objective_visual.mesh = objective_mesh
+	_objective_visual.position = Battle3DAdapter.sim_to_world(_command_area.global_position, 0.055)
+	add_child(_objective_visual)
 
-func _update_objectives() -> void:
-	for objective_variant: Variant in _objective_visuals.keys():
-		var objective := objective_variant as BattleObjective
-		var node := _objective_visuals[objective] as MeshInstance3D
-		node.position = Battle3DAdapter.sim_to_world(objective.global_position, 0.055)
-		if objective.is_player_capture_locked():
-			node.material_override = _objective_locked_material
-		elif objective.is_contested():
-			node.material_override = _objective_contested_material
-		elif objective.get_control_owner() == BattleObjective.OWNER_PLAYER:
-			node.material_override = _objective_blue_material
-		else:
-			node.material_override = _objective_red_material
+	_counterattack_ring = MeshInstance3D.new()
+	_counterattack_ring.name = "CommandAreaCounterattackZone"
+	var zone_mesh := TorusMesh.new()
+	var zone_radius: float = Battle3DAdapter.sim_length_to_world(_war_flow.get_counterattack_radius())
+	zone_mesh.inner_radius = maxf(0.01, zone_radius - 0.035)
+	zone_mesh.outer_radius = zone_radius + 0.035
+	zone_mesh.rings = 40
+	zone_mesh.ring_segments = 8
+	_counterattack_ring.mesh = zone_mesh
+	_counterattack_ring.position = Battle3DAdapter.sim_to_world(_command_area.global_position, 0.04)
+	_counterattack_ring.material_override = _counterattack_material
+	add_child(_counterattack_ring)
+
+	_command_area.modulate = Color(1.0, 1.0, 1.0, 0.0)
+
+func _update_command_area() -> void:
+	if _objective_visual == null or _command_area == null:
+		return
+	_objective_visual.position = Battle3DAdapter.sim_to_world(_command_area.global_position, 0.055)
+	if _command_area.is_contested():
+		_objective_visual.material_override = _objective_contested_material
+	elif _command_area.get_control_owner() == BattleObjective.OWNER_PLAYER:
+		_objective_visual.material_override = _objective_blue_material
+	else:
+		_objective_visual.material_override = _objective_red_material
 
 func _update_last_known_markers() -> void:
 	for formation_variant: Variant in _proxies.keys():
@@ -193,31 +205,6 @@ func _update_last_known_markers() -> void:
 		elif _last_known_markers.has(formation):
 			(_last_known_markers[formation] as MeshInstance3D).visible = false
 
-func _create_rally_visuals() -> void:
-	var west := _make_ground_ring("WestRearRally3D", BattlePlayerWarFlow.WEST_REAR_RALLY, Color(0.20, 0.65, 1.0))
-	west.visible = true
-	var forward := _make_ground_ring("BridgeheadForwardRally3D", BattlePlayerWarFlow.BRIDGEHEAD_FORWARD_RALLY, Color(0.20, 0.88, 0.92))
-	forward.visible = false
-
-func _update_rallies() -> void:
-	var forward := get_node_or_null("BridgeheadForwardRally3D") as MeshInstance3D
-	if forward != null:
-		forward.visible = _war_flow.is_forward_rally_active()
-
-func _make_ground_ring(name_value: String, sim_position: Vector2, color: Color) -> MeshInstance3D:
-	var node := MeshInstance3D.new()
-	node.name = name_value
-	var mesh := TorusMesh.new()
-	mesh.inner_radius = 0.28
-	mesh.outer_radius = 0.42
-	mesh.rings = 18
-	mesh.ring_segments = 8
-	node.mesh = mesh
-	node.position = Battle3DAdapter.sim_to_world(sim_position, 0.04)
-	node.material_override = _make_material(color, 0.10, 0.52)
-	add_child(node)
-	return node
-
 func _on_smoke_deployed(center: Vector2, radius: float, duration: float) -> void:
 	var smoke := MeshInstance3D.new()
 	smoke.name = "Smoke3D"
@@ -233,8 +220,18 @@ func _on_smoke_deployed(center: Vector2, radius: float, duration: float) -> void
 	get_tree().create_timer(duration).timeout.connect(smoke.queue_free)
 
 func show_command_marker(sim_position: Vector2) -> void:
-	var marker := _make_ground_ring("CommandMarker3D", sim_position, Color(0.30, 0.92, 1.0))
+	var marker := MeshInstance3D.new()
+	marker.name = "CommandMarker3D"
+	var mesh := TorusMesh.new()
+	mesh.inner_radius = 0.28
+	mesh.outer_radius = 0.42
+	mesh.rings = 18
+	mesh.ring_segments = 8
+	marker.mesh = mesh
+	marker.position = Battle3DAdapter.sim_to_world(sim_position, 0.04)
+	marker.material_override = _make_material(Color(0.30, 0.92, 1.0), 0.10, 0.52)
 	marker.scale = Vector3(0.72, 0.72, 0.72)
+	add_child(marker)
 	get_tree().create_timer(1.2).timeout.connect(marker.queue_free)
 
 func get_player_selectable_formations() -> Array[BattleFormation]:
