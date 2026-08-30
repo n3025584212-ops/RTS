@@ -117,8 +117,9 @@ func _bind_red_formation(formation: BattleFormation) -> void:
 		return
 	formation.set_navigation(navigation)
 	formation.set_visibility_field(visibility)
-	if not formation.health_changed.is_connected(_on_red_health_changed.bind(formation)):
-		formation.health_changed.connect(_on_red_health_changed.bind(formation))
+	var health_callback: Callable = _on_red_health_changed.bind(formation)
+	if not formation.health_changed.is_connected(health_callback):
+		formation.health_changed.connect(health_callback)
 	if not formation.attack_fired.is_connected(_on_attack_fired):
 		formation.attack_fired.connect(_on_attack_fired)
 	if not formation.died.is_connected(_on_red_died):
@@ -197,7 +198,7 @@ func _on_red_died(formation: BattleFormation) -> void:
 
 func _on_attack_fired(attacker: BattleFormation, _target: BattleFormation, _damage: int) -> void:
 	if attacker != null and attacker.faction == "RED":
-		intel.note_target_fired()
+		intel.note_target_fired(attacker)
 	if not _combat_started:
 		_combat_started = true
 		print("FRONTLINE_M2_COMBAT_STARTED")
