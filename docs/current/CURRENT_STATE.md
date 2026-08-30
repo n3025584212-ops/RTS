@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V2
+STATE_VERSION=V3
 INTEGRATION_AUTHORITY=WINDOW_00_GAME_DIRECTOR_PRODUCER
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V2.md
 ACTIVE_BATTLE_CONTRACT=docs/current/BATTLE01_CONNECTED_PLAYABLE_CONTRACT_V1.md
@@ -22,22 +22,27 @@ M3_REPRESENTATIVE_VISUAL_SLICE=NOT_STARTED
 M4_PLAYER_BUILD=NOT_STARTED
 M5_BATTLE01_VERTICAL_SLICE=NOT_STARTED
 
-M1 is closed by the frozen Battle01 Connected Playable Contract V1.
-M2 exists to implement and directly play the approximately 10-15 minute connected decision loop defined by that contract.
+M2 is implementing the frozen approximately 10-15 minute connected decision loop one coherent player-facing layer at a time.
 
 ---
 
 ## CURRENT_PLAYABLE
 
-STATUS=TECHNICAL_PLAYABLE_PROTOTYPE
+STATUS=M2_RUNTIME_SHELL_VERIFIED
 PRODUCT_VERTICAL_SLICE_STATUS=NOT_ACCEPTED
-M2_CONNECTED_PLAYABLE_STATUS=NOT_YET_IMPLEMENTED
+M2_CONNECTED_PLAYABLE_STATUS=PARTIALLY_IMPLEMENTED
 
-The historical Battle01 remains a working technical prototype and reusable toolbox. It is not the accepted M2 Battle01 design.
+M2_01_RUNTIME_SHELL=COMPLETE
 
-Real Godot 4.7.1 evidence exists for ancestor commit `51923884e06969460d01f5eb90b940986e491403`: Parse, Boot, real viewport Selection, MOVE, Combat, Objective transitions and repeated Restart all passed with no SCRIPT ERROR / Parse Error / Invalid access observed.
+The accepted Battle01 runtime now boots directly into the M2 structure:
+- BLUE Recon x1, Infantry x2, IFV x1, Armor x1;
+- RED Infantry x2, IFV x1, Armor x1;
+- one RED Command Area;
+- no active Supply Truck / Resupply / Reserve Unlock / PreBattleStaging / runtime reinforcement flow;
+- Recon starts HOLD FIRE;
+- selection, MOVE, ADVANCE, WITHDRAW and HOLD FIRE / WEAPONS FREE are available.
 
-This proves technical playability only. It does not prove the new M2 product design.
+This runtime shell was verified locally with real Godot 4.7.1. The full connected playable is not yet complete because the tactical-sector battlefield and reactive RED AI still require M2 implementation.
 
 ---
 
@@ -63,20 +68,17 @@ PRODUCT_PILLARS=
 
 BATTLE01_PRODUCT_DESIGN=FROZEN_CONNECTED_PLAYABLE_CONTRACT_V1
 
-Frozen Battle01 essentials:
-- BLUE: Recon x1, Infantry x2, IFV x1, Armor x1; all available from start;
-- RED: Infantry x2, IFV x1, Armor x1; all physically present from initialization;
-- one final RED Command Area; no Central->Industrial unlock chain;
+Frozen essentials remain unchanged:
+- BLUE=Recon x1 / Infantry x2 / IFV x1 / Armor x1;
+- RED=Infantry x2 / IFV x1 / Armor x1;
+- North / Central / South must create distinct tactical problems;
+- one final RED Command Area;
 - three authored hidden RED defensive plans using the same finite roster;
 - symmetric limited information using UNSEEN / CONTACT / CONFIRMED / LAST_KNOWN principles;
-- player commands: MOVE / ADVANCE / WITHDRAW / HOLD FIRE<->WEAPONS FREE;
-- Recon starts HOLD FIRE;
-- RED distinguishes probe vs major commitment using legitimate information;
-- finite RED redeployment has commitment inertia;
-- no Supply/Resupply or scripted reserve/reinforcement flow in M2;
-- Victory/Defeat are deterministic and player-readable.
-
-Exact combat tuning values remain M2 tuning variables unless separately frozen after play evidence.
+- player commands MOVE / ADVANCE / WITHDRAW / HOLD FIRE<->WEAPONS FREE;
+- RED must distinguish probe from major commitment using legitimate information;
+- finite RED redeployment must have commitment inertia;
+- no Supply/Resupply or scripted reserve/reinforcement flow in M2.
 
 ---
 
@@ -84,14 +86,12 @@ Exact combat tuning values remain M2 tuning variables unless separately frozen a
 
 STATUS=RECOVERED_BUT_NOT_RECONFIRMED_FOR_3D_PRODUCTION
 
-The eight-image Battle01 target package remains visual lineage/reference.
-
 INTERNAL_FORMAL_TARGET_SET=YES
 WINDOW_06_TARGET_PACKAGE_VALIDATED=YES
 USER_EXPLICIT_PER_IMAGE_APPROVAL=NOT_RECOVERED
 CURRENT_3D_PRODUCTION_AUTHORITY=NOT_YET_RECONFIRMED
 
-M2 may use greybox/proxy presentation. Production-quality visual work is not required to prove the connected gameplay loop and must not block M2.
+M2 may use greybox/proxy presentation. Production art must not block gameplay validation.
 
 ---
 
@@ -99,6 +99,17 @@ M2 may use greybox/proxy presentation. Production-quality visual work is not req
 
 ENGINE=GODOT_4_7_1
 CURRENT_ARCHITECTURE=2D_SIMULATION_TRUTH_PLUS_3D_PRESENTATION_INPUT_FOUNDATION
+
+M2_01_IMPLEMENTED_AND_VERIFIED=
+- new five-Formation BLUE starting roster;
+- finite four-Formation RED roster;
+- single Command Area mission shell;
+- legacy Supply/Staging/Reserve Unlock/Reinforcement runtime flow inactive;
+- minimal M2 HUD;
+- selection and movement foundation retained;
+- MOVE / ADVANCE / WITHDRAW / HOLD FIRE active;
+- Recon default HOLD FIRE;
+- deterministic combat foundation retained.
 
 KEEP_FOR_M2=
 - Camera3D foundation;
@@ -109,68 +120,67 @@ KEEP_FOR_M2=
 - Intel state model;
 - core LOS;
 - Objective ownership/capture/contest core;
-- deterministic damage/ammo foundation where compatible.
+- deterministic damage/ammo foundation.
 
-REWORK_FOR_M2=
-- battlefield layout into the new North/Central/South tactical sectors;
-- command orchestration to the four frozen command semantics;
-- PlayerWarFlow into a minimal mission/end-state controller;
-- RED AI around the three defensive plans, symmetric information, pressure classification and commitment inertia;
-- HUD to show the active M2 contract rather than historical progression systems.
+REWORK_NEXT_FOR_M2=
+- battlefield geometry and navigation into true North / Central / South tactical sectors;
+- RED AI around authored plans, symmetric information, pressure classification and commitment inertia;
+- HUD only where needed to make the connected decision loop readable.
 
-REMOVE_FROM_M2_ACTIVE_FLOW=
-- Supply/Resupply and Supply Truck;
-- Reserve unlock/deployment;
-- Pre-battle Staging gameplay phase;
-- Central->Industrial progression;
-- fixed-time and post-capture RED reinforcement activation;
-- historical route/posture logic that conflicts with the new defensive plans;
-- Artillery in Battle01.
-
-Removal from M2 active flow does not authorize immediate source deletion.
+Removal from M2 active flow does not authorize source deletion of historical systems.
 
 ---
 
 ## KNOWN_PRODUCT_BLOCKERS
 
-1. The frozen M2 Battle01 has not yet been implemented.
-2. The ten M2 playable hypotheses in `BATTLE01_CONNECTED_PLAYABLE_CONTRACT_V1.md` have not yet been proven by direct human play.
-3. Exact tuning of movement/combat/detection/capture values remains to be adjusted during M2 without violating frozen role relationships.
-4. Current representative 3D art direction remains unconfirmed and is intentionally deferred to M3.
-5. There is no accepted Windows player build yet.
+1. North / Central / South do not yet constitute the frozen three tactical problems in the accepted M2 runtime.
+2. New RED reactive AI is not yet implemented.
+3. The complete approximately 10-15 minute OBSERVE->COMMIT->REASSESS loop has not yet been proven by direct human play.
+4. Exact movement/combat/detection/capture values remain M2 tuning variables.
+5. Representative 3D art direction remains unconfirmed and is deferred to M3.
+6. There is no accepted Windows player build yet.
 
 ---
 
 ## KNOWN_TECHNICAL_BLOCKERS
 
-1. GitHub `Frontline Core Verify` currently exhibits a `PROJECT_SYSTEM_BUG / CI_INFRASTRUCTURE` failure mode in which recent PR jobs end before any steps execute and provide no Godot logs.
-2. Godot validation has generated untracked `.uid/.import` files whose repository policy remains HOLD pending a focused hygiene decision.
-3. Legacy documents and source paths may contain obsolete Battle01 assumptions; they are not authority over the frozen M2 contract.
+1. GitHub Frontline Core Verify still has a PROJECT_SYSTEM_BUG / CI_INFRASTRUCTURE mode where jobs fail before any step executes and provide no Godot logs.
+2. Local Godot use has produced pre-existing untracked `.uid/.import` files; repository disposition remains HOLD pending focused hygiene review.
+3. Legacy documents/source may retain obsolete Battle01 assumptions; they are not authority over the frozen M2 contract.
 
-These blockers do not authorize feature expansion or rebuilding the old QA stack.
+No current runtime blocker is known for the merged M2-01 shell.
 
 ---
 
 ## CURRENT_BUILD
 
-STATE_TRANSITION_BASE_MAIN_SHA=aa6810e84c595d80be9b01e274964ebf4fa5ce6d
-ENGINE_BASELINE=Godot_4_7_1
-REAL_RUNTIME_EVIDENCE_SHA=51923884e06969460d01f5eb90b940986e491403
-REAL_RUNTIME_EVIDENCE_STATUS=TECHNICAL_PLAYABLE_CONFIRMED
+CURRENT_MAIN_AFTER_M2_01=ba4f3f1c5f3dce7736014963230b6103ef029c0d
+M2_01_VERIFIED_HEAD_SHA=2638a749654eb73ab18245876d347736e5f36bed
+M2_01_LOCAL_VERIFY_TASK=M2_01_LOCAL_GODOT_VERIFY_V1
+M2_01_LOCAL_VERIFY_RESULT=PASS
+REAL_GODOT_VERSION=4.7.1.stable.official.a13da4feb
+PARSE=PASS
+BOOT=PASS
+SELECTION=PASS
+MOVE=PASS
+ADVANCE=PASS
+WITHDRAW=PASS
+HOLD_FIRE=PASS
+RUNTIME_ERRORS=NONE
 ACCEPTED_WINDOWS_PLAYER_BUILD=NONE
 
 ---
 
 ## NEXT_DECISION
 
-NEXT=DEFINE_M2_IMPLEMENTATION_SEQUENCE_AND_FIRST_SCOPED_TASK
+NEXT=M2_02_BUILD_NORTH_CENTRAL_SOUTH_TACTICAL_SECTORS
 
-The next action is not a repository-wide gap search. WINDOW_00 must decompose the frozen connected playable into the smallest coherent implementation sequence, then issue the first scoped M2 task with:
-- player-facing problem;
-- authorized change;
-- explicit non-goals;
-- reusable/rework components;
-- completion evidence.
+M2-02 must make terrain itself create three materially different player judgments:
+- North = broken information / close approach;
+- Central = fastest and most exposed direct approach;
+- South = mobile but exposed maneuver.
+
+The next task must remain scoped to battlefield geometry, LOS and pathing needed to prove those differences. It must not prematurely implement RED reactive AI, production art, logistics, economy or unrelated systems.
 
 CODEX_GAMEPLAY_WORK=AUTHORIZED_ONLY_BY_SCOPED_M2_TASK
 NO_OPEN_ENDED_CODEX_ROADMAP_AUTHORITY=YES
