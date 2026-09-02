@@ -8,9 +8,8 @@
 - Current phase: `P0_DISCOVER`
 - Battle01 production: `PAUSED`
 - Source of truth: `docs/current/CURRENT_STATE.md`
-- Active task: GitHub Issue #20 — Build Prototype B minimum coherent playable
+- Active task: GitHub Issue #20 — Prototype B representative command-battle slice
 - GPT collaboration: four-window shared-state runtime
-- Human experience gate: only after `MINIMUM_PLAYABLE_READINESS`
 
 ## 开始阅读
 
@@ -29,40 +28,23 @@
 
 ```text
 00  Project Control / Integration   项目总控、状态整合、冲突裁决
-01  Design / Experience             游戏设计、UX/UI、玩家侧目标与反馈
+01  Design / Experience             游戏设计、UX/UI、玩家体验与战斗结构
 02  Development                     Godot、Gameplay、Combat、Units、AI、实现
-03  Review / Operations             QA、可玩成熟度证据、PR/CI、GitHub运维
+03  Review / Operations             QA、Playtest Evidence、PR/CI、GitHub运维
 ```
 
 ### 当前 P0 运行状态
 
 ```text
 WINDOW_00 = ACTIVE
-WINDOW_01 = ACTIVE_TARGET_DEFINITION
-WINDOW_02 = ACTIVE_MINIMUM_PLAYABLE_BUILD
+WINDOW_01 = ACTIVE_BATTLE_AND_COMMAND_DESIGN
+WINDOW_02 = ACTIVE_REPRESENTATIVE_SLICE_BUILD
 WINDOW_03 = STANDBY_ON_DEMAND
 ```
 
-当前重点不是反复模拟玩家体验，而是先把 Prototype B 做到最低可玩完整度。00 控范围，01 给足够施工目标，02 实际构建，03 在真实 build 出现后按需独立检查。
+不是四个窗口全部同时制造工作。00 常驻；01/02 当前围绕同一个代表性战斗切片工作；03 在有实质构建或审查对象时进入。
 
-窗口间不使用强制回执链；共享成果落在 GitHub Issue、branch/PR、代码、测试和 CI 证据中。
-
-## 三层证据
-
-```text
-1. TECHNICAL_VERIFICATION
-   Codex / tests / CI 可执行
-
-2. MINIMUM_PLAYABLE_READINESS
-   先确认已经有目标、操作、对抗/变化、后果、反馈、持续游玩和结果闭环
-
-3. HUMAN_PRODUCT_EVIDENCE
-   只有真实用户试玩才有效
-```
-
-`CODEX_SIMULATED_HUMAN_PLAY=INVALID`
-
-TECHNICAL_PASS 不等于 PRODUCT_PASS；但 PRODUCT_PASS 也不应该被要求在游戏尚未形成可玩闭环时提前判断。
+这些窗口只是 GPT 分工/上下文路由，不各自拥有项目状态、路线图或冻结权。窗口间不使用强制回执链；共享成果落在 GitHub Issue、branch/PR、代码、测试和 CI 证据中。
 
 ## Repository layout
 
@@ -80,4 +62,6 @@ docs/gpt_windows/             four reusable GPT initialization prompts
 
 ## 当前开发原则
 
-先形成一个真实、连贯、可运行的小型游戏闭环，再要求真人判断玩家体验。Battle01 正式生产仍暂停；最低可玩原型中的临时实现不自动成为最终产品规则。
+当前阶段不再用几个盒子、一次接触、一个孤立决策来代表整款 RTS。Prototype B 必须形成一个具有持续指挥负荷的代表性灰盒战斗：多个责任区/战场需求、敌军主动变化、局部自主执行、预备力量或未投入战力、再任务、战斗后果与持续结果流。精确单位数量、地图尺寸和时长保持软定义。
+
+只有当这种代表性战斗已经实际运行，才进入有意义的真人产品体验判断。Codex/自动化只负责技术验证，不模拟真人。
