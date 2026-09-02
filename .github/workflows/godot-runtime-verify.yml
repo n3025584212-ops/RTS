@@ -43,6 +43,13 @@ jobs:
           timeout 60s "$GODOT" --headless --editor --path . --quit 2>&1 | tee godot-editor.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-editor.log
 
+      - name: Prototype B representative command battle smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --script tests/prototype_b_command_battle_smoke.gd 2>&1 | tee godot-prototype-b.log
+          grep -q 'PROTOTYPE_B_COMMAND_BATTLE_SMOKE=PASS' godot-prototype-b.log
+
       - name: Core role/capture regression
         shell: bash
         run: |
