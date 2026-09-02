@@ -42,21 +42,28 @@ No specialist, test, implementation agent, GPT window, old window, old contract 
 
 ---
 
-## 3. No permanent authority windows; GPT routing windows are allowed
+## 3. No permanent authority windows; four GPT routing windows are allowed
 
 FRONTLINE no longer has permanent numbered work windows that own independent state, roadmap or freeze authority.
 
-There is no required 01/03/06/08 handoff chain, no window-to-window receipt protocol, and no independent current state per discipline.
+There is no required handoff chain, no window-to-window receipt protocol, and no independent current state per discipline.
 
 Design, engineering, art, audio, AI, UX and QA are CAPABILITIES used when a task needs them. They are not separate project authorities.
 
-For practical multi-chat work, FRONTLINE may use `WINDOW_00`–`WINDOW_08` as stable GPT conversation/routing labels under `docs/GPT_MULTI_WINDOW_SYSTEM_V1.md`.
+For practical multi-chat work, FRONTLINE may use four stable GPT conversation/routing labels under `docs/GPT_MULTI_WINDOW_SYSTEM_V2.md`:
 
-These new GPT window labels do **not** restore the retired permanent-window operating model. Every GPT window must use the same `docs/current/CURRENT_STATE.md`, current Active Issue and authority order.
+- WINDOW_00 = Project Control / Integration
+- WINDOW_01 = Design / Experience
+- WINDOW_02 = Development
+- WINDOW_03 = Review / Operations
 
-Historical WINDOW_00 / WINDOW_03 / WINDOW_08 references from the old operating model remain historical unless explicitly reaccepted. Identical numbers in the new GPT collaboration system are routing labels, not inherited authority.
+Activation rules live in `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md`.
 
-A task may use several capabilities/windows at once when that produces a better playable result.
+These GPT window labels do **not** restore the retired permanent-window operating model. Every GPT window must use the same `docs/current/CURRENT_STATE.md`, current Active Issue and authority order.
+
+Historical WINDOW references from older systems remain historical unless explicitly reaccepted. Identical numbers in the current GPT collaboration system are routing labels, not inherited authority.
+
+A task may use several capabilities/windows at once when that produces a better playable result, but it should use the smallest set needed.
 
 ---
 
@@ -67,7 +74,6 @@ The project maintains one living state:
 `docs/current/CURRENT_STATE.md`
 
 It should answer only the information needed to continue work:
-
 - CURRENT_PHASE
 - CURRENT_PRODUCT_QUESTION
 - CURRENT_PLAYABLE
@@ -111,7 +117,6 @@ At any time there should normally be one PRIMARY ACTIVE TASK.
 Independent maintenance may occur in parallel only when it does not change product direction or distract from the primary task.
 
 Every gameplay/product task must contain:
-
 TASK_ID
 CURRENT_PHASE
 PRODUCT_QUESTION
@@ -123,14 +128,11 @@ COMPLETION_EVIDENCE
 DECISION_AFTER_EVIDENCE
 
 Tasks should be large enough to produce a meaningful player-facing result and small enough to evaluate directly.
-
 Avoid long chains of micro-tasks whose only result is internal system completeness.
 
 ---
 
 ## 7. Product discovery loop
-
-For an unproven design question use:
 
 QUESTION
 -> HYPOTHESIS
@@ -139,7 +141,6 @@ QUESTION
 -> KEEP / REWORK / KILL
 
 Do not promote a hypothesis because it sounds plausible, resembles doctrine, has a document, or passed automated tests.
-
 Do not add production art or system complexity to rescue an unclear prototype before the interaction itself is understood.
 
 ---
@@ -147,7 +148,6 @@ Do not add production art or system complexity to rescue an unclear prototype be
 ## 8. Accepted vs experimental decisions
 
 Every important product statement is one of:
-
 HYPOTHESIS
 ACCEPTED
 REOPENED
@@ -155,7 +155,6 @@ SUPERSEDED
 HISTORICAL_REFERENCE
 
 Only ACCEPTED decisions constrain downstream product work.
-
 A design can be reopened whenever direct play contradicts it or the user changes direction.
 
 Hard constraints and soft choices must be distinguished. Hard constraints protect product identity, safety, engine/runtime requirements or already-proven dependencies. Soft choices such as exact UI form, terminology, timings and layout remain adjustable until evidence justifies freezing them.
@@ -179,7 +178,6 @@ They may not:
 - declare gameplay, fun or product direction proven.
 
 Normal engineering flow:
-
 SCOPED_TASK
 -> FEATURE_OR_PROTOTYPE_BRANCH
 -> REAL_GODOT_VERIFY
@@ -196,13 +194,11 @@ Disposable discovery prototypes do not have to merge into main merely because th
 Technical verification and product validation are separate.
 
 TECHNICAL_VERIFICATION asks whether the implementation parses, boots, runs and behaves mechanically as specified.
-
 PRODUCT_VALIDATION asks whether the player understands it, makes meaningful decisions, wants to continue playing, and experiences the intended causal loop.
 
 TECHNICAL_PASS != PRODUCT_PASS
 
 For core gameplay discovery, direct human play is the decisive evidence.
-
 QA protects known behavior. QA does not invent product intent.
 
 ---
@@ -210,13 +206,9 @@ QA protects known behavior. QA does not invent product intent.
 ## 11. Visual and UX work
 
 Visual work enters at the level needed by the current product question.
-
 During discovery/proof, use the minimum presentation needed for the player to understand and judge the interaction.
-
 If a player cannot understand a greybox because the interaction is not communicated, that is a product/UX finding. Do not hide it by adding decorative production art.
-
 Once gameplay is proven, representative art direction can be developed against real normal-play scenes.
-
 Historical visual targets are references until explicitly reaccepted.
 
 ---
@@ -226,15 +218,13 @@ Historical visual targets are references until explicitly reaccepted.
 Prefer living documents over receipt chains.
 
 Active authority should normally fit in:
-
 - `docs/FRONTLINE_PROJECT_CHARTER_V3.md`
 - `docs/current/CURRENT_STATE.md`
 - active GitHub issue/PR for the current task
 
-`docs/GPT_MULTI_WINDOW_SYSTEM_V1.md` and `docs/gpt_windows/` define collaboration/routing behavior but do not create additional project truth.
+`docs/GPT_MULTI_WINDOW_SYSTEM_V2.md`, `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md` and `docs/gpt_windows/` define collaboration/routing behavior but do not create additional project truth.
 
-Older contracts, audits and legacy-window documents remain available through Git history or `archive/legacy-unused` but are historical unless CURRENT_STATE explicitly reaccepts them.
-
+Older contracts, audits and superseded window systems remain available through Git history or `archive/legacy-unused` but are historical unless CURRENT_STATE explicitly reaccepts them.
 Do not create documents solely to acknowledge other documents.
 
 ---
@@ -242,11 +232,8 @@ Do not create documents solely to acknowledge other documents.
 ## 13. Git and repository hygiene
 
 `main` represents the current stable project baseline, not the entire history of every experiment.
-
 Keep prototype branches when they contain useful experimental evidence. Merge them only if the code has reusable current product value.
-
 Do not delete uncertain historical assets/source simply because the operating system changed. Classification remains KEEP / REWORK / REMOVE / HOLD based on current value and dependencies.
-
 Clearly superseded/unused historical material may be stored on `archive/legacy-unused` to keep `main` focused.
 
 ---
@@ -256,7 +243,6 @@ Clearly superseded/unused historical material may be stored on `archive/legacy-u
 The abolition of the old permanent numbered-window system does not automatically invalidate every result created under it.
 
 Each existing result is judged by current value:
-
 - proven reusable technical foundation -> KEEP
 - unproven design assumption -> REOPEN / REWORK
 - obsolete operating procedure -> HISTORICAL
@@ -275,5 +261,6 @@ ONE_CURRENT_STATE=YES
 ONE_PRIMARY_PRODUCT_QUESTION=YES
 PERMANENT_AUTHORITY_WINDOWS=NO
 GPT_ROUTING_WINDOWS=YES
+GPT_WINDOW_COUNT=4
 SPECIALISTS_AS_CAPABILITIES_NOT_AUTHORITIES=YES
 CODEX_ROADMAP_AUTHORITY=NO
