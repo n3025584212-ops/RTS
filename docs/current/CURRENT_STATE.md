@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V8
+STATE_VERSION=V9
 INTEGRATION_AUTHORITY=PROJECT_DIRECTOR
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V1.md
@@ -13,9 +13,10 @@ SOURCE_OF_TRUTH=THIS_FILE
 
 LEGACY_PERMANENT_WINDOW_SYSTEM=ABOLISHED
 GPT_MULTI_WINDOW_COLLABORATION=ENABLED
-GPT_WINDOW_IDS_ARE_ROUTING_LABELS=YES
-INDEPENDENT_WINDOW_PROJECT_STATES=NO
 GPT_WINDOW_COUNT=4
+INDEPENDENT_WINDOW_PROJECT_STATES=NO
+CODEX_SIMULATED_HUMAN_PLAY=INVALID_EVIDENCE
+PLAYER_EXPERIENCE_GATE=AFTER_MINIMUM_PLAYABLE_READINESS
 
 ---
 
@@ -24,7 +25,9 @@ GPT_WINDOW_COUNT=4
 CURRENT_PHASE=P0_DISCOVER
 BATTLE01_PRODUCTION=PAUSED
 
-The repeated player decision and command experience are not yet proven. The project remains in core-game discovery.
+The core command identity is still being discovered, but the project must now build enough coherent game substance before repeatedly asking for player-experience judgments.
+
+The prior process over-weighted early readability/experience gates while the playable was too thin to support a meaningful product judgment.
 
 ---
 
@@ -33,20 +36,20 @@ The repeated player decision and command experience are not yet proven. The proj
 QUESTION=
 What repeated real-time decision makes FRONTLINE worth playing as a formation-level command game rather than as a conventional RTS with fewer units?
 
-The game must be discovered and proven through direct play before Battle01 production resumes.
+This remains the product question, but it no longer blocks all prototype construction until a paper/design answer is proven.
 
 ---
 
 ## CURRENT_PLAYABLE
 
-### Reusable production foundation
+### Reusable technical foundation
 
 M2_01_RUNTIME_SHELL=KEEP_AS_TECHNICAL_TOOLBOX
 REAL_GODOT_4_7_1_VERIFY=PASS
 
-Reusable foundations include selection, movement/pathing, 2D simulation truth + 3D presentation/input, LOS/intel, deterministic combat, objective primitives and the verified M2-01 runtime shell.
+Reusable foundations include selection, movement/pathing, 2D simulation truth + 3D presentation/input, LOS/intel, deterministic combat, objective primitives and the verified runtime shell.
 
-These components do not define the future game merely because they already exist.
+These are construction material, not final product rules.
 
 ### Discovery Prototype A
 
@@ -57,7 +60,7 @@ TECHNICAL_RESULT=PASS
 PRODUCT_RESULT=REWORK_REQUIRED
 MERGE_TO_MAIN=NOT_AUTHORIZED
 
-Direct first-use evidence: player response was "没看懂". The current interaction appears too close to select -> right-click location -> pressure, so the core command hypothesis is not proven.
+Direct first-use evidence was "没看懂". That evidence remains valid, but it must not be generalized into a rule that every early implementation increment requires player-experience validation.
 
 ---
 
@@ -66,15 +69,15 @@ Direct first-use evidence: player response was "没看懂". The current interact
 ACCEPTED:
 - FRONTLINE remains a modern-warfare formation/platoon-level tactical game project.
 - high-APM unit micromanagement is not an assumed product goal.
-- technical PASS and product PASS are separate.
-- direct human play outranks automated evidence for core gameplay acceptance.
-- Codex is a scoped construction executor, not roadmap/product authority.
-- old North/Central/South Battle01 construction is not authorized.
-- production art must not be used to hide an unclear core interaction.
+- TECHNICAL_PASS != PRODUCT_PASS.
+- direct human play is decisive for product acceptance when the build is sufficiently developed to justify human judgment.
+- Codex/automation may perform technical verification and heuristic inspection but may not simulate or stand in for a human player.
+- player-experience testing is deferred until MINIMUM_PLAYABLE_READINESS is reached.
+- early development may proceed when the player-facing target and scope are clear enough to build without inventing a new product direction.
+- old North/Central/South Battle01 production remains unauthorized.
+- production art must not be used to hide an unclear interaction.
 - one shared current state replaces permanent specialist/window states.
-- FRONTLINE_PROJECT_SYSTEM_V1 is the active day-to-day operating system under the V3 charter.
-- GPT multi-window collaboration uses four routing contexts only: 00 Project Control, 01 Design/Experience, 02 Development, 03 Review/Operations.
-- the four GPT windows share this single state and do not own independent roadmaps, freeze rights or mandatory handoff chains.
+- the active GPT system uses four routing contexts only: 00 Project Control, 01 Design/Experience, 02 Development, 03 Review/Operations.
 
 REOPENED / NOT PROVEN:
 - incomplete information as the primary game core;
@@ -86,15 +89,38 @@ REOPENED / NOT PROVEN:
 
 ---
 
+## EVIDENCE_MODEL
+
+LAYER_1_TECHNICAL_VERIFICATION=
+Codex/tests/CI verify that the build runs and specified mechanics work. This is not player evidence.
+
+LAYER_2_MINIMUM_PLAYABLE_READINESS=
+The build has enough coherent game substance that asking a human to judge it is meaningful.
+
+MINIMUM_PLAYABLE_READINESS requires, at minimum:
+- a visible situation or objective;
+- controllable player action;
+- an opposing force or changing battlefield state;
+- consequences from player action;
+- readable feedback;
+- a beginning, continued play loop and recognizable result/restart path.
+
+Exact scenario length, visual style, timings, unit abstraction and presentation are soft choices.
+
+LAYER_3_HUMAN_PRODUCT_EVIDENCE=
+Only after readiness should the user judge understandability, decision quality, engagement and the intended command experience.
+
+---
+
 ## GPT_WINDOW_RUNTIME
 
 WINDOW_00=ACTIVE
-WINDOW_01=ACTIVE
-WINDOW_02=STANDBY_FEASIBILITY_ONLY
+WINDOW_01=ACTIVE_TARGET_DEFINITION
+WINDOW_02=ACTIVE_MINIMUM_PLAYABLE_BUILD
 WINDOW_03=STANDBY_ON_DEMAND
 
 CURRENT_RUNTIME_REASON=
-P0 discovery currently needs product/experience work first. Development may inspect feasibility but must not pre-implement unaccepted core gameplay. Independent review/ops enters when a runnable result, evidence review or repository task exists.
+The game currently needs more coherent playable substance, not repeated simulated-player judgment. WINDOW_01 should define enough intent to guide construction; WINDOW_02 should actively build; WINDOW_03 enters for independent technical/readiness review when a real build exists.
 
 WINDOW_00_STATE_WRITE_AUTHORITY=DEFAULT
 WINDOW_01_02_03_STATE_WRITE_AUTHORITY=ONLY_IF_USER_OR_TASK_EXPLICITLY_DELEGATES
@@ -107,59 +133,71 @@ DURABLE_RESULTS_OVER_CHAT_RECEIPTS=YES
 
 H1_COMMAND_LEVEL_PLAY=
 The player should spend more attention forming, observing and revising plans than repeatedly correcting local movement.
-STATUS=STILL_PLAUSIBLE_NOT_PROVEN
+STATUS=PLAUSIBLE_NOT_PROVEN
 
 H2_ACTION_RESPONSE=
 Player action should cause understandable opponent responses that change subsequent choices.
-STATUS=STILL_PLAUSIBLE_NOT_PROVEN
+STATUS=PLAUSIBLE_NOT_PROVEN
 
 H3_CURRENT_PROTOTYPE_EXPRESSION=
 A single right-click maintain-pressure task is sufficient to communicate and test the above ideas.
 STATUS=FAILED_REWORK_REQUIRED
 
+H4_PROCESS_READINESS=
+Meaningful player-experience judgment requires a more coherent playable than Prototype A currently provides.
+STATUS=ACCEPTED_PROCESS_RULE
+
 ---
 
 ## CURRENT_TASK
 
-ACTIVE_PRIMARY_TASK=DEFINE_PROTOTYPE_B_CORE_PLAYER_DECISION_V1
+ACTIVE_PRIMARY_TASK=BUILD_PROTOTYPE_B_MINIMUM_COHERENT_PLAYABLE_V1
 ACTIVE_ISSUE=#20
 ACTIVE_ISSUE_URL=https://github.com/n3025584212-ops/RTS/issues/20
 
-The current product task is to define one concrete repeated player decision for Prototype B before writing more gameplay code.
+Immediate goal:
+Build a small but coherent Prototype B greybox that is sufficiently game-like to justify later human experience evaluation.
 
-No additional core gameplay implementation is authorized until the decision is stated clearly enough that a first-time player can understand what decision the prototype is asking them to make and the user accepts it for implementation.
+WINDOW_01 must provide enough player-facing intent, information/choice/feedback guidance and non-goals for WINDOW_02 to build without inventing a new product direction.
+
+WINDOW_02 is authorized to implement the minimum coherent playable baseline using current reusable technology. It does not need simulated human approval for every implementation increment.
+
+This authorization does not resume Battle01 production and does not freeze temporary prototype choices as final design.
 
 ---
 
 ## BLOCKERS
 
-PRODUCT_BLOCKERS:
-1. The core repeated player decision is not proven.
-2. Prototype A is not self-explanatory to a first-time player.
-3. The current pressure interaction may be MOVE renamed rather than a distinct command decision.
-4. Formation autonomy has not yet demonstrated clear player value.
-5. Battle01 design cannot be responsibly rebuilt until the core interaction is clearer.
+CURRENT_PRODUCT_BLOCKERS:
+1. The repeated formation-level decision remains unproven.
+2. The current playable lacks enough coherent game substance for repeated player-experience judgments to be useful.
+3. Prototype A's pressure expression remains too close to MOVE renamed.
+4. Formation autonomy has not demonstrated clear player value.
+
+CURRENT_BUILD_NEED:
+- connect enough objective, controllable action, opposition/change, consequence, feedback and result flow to create a meaningful greybox playable.
 
 TECHNICAL_BLOCKERS:
-- no known technical blocker prevents isolated prototyping;
-- existing CI infrastructure failure mode remains non-product-critical.
+- no known technical blocker prevents building the minimum coherent playable;
+- existing CI infrastructure issues remain non-product-critical.
 
 ---
 
 ## NEXT_DECISION
 
-NEXT=ACCEPT_REWORK_OR_KILL_PROTOTYPE_B_CORE_DECISION
+NEXT=MINIMUM_PLAYABLE_READY_FOR_HUMAN_TEST_OR_CONTINUE_BUILD
 
 Required sequence:
-1. WINDOW_00 maintains the decision frame.
-2. WINDOW_01 states one concrete repeated player decision, information, alternatives, tradeoff, immediate feedback, recurrence and minimum first-use flow.
-3. User decides KEEP / REWORK / KILL before implementation.
-4. If KEEP, WINDOW_02 implements one disposable Prototype B and produces real Godot technical evidence.
-5. WINDOW_03 independently checks the runnable result/evidence when warranted.
-6. User directly plays the prototype.
-7. WINDOW_00 integrates the product result and updates state.
+1. WINDOW_00 keeps scope small and prevents accidental Battle01/product freeze.
+2. WINDOW_01 defines only the player-facing target necessary for construction.
+3. WINDOW_02 builds a coherent Prototype B greybox using existing reusable foundations.
+4. Technical verification proves that the build runs and mechanics function.
+5. WINDOW_03 may independently assess technical/readiness evidence.
+6. If MINIMUM_PLAYABLE_READINESS is not reached, continue building rather than asking for player-experience judgment.
+7. Only when readiness is reached does the user directly play and judge the experience.
+8. WINDOW_00 then integrates KEEP / REWORK / KILL or the next build decision.
 
-Do not resume Battle01, formal art production, broad AI work or repository-wide system completion until a core interaction survives this loop.
+Do not use Codex, scripted agents or automated tests as fake human-player evidence.
 
 ONE_PRIMARY_PRODUCT_QUESTION=YES
 ONE_PRIMARY_ACTIVE_TASK=YES
