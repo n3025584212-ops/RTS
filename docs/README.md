@@ -1,6 +1,6 @@
 # FRONTLINE documentation map
 
-This directory is intentionally split into **active authority** and **history**.
+This directory contains only **active project authority and current-state support**.
 
 ## Active authority
 
@@ -13,12 +13,14 @@ Use these files for current work:
 
 The active GitHub Issue named by `CURRENT_STATE.md` is the working contract/evidence thread for the current primary task.
 
-## Historical material
+## Historical / unused material
 
-`archive/` contains superseded Battle01 contracts, older governance, previous baselines and historical visual targets.
+Clearly superseded Battle01 contracts, retired governance documents and old visual targets are stored on the branch:
 
-Archived files may still provide technical or design evidence, but they are **not current authority unless CURRENT_STATE explicitly reaccepts them**.
+`archive/legacy-unused`
+
+That branch is non-authoritative. Material there may only regain current authority if explicitly reaccepted through `docs/current/CURRENT_STATE.md` on `main`.
 
 ## Rule of thumb
 
-When two files disagree, do not resolve the conflict by date or by a historical PASS label. Follow the authority order in `FRONTLINE_PROJECT_CHARTER_V3.md`.
+When two sources disagree, follow the authority order in `FRONTLINE_PROJECT_CHARTER_V3.md`; do not restore an old rule merely because it once had a PASS/FROZEN label.

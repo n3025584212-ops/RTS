@@ -18,7 +18,7 @@
 4. `docs/current/DECISION_LOG.md` — 已接受/重开的产品决策历史
 5. 当前 Active Issue — 当前工作的合同与证据线程
 
-旧 Battle01 合同、旧治理规则和旧视觉目标已归档到 `docs/archive/`。它们保留历史价值，但不自动拥有当前产品权威。
+已经明确过时/废弃的历史资料不留在 `main`，统一保存在 `archive/legacy-unused` 分支。该分支没有当前产品权威。
 
 ## Repository layout
 
@@ -30,7 +30,6 @@ resources/                    game data/resources
 assets/                       UI and visual assets
 tests/                        focused runtime/smoke verification
 docs/current/                 current state + decision history
-docs/archive/                 historical/non-authoritative documents
 .github/workflows/            automated runtime verification
 ```
 
