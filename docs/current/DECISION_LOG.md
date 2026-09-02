@@ -41,3 +41,13 @@ DECISION=Prototype A is technically valid evidence but does not prove Command & 
 EVIDENCE=First-use player response "没看懂" plus Prototype A technical PASS.
 IMPACT=Battle01 production remains paused. Discovery must define one clearer repeated player decision before more gameplay implementation.
 RELATED_ISSUE_OR_PR=#17
+
+## 2026-09-02 — GPT multi-window collaboration system
+
+DATE=2026-09-02
+DECISION_ID=FRONTLINE_GPT_MULTI_WINDOW_SYSTEM_V1
+STATUS=ACCEPTED
+DECISION=FRONTLINE enables WINDOW_00–WINDOW_08 as reusable GPT collaboration/routing contexts while retaining one shared CURRENT_STATE and one product authority chain.
+EVIDENCE=User explicit decision to establish a GPT multi-window system + docs/GPT_MULTI_WINDOW_SYSTEM_V1.md.
+IMPACT=Separate ChatGPT conversations may specialize in integration, game design, architecture, gameplay, AI, UX, QA, presentation and repository operations. Window numbers are routing labels only; they do not create independent project states, roadmaps, freeze rights or mandatory handoff chains.
+RELATED_ISSUE_OR_PR=
