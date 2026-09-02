@@ -31,19 +31,23 @@ ACTIVE_WINDOWS:
 - WINDOW_02 = Development
 - WINDOW_03 = Review / Operations
 
-Capabilities are grouped as follows.
-
 ### WINDOW_00 — Project Control / Integration
 Owns integration, priority framing, conflict resolution, task routing and material `CURRENT_STATE` updates.
 
 ### WINDOW_01 — Design / Experience
 Combines game design, product discovery, interaction/UX, UI readability, playtest interpretation and player-facing visual direction.
 
+During early construction it defines enough player-facing target to guide implementation; it does not require simulated player-experience proof before the game is sufficiently playable.
+
 ### WINDOW_02 — Development
 Combines Godot architecture, gameplay, combat, units, AI/autonomy, implementation and focused technical verification.
 
+When `CURRENT_STATE` authorizes minimum-playable construction, WINDOW_02 actively builds it without waiting for fake-player approval on each increment.
+
 ### WINDOW_03 — Review / Operations
-Combines independent QA, regression review, playtest evidence structure, PR/CI review, repository hygiene and production operations.
+Combines independent QA, regression review, playable-readiness evidence, PR/CI review, repository hygiene and production operations.
+
+It may verify readiness evidence but does not simulate a human player or decide whether the game is fun.
 
 ## 3. Shared initialization
 
@@ -83,7 +87,20 @@ Default write authority:
 
 The user remains final product authority.
 
-## 6. No manual receipt chain
+## 6. Evidence boundaries
+
+FRONTLINE distinguishes:
+
+1. TECHNICAL_VERIFICATION — agents/tests may perform this;
+2. MINIMUM_PLAYABLE_READINESS — agents may check whether enough coherent game exists to justify human evaluation;
+3. HUMAN_PRODUCT_EVIDENCE — only real human play counts.
+
+CODEX_SIMULATED_HUMAN_PLAY=INVALID
+AUTOMATION_CANNOT_DECLARE_PLAYER_EXPERIENCE_PASS=YES
+
+Human experience testing is important, but it is not required after every small implementation increment.
+
+## 7. No manual receipt chain
 
 The system does not require:
 
@@ -97,31 +114,32 @@ Instead, each window reads shared GitHub state and writes useful durable outputs
 
 WINDOW_00 reads those durable results when integration is needed.
 
-## 7. Activation model
+## 8. Activation model
 
 Do not keep every window busy.
 
 WINDOW_00 is the normal persistent control context.
 WINDOW_01–03 are activated only when their context materially helps the current task.
 
-The detailed phase/trigger rules are defined in `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md`.
+Detailed phase/trigger rules are defined in `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md`.
 
-## 8. Parallel work
+## 9. Parallel work
 
 Parallel work is allowed when low-conflict.
 
 Good examples:
-- WINDOW_01 designs a Prototype B decision while WINDOW_02 checks feasibility without coding it;
-- WINDOW_02 implements an accepted prototype while WINDOW_03 prepares independent verification;
+- WINDOW_01 defines the player-facing target while WINDOW_02 builds the authorized minimum coherent playable;
+- WINDOW_02 implements while WINDOW_03 prepares independent technical/readiness verification;
 - WINDOW_03 performs repository cleanup while WINDOW_01 continues product analysis, provided cleanup does not alter product direction.
 
 Bad examples:
-- WINDOW_01 and WINDOW_02 independently choosing different core loops;
-- WINDOW_02 implementing unaccepted gameplay to get ahead;
+- WINDOW_01 and WINDOW_02 independently choosing different final core loops;
+- WINDOW_01 demanding simulated-human approval before every implementation step;
+- WINDOW_02 expanding beyond the current prototype into Battle01 production;
 - WINDOW_03 treating test completeness as product authority;
 - WINDOW_00 manufacturing work merely to keep all windows active.
 
-## 9. Conflict rule
+## 10. Conflict rule
 
 When windows disagree on a material product question:
 - preserve each supported position;
@@ -131,7 +149,7 @@ When windows disagree on a material product question:
 
 Do not average incompatible recommendations into a false consensus.
 
-## 10. Hard and soft boundaries
+## 11. Hard and soft boundaries
 
 HARD:
 - one current state;
@@ -140,15 +158,17 @@ HARD:
 - engine/runtime requirements;
 - accepted decisions;
 - explicit task non-goals;
-- direct human-play requirement for core gameplay acceptance.
+- actual human-play requirement for final core gameplay acceptance;
+- no Codex-simulated human evidence.
 
 SOFT:
 - exact internal capability boundary between the four windows;
 - whether one window temporarily performs an overlapping low-risk task;
+- prototype implementation details;
 - response format;
 - terminology and sequencing when authority is unaffected.
 
-## 11. Archive rule
+## 12. Archive rule
 
 Superseded, historical or unused project material belongs on:
 
@@ -156,13 +176,21 @@ Superseded, historical or unused project material belongs on:
 
 Historical material may be consulted but does not regain authority unless explicitly reaccepted through `main:docs/current/CURRENT_STATE.md`.
 
-## 12. Current condition
+## 13. Current condition
 
 CURRENT_PHASE=P0_DISCOVER
 BATTLE01_PRODUCTION=PAUSED
-CURRENT_PRIMARY_TASK=DEFINE_PROTOTYPE_B_CORE_PLAYER_DECISION_V1
+CURRENT_PRIMARY_TASK=BUILD_PROTOTYPE_B_MINIMUM_COHERENT_PLAYABLE_V1
 ACTIVE_ISSUE=#20
 
+CURRENT_WINDOW_RUNTIME:
+- WINDOW_00=ACTIVE
+- WINDOW_01=ACTIVE_TARGET_DEFINITION
+- WINDOW_02=ACTIVE_MINIMUM_PLAYABLE_BUILD
+- WINDOW_03=STANDBY_ON_DEMAND
+
+PLAYER_EXPERIENCE_GATE=AFTER_MINIMUM_PLAYABLE_READINESS
+CODEX_SIMULATED_HUMAN_PLAY=INVALID
 GPT_WINDOW_COUNT=4
 INDEPENDENT_WINDOW_PROJECT_STATES=NO
 PERMANENT_HANDOFF_CHAIN=NO
