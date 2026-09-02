@@ -2,9 +2,11 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V5
+STATE_VERSION=V6
 INTEGRATION_AUTHORITY=PROJECT_DIRECTOR
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
+GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V1.md
+DECISION_HISTORY=docs/current/DECISION_LOG.md
 SOURCE_OF_TRUTH=THIS_FILE
 
 NUMBERED_WINDOW_SYSTEM=ABOLISHED
@@ -84,6 +86,7 @@ ACCEPTED:
 - old North/Central/South Battle01 construction is not authorized.
 - production art must not be used to hide an unclear core interaction.
 - one shared current state replaces permanent specialist/window states.
+- FRONTLINE_PROJECT_SYSTEM_V1 is the active day-to-day operating system under the V3 charter.
 
 REOPENED / NOT PROVEN:
 - incomplete information as the primary game core;
@@ -113,12 +116,15 @@ STATUS=FAILED / REWORK_REQUIRED
 
 ## CURRENT_TASK
 
-ACTIVE_PRIMARY_TASK=REDESIGN_DISCOVERY_TEST
+ACTIVE_PRIMARY_TASK=DEFINE_PROTOTYPE_B_CORE_PLAYER_DECISION_V1
+ACTIVE_ISSUE=#20
+ACTIVE_ISSUE_URL=https://github.com/n3025584212-ops/RTS/issues/20
 
-The unified production-system migration is complete.
-The current product task is to redesign the discovery test itself before writing more gameplay code.
+The current product task is to define one concrete repeated player decision for Prototype B before writing more gameplay code.
 
-No additional gameplay implementation is authorized until one concrete player decision is stated clearly enough that a first-time player can understand what decision the prototype is asking them to make.
+No additional gameplay implementation is authorized until the decision is stated clearly enough that a first-time player can understand what decision the prototype is asking them to make.
+
+Task execution uses the active Issue as the working contract/evidence thread while this file remains the single project truth.
 
 ---
 
@@ -140,20 +146,22 @@ TECHNICAL_BLOCKERS:
 
 ## NEXT_DECISION
 
-NEXT=DEFINE_ONE_CLEAR_PLAYER_DECISION_FOR_PROTOTYPE_B
+NEXT=ACCEPT_REWORK_OR_KILL_PROTOTYPE_B_CORE_DECISION
 
 Required sequence:
 
 1. State one concrete player decision the prototype must make understandable without explanation.
-2. Design the smallest interaction that exposes that decision.
-3. Check the paper/UI flow before coding.
-4. Build one disposable prototype iteration.
-5. Put it in front of the user immediately.
-6. Decide KEEP / REWORK / KILL from direct play.
+2. Explain why it is not merely MOVE/ATTACK renamed.
+3. Define what information, alternatives and tradeoff make the decision meaningful.
+4. Design the smallest paper/UI flow that exposes that decision.
+5. User/product owner decides KEEP / REWORK / KILL before coding.
+6. If kept, build one disposable prototype iteration.
+7. Put it in front of the user immediately and decide again from direct play.
 
 Do not resume Battle01, formal art production, broad AI work or repository-wide system completion until a core interaction survives this loop.
 
 ONE_PRIMARY_PRODUCT_QUESTION=YES
+ONE_PRIMARY_ACTIVE_TASK=YES
 NUMBERED_WINDOWS=NO
 BATTLE01_PRODUCTION=PAUSED
 CODEX_ROADMAP_AUTHORITY=NO
