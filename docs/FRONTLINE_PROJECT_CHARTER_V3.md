@@ -9,16 +9,17 @@ ENGINE_BASELINE=GODOT_4_7_1
 
 SUPERSEDES=
 - docs/FRONTLINE_PROJECT_CHARTER_V2.md
-- fixed FRONTLINE numbered-window operating model
+- fixed FRONTLINE numbered-window authority model
 
-NUMBERED_WINDOW_SYSTEM=ABOLISHED
-LEGACY_WINDOW_NAMES=HISTORICAL_METADATA_ONLY
+LEGACY_PERMANENT_NUMBERED_WINDOW_SYSTEM=ABOLISHED
+GPT_MULTI_WINDOW_COLLABORATION=PERMITTED
+GPT_WINDOW_IDS=ROUTING_LABELS_ONLY
 
 ---
 
 ## 1. Purpose
 
-FRONTLINE uses one unified production system. The project is organized around the current product question and current playable, not around permanent chat windows or specialist silos.
+FRONTLINE uses one unified production system. The project is organized around the current product question and current playable, not around independent specialist silos.
 
 The system exists to answer one thing efficiently: what should be built next to make the game better, and what evidence is sufficient to decide whether it worked.
 
@@ -37,21 +38,25 @@ When information conflicts, use this order:
 
 The user owns major product direction.
 The Project Director integrates design, playtest, engineering, art and QA evidence into CURRENT_STATE.
-No specialist, test, implementation agent, old window, old contract or historical PASS can independently redefine project truth.
+No specialist, test, implementation agent, GPT window, old window, old contract or historical PASS can independently redefine project truth.
 
 ---
 
-## 3. No permanent windows
+## 3. No permanent authority windows; GPT routing windows are allowed
 
-FRONTLINE no longer has permanent numbered work windows.
+FRONTLINE no longer has permanent numbered work windows that own independent state, roadmap or freeze authority.
 
 There is no required 01/03/06/08 handoff chain, no window-to-window receipt protocol, and no independent current state per discipline.
 
 Design, engineering, art, audio, AI, UX and QA are CAPABILITIES used when a task needs them. They are not separate project authorities.
 
-A task may use several capabilities at once when that produces a better playable result.
+For practical multi-chat work, FRONTLINE may use `WINDOW_00`–`WINDOW_08` as stable GPT conversation/routing labels under `docs/GPT_MULTI_WINDOW_SYSTEM_V1.md`.
 
-Legacy fields such as WINDOW_00, WINDOW_03 or WINDOW_08 in historical files have no current authority.
+These new GPT window labels do **not** restore the retired permanent-window operating model. Every GPT window must use the same `docs/current/CURRENT_STATE.md`, current Active Issue and authority order.
+
+Historical WINDOW_00 / WINDOW_03 / WINDOW_08 references from the old operating model remain historical unless explicitly reaccepted. Identical numbers in the new GPT collaboration system are routing labels, not inherited authority.
+
+A task may use several capabilities/windows at once when that produces a better playable result.
 
 ---
 
@@ -72,7 +77,7 @@ It should answer only the information needed to continue work:
 - BLOCKERS
 - NEXT_DECISION
 
-Do not create competing current-state documents for specialties.
+Do not create competing current-state documents for specialties or GPT windows.
 
 ---
 
@@ -226,7 +231,9 @@ Active authority should normally fit in:
 - `docs/current/CURRENT_STATE.md`
 - active GitHub issue/PR for the current task
 
-Older contracts, audits and window documents remain available through Git history but are historical unless CURRENT_STATE explicitly reaccepts them.
+`docs/GPT_MULTI_WINDOW_SYSTEM_V1.md` and `docs/gpt_windows/` define collaboration/routing behavior but do not create additional project truth.
+
+Older contracts, audits and legacy-window documents remain available through Git history or `archive/legacy-unused` but are historical unless CURRENT_STATE explicitly reaccepts them.
 
 Do not create documents solely to acknowledge other documents.
 
@@ -240,11 +247,13 @@ Keep prototype branches when they contain useful experimental evidence. Merge th
 
 Do not delete uncertain historical assets/source simply because the operating system changed. Classification remains KEEP / REWORK / REMOVE / HOLD based on current value and dependencies.
 
+Clearly superseded/unused historical material may be stored on `archive/legacy-unused` to keep `main` focused.
+
 ---
 
 ## 14. Current recovery rule
 
-The abolition of numbered windows does not automatically invalidate every result created under them.
+The abolition of the old permanent numbered-window system does not automatically invalidate every result created under it.
 
 Each existing result is judged by current value:
 
@@ -264,6 +273,7 @@ FRONTLINE is built through a sequence of playable product decisions, not through
 PLAYER_EVIDENCE_OVER_INTERNAL_COMPLETENESS=YES
 ONE_CURRENT_STATE=YES
 ONE_PRIMARY_PRODUCT_QUESTION=YES
-NUMBERED_WINDOWS=NO
+PERMANENT_AUTHORITY_WINDOWS=NO
+GPT_ROUTING_WINDOWS=YES
 SPECIALISTS_AS_CAPABILITIES_NOT_AUTHORITIES=YES
 CODEX_ROADMAP_AUTHORITY=NO
