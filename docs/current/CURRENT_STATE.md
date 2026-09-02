@@ -2,10 +2,12 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V7
+STATE_VERSION=V8
 INTEGRATION_AUTHORITY=PROJECT_DIRECTOR
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V1.md
+GPT_COLLABORATION_SYSTEM=docs/GPT_MULTI_WINDOW_SYSTEM_V2.md
+GPT_RUNTIME_PLAN=docs/GPT_WINDOW_RUNTIME_PLAN_V1.md
 DECISION_HISTORY=docs/current/DECISION_LOG.md
 SOURCE_OF_TRUTH=THIS_FILE
 
@@ -13,19 +15,16 @@ LEGACY_PERMANENT_WINDOW_SYSTEM=ABOLISHED
 GPT_MULTI_WINDOW_COLLABORATION=ENABLED
 GPT_WINDOW_IDS_ARE_ROUTING_LABELS=YES
 INDEPENDENT_WINDOW_PROJECT_STATES=NO
-LEGACY_WINDOW_REFERENCES=HISTORICAL_METADATA_ONLY
+GPT_WINDOW_COUNT=4
 
 ---
 
 ## CURRENT_PHASE
 
 CURRENT_PHASE=P0_DISCOVER
+BATTLE01_PRODUCTION=PAUSED
 
-The previous fixed numbered-window operating model has been retired. FRONTLINE now uses one unified project state and task-based capabilities.
-
-The project remains in core-game discovery because the repeated player decision and command experience are not yet proven.
-
-Battle01 production remains paused.
+The repeated player decision and command experience are not yet proven. The project remains in core-game discovery.
 
 ---
 
@@ -58,23 +57,7 @@ TECHNICAL_RESULT=PASS
 PRODUCT_RESULT=REWORK_REQUIRED
 MERGE_TO_MAIN=NOT_AUTHORIZED
 
-Technical evidence:
-- Godot 4.7.1 parse/boot PASS;
-- BLUE=3 / RED=3;
-- persistent pressure task executes;
-- local autonomous execution exists;
-- visible boundary exists;
-- RED response is state-driven;
-- task revision and restart work;
-- no runtime errors reported.
-
-Direct first-use product evidence:
-- the player could launch the prototype;
-- the player response was "没看懂";
-- the battlefield presentation did not make the intended command-and-response loop self-evident;
-- the current interaction appears too close to select -> right-click location -> pressure, so the core command hypothesis is not proven.
-
-This is useful negative evidence, not a gameplay PASS.
+Direct first-use evidence: player response was "没看懂". The current interaction appears too close to select -> right-click location -> pressure, so the core command hypothesis is not proven.
 
 ---
 
@@ -90,7 +73,8 @@ ACCEPTED:
 - production art must not be used to hide an unclear core interaction.
 - one shared current state replaces permanent specialist/window states.
 - FRONTLINE_PROJECT_SYSTEM_V1 is the active day-to-day operating system under the V3 charter.
-- GPT_MULTI_WINDOW_SYSTEM_V1 is enabled: WINDOW_00–WINDOW_08 are reusable GPT collaboration/routing contexts sharing this single project state; they are not independent project authorities.
+- GPT multi-window collaboration uses four routing contexts only: 00 Project Control, 01 Design/Experience, 02 Development, 03 Review/Operations.
+- the four GPT windows share this single state and do not own independent roadmaps, freeze rights or mandatory handoff chains.
 
 REOPENED / NOT PROVEN:
 - incomplete information as the primary game core;
@@ -99,6 +83,23 @@ REOPENED / NOT PROVEN:
 - old Battle01 map structure;
 - Command & Response as the final core loop;
 - formation autonomy as the final control solution.
+
+---
+
+## GPT_WINDOW_RUNTIME
+
+WINDOW_00=ACTIVE
+WINDOW_01=ACTIVE
+WINDOW_02=STANDBY_FEASIBILITY_ONLY
+WINDOW_03=STANDBY_ON_DEMAND
+
+CURRENT_RUNTIME_REASON=
+P0 discovery currently needs product/experience work first. Development may inspect feasibility but must not pre-implement unaccepted core gameplay. Independent review/ops enters when a runnable result, evidence review or repository task exists.
+
+WINDOW_00_STATE_WRITE_AUTHORITY=DEFAULT
+WINDOW_01_02_03_STATE_WRITE_AUTHORITY=ONLY_IF_USER_OR_TASK_EXPLICITLY_DELEGATES
+MANDATORY_WINDOW_HANDOFF_CHAIN=NO
+DURABLE_RESULTS_OVER_CHAT_RECEIPTS=YES
 
 ---
 
@@ -114,7 +115,7 @@ STATUS=STILL_PLAUSIBLE_NOT_PROVEN
 
 H3_CURRENT_PROTOTYPE_EXPRESSION=
 A single right-click maintain-pressure task is sufficient to communicate and test the above ideas.
-STATUS=FAILED / REWORK_REQUIRED
+STATUS=FAILED_REWORK_REQUIRED
 
 ---
 
@@ -126,9 +127,7 @@ ACTIVE_ISSUE_URL=https://github.com/n3025584212-ops/RTS/issues/20
 
 The current product task is to define one concrete repeated player decision for Prototype B before writing more gameplay code.
 
-No additional gameplay implementation is authorized until the decision is stated clearly enough that a first-time player can understand what decision the prototype is asking them to make.
-
-Task execution uses the active Issue as the working contract/evidence thread while this file remains the single project truth.
+No additional core gameplay implementation is authorized until the decision is stated clearly enough that a first-time player can understand what decision the prototype is asking them to make and the user accepts it for implementation.
 
 ---
 
@@ -142,9 +141,8 @@ PRODUCT_BLOCKERS:
 5. Battle01 design cannot be responsibly rebuilt until the core interaction is clearer.
 
 TECHNICAL_BLOCKERS:
-- no known technical blocker prevents further isolated prototyping;
-- existing CI infrastructure failure mode remains non-product-critical;
-- pre-existing local generated files remain a hygiene issue, not a gameplay authority.
+- no known technical blocker prevents isolated prototyping;
+- existing CI infrastructure failure mode remains non-product-critical.
 
 ---
 
@@ -153,14 +151,13 @@ TECHNICAL_BLOCKERS:
 NEXT=ACCEPT_REWORK_OR_KILL_PROTOTYPE_B_CORE_DECISION
 
 Required sequence:
-
-1. State one concrete player decision the prototype must make understandable without explanation.
-2. Explain why it is not merely MOVE/ATTACK renamed.
-3. Define what information, alternatives and tradeoff make the decision meaningful.
-4. Design the smallest paper/UI flow that exposes that decision.
-5. User/product owner decides KEEP / REWORK / KILL before coding.
-6. If kept, build one disposable prototype iteration.
-7. Put it in front of the user immediately and decide again from direct play.
+1. WINDOW_00 maintains the decision frame.
+2. WINDOW_01 states one concrete repeated player decision, information, alternatives, tradeoff, immediate feedback, recurrence and minimum first-use flow.
+3. User decides KEEP / REWORK / KILL before implementation.
+4. If KEEP, WINDOW_02 implements one disposable Prototype B and produces real Godot technical evidence.
+5. WINDOW_03 independently checks the runnable result/evidence when warranted.
+6. User directly plays the prototype.
+7. WINDOW_00 integrates the product result and updates state.
 
 Do not resume Battle01, formal art production, broad AI work or repository-wide system completion until a core interaction survives this loop.
 
@@ -168,6 +165,5 @@ ONE_PRIMARY_PRODUCT_QUESTION=YES
 ONE_PRIMARY_ACTIVE_TASK=YES
 PERMANENT_AUTHORITY_WINDOWS=NO
 GPT_ROUTING_WINDOWS=YES
-GPT_WINDOW_COUNT=9
 BATTLE01_PRODUCTION=PAUSED
 CODEX_ROADMAP_AUTHORITY=NO
