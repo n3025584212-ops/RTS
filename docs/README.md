@@ -13,6 +13,13 @@ Use these files for current work:
 
 The active GitHub Issue named by `CURRENT_STATE.md` is the working contract/evidence thread for the current primary task.
 
+## GPT multi-window collaboration
+
+- `GPT_MULTI_WINDOW_SYSTEM_V1.md` — shared rules for using multiple GPT chats without splitting project truth.
+- `gpt_windows/` — ready-to-copy initialization prompts for WINDOW_00–WINDOW_08.
+
+Window IDs are routing labels only. All windows share the same CURRENT_STATE and authority order.
+
 ## Historical / unused material
 
 Clearly superseded Battle01 contracts, retired governance documents and old visual targets are stored on the branch:
