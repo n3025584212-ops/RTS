@@ -7,11 +7,12 @@ SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md
 
 ## 1. Operating objective
 
-Use the minimum number of GPT windows needed to move the current product decision forward while preserving one project truth.
+Use the minimum number of GPT windows needed to move the current product forward while preserving one project truth.
 
 DEFAULT_MODE=ONE_CONTROL_WINDOW_PLUS_ONLY_NEEDED_SPECIALISTS
 ALL_WINDOWS_ALWAYS_ACTIVE=NO
 MANDATORY_HANDOFF_CHAIN=NO
+CODEX_SIMULATED_HUMAN_PLAY=NOT_VALID_EVIDENCE
 
 ## 2. Window lifecycle states
 
@@ -22,23 +23,66 @@ Each specialist window may be:
 
 WINDOW_00 is normally ACTIVE whenever the project is being directed.
 
-## 3. Current P0 configuration
+## 3. Evidence layers
+
+FRONTLINE separates three different questions.
+
+### Layer 1 — Technical verification
+
+Performed by development/QA tools and agents.
+
+Checks things such as:
+- parse/import/boot;
+- commands execute;
+- combat/AI/state changes behave as intended;
+- no blocking runtime errors;
+- focused regressions.
+
+This is not player experience evidence.
+
+### Layer 2 — Minimum playable readiness
+
+Before asking the user to judge experience, the build must contain enough coherent game substance to justify human play.
+
+A build is ready for meaningful human play when it has, at minimum:
+- a visible situation/objective;
+- controllable player action;
+- an opposing force or changing battlefield state;
+- consequences from player action;
+- readable feedback;
+- a beginning, continued play loop and recognizable result/restart path.
+
+Exact content, timings, art level and scenario length are soft choices.
+
+Codex/automation may inspect whether these pieces exist and function, but may not pretend to be a human player or declare the game understandable/fun.
+
+### Layer 3 — Human product evidence
+
+Only after minimum playable readiness is reached should the user be asked to judge:
+- whether the interaction is understandable;
+- whether decisions feel meaningful;
+- whether the player wants to continue;
+- whether the intended command experience exists.
+
+Direct human play remains decisive for product acceptance, but it is not a gate to every small implementation step.
+
+## 4. Current P0 configuration
 
 CURRENT_PHASE=P0_DISCOVER
 
 Recommended state now:
 - WINDOW_00=ACTIVE
-- WINDOW_01=ACTIVE
-- WINDOW_02=STANDBY_FEASIBILITY_ONLY
+- WINDOW_01=ACTIVE_TARGET_DEFINITION
+- WINDOW_02=ACTIVE_MINIMUM_PLAYABLE_BUILD
 - WINDOW_03=STANDBY_ON_DEMAND
 
 Reason:
-- the product decision is not yet accepted;
-- design/experience work is the main need;
-- development may inspect feasibility but must not pre-implement unaccepted gameplay;
-- review/ops enters when independent evidence or repository work is needed.
+- the project has enough reusable technical foundation to build a coherent greybox baseline;
+- the previous process overused experience/readability gates before enough game existed to judge;
+- WINDOW_01 should define player-facing intent while WINDOW_02 builds the minimum coherent playable needed to expose it;
+- WINDOW_03 enters for independent technical/repository review when a real build exists.
 
-## 4. Activation triggers
+## 5. Activation triggers
 
 ### Activate WINDOW_01 when
 - the repeated player decision is unclear;
@@ -47,29 +91,31 @@ Reason:
 - visual communication affects understanding;
 - a prototype concept needs alternatives or tradeoffs.
 
+WINDOW_01 should not demand human-play conclusions from a build that has not reached minimum playable readiness.
+
 ### Activate WINDOW_02 when
+- a minimum coherent playable needs to be built;
 - feasibility must be checked;
 - the user/current task authorizes implementation;
-- an accepted prototype/gameplay change needs Godot work;
 - gameplay/combat/AI/runtime behavior needs technical investigation;
 - a technical defect blocks the current task.
 
-During P0 before product acceptance, WINDOW_02 may inspect and recommend but must not expand gameplay implementation unless explicitly authorized.
+During P0, WINDOW_02 may implement the authorized minimum playable baseline and disposable prototypes. It must not silently convert temporary prototype choices into final product rules or resume Battle01 production.
 
 ### Activate WINDOW_03 when
-- a playable needs independent verification;
+- a playable needs independent technical verification;
 - regressions/CI/PRs need review;
-- human-play evidence needs a neutral protocol;
+- minimum playable readiness needs evidence checking;
 - repository hygiene or archival work is needed;
 - release/build readiness needs checking.
 
-WINDOW_03 does not decide whether gameplay is fun or redefine product intent.
+WINDOW_03 does not simulate a human player and does not decide whether gameplay is fun.
 
-## 5. Phase defaults
+## 6. Phase defaults
 
 ### P0 DISCOVER
-ACTIVE: 00, 01
-ON_DEMAND: 02 feasibility, 03 review/ops
+ACTIVE: 00, 01, 02 when building the current prototype
+ON_DEMAND: 03 review/ops
 
 ### P1 PROVE
 ACTIVE: 00, 01, 02
@@ -89,16 +135,16 @@ ON_DEMAND: 01 for final player-facing polish/readability decisions
 
 These are defaults, not permanent departments.
 
-## 6. Work initiation
+## 7. Work initiation
 
 A window may start work when one of these is true:
 1. the user asks that window directly;
 2. `CURRENT_STATE` / Active Issue clearly contains work inside that window's role;
-3. WINDOW_00 identifies a concrete need and the work does not require a new product decision.
+3. WINDOW_00 identifies a concrete need and the work does not require inventing a new product direction.
 
 Do not create filler work merely because a window exists.
 
-## 7. Durable communication surfaces
+## 8. Durable communication surfaces
 
 Prefer durable project evidence over chat-to-chat copying.
 
@@ -111,41 +157,43 @@ Use:
 
 Chats are working contexts, not storage authorities.
 
-## 8. Result routing
+## 9. Result routing
 
 ### WINDOW_01 result
-Normally goes to Active Issue as a recommendation/design decision package.
+Normally goes to Active Issue as player-facing target/design guidance.
 It does not change `CURRENT_STATE` by default.
 
 ### WINDOW_02 result
-Normally goes to a branch/PR plus focused runtime evidence; important limitations are recorded in the Active Issue.
-It does not declare PRODUCT_PASS.
+Normally goes to a branch/PR plus focused runtime evidence.
+It may build the current minimum playable without claiming PRODUCT_PASS.
 
 ### WINDOW_03 result
-Normally goes to PR review, CI/test evidence or the Active Issue as independent findings.
+Normally goes to PR review, CI/test evidence or the Active Issue as independent technical/readiness findings.
 It does not rewrite product intent.
 
 ### WINDOW_00 result
 Integrates accepted decisions/evidence and updates `CURRENT_STATE` / `DECISION_LOG` when material.
 
-## 9. Decision gates
+## 10. Decision gates
 
-### Gate A — Product decision before coding
-For unproven core gameplay:
-WINDOW_01 proposes -> user KEEP/REWORK/KILL -> only KEEP authorizes WINDOW_02 implementation.
+### Gate A — Implementation target
+WINDOW_01/00 define enough player-facing intent and scope that WINDOW_02 can build without inventing the product direction.
+
+This gate does not require simulated human feedback and does not require the prototype to be self-explanatory before it exists.
 
 ### Gate B — Technical gate
 WINDOW_02 produces a real Godot runnable result and technical evidence.
-TECHNICAL_PASS does not close the product question.
 
-### Gate C — Independent evidence
-WINDOW_03 checks build/regression/evidence quality when warranted.
+### Gate C — Minimum playable readiness
+The build contains enough coherent gameplay substance to justify asking a human to evaluate it.
+WINDOW_03 may independently check this evidence when useful.
 
 ### Gate D — Human product gate
-User/direct human play determines whether the core interaction survives.
-WINDOW_00 integrates KEEP/REWORK/KILL into project state.
+The user directly plays the sufficiently developed prototype.
+Only then are understandability, decision quality and player experience judged.
+WINDOW_00 integrates KEEP / REWORK / KILL into project state.
 
-## 10. Conflict handling
+## 11. Conflict handling
 
 If two windows materially disagree:
 1. do not edit project state to hide the disagreement;
@@ -153,7 +201,7 @@ If two windows materially disagree:
 3. WINDOW_00 presents both positions;
 4. user decides or authorizes a discriminating test.
 
-## 11. Repository/branch rules
+## 12. Repository/branch rules
 
 - `main` = current stable baseline.
 - disposable prototypes may live on prototype branches and need not merge.
@@ -161,7 +209,7 @@ If two windows materially disagree:
 - superseded/unused material goes to `archive/legacy-unused` when it should be retained outside main.
 - no window may merge historical/archive material wholesale back into main.
 
-## 12. Anti-bureaucracy rules
+## 13. Anti-bureaucracy rules
 
 DO_NOT:
 - require every task to visit all four windows;
@@ -169,14 +217,16 @@ DO_NOT:
 - create separate state files per window;
 - make 00 manually relay full outputs that already exist on GitHub;
 - keep specialists busy for appearance;
+- ask for human-play judgments before minimum playable readiness;
+- use Codex/automation as fake human-play evidence;
 - turn a temporary division of labor into a permanent product rule.
 
-## 13. Current next action
+## 14. Current next action
 
 For the present P0 task:
-1. WINDOW_00 maintains the decision frame.
-2. WINDOW_01 defines Prototype B's one repeated player decision and first-use interaction.
-3. User decides KEEP / REWORK / KILL.
-4. WINDOW_02 remains non-implementing until KEEP, except narrow feasibility checks.
-5. After a runnable Prototype B exists, WINDOW_03 independently verifies it.
-6. User plays it; WINDOW_00 integrates the result.
+1. WINDOW_00 maintains a minimal product target and prevents scope drift.
+2. WINDOW_01 defines enough of Prototype B's player-facing decision/feedback to guide implementation, without demanding player-experience proof first.
+3. WINDOW_02 actively builds the minimum coherent playable Prototype B baseline from current reusable technology.
+4. WINDOW_03 independently checks technical/readiness evidence when a real build exists.
+5. Only after minimum playable readiness does the user directly play it.
+6. WINDOW_00 then integrates the real product result.
