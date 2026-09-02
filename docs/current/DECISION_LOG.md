@@ -39,7 +39,7 @@ DECISION_ID=PROTOTYPE_A_COMMAND_RESPONSE_REWORK
 STATUS=REOPENED
 DECISION=Prototype A is technically valid evidence but does not prove Command & Response as the game core. Its expression is not accepted for production.
 EVIDENCE=First-use player response "没看懂" plus Prototype A technical PASS.
-IMPACT=Battle01 production remains paused. Discovery must define a clearer command interaction and build enough playable substance before further product judgment.
+IMPACT=Battle01 production remains paused. Discovery must move beyond the thin Prototype A expression.
 RELATED_ISSUE_OR_PR=#17
 
 ## 2026-09-02 — Initial nine-window GPT collaboration layout
@@ -62,12 +62,22 @@ EVIDENCE=User explicitly judged nine windows excessive and requested initializat
 IMPACT=WINDOW_00 is the persistent control context; other windows are activated only when needed. Results are shared through GitHub Issue/PR/code/test evidence rather than mandatory chat receipt chains. Only 00 edits CURRENT_STATE by default.
 RELATED_ISSUE_OR_PR=#20
 
-## 2026-09-03 — Defer player-experience judgment until minimum playable readiness
+## 2026-09-03 — Human experience gate after sufficient game substance
 
 DATE=2026-09-03
-DECISION_ID=FRONTLINE_MINIMUM_PLAYABLE_BEFORE_HUMAN_EXPERIENCE_V1
+DECISION_ID=FRONTLINE_HUMAN_PLAY_AFTER_READINESS_V1
 STATUS=ACCEPTED
-DECISION=FRONTLINE must stop treating Codex/automation as simulated human players and stop repeatedly asking for player-experience judgments while the game is still too thin to support meaningful evaluation. Technical verification, minimum playable readiness and real human product evidence are separate layers.
-EVIDENCE=User explicit process correction: repeated simulated-human testing is not useful when the game itself is not yet sufficiently developed.
-IMPACT=Issue #20 is re-scoped to BUILD_PROTOTYPE_B_MINIMUM_COHERENT_PLAYABLE_V1. WINDOW_02 becomes active for minimum-playable construction. Human experience testing occurs only after a coherent objective/action/opposition/consequence/feedback/result loop exists. Codex simulated human play is invalid evidence.
+DECISION=Codex/automation may verify technical behavior but may not simulate or stand in for a human player. Human product judgment should not repeatedly gate ultra-thin implementation increments.
+EVIDENCE=User explicitly challenged the value of repeated simulated-player/experience checks while the game was still too underdeveloped for meaningful judgment.
+IMPACT=Development proceeds until enough coherent game substance exists for meaningful human evaluation; TECHNICAL_PASS remains separate from PRODUCT_PASS.
+RELATED_ISSUE_OR_PR=#20
+
+## 2026-09-03 — Representative command-battle slice, not toy mechanism demo
+
+DATE=2026-09-03
+DECISION_ID=FRONTLINE_REPRESENTATIVE_COMMAND_BATTLE_SLICE_V1
+STATUS=ACCEPTED
+DECISION=FRONTLINE must not be reduced to a tiny prototype with a few abstract formations, one contact or one isolated repeated decision and then treated as if that were an RTS battle. Core discovery must use a representative integrated command-battle slice with sustained command load and interacting systems.
+EVIDENCE=User explicitly rejected the proposed "3 formations / small scenario" framing as an inadequate representation of a real game.
+IMPACT=The current primary task is now BUILD_PROTOTYPE_B_REPRESENTATIVE_COMMAND_BATTLE_SLICE_V1. Exact counts and map sizes remain soft; readiness is based on interacting battlefield demands, autonomous local execution, changing enemy action, reserves/retasking, combat consequences and sustained play. The earlier "one repeated decision defines the game" framing is reopened as too narrow.
 RELATED_ISSUE_OR_PR=#20
