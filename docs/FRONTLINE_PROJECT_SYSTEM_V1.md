@@ -5,7 +5,8 @@ PROJECT=FRONTLINE
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md
 ENGINE_BASELINE=Godot_4_7_1
-GPT_COLLABORATION_SYSTEM=docs/GPT_MULTI_WINDOW_SYSTEM_V1.md
+GPT_COLLABORATION_SYSTEM=docs/GPT_MULTI_WINDOW_SYSTEM_V2.md
+GPT_RUNTIME_PLAN=docs/GPT_WINDOW_RUNTIME_PLAN_V1.md
 
 This document defines how FRONTLINE is operated day to day. It does not create a second project state and does not override the charter.
 
@@ -49,30 +50,18 @@ Only four surfaces are needed for normal work.
 ### A. Charter
 `docs/FRONTLINE_PROJECT_CHARTER_V3.md`
 
-Defines durable project rules and authority.
-
 ### B. Current State
 `docs/current/CURRENT_STATE.md`
 
-The only living project truth. It should stay compact and answer:
-- current phase;
-- current product question;
-- current playable;
-- accepted / reopened decisions;
-- active hypotheses;
-- primary task and active Issue;
-- blockers;
-- next decision.
+The only living project truth. It stays compact and answers current phase, product question, playable, accepted/reopened decisions, hypotheses, active task, blockers and next decision.
 
 ### C. Active Issue
-GitHub Issue for the current primary task.
-
-The Issue contains the working contract and evidence thread. It is not a second current-state document.
+The working contract and evidence thread for the current primary task. It is not a second state document.
 
 ### D. Decision Log
 `docs/current/DECISION_LOG.md`
 
-Records material decisions after they are made. It is append-only history, not an alternative roadmap.
+Append-only material decision history, not an alternative roadmap.
 
 ---
 
@@ -81,7 +70,6 @@ Records material decisions after they are made. It is append-only history, not a
 A primary task should produce a player-facing result, decision-quality evidence, or a necessary enabling result directly tied to the current product question.
 
 Every primary task should state:
-
 - TASK_ID
 - CURRENT_PHASE
 - PRODUCT_QUESTION
@@ -104,8 +92,6 @@ Do not convert a convenient implementation choice into a permanent product rule.
 
 ## 5. Discovery and proof loop
 
-For unproven gameplay:
-
 QUESTION
 -> CANDIDATE DECISION
 -> PAPER/UI FLOW
@@ -122,8 +108,6 @@ A failed prototype is valid evidence. Do not rescue a weak interaction through s
 ---
 
 ## 6. Build loop after a product decision is accepted
-
-For accepted requirements:
 
 SCOPED ISSUE
 -> FEATURE / PROTOTYPE BRANCH WHEN NEEDED
@@ -142,40 +126,32 @@ Disposable prototypes do not need to merge to main.
 
 Use minimum sufficient evidence proportional to risk.
 
-LOW:
-- focused diff or artifact;
-- one relevant verification.
-
-MEDIUM:
-- revision identity;
-- direct runtime evidence;
-- focused regression around affected systems.
-
-HIGH / CORE GAMEPLAY:
-- revision identity;
-- real Godot runtime verification;
-- direct player-facing evidence;
-- relevant regressions;
-- explicit product decision from human play.
+LOW: focused diff/artifact + one relevant verification.
+MEDIUM: revision identity + direct runtime evidence + focused regression.
+HIGH / CORE GAMEPLAY: revision identity + real Godot runtime + direct player-facing evidence + relevant regressions + explicit human product decision.
 
 Never treat an aggregate PASS line as sufficient when the important behavior cannot be reconstructed.
 
 ---
 
-## 8. Capabilities and GPT windows
+## 8. Capabilities and four GPT windows
 
 Design, engineering, AI, combat, UX, art, audio, QA, research and production remain capabilities selected per task.
 
-FRONTLINE also permits persistent GPT chat contexts labeled WINDOW_00–WINDOW_08 under `docs/GPT_MULTI_WINDOW_SYSTEM_V1.md`.
+For persistent ChatGPT contexts FRONTLINE uses four routing windows under `docs/GPT_MULTI_WINDOW_SYSTEM_V2.md`:
 
-Those window IDs are routing labels for reusable specialist conversations. They do not maintain separate current states, independent roadmaps, freeze rights or mandatory handoff chains.
+- WINDOW_00 = Project Control / Integration
+- WINDOW_01 = Design / Experience
+- WINDOW_02 = Development
+- WINDOW_03 = Review / Operations
 
-Several GPT windows may work on the same primary task when useful, but all must read the same CURRENT_STATE and Active Issue.
+These are reusable contexts, not departments. They do not maintain separate current states, roadmaps, freeze rights or mandatory handoff chains.
 
-The old permanent numbered-window operating model remains retired. Reusing numbers for the new GPT collaboration system does not restore the old authority model.
+Activation and standby rules are defined by `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md`. Use the minimum number of windows needed; do not manufacture work to keep windows active.
 
 LEGACY_PERMANENT_WINDOW_SYSTEM=ABOLISHED
 GPT_MULTI_WINDOW_ROUTING=YES
+GPT_WINDOW_COUNT=4
 INDEPENDENT_WINDOW_PROJECT_STATES=NO
 PERMANENT_HANDOFF_CHAIN=NO
 SPECIALIST_ROADMAP_AUTHORITY=NO
@@ -207,21 +183,15 @@ Update CURRENT_STATE only when something material changes:
 - next decision changes.
 
 Do not update CURRENT_STATE for routine implementation noise.
-
 When a material decision is finalized, append it to DECISION_LOG.
 
 ---
 
 ## 11. Historical governance handling
 
-Older FRONTLINE governance, Battle01 contracts and legacy permanent-window documents remain in Git history or `archive/legacy-unused` as evidence.
+Older FRONTLINE governance, Battle01 contracts, legacy permanent-window documents and superseded GPT window systems remain in Git history or `archive/legacy-unused` as evidence.
 
-Unless explicitly reaccepted by CURRENT_STATE, classify them as:
-- HISTORICAL_REFERENCE;
-- reusable technical evidence;
-- candidate material to re-evaluate.
-
-They must not silently override V3 charter or current product state.
+Unless explicitly reaccepted by CURRENT_STATE, classify them as HISTORICAL_REFERENCE, reusable evidence, or candidate material to re-evaluate. They must not silently override V3 charter or current product state.
 
 ---
 
@@ -233,3 +203,4 @@ PRIMARY_TASK_MUST_SERVE_CORE_DECISION=YES
 NO_GAMEPLAY_SCOPE_EXPANSION_WITHOUT_PRODUCT_DECISION=YES
 PLAYER_EVIDENCE_OVER_INTERNAL_COMPLETENESS=YES
 GPT_MULTI_WINDOW_COLLABORATION=YES
+GPT_WINDOW_COUNT=4
