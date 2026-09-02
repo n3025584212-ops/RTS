@@ -9,20 +9,21 @@ Use these files for current work:
 - `current/CURRENT_STATE.md` — single source of current project truth.
 - `FRONTLINE_PROJECT_CHARTER_V3.md` — project authority and phase model.
 - `FRONTLINE_PROJECT_SYSTEM_V1.md` — day-to-day task/decision/evidence workflow.
-- `current/DECISION_LOG.md` — append-only product decision history.
+- `current/DECISION_LOG.md` — append-only material decision history.
 
 The active GitHub Issue named by `CURRENT_STATE.md` is the working contract/evidence thread for the current primary task.
 
-## GPT multi-window collaboration
+## GPT four-window collaboration
 
-- `GPT_MULTI_WINDOW_SYSTEM_V1.md` — shared rules for using multiple GPT chats without splitting project truth.
-- `gpt_windows/` — ready-to-copy initialization prompts for WINDOW_00–WINDOW_08.
+- `GPT_MULTI_WINDOW_SYSTEM_V2.md` — shared rules for the four GPT routing contexts.
+- `GPT_WINDOW_RUNTIME_PLAN_V1.md` — ACTIVE / STANDBY / phase and decision-gate runtime rules.
+- `gpt_windows/` — ready-to-copy initialization prompts for WINDOW_00–WINDOW_03.
 
 Window IDs are routing labels only. All windows share the same CURRENT_STATE and authority order.
 
 ## Historical / unused material
 
-Clearly superseded Battle01 contracts, retired governance documents and old visual targets are stored on the branch:
+Clearly superseded Battle01 contracts, retired governance documents, old visual targets and superseded GPT window systems are stored on:
 
 `archive/legacy-unused`
 
