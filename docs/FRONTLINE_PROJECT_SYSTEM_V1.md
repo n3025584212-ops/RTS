@@ -5,6 +5,7 @@ PROJECT=FRONTLINE
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md
 ENGINE_BASELINE=Godot_4_7_1
+GPT_COLLABORATION_SYSTEM=docs/GPT_MULTI_WINDOW_SYSTEM_V1.md
 
 This document defines how FRONTLINE is operated day to day. It does not create a second project state and does not override the charter.
 
@@ -161,15 +162,21 @@ Never treat an aggregate PASS line as sufficient when the important behavior can
 
 ---
 
-## 8. Capabilities, not departments
+## 8. Capabilities and GPT windows
 
-Design, engineering, AI, combat, UX, art, audio, QA, research and production are capabilities selected per task.
+Design, engineering, AI, combat, UX, art, audio, QA, research and production remain capabilities selected per task.
 
-They do not maintain separate current states and they do not own independent roadmaps.
+FRONTLINE also permits persistent GPT chat contexts labeled WINDOW_00–WINDOW_08 under `docs/GPT_MULTI_WINDOW_SYSTEM_V1.md`.
 
-Several capabilities may work on the same primary task when useful.
+Those window IDs are routing labels for reusable specialist conversations. They do not maintain separate current states, independent roadmaps, freeze rights or mandatory handoff chains.
 
-NUMBERED_WINDOWS=HISTORICAL_ONLY
+Several GPT windows may work on the same primary task when useful, but all must read the same CURRENT_STATE and Active Issue.
+
+The old permanent numbered-window operating model remains retired. Reusing numbers for the new GPT collaboration system does not restore the old authority model.
+
+LEGACY_PERMANENT_WINDOW_SYSTEM=ABOLISHED
+GPT_MULTI_WINDOW_ROUTING=YES
+INDEPENDENT_WINDOW_PROJECT_STATES=NO
 PERMANENT_HANDOFF_CHAIN=NO
 SPECIALIST_ROADMAP_AUTHORITY=NO
 
@@ -207,7 +214,7 @@ When a material decision is finalized, append it to DECISION_LOG.
 
 ## 11. Historical governance handling
 
-Older FRONTLINE governance, Battle01 contracts and numbered-window documents remain in Git history/repository as evidence.
+Older FRONTLINE governance, Battle01 contracts and legacy permanent-window documents remain in Git history or `archive/legacy-unused` as evidence.
 
 Unless explicitly reaccepted by CURRENT_STATE, classify them as:
 - HISTORICAL_REFERENCE;
@@ -225,3 +232,4 @@ BATTLE01_PRODUCTION=PAUSED
 PRIMARY_TASK_MUST_SERVE_CORE_DECISION=YES
 NO_GAMEPLAY_SCOPE_EXPANSION_WITHOUT_PRODUCT_DECISION=YES
 PLAYER_EVIDENCE_OVER_INTERNAL_COMPLETENESS=YES
+GPT_MULTI_WINDOW_COLLABORATION=YES
