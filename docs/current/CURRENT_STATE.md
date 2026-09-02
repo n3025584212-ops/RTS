@@ -113,11 +113,12 @@ STATUS=FAILED / REWORK_REQUIRED
 
 ## CURRENT_TASK
 
-ACTIVE_PRIMARY_TASK=OPERATING_SYSTEM_RESET_COMPLETE_PENDING_MERGE
+ACTIVE_PRIMARY_TASK=REDESIGN_DISCOVERY_TEST
 
-After governance migration, the next product task must redesign the discovery test itself before writing more production code.
+The unified production-system migration is complete.
+The current product task is to redesign the discovery test itself before writing more gameplay code.
 
-No additional gameplay implementation is authorized until the next prototype question is stated clearly enough that a first-time player can understand what decision they are being asked to make.
+No additional gameplay implementation is authorized until one concrete player decision is stated clearly enough that a first-time player can understand what decision the prototype is asking them to make.
 
 ---
 
@@ -139,7 +140,7 @@ TECHNICAL_BLOCKERS:
 
 ## NEXT_DECISION
 
-NEXT=REDESIGN_DISCOVERY_TEST_BEFORE_MORE_CODE
+NEXT=DEFINE_ONE_CLEAR_PLAYER_DECISION_FOR_PROTOTYPE_B
 
 Required sequence:
 
