@@ -1,37 +1,39 @@
 # FRONTLINE / 战线
 
-现代战争题材、俯视斜视角、以 Formation / Platoon 级指挥为核心的实时战术 / RTS 项目。
+现代战争题材、Formation / Platoon 级指挥导向的实时战术游戏项目。
 
 ## 当前状态
 
 - Engine: Godot 4.7.1
-- Source of truth: 本仓库
-- Previous local project: 已删除，不继承旧工程 PASS/进度
-- Current phase: Battle01 rebuild / Walking Skeleton
-- Product baseline: `docs/FRONTLINE_PRODUCT_BASELINE_V1.md`
-- Vertical slice spec: `docs/BATTLE01_VERTICAL_SLICE_SPEC_V1.md`
+- Current phase: `P0_DISCOVER`
+- Battle01 production: `PAUSED`
+- Source of truth: `docs/current/CURRENT_STATE.md`
+- Active task: GitHub Issue #20 — Prototype B core player decision
 
-## Runtime verification
+## 开始阅读
 
-仓库内 `.github/workflows/godot-runtime-verify.yml` 在 push / pull request 时下载固定版本 Godot 4.7.1，并执行：
+1. `docs/current/CURRENT_STATE.md` — 唯一当前项目状态
+2. `docs/FRONTLINE_PROJECT_CHARTER_V3.md` — 项目最高运行规则
+3. `docs/FRONTLINE_PROJECT_SYSTEM_V1.md` — 日常项目系统
+4. `docs/current/DECISION_LOG.md` — 已接受/重开的产品决策历史
+5. 当前 Active Issue — 当前工作的合同与证据线程
 
-1. Godot version check
-2. Headless editor parse/import
-3. Main scene runtime smoke
-4. `FRONTLINE_BOOT_OK` boot marker verification
-5. Runtime logs artifact upload
+旧 Battle01 合同、旧治理规则和旧视觉目标已归档到 `docs/archive/`。它们保留历史价值，但不自动拥有当前产品权威。
 
 ## Repository layout
 
 ```text
-project.godot
-scenes/battle01/
-scripts/battle01/
-resources/
-assets/
-tests/
-docs/
-.github/workflows/
+project.godot                 Godot 4.7.1 project entry
+scenes/                       runtime scenes
+scripts/                      runtime scripts
+resources/                    game data/resources
+assets/                       UI and visual assets
+tests/                        focused runtime/smoke verification
+docs/current/                 current state + decision history
+docs/archive/                 historical/non-authoritative documents
+.github/workflows/            automated runtime verification
 ```
 
-当前仓库从零重建，不恢复已删除本地工程。
+## 当前开发原则
+
+当前阶段先证明一个首次玩家能理解、可重复发生、区别于普通 MOVE/ATTACK 微操的 Formation-level 决策。核心交互没有通过直接试玩前，不恢复 Battle01 正式生产，也不以历史 PASS 自动恢复旧设计。
