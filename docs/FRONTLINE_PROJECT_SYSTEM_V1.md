@@ -14,17 +14,18 @@ This document defines how FRONTLINE is operated day to day. It does not create a
 
 ## 1. System objective
 
-Keep the project centered on one product question, one primary task, enough real construction to test meaningfully, and explicit decisions.
+Keep the project centered on one product question, one primary task, representative playable evidence, and explicit decisions.
 
-The system must reduce coordination cost rather than create paperwork or endless premature validation loops.
+The system must reduce coordination cost rather than create paperwork or toy proofs.
 
 SYSTEM_GOALS:
 - one current state;
 - one primary product question;
 - normally one primary active task;
 - product decisions separated from implementation details;
-- technical verification separated from playable readiness and human product evidence;
-- enough history to explain why a decision exists without turning history into current authority.
+- technical verification separated from human product evidence;
+- representative battle evidence before broad player-experience judgment;
+- enough history to explain decisions without turning history into current authority.
 
 ---
 
@@ -53,7 +54,7 @@ Only four surfaces are needed for normal work.
 ### B. Current State
 `docs/current/CURRENT_STATE.md`
 
-The only living project truth.
+The only living project truth. It stays compact and answers current phase, product question, playable, accepted/reopened decisions, hypotheses, active task, blockers and next decision.
 
 ### C. Active Issue
 The working contract and evidence thread for the current primary task. It is not a second state document.
@@ -69,7 +70,7 @@ Append-only material decision history, not an alternative roadmap.
 
 A primary task should produce a player-facing result, decision-quality evidence, or a necessary enabling result directly tied to the current product question.
 
-Every primary task should state as needed:
+Every primary task should state:
 - TASK_ID
 - CURRENT_PHASE
 - PRODUCT_QUESTION
@@ -82,30 +83,35 @@ Every primary task should state as needed:
 - COMPLETION_EVIDENCE
 - DECISION_AFTER_EVIDENCE
 
-HARD_CONSTRAINTS protect accepted product identity, engine/runtime requirements, safety, explicit user decisions or proven dependencies.
+HARD_CONSTRAINTS protect accepted product identity, engine/runtime requirements, safety, explicit user decisions, or proven dependencies.
 
-SOFT_CHOICES are implementation, UX, terminology, timing, layout, tuning and presentation choices that remain adjustable unless evidence justifies freezing them.
+SOFT_CHOICES are implementation, UX, terminology, timing, layout, tuning, scale and presentation choices that remain adjustable unless evidence justifies freezing them.
 
-Do not convert a convenient implementation choice into a permanent product rule.
+Do not convert a convenient implementation choice or test simplification into a permanent product rule.
 
 ---
 
-## 5. Discovery and construction loop
+## 5. Discovery and proof loop
 
-For unproven gameplay, use a loop that builds enough substance before asking for product judgment:
+For unproven gameplay, use:
 
-QUESTION
--> PLAYER-FACING TARGET
--> MINIMUM COHERENT PLAYABLE
+PRODUCT_QUESTION
+-> BATTLE / COMMAND HYPOTHESES
+-> REPRESENTATIVE GREYBOX SLICE
 -> REAL GODOT TECHNICAL VERIFY
--> PLAYABLE READINESS CHECK
--> HUMAN PLAY WHEN READY
+-> REPRESENTATIVE-READINESS REVIEW
+-> HUMAN PLAY
 -> KEEP / REWORK / KILL / CONTINUE BUILD
 
-Do not require a paper design to prove player experience before implementation exists.
-Do not ask the user to repeatedly judge half-formed increments that do not yet constitute a meaningful playable.
+A tiny mechanic demo may be useful for technical experimentation, but it cannot by itself represent the RTS or satisfy product evidence requirements.
 
-A failed prototype is valid evidence. A thin prototype may also simply be NOT_READY_FOR_PRODUCT_JUDGMENT rather than a meaningful product failure.
+Do not reduce the whole game to one isolated repeated decision merely because that makes a clean prototype. A single decision can be analyzed, but FRONTLINE must eventually be judged as interacting command systems under sustained battle load.
+
+Technical PASS proves only that the implementation works as built.
+Codex, tests and scripted agents are not human players.
+Human product judgment should begin only when the build is sufficiently representative to make that judgment meaningful.
+
+A failed representative slice is valid evidence. Do not rescue a weak battle system through decorative production work.
 
 ---
 
@@ -115,61 +121,34 @@ SCOPED ISSUE
 -> FEATURE / PROTOTYPE BRANCH WHEN NEEDED
 -> IMPLEMENT
 -> FOCUSED TECHNICAL VERIFY
--> PLAYER / UX REVIEW WHEN RELEVANT AND READY
+-> PLAYER / UX REVIEW WHEN RELEVANT
 -> PR
 -> MERGE IF CURRENT PRODUCT VALUE EXISTS
 -> UPDATE CURRENT_STATE
 
-Disposable prototypes do not need to merge to main.
+Discovery slices do not need to merge to main merely because they work technically.
 
 ---
 
-## 7. Three evidence layers
+## 7. Evidence scale
 
-### Layer 1 — Technical verification
+Use minimum sufficient evidence proportional to risk, but do not confuse minimum evidence with minimum game substance.
 
-Answers: does the implementation work as specified?
+LOW:
+- focused diff/artifact + one relevant verification.
 
-Evidence may include:
-- parse/import/boot;
-- runtime behavior;
-- deterministic or focused mechanical checks;
-- regressions;
-- CI/tests.
+MEDIUM:
+- revision identity + direct runtime evidence + focused regression.
 
-Codex, scripted agents and automation are valid here.
+HIGH / CORE GAMEPLAY:
+- revision identity;
+- real Godot runtime;
+- interacting representative battle systems;
+- independent readiness review when warranted;
+- direct human product evidence after representative readiness;
+- explicit product decision.
 
-TECHNICAL_PASS proves only technical behavior.
-
-### Layer 2 — Minimum playable readiness
-
-Answers: is there enough coherent game here that asking a human to judge experience is worthwhile?
-
-Typical readiness includes:
-- visible situation/objective;
-- controllable player action;
-- opposition or changing battlefield state;
-- consequences;
-- readable feedback;
-- continued play loop;
-- recognizable result/restart path.
-
-This is a readiness threshold, not a claim that the game is fun.
-
-### Layer 3 — Human product evidence
-
-Answers questions such as:
-- does the player understand what they are doing?
-- are choices meaningful?
-- is the command experience interesting?
-- does the player want to continue?
-
-Only actual human play provides this evidence.
-
-CODEX_SIMULATED_HUMAN_PLAY=INVALID
-AUTOMATED_PLAYER_EXPERIENCE_CLAIM=INVALID
-
-Direct human play remains decisive for core gameplay acceptance, but it is used when Layer 2 has been reached rather than after every implementation increment.
+Never treat an aggregate PASS line, a few scripted units, or an isolated mechanic as sufficient evidence when the important battle behavior cannot be reconstructed.
 
 ---
 
@@ -202,10 +181,10 @@ SPECIALIST_ROADMAP_AUTHORITY=NO
 Normally keep one primary task.
 
 Parallel work is allowed only when it:
-- does not create competing product directions;
+- does not change product direction;
+- does not compete for the same decision;
 - does not resume paused production implicitly;
-- is clearly scoped construction, design support, maintenance, investigation, tooling or evidence work;
-- shares durable results through GitHub rather than chat receipt chains.
+- clearly contributes design, implementation, evidence or low-coupling support to the same current objective.
 
 If parallel work begins to affect the roadmap, it must become visible in CURRENT_STATE.
 
@@ -217,7 +196,7 @@ Update CURRENT_STATE only when something material changes:
 - user makes a product/process decision;
 - human play changes a hypothesis;
 - a task becomes active / complete / blocked;
-- a prototype becomes the current playable;
+- a representative slice becomes the current playable;
 - a requirement becomes ACCEPTED, REOPENED or SUPERSEDED;
 - next decision changes.
 
@@ -230,7 +209,7 @@ When a material decision is finalized, append it to DECISION_LOG.
 
 Older FRONTLINE governance, Battle01 contracts, legacy permanent-window documents and superseded GPT window systems remain in Git history or `archive/legacy-unused` as evidence.
 
-Unless explicitly reaccepted by CURRENT_STATE, classify them as HISTORICAL_REFERENCE, reusable evidence or candidate material to re-evaluate. They must not silently override V3 charter or current product state.
+Unless explicitly reaccepted by CURRENT_STATE, classify them as HISTORICAL_REFERENCE, reusable evidence, or candidate material to re-evaluate. They must not silently override V3 charter or current product state.
 
 ---
 
@@ -238,10 +217,10 @@ Unless explicitly reaccepted by CURRENT_STATE, classify them as HISTORICAL_REFER
 
 CURRENT_PHASE=P0_DISCOVER
 BATTLE01_PRODUCTION=PAUSED
-PRIMARY_TASK=BUILD_PROTOTYPE_B_MINIMUM_COHERENT_PLAYABLE_V1
-PLAYER_EXPERIENCE_GATE=AFTER_MINIMUM_PLAYABLE_READINESS
+PRIMARY_TASK_MUST_SERVE_CORE_GAME_IDENTITY=YES
+REPRESENTATIVE_SLICE_BEFORE_HUMAN_PRODUCT_GATE=YES
+TOY_MECHANIC_DEMO_AS_PRODUCT_EVIDENCE=NO
 CODEX_SIMULATED_HUMAN_PLAY=INVALID
-NO_GAMEPLAY_SCOPE_EXPANSION_BEYOND_ACTIVE_TASK=YES
 PLAYER_EVIDENCE_OVER_INTERNAL_COMPLETENESS=YES
 GPT_MULTI_WINDOW_COLLABORATION=YES
 GPT_WINDOW_COUNT=4
