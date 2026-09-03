@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V15
+STATE_VERSION=V16
 INTEGRATION_AUTHORITY=PROJECT_DIRECTOR
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V1.md
@@ -27,7 +27,7 @@ SINGLE_DECISION_REDUCTION_AS_GAME_DEFINITION=REJECTED_AS_TOO_NARROW
 CURRENT_PHASE=P0_DISCOVER
 BATTLE01_PRODUCTION=PAUSED
 
-Discovery proceeds through a representative command-battle system rather than ultra-thin mechanic demos. A mechanism test may verify code but cannot stand in for an RTS battle or justify product conclusions.
+Discovery proceeds through a representative command-battle system rather than ultra-thin mechanic demos. Technical tests may verify behavior but cannot substitute for a representative RTS battle or later human product judgment.
 
 ---
 
@@ -35,8 +35,6 @@ Discovery proceeds through a representative command-battle system rather than ul
 
 QUESTION=
 What interacting real-time command decisions and battle loop make FRONTLINE worth playing as a formation-level command game rather than as a conventional RTS with fewer units?
-
-The earlier framing around one repeated decision remains diagnostically useful but is too narrow as the game definition.
 
 ---
 
@@ -52,39 +50,72 @@ CORE_V1_BATCH1_FINAL_REVIEW=PASS
 
 Accepted Core includes FormationState, FormationTask, FormationAgent2D, TaskCommandService, FormationAutonomy, NavigationService and a minimal CombatResolver. Scenario-specific Battle01 identity remains outside Core.
 
+PROTOTYPE_B_CORE_MIGRATION_PR=#27
+PROTOTYPE_B_CORE_MIGRATION_MERGED=YES
+PROTOTYPE_B_CORE_MIGRATION_COMMIT=09146d7bc351762cd6d9b48719015cd88e200063
+HISTORICAL_PROTOTYPE_B_PR=#21 CLOSED_SUPERSEDED
+
+Prototype B is a real consumer of the accepted Core. BLUE and RED task/movement execution share the same Core formation path and TaskCommandService. This remains technical integration evidence only.
+
 ---
 
-## ACCEPTED_PROTOTYPE_B_CORE_MIGRATION
+## CURRENT_REPRESENTATIVE_BATTLE_BATCH1
 
 PRODUCT_ISSUE=#20
-TECHNICAL_TASK=#26 CLOSED
-TECHNICAL_FIX_ISSUE=#28 CLOSED
-TECHNICAL_PR=#27
-REVIEWED_FIX_HEAD=c69b6cfd045a8d2b0469ced5fe36a0c443738835
-PR_MERGED=YES
-PR_MERGE_COMMIT=09146d7bc351762cd6d9b48719015cd88e200063
+IMPLEMENTATION_ISSUE=#29
+REVIEW_ISSUE=#31
+PR=#30
+BRANCH=dev/prototype-b-representative-battle-content-v1
+HEAD=9769196db09cc57e38db4d2c2fdea2445484a21d
+PR_STATE=OPEN
+PR_MERGED=NO
+PR_MERGEABLE=YES
+CORE_FILES_CHANGED=0
 
-Prototype B is now a real consumer of the accepted RTS Core:
-- BLUE and RED formation execution uses FormationAgent2D / FormationState / FormationAutonomy / NavigationService;
-- BLUE player commands and RED scenario commander tasking share TaskCommandService;
-- scenario-specific RIDGE/CROSSING/RELAY, pressure, intel/confidence, objective/control and outcome logic remain scenario-side;
-- representative structure remains present: 5 BLUE including ECHO reserve, 3 sectors, 3 RED agents, reserve/retask consequences, fallback/recovery, escalation, combat consequences and outcome/restart.
+Batch 1 adds actual battle substance on top of accepted Core rather than another architecture pass:
 
-Issue #28 lifecycle fix is included in the merged result:
-- CORE_CONSISTENT_STAGING_TARGET=YES
-- FALLBACK_RECOVERY_RESUME_TEST=PASS
-- ECHO_RESERVE_RETURN_TEST=PASS
-- PROTOTYPE_B_MIGRATION_CI=PASS_RUN_4
-- FRONTLINE_CORE_VERIFY=PASS_RUN_255
-- REGRESSIONS=NO_BLOCKING_REGRESSION_OBSERVED
+### State-driven RED commander
+- normal RED reaction is based on live sector control and BLUE-vs-RED combat power rather than the old 14-second target profile;
+- RED begins with two committed formations and one genuine uncommitted reserve;
+- RED can counter-commit or exploit according to battlefield state;
+- maneuver/reserve retasking uses commitment locks so the opponent cannot oscillate every frame;
+- RED task execution continues through the shared TaskCommandService and Core formation runtime.
 
-Historical draft PR #21 is CLOSED and marked `[SUPERSEDED]`; history is preserved and not deleted.
+### Limited BLUE commander support
+- BLUE has two finite support missions;
+- support requires sector choice and has active duration plus cooldown;
+- support produces real RED FormationState HP/ammo effects plus temporary pressure suppression and stronger contact confirmation;
+- support timing is a resource tradeoff rather than unlimited UI spam.
 
-Integration provenance: the last recorded WINDOW_03 review before merge was PARTIAL_PASS / FIX_THEN_MERGE on the pre-fix head. Issue #28 then resolved the identified blocker with focused lifecycle coverage and green CI. At merge time no separate final WINDOW_03 PASS review record was present in GitHub; the user explicitly authorized WINDOW_00 to merge PR #27 and close the chain. User explicit authority therefore performed the integration decision.
+### Battlefield trend/readability
+- sectors expose GAINING / LOSING / UNDER PRESSURE / ADVANTAGE / CONTESTED from live battle state;
+- UI exposes current RED focus, reserve commitment state and remaining support;
+- UI presents facts and does not prescribe a correct player answer.
 
-TECHNICAL_CORE_MIGRATION=ACCEPTED_ON_MAIN
+Representative structure remains intact:
+- 5 BLUE including ECHO reserve;
+- 3 RED;
+- 3 simultaneous sectors;
+- retask, fallback/recovery, escalation and outcome/restart remain present;
+- no Battle01 production restart;
+- no economy/base-building expansion;
+- no final roster/map/command freeze.
+
+Verified on current head:
+- FRONTLINE Prototype B Representative Battle Verify run 33741943494 = SUCCESS;
+- Frontline Core Verify #256 / run 33741943657 = SUCCESS;
+- Prototype B Core Migration Verify #5 / run 33741943773 = SUCCESS;
+- old Core consumer regression = PASS;
+- state-driven RED response = PASS;
+- RED reserve commit through shared Core command = PASS;
+- limited support real damage/suppression/no-spam/later-tradeoff coverage = PASS;
+- battlefield trend state = PASS;
+- bounded 900-frame Godot 4.7.1 runtime = PASS.
+
+TECHNICAL_RESULT=PASS_PENDING_INDEPENDENT_REVIEW
 PRODUCT_PASS=NO
 HUMAN_PLAY_GATE=NOT_REACHED
+MERGE=NO
 
 ---
 
@@ -96,10 +127,10 @@ ACCEPTED:
 - TECHNICAL_PASS != PRODUCT_PASS.
 - Direct human play is decisive for product acceptance only after representative readiness.
 - Codex/automation may perform technical verification but may not simulate or stand in for a human player.
-- FRONTLINE must not be reduced to a toy mechanism demo or arbitrary small number of boxes/formations for product evaluation.
+- FRONTLINE must not be reduced to a toy mechanism demo or an arbitrary small number of boxes/formations for product evaluation.
 - Representative readiness is systemic, not a fixed unit-count/map-size/minutes checklist.
 - The player-facing battle must create sustained command load through interacting responsibilities, changing threats and continuing consequences.
-- RTS Core V1 batch 1 and the Prototype B Core migration are accepted technical foundations on main.
+- RTS Core V1 and the Prototype B Core migration are accepted technical foundations on main.
 - Old North/Central/South Battle01 production remains unauthorized.
 - One shared current state replaces permanent specialist/window states.
 
@@ -133,11 +164,11 @@ Only after representative readiness should the user judge command quality, workl
 
 WINDOW_00=ACTIVE
 WINDOW_01=ACTIVE_BATTLE_AND_COMMAND_DESIGN
-WINDOW_02=ACTIVE_REPRESENTATIVE_BATTLE_BUILD
-WINDOW_03=STANDBY_ON_DEMAND
+WINDOW_02=STANDBY_AFTER_REPRESENTATIVE_BATTLE_BATCH1
+WINDOW_03=ACTIVE_INDEPENDENT_REVIEW_PR30
 
 CURRENT_RUNTIME_REASON=
-PR #27 is merged to main and #26/#28 are closed. The architecture-to-game migration is complete. WINDOW_02 now continues building actual representative battle substance on top of the accepted Core; WINDOW_01 resolves player-facing command/battle questions only where construction needs them. WINDOW_03 re-enters for independent review when a substantive next integration/readiness gate exists.
+WINDOW_02 completed representative battle-content Batch 1 on PR #30 at `9769196db09cc57e38db4d2c2fdea2445484a21d`. All three Godot 4.7.1 workflows are green and no Core files changed. Because this is a substantive battle-content integration gate, WINDOW_03 now independently reviews PR #30 under Issue #31. WINDOW_02 does not begin Batch 2 until review integration unless the user explicitly authorizes parallel work.
 
 WINDOW_00_STATE_WRITE_AUTHORITY=DEFAULT
 WINDOW_01_02_03_STATE_WRITE_AUTHORITY=ONLY_IF_USER_OR_TASK_EXPLICITLY_DELEGATES
@@ -152,6 +183,7 @@ H1_COMMAND_LEVEL_PLAY=PLAUSIBLE_NOT_PROVEN
 H2_ACTION_RESPONSE=PLAUSIBLE_NOT_PROVEN
 H3_SINGLE_RIGHT_CLICK_MAINTAIN_PRESSURE=FAILED_REWORK_REQUIRED
 H4_REPRESENTATIVE_SYSTEM_NEED=ACCEPTED_PROCESS_RULE
+H5_STATE_DRIVEN_OPPOSITION_AND_LIMITED_SUPPORT=TECHNICALLY_IMPLEMENTED_PENDING_REVIEW
 
 ---
 
@@ -161,14 +193,14 @@ ACTIVE_PRIMARY_TASK=BUILD_PROTOTYPE_B_REPRESENTATIVE_COMMAND_BATTLE_SLICE_V1
 ACTIVE_ISSUE=#20
 ACTIVE_ISSUE_URL=https://github.com/n3025584212-ops/RTS/issues/20
 
-CURRENT_TECHNICAL_INTEGRATION=PROTOTYPE_B_CORE_MIGRATION_ACCEPTED_ON_MAIN
-ACCEPTED_MIGRATION_PR=#27
-ACCEPTED_MIGRATION_MERGE_COMMIT=09146d7bc351762cd6d9b48719015cd88e200063
+CURRENT_TECHNICAL_INTEGRATION=REVIEW_REPRESENTATIVE_BATTLE_CONTENT_BATCH1_PR30
+IMPLEMENTATION_ISSUE=#29
+REVIEW_ISSUE=#31
+TECHNICAL_PR=#30
+TECHNICAL_REVIEW_HEAD=9769196db09cc57e38db4d2c2fdea2445484a21d
 
 Immediate goal:
-Continue building coherent representative battle substance on the accepted Core rather than stopping at architecture cleanliness.
-
-Known remaining gaps include scenario-owned intel/objective logic, aggregate rather than target-level combat expression, and scenario-owned RED commander policy. These are candidate construction areas, not automatically frozen scope. Build/extract only what materially strengthens the representative battle and sustained command load.
+Independently determine whether Batch 1 is merge-ready without confusing technical integration with PRODUCT_PASS.
 
 ---
 
@@ -176,23 +208,27 @@ Known remaining gaps include scenario-owned intel/objective logic, aggregate rat
 
 CURRENT_PRODUCT_BLOCKERS:
 1. FRONTLINE has not yet passed representative command-battle readiness for direct human judgment.
-2. The interaction among command responsibilities, formation autonomy, enemy reaction, information, combat and reserves remains unproven as a product experience under sustained battle load.
-3. The game must demonstrate that higher-level command reduces babysitting without making the player passive.
+2. Ordinary combat remains primarily sector aggregate attrition rather than a convincing formation-vs-formation local engagement process.
+3. The interaction among command responsibilities, formation autonomy, enemy reaction, information, combat, support and reserves remains unproven as a product experience under sustained battle load.
+4. The game must demonstrate that higher-level command reduces babysitting without making the player passive.
 
-CURRENT_TECHNICAL_INTEGRATION_BLOCKERS:
-- none from PR #27 / Issue #26 / Issue #28; that chain is closed.
+CURRENT_TECHNICAL_INTEGRATION_BLOCKER:
+- PR #30 requires WINDOW_03 independent review under Issue #31 before merge unless the user explicitly overrides.
+
+NEXT_BUILD_HYPOTHESIS:
+Formation-vs-formation local engagement — contact, suppression, damage, disengagement, ammunition/endurance and state-driven retasking pressure — is the leading candidate for Batch 2 after Batch 1 acceptance. This is not yet frozen scope and should not be required by review unless a concrete PR #30 defect depends on it.
 
 ---
 
 ## NEXT_DECISION
 
-NEXT=CONTINUE_REPRESENTATIVE_COMMAND_BATTLE_BUILD_ON_ACCEPTED_CORE
+NEXT=WINDOW_03_INDEPENDENT_REVIEW_PR30
 
-Required direction:
-1. Continue building the representative battle under Issue #20 on main/Core V1.
-2. Do not shrink the battle back to a few boxes or isolated decisions.
-3. Do not treat technical cleanliness or CI as PRODUCT_PASS.
-4. Use WINDOW_03 again when the next substantive integration/readiness gate exists.
+Required sequence:
+1. WINDOW_03 reviews PR #30 / head `9769196db09cc57e38db4d2c2fdea2445484a21d` under Issue #31.
+2. If PASS / MERGE: WINDOW_00 merges PR #30, closes #29/#31, and decides/authorizes the next representative battle-content batch.
+3. If FIX_THEN_MERGE: WINDOW_02 fixes only concrete blockers and returns to review; do not expand scope or shrink the battle.
+4. After Batch 1 acceptance, formation-vs-formation local engagement is the leading next construction direction, but final Batch 2 scope remains a build decision rather than a permanent product freeze.
 5. Only after representative readiness does the user directly play and judge the game.
 
 ONE_PRIMARY_PRODUCT_QUESTION=YES
