@@ -33,25 +33,43 @@ func _run() -> void:
 	agent.set_navigation_service(navigation)
 	var commands := TaskCommandService.new()
 	root.add_child(commands)
-	var issued: int = commands.assign_area([agent], Vector2(700.0, 80.0), &"EAST_TASK", 2)
-	_require(issued == 1 and agent.state.current_task == FormationTask.ASSIGN, "CORE_TASK_ASSIGN_PASS")
-	_require(agent.state.execution_state == FormationState.EXECUTION_MOVING, "CORE_AUTONOMY_PATH_ACCEPT_PASS")
 
-	for _step: int in range(120):
+	# Explicit common commander-facing contract: ASSIGN -> RETASK -> CANCEL.
+	var first_task := FormationTask.assign_to(Vector2(700.0, 80.0), &"EAST_TASK", 2)
+	var assigned: int = commands.assign([agent], first_task)
+	_require(assigned == 1 and commands.get_last_operation() == TaskCommandService.OP_ASSIGN, "CORE_COMMAND_ASSIGN_SURFACE_PASS")
+	_require(agent.state.current_task == FormationTask.ASSIGN and agent.state.execution_state == FormationState.EXECUTION_MOVING, "CORE_TASK_ASSIGN_PASS")
+
+	for _step: int in range(30):
+		agent.force_tick_for_test(0.05)
+	var position_before_retask: Vector2 = agent.state.position
+	var replacement := FormationTask.assign_to(Vector2(140.0, 240.0), &"SOUTH_TASK", 5)
+	var retasked: int = commands.retask([agent], replacement)
+	var current_after_retask: FormationTask = agent.get_current_task()
+	_require(retasked == 1 and commands.get_last_operation() == TaskCommandService.OP_RETASK, "CORE_COMMAND_RETASK_SURFACE_PASS")
+	_require(current_after_retask.target_id == &"SOUTH_TASK" and current_after_retask.target_position == Vector2(140.0, 240.0), "CORE_RETASK_REPLACES_TASK_PASS")
+	_require(agent.state.position == position_before_retask and agent.has_active_navigation_path(), "CORE_RETASK_REPLACES_PATH_WITHOUT_TELEPORT_PASS")
+
+	var cancelled: int = commands.cancel([agent])
+	var current_after_cancel: FormationTask = agent.get_current_task()
+	var last_recorded: FormationTask = commands.get_last_task(agent)
+	_require(cancelled == 1 and commands.get_last_operation() == TaskCommandService.OP_CANCEL, "CORE_COMMAND_CANCEL_SURFACE_PASS")
+	_require(current_after_cancel.task_type == FormationTask.HOLD and not agent.has_active_navigation_path(), "CORE_CANCEL_RETURNS_TO_HOLD_PASS")
+	_require(agent.state.execution_state == FormationState.EXECUTION_HOLDING, "CORE_CANCEL_STOPS_LOCAL_EXECUTION_PASS")
+	_require(last_recorded != null and last_recorded.task_type == FormationTask.HOLD, "CORE_CANCEL_RECORDED_BY_COMMAND_SERVICE_PASS")
+	_require(commands.get_command_revision() == 3, "CORE_ASSIGN_RETASK_CANCEL_REVISION_PASS")
+	print("FRONTLINE_CORE_TASK_COMMAND_ASSIGN_RETASK_CANCEL_PASS")
+
+	# Existing movement/persistent-task execution remains covered after the command
+	# surface change.
+	var reissued: int = commands.assign_area([agent], Vector2(700.0, 80.0), &"EAST_TASK", 2)
+	_require(reissued == 1 and agent.state.execution_state == FormationState.EXECUTION_MOVING, "CORE_AUTONOMY_PATH_ACCEPT_PASS")
+	for _step: int in range(160):
 		agent.force_tick_for_test(0.05)
 		if not agent.has_active_navigation_path():
 			break
 	_require(agent.state.position.distance_to(Vector2(700.0, 80.0)) <= 45.0, "CORE_AGENT_MOVEMENT_PASS")
 	_require(agent.state.execution_state == FormationState.EXECUTION_EXECUTING, "CORE_PERSISTENT_TASK_EXECUTION_PASS")
-
-	var retask_count: int = commands.move([agent], Vector2(140.0, 240.0), 5)
-	_require(retask_count == 1 and agent.state.current_task == FormationTask.MOVE, "CORE_RETASK_PASS")
-	for _step: int in range(160):
-		agent.force_tick_for_test(0.05)
-		if not agent.has_active_navigation_path():
-			break
-	_require(agent.state.execution_state == FormationState.EXECUTION_COMPLETE, "CORE_NONPERSISTENT_MOVE_COMPLETE_PASS")
-	_require(commands.get_command_revision() == 2, "CORE_COMMAND_REVISION_PASS")
 
 	agent.queue_free()
 	commands.queue_free()
