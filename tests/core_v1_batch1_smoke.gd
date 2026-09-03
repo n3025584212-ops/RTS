@@ -10,7 +10,7 @@ func _run() -> void:
 	var navigation := NavigationService.new()
 	var profiles: Array[StringName] = [&"FOOT", &"VEHICLE"]
 	var blocked_query := func(world_point: Vector2, profile: StringName) -> bool:
-		return profile == &"VEHICLE" and Rect2(Vector2(360.0, 0.0), Vector2(80.0, 320.0)).has_point(world_point)
+		return profile == &"VEHICLE" and Rect2(Vector2(360.0, 80.0), Vector2(80.0, 160.0)).has_point(world_point)
 	navigation.configure(Vector2(800.0, 320.0), Vector2(40.0, 40.0), profiles, blocked_query, 8)
 
 	_require(navigation.has_profile(&"FOOT") and navigation.has_profile(&"VEHICLE"), "CORE_NAV_PROFILES_PASS")
