@@ -1,0 +1,56 @@
+name: FRONTLINE Core V1 Batch1 Verify
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/core/**'
+      - 'scripts/battle01/battle_navigation.gd'
+      - 'tests/core_v1_batch1_smoke.gd'
+      - '.github/workflows/core-v1-batch1-verify.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  core-v1-batch1:
+    name: Godot 4.7.1 Core V1 batch1
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_TAG="4.7.1-stable"
+          GODOT_ARCHIVE="Godot_v4.7.1-stable_linux.x86_64.zip"
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_ARCHIVE}"
+          mkdir -p "$RUNNER_TEMP/godot"
+          curl -fL --retry 3 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Verify Godot version
+        shell: bash
+        run: |
+          "$GODOT" --version | grep -E '^4\.7\.1'
+
+      - name: Parse and import project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s "$GODOT" --headless --editor --path . --quit 2>&1 | tee core-v1-editor.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' core-v1-editor.log
+
+      - name: Core V1 batch1 smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --script tests/core_v1_batch1_smoke.gd 2>&1 | tee core-v1-batch1.log
+          grep -q 'FRONTLINE_CORE_V1_BATCH1_SMOKE_PASS' core-v1-batch1.log
