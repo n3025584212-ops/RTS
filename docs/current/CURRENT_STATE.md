@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V12
+STATE_VERSION=V13
 INTEGRATION_AUTHORITY=PROJECT_DIRECTOR
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V1.md
@@ -53,24 +53,22 @@ Reusable foundations include selection, movement/pathing, 2D simulation truth + 
 
 These are construction material, not final product rules.
 
-### RTS Core V1 extraction
+### Accepted RTS Core V1 batch 1
 
 CORE_V1_BATCH1_BRANCH=dev/core-v1-batch1-migration
-CORE_V1_BATCH1_HEAD=9e14b49046103074992f6abb6fbea6dac4266e57
+CORE_V1_BATCH1_REVIEWED_HEAD=54f10d360a92f782183cf76b577ef7f80962bc09
 CORE_V1_BATCH1_PR=#23
-CORE_V1_BATCH1_TECHNICAL_TASK=#22
-CORE_V1_BATCH1_REVIEW_ISSUE=#24
-CORE_V1_BATCH1_FIX_ISSUE=#25
-CORE_V1_BATCH1_CI=PASS_ON_REVIEWED_HEAD
-CORE_V1_BATCH1_REVIEW_STATUS=PARTIAL_PASS_FIX_THEN_MERGE
+CORE_V1_BATCH1_MERGED=YES
+CORE_V1_BATCH1_MERGE_COMMIT=74c40115b6942df07ffca14b81f2fdbb2261e7ab
+CORE_V1_BATCH1_TECHNICAL_TASK=#22 CLOSED
+CORE_V1_BATCH1_REVIEW_ISSUE=#24 CLOSED
+CORE_V1_BATCH1_FIX_ISSUE=#25 CLOSED
+CORE_V1_BATCH1_FINAL_REVIEW=PASS
+CORE_V1_BATCH1_CI=GODOT_4_7_1_FRONTLINE_CORE_VERIFY_251_PASS
 
-WINDOW_03 independently found the architectural separation materially sound. `scripts/core/**` has no HUD ownership, Battle01 exact-node dependency, North/Central/South route constants, scenario victory logic, exact formation display-name policy or legacy enemy-AI inheritance.
+The first reusable Core seam is now accepted on main. It includes FormationState, FormationTask, FormationAgent2D, TaskCommandService, FormationAutonomy, NavigationService and a minimal CombatResolver. TaskCommandService exposes explicit assign/retask/cancel semantics. BattleNavigation delegates reusable pathfinding to NavigationService while Battle01 route/terrain identity remains scenario-side.
 
-Two narrow merge blockers remain:
-1. TaskCommandService needs an explicit assignment/retask/cancel common command surface with focused tests.
-2. CI must add a bounded real Godot 4.7.1 boot/runtime regression for the designated playable/baseline.
-
-No architecture rewrite is required. PR #23 is not yet accepted into main and does not prove the product loop.
+WINDOW_03 independently verified the architecture boundary and the narrow review fixes. Godot 4.7.1 CI passed parse/import, Core smoke, assign/retask/cancel coverage, BattleNavigation compatibility and bounded designated-baseline boot/runtime. This acceptance is technical architecture evidence only; it is not PRODUCT_PASS and does not prove the command game loop.
 
 ### Discovery Prototype A
 
@@ -97,6 +95,7 @@ ACCEPTED:
 - FRONTLINE must not be reduced to a toy mechanism demo or an arbitrary small number of boxes/formations for product evaluation.
 - representative readiness is systemic, not a fixed unit-count/map-size/minutes checklist.
 - the player-facing battle must create sustained command load through interacting responsibilities, changing threats and continuing consequences.
+- RTS Core V1 batch 1 is accepted as reusable technical foundation on main; this does not freeze product gameplay semantics.
 - old North/Central/South Battle01 production remains unauthorized.
 - production art must not be used to hide an unclear interaction.
 - one shared current state replaces permanent specialist/window states.
@@ -143,11 +142,11 @@ Only after representative readiness should the user judge command quality, workl
 
 WINDOW_00=ACTIVE
 WINDOW_01=ACTIVE_BATTLE_AND_COMMAND_DESIGN
-WINDOW_02=ACTIVE_NARROW_CORE_REVIEW_FIX
-WINDOW_03=STANDBY_PENDING_FINAL_CORE_REVIEW
+WINDOW_02=ACTIVE_PROTOTYPE_B_CORE_MIGRATION
+WINDOW_03=STANDBY_ON_DEMAND
 
 CURRENT_RUNTIME_REASON=
-WINDOW_03 completed the first independent review of PR #23 with PARTIAL_PASS / FIX_THEN_MERGE. The Core separation is materially sound, but two narrow acceptance gaps remain. WINDOW_02 is reactivated only for Issue #25: explicit TaskCommandService retask/cancel semantics plus focused tests, and bounded real Godot 4.7.1 playable/baseline boot-runtime evidence. WINDOW_03 re-enters after those fixes and green CI for final independent review. Product work under Issue #20 remains the primary project objective.
+RTS Core V1 batch 1 has passed final independent review and is merged to main. WINDOW_02 now moves from Core extraction to Issue #26: migrate the representative Prototype B command battle onto the accepted Core without shrinking its systemic battle structure. WINDOW_01 remains available to resolve player-facing command/battle questions that materially affect construction. WINDOW_03 re-enters when substantive migration evidence exists or an independent readiness/merge review is needed.
 
 WINDOW_00_STATE_WRITE_AUTHORITY=DEFAULT
 WINDOW_01_02_03_STATE_WRITE_AUTHORITY=ONLY_IF_USER_OR_TASK_EXPLICITLY_DELEGATES
@@ -182,61 +181,59 @@ ACTIVE_PRIMARY_TASK=BUILD_PROTOTYPE_B_REPRESENTATIVE_COMMAND_BATTLE_SLICE_V1
 ACTIVE_ISSUE=#20
 ACTIVE_ISSUE_URL=https://github.com/n3025584212-ops/RTS/issues/20
 
-CURRENT_TECHNICAL_INTEGRATION=FIX_CORE_V1_BATCH1_PR23_REVIEW_BLOCKERS
-TECHNICAL_TASK=#22
-TECHNICAL_REVIEW_ISSUE=#24
-TECHNICAL_FIX_ISSUE=#25
-TECHNICAL_PR=#23
+CURRENT_TECHNICAL_INTEGRATION=MIGRATE_PROTOTYPE_B_REPRESENTATIVE_BATTLE_TO_RTS_CORE_V1
+TECHNICAL_TASK=#26
+ACCEPTED_CORE_PR=#23
+ACCEPTED_CORE_MERGE_COMMIT=74c40115b6942df07ffca14b81f2fdbb2261e7ab
 
 Immediate goal:
-Build a coherent greybox battle slice that behaves like an actual small RTS/tactical battle rather than a mechanism demonstration.
+Make the representative command-battle slice a real consumer of the accepted reusable Core instead of continuing to grow a parallel single-file discovery simulation.
 
-The first reusable Core extraction has passed architecture-boundary review but still needs the two narrow #25 fixes before merge. After final acceptance, Prototype B and future scenarios should migrate to Core as consumers rather than continuing to grow Battle01-specific or single-file simulation logic.
+WINDOW_02 must preserve the representative battle's multiple battlefield demands, reserve/retask consequences, enemy activity, escalation and recognizable outcome while moving overlapping formation/task/navigation/autonomy responsibility into Core. The migration must not shrink the battle merely to make integration easier.
 
-WINDOW_01 defines the command structure, simultaneous responsibilities, battle flow and player-facing information only to the level needed for construction.
+Where Intel, Objective, combat-state or commander behavior still duplicates scenario-owned simulation logic, extract only the narrow reusable interfaces needed by the representative battle. Do not turn this into a repo-wide completeness refactor.
 
-WINDOW_02 is currently restricted to #25. Do not expand Core or begin the next migration batch until PR #23 passes final independent review.
-
-This authorization does not resume formal Battle01 production and does not freeze temporary prototype choices as final design.
+This authorization does not resume formal Battle01 production and does not freeze temporary Prototype B choices as final product rules.
 
 ---
 
 ## BLOCKERS
 
 CURRENT_PRODUCT_BLOCKERS:
-1. FRONTLINE does not yet have a representative integrated command-battle slice running on the reusable Core.
+1. FRONTLINE does not yet have a representative integrated command-battle slice running fully on the reusable Core.
 2. The interaction among command responsibilities, formation autonomy, enemy reaction, information and reserves remains unproven under sustained battle load.
 3. Prototype A remains too thin and too close to MOVE renamed to answer the product question.
 4. The game must demonstrate that higher-level command reduces babysitting without making the player passive.
 
 CURRENT_TECHNICAL_INTEGRATION_BLOCKERS:
-1. PR #23 TaskCommandService lacks explicit complete assignment/retask/cancel semantics and cancel-focused test coverage.
-2. PR #23 lacks bounded actual playable/designated-baseline boot-runtime regression evidence in Godot 4.7.1 CI.
+- no current Core V1 batch1 merge blocker remains;
+- Prototype B still owns parallel local simulation logic that must be migrated to the accepted Core under Issue #26.
 
 CURRENT_BUILD_NEED:
-- fix only Issue #25, then return PR #23 to WINDOW_03;
-- after Core merge, continue migrating enough battlefield sectors/demands, persistent tasks, autonomous local execution, enemy activity, combat consequences, reserve commitment, retasking and outcome flow to produce a sustained playable battle.
+- migrate Prototype B formation/task/movement/autonomy execution onto Core;
+- preserve representative battle density and command load during migration;
+- connect enemy command generation through the common task-command contract rather than separate movement physics;
+- extract only the additional reusable Intel/Objective/combat/commander seams actually required to eliminate duplicate scenario-owned simulation behavior;
+- retain real Godot 4.7.1 parse/boot/integration regression evidence.
 
 TECHNICAL_BLOCKERS:
-- no known engine/runtime blocker prevents continuing the representative slice;
-- Core V1 batch1 merge is gated only by the two narrow independent-review findings above.
+- no known engine/runtime blocker prevents the Core consumer migration.
 
 ---
 
 ## NEXT_DECISION
 
-NEXT=CORE_V1_BATCH1_FINAL_REVIEW_AFTER_NARROW_FIX
+NEXT=PROTOTYPE_B_CORE_MIGRATION_COMPLETE_OR_CONTINUE_BUILD
 
 Required sequence:
-1. WINDOW_02 fixes only Issue #25 on PR #23.
-2. Godot 4.7.1 CI must pass with explicit assign/retask/cancel coverage and bounded baseline boot/runtime evidence.
-3. WINDOW_03 performs final independent re-review under Issue #24.
-4. If final review PASS: merge PR #23, close #22/#24/#25, and make the reusable Core seam the basis for further Prototype B migration.
-5. If final review still finds a concrete blocker: fix that blocker only and repeat review; do not expand scope.
-6. Continue the representative command-battle build under product Issue #20; do not stop at architecture extraction.
-7. If the battle still behaves like a tiny scripted mechanism demo, continue building rather than requesting a player verdict.
-8. Only after representative readiness does the user directly play and judge the game.
-9. WINDOW_00 integrates the result and next product/build decision.
+1. WINDOW_02 executes Issue #26 against current main/Core V1.
+2. Prototype B must remain a representative multi-demand battle while becoming a Core consumer; migration must not reduce it to a toy mechanism proof.
+3. Real Godot 4.7.1 verification must cover Core integration plus a runnable representative battle baseline.
+4. WINDOW_03 independently reviews the migration when substantive evidence is ready.
+5. After accepted migration, continue filling the battle-system gaps needed for a representative command battle rather than stopping at architecture cleanliness.
+6. If the battle still lacks sustained command load or coherent game substance, continue building rather than requesting a player verdict.
+7. Only after representative readiness does the user directly play and judge the game.
+8. WINDOW_00 integrates the result and next product/build decision.
 
 Do not use Codex, scripted agents, a few boxes, or automated tests as substitutes for an actual representative RTS battle and later human evidence.
 
