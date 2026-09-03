@@ -35,37 +35,24 @@ const SOUTH_ROUTE_GUIDES: Array[Vector2] = [
 	Vector2(2360.0, 1320.0),
 ]
 
-var _foot_grid: AStarGrid2D = AStarGrid2D.new()
-var _vehicle_grid: AStarGrid2D = AStarGrid2D.new()
-var _foot_solid_cells: Dictionary = {}
-var _vehicle_solid_cells: Dictionary = {}
+var _service: NavigationService = NavigationService.new()
 
 func _ready() -> void:
-	_configure_grid(_foot_grid)
-	_configure_grid(_vehicle_grid)
-	for y: int in range(GRID_SIZE.y):
-		for x: int in range(GRID_SIZE.x):
-			var id := Vector2i(x, y)
-			var world_point: Vector2 = _foot_grid.get_point_position(id)
-			var hard_blocked: bool = _is_hard_blocked_position(world_point)
-			if hard_blocked:
-				_foot_solid_cells[id] = true
-				_vehicle_solid_cells[id] = true
-				_foot_grid.set_point_solid(id, true)
-				_vehicle_grid.set_point_solid(id, true)
-			elif BattleRouteTerrain.is_vehicle_clearance_blocked(world_point):
-				_vehicle_solid_cells[id] = true
-				_vehicle_grid.set_point_solid(id, true)
+	var profiles: Array[StringName] = [&"FOOT", &"VEHICLE"]
+	_service.configure(
+		MAP_SIZE,
+		CELL_SIZE,
+		profiles,
+		Callable(self, "_is_blocked_for_profile"),
+		NEAREST_SEARCH_RADIUS
+	)
 	queue_redraw()
-	print("FRONTLINE_NAVIGATION_GRID_READY cells=%d foot_blocked=%d vehicle_blocked=%d mobility_profiles=2" % [GRID_SIZE.x * GRID_SIZE.y, _foot_solid_cells.size(), _vehicle_solid_cells.size()])
+	print("FRONTLINE_NAVIGATION_GRID_READY cells=%d foot_blocked=%d vehicle_blocked=%d mobility_profiles=2 core_service=YES" % [
+		GRID_SIZE.x * GRID_SIZE.y,
+		_service.get_blocked_count(&"FOOT"),
+		_service.get_blocked_count(&"VEHICLE"),
+	])
 	print("FRONTLINE_NORTH_FOOT_LINK_READY entry=%s exit=%s" % [BattleRouteTerrain.NORTH_FOOT_LINK_ENTRY, BattleRouteTerrain.NORTH_FOOT_LINK_EXIT])
-
-func _configure_grid(grid: AStarGrid2D) -> void:
-	grid.region = Rect2i(Vector2i.ZERO, GRID_SIZE)
-	grid.cell_size = CELL_SIZE
-	grid.offset = CELL_SIZE * 0.5
-	grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
-	grid.update()
 
 func find_path(from_world: Vector2, to_world: Vector2) -> PackedVector2Array:
 	return find_path_for_mobility(from_world, to_world, _resolve_mobility_for_origin(from_world))
@@ -76,13 +63,7 @@ func find_path_for_formation(formation: Node2D, to_world: Vector2) -> PackedVect
 	return find_path_for_mobility(formation.global_position, to_world, mobility_for_formation(formation))
 
 func find_path_for_mobility(from_world: Vector2, to_world: Vector2, mobility: String) -> PackedVector2Array:
-	var normalized: String = _normalize_mobility(mobility)
-	var grid: AStarGrid2D = _grid_for_mobility(normalized)
-	var from_id: Vector2i = _nearest_walkable_id(_world_to_id(from_world), normalized)
-	var to_id: Vector2i = _nearest_walkable_id(_world_to_id(to_world), normalized)
-	if not _is_walkable_id(from_id, normalized) or not _is_walkable_id(to_id, normalized):
-		return PackedVector2Array()
-	return grid.get_point_path(from_id, to_id)
+	return _service.find_path(from_world, to_world, _profile_for_mobility(mobility))
 
 func mobility_for_formation(formation: Node) -> String:
 	if formation == null or not is_instance_valid(formation) or not formation.has_method("get_role"):
@@ -93,17 +74,13 @@ func clamp_to_walkable(world_point: Vector2) -> Vector2:
 	return clamp_to_walkable_for_mobility(world_point, BattleRouteTerrain.MOBILITY_VEHICLE)
 
 func clamp_to_walkable_for_mobility(world_point: Vector2, mobility: String) -> Vector2:
-	var normalized: String = _normalize_mobility(mobility)
-	var id: Vector2i = _nearest_walkable_id(_world_to_id(world_point), normalized)
-	if not _is_walkable_id(id, normalized):
-		return world_point
-	return _grid_for_mobility(normalized).get_point_position(id)
+	return _service.clamp_to_walkable(world_point, _profile_for_mobility(mobility))
 
 func is_world_walkable(world_point: Vector2) -> bool:
 	return is_world_walkable_for_mobility(world_point, BattleRouteTerrain.MOBILITY_VEHICLE)
 
 func is_world_walkable_for_mobility(world_point: Vector2, mobility: String) -> bool:
-	return _is_walkable_id(_world_to_id(world_point), _normalize_mobility(mobility))
+	return _service.is_world_walkable(world_point, _profile_for_mobility(mobility))
 
 func get_named_route(route_name: StringName) -> PackedVector2Array:
 	return get_named_route_for_mobility(route_name, BattleRouteTerrain.MOBILITY_VEHICLE)
@@ -116,19 +93,18 @@ func get_named_route_for_mobility(route_name: StringName, mobility: String) -> P
 	return PackedVector2Array()
 
 func get_path_length(path: PackedVector2Array) -> float:
-	var total: float = 0.0
-	for i: int in range(1, path.size()):
-		total += path[i - 1].distance_to(path[i])
-	return total
+	return _service.get_path_length(path)
 
 func path_crosses_bridge(path: PackedVector2Array) -> bool:
 	for point: Vector2 in path:
-		if BattleRouteTerrain.BRIDGE_RECT.has_point(point): return true
+		if BattleRouteTerrain.BRIDGE_RECT.has_point(point):
+			return true
 	return false
 
 func path_crosses_river_outside_bridge(path: PackedVector2Array) -> bool:
 	for point: Vector2 in path:
-		if BattleRouteTerrain.RIVER_RECT.has_point(point) and not BattleRouteTerrain.BRIDGE_RECT.has_point(point): return true
+		if BattleRouteTerrain.RIVER_RECT.has_point(point) and not BattleRouteTerrain.BRIDGE_RECT.has_point(point):
+			return true
 	return false
 
 func path_uses_north_foot_link(path: PackedVector2Array) -> bool:
@@ -145,53 +121,44 @@ func get_north_foot_link_exit() -> Vector2:
 
 func _get_route_via(guides: Array[Vector2], mobility: String) -> PackedVector2Array:
 	var result := PackedVector2Array()
-	if guides.size() < 2: return result
-	for i: int in range(1, guides.size()):
-		var segment: PackedVector2Array = find_path_for_mobility(guides[i - 1], guides[i], mobility)
-		if segment.is_empty(): return PackedVector2Array()
+	if guides.size() < 2:
+		return result
+	for index: int in range(1, guides.size()):
+		var segment: PackedVector2Array = find_path_for_mobility(guides[index - 1], guides[index], mobility)
+		if segment.is_empty():
+			return PackedVector2Array()
 		var start_index: int = 1 if not result.is_empty() else 0
-		for j: int in range(start_index, segment.size()): result.append(segment[j])
+		for segment_index: int in range(start_index, segment.size()):
+			result.append(segment[segment_index])
 	return result
 
-func _world_to_id(world_point: Vector2) -> Vector2i:
-	var clamped := Vector2(clampf(world_point.x, 0.0, MAP_SIZE.x - 0.001), clampf(world_point.y, 0.0, MAP_SIZE.y - 0.001))
-	return Vector2i(int(floor(clamped.x / CELL_SIZE.x)), int(floor(clamped.y / CELL_SIZE.y)))
-
-func _nearest_walkable_id(origin: Vector2i, mobility: String) -> Vector2i:
-	if _is_walkable_id(origin, mobility): return origin
-	for radius: int in range(1, NEAREST_SEARCH_RADIUS + 1):
-		for y: int in range(origin.y - radius, origin.y + radius + 1):
-			for x: int in range(origin.x - radius, origin.x + radius + 1):
-				if abs(x - origin.x) != radius and abs(y - origin.y) != radius: continue
-				var candidate := Vector2i(x, y)
-				if _is_walkable_id(candidate, mobility): return candidate
-	return origin
-
-func _is_walkable_id(id: Vector2i, mobility: String) -> bool:
-	if id.x < 0 or id.y < 0 or id.x >= GRID_SIZE.x or id.y >= GRID_SIZE.y: return false
-	var solid_cells: Dictionary = _foot_solid_cells if mobility == BattleRouteTerrain.MOBILITY_FOOT else _vehicle_solid_cells
-	return not solid_cells.has(id)
+func _is_blocked_for_profile(world_point: Vector2, profile: StringName) -> bool:
+	if _is_hard_blocked_position(world_point):
+		return true
+	return profile == &"VEHICLE" and BattleRouteTerrain.is_vehicle_clearance_blocked(world_point)
 
 func _is_hard_blocked_position(world_point: Vector2) -> bool:
-	if BattleRouteTerrain.RIVER_RECT.has_point(world_point) and not BattleRouteTerrain.BRIDGE_RECT.has_point(world_point): return true
+	if BattleRouteTerrain.RIVER_RECT.has_point(world_point) and not BattleRouteTerrain.BRIDGE_RECT.has_point(world_point):
+		return true
 	return BattleRouteTerrain.is_hard_blocked(world_point)
 
-func _grid_for_mobility(mobility: String) -> AStarGrid2D:
-	return _foot_grid if mobility == BattleRouteTerrain.MOBILITY_FOOT else _vehicle_grid
-
-func _normalize_mobility(mobility: String) -> String:
-	return BattleRouteTerrain.MOBILITY_FOOT if mobility == BattleRouteTerrain.MOBILITY_FOOT else BattleRouteTerrain.MOBILITY_VEHICLE
+func _profile_for_mobility(mobility: String) -> StringName:
+	return &"FOOT" if mobility == BattleRouteTerrain.MOBILITY_FOOT else &"VEHICLE"
 
 func _resolve_mobility_for_origin(from_world: Vector2) -> String:
+	# Legacy compatibility only. New Core callers must bind mobility explicitly.
 	var matches: Array[Node2D] = []
 	_collect_formations_at(get_parent(), from_world, matches)
-	if matches.is_empty(): return BattleRouteTerrain.MOBILITY_VEHICLE
+	if matches.is_empty():
+		return BattleRouteTerrain.MOBILITY_VEHICLE
 	for formation: Node2D in matches:
-		if mobility_for_formation(formation) == BattleRouteTerrain.MOBILITY_VEHICLE: return BattleRouteTerrain.MOBILITY_VEHICLE
+		if mobility_for_formation(formation) == BattleRouteTerrain.MOBILITY_VEHICLE:
+			return BattleRouteTerrain.MOBILITY_VEHICLE
 	return BattleRouteTerrain.MOBILITY_FOOT
 
 func _collect_formations_at(node: Node, world_point: Vector2, result: Array[Node2D]) -> void:
-	if node == null: return
+	if node == null:
+		return
 	if node is Node2D and node.has_method("get_role"):
 		var candidate: Node2D = node as Node2D
 		if candidate.global_position.distance_to(world_point) <= FORMATION_ORIGIN_TOLERANCE:
@@ -200,6 +167,7 @@ func _collect_formations_at(node: Node, world_point: Vector2, result: Array[Node
 		_collect_formations_at(child, world_point, result)
 
 func _draw() -> void:
+	# Battle01-specific debug rendering remains in this scenario adapter.
 	draw_rect(BattleRouteTerrain.RIVER_RECT, Color(0.08, 0.35, 0.58, 0.22), false, 3.0)
 	draw_rect(BattleRouteTerrain.BRIDGE_RECT, Color(0.92, 0.74, 0.24, 0.70), false, 3.0)
 	for blocker: Rect2 in BattleRouteTerrain.get_hard_blockers():
