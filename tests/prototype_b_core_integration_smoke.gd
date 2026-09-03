@@ -66,7 +66,8 @@ func _run() -> void:
 
 	var revision_before_enemy := command_service.get_command_revision()
 	battle.debug_force_enemy_phase(2)
-	await process_frame
+	# The command service mutates task state synchronously. Snapshot before the
+	# normal scenario clock advances again so this hook tests the forced phase only.
 	snapshot = battle.debug_snapshot()
 	var red_tasks: Array = snapshot.get("red_tasks", []) as Array
 	_require(int(snapshot.get("phase_index", -1)) == 2, "PROTOTYPE_B_ENEMY_ESCALATION_PHASE_PASS")
