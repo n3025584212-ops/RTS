@@ -58,6 +58,7 @@ func set_formation_task(task: FormationTask) -> bool:
 
 	_task = task.duplicate_task()
 	_path = (plan.get("path", PackedVector2Array()) as PackedVector2Array).duplicate()
+	_append_exact_walkable_task_target()
 	_path_index = 1 if _path.size() > 1 else 0
 	state.assign_task(_task.task_type)
 	if _task.task_type == FormationTask.HOLD:
@@ -70,6 +71,22 @@ func set_formation_task(task: FormationTask) -> bool:
 	if _path.size() <= 1 and _task.task_type != FormationTask.HOLD:
 		task_completed.emit(_task)
 	return true
+
+func _append_exact_walkable_task_target() -> void:
+	# AStarGrid2D returns cell-center waypoints. When the requested task target is
+	# itself in a walkable cell, keep the grid path for routing but finish the last
+	# short segment at the requested world position. This keeps FormationTask's
+	# target contract and FormationState's completed position consistent without
+	# leaking grid-cell offsets into scenario arrival logic.
+	if _task.task_type == FormationTask.HOLD or _navigation == null or _path.is_empty():
+		return
+	if not _navigation.is_world_walkable(_task.target_position, state.mobility_profile):
+		return
+	var last_index: int = _path.size() - 1
+	if _path[last_index].distance_to(_task.target_position) <= FormationAutonomy.ARRIVAL_TOLERANCE:
+		_path[last_index] = _task.target_position
+	else:
+		_path.append(_task.target_position)
 
 func clear_task() -> void:
 	set_formation_task(FormationTask.hold())
