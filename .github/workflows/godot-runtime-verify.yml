@@ -43,23 +43,34 @@ jobs:
           timeout 60s "$GODOT" --headless --editor --path . --quit 2>&1 | tee godot-editor.log
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-editor.log
 
-      - name: Core role/capture regression
+      - name: Core formation task autonomy combat regression
         shell: bash
         run: |
           set -euo pipefail
-          timeout 30s "$GODOT" --headless --path . --script tests/battle01_role_capture_v2_smoke.gd 2>&1 | tee godot-core.log
-          grep -q 'FRONTLINE_ROLE_CAPTURE_V2_SMOKE_PASS' godot-core.log
+          timeout 30s "$GODOT" --headless --path . --script tests/core_v1_batch1_smoke.gd 2>&1 | tee godot-core-v1.log
+          grep -q 'FRONTLINE_CORE_TASK_COMMAND_ASSIGN_RETASK_CANCEL_PASS' godot-core-v1.log
+          grep -q 'FRONTLINE_CORE_V1_BATCH1_SMOKE_PASS' godot-core-v1.log
 
-      - name: Core navigation regression
+      - name: BattleNavigation Core service compatibility
         shell: bash
         run: |
           set -euo pipefail
-          timeout 30s "$GODOT" --headless --path . --quit-after 3000 -- --battle01-ci-navigation-smoke 2>&1 | tee godot-navigation.log
-          grep -q 'FRONTLINE_NAVIGATION_SMOKE_PASS' godot-navigation.log
+          timeout 30s "$GODOT" --headless --path . --script tests/core_v1_battle_navigation_compat_smoke.gd 2>&1 | tee godot-nav-compat.log
+          grep -q 'FRONTLINE_CORE_V1_BATTLE_NAV_COMPAT_PASS' godot-nav-compat.log
 
-      - name: Core enemy AI regression
+      - name: Designated baseline boot runtime
         shell: bash
         run: |
           set -euo pipefail
-          timeout 30s "$GODOT" --headless --path . --quit-after 500 -- --battle01-ci-enemy-ai-smoke 2>&1 | tee godot-enemy-ai.log
-          grep -q 'FRONTLINE_ENEMY_AI_SMOKE_PASS' godot-enemy-ai.log
+          # project.godot designates scenes/battle01/Battle01.tscn as the current
+          # runnable baseline. Boot the real main scene for a bounded frame window;
+          # this checks runtime wiring without reinstating legacy Battle01 product
+          # contracts as Core authority.
+          timeout 30s "$GODOT" --headless --path . --quit-after 180 2>&1 | tee godot-baseline-boot.log
+          grep -q 'FRONTLINE_BOOT_OK build=BATTLE01_M2_RUNTIME_SHELL_V1' godot-baseline-boot.log
+          grep -q 'FRONTLINE_M2_RUNTIME_ROSTER_READY' godot-baseline-boot.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access|M2 runtime shell expected exactly four RED combat formations' godot-baseline-boot.log
+
+      # Historical Battle01 role/capture/enemy-AI smoke tests are intentionally not
+      # Core gates. CURRENT_STATE reopens those scenario/product contracts. The
+      # baseline boot above verifies runtime integrity only, not their product rules.
