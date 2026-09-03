@@ -87,6 +87,16 @@ func apply_damage(amount: int) -> int:
 		destroyed.emit()
 	return applied
 
+func restore_health(amount: int) -> int:
+	if not is_alive or amount <= 0:
+		return 0
+	var before: int = current_hp
+	current_hp = mini(max_hp, current_hp + amount)
+	var restored: int = current_hp - before
+	if restored > 0:
+		health_changed.emit(current_hp, max_hp)
+	return restored
+
 func spend_ammo(amount: int = 1) -> bool:
 	if not is_alive or amount <= 0 or current_ammo < amount:
 		return false
