@@ -1,0 +1,67 @@
+name: FRONTLINE Prototype B Core Migration Verify
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/core/formation/formation_state.gd'
+      - 'scripts/discovery/prototype_b_command_battle.gd'
+      - 'scenes/discovery/PrototypeB_CommandBattle.tscn'
+      - 'tests/prototype_b_core_integration_smoke.gd'
+      - '.github/workflows/prototype-b-core-migration-verify.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prototype-b-core:
+    name: Godot 4.7.1 Prototype B Core integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_TAG="4.7.1-stable"
+          GODOT_ARCHIVE="Godot_v4.7.1-stable_linux.x86_64.zip"
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_ARCHIVE}"
+          mkdir -p "$RUNNER_TEMP/godot"
+          curl -fL --retry 3 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Verify Godot version
+        shell: bash
+        run: |
+          "$GODOT" --version | grep -E '^4\.7\.1'
+
+      - name: Parse and import project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s "$GODOT" --headless --editor --path . --quit 2>&1 | tee prototype-b-editor.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' prototype-b-editor.log
+
+      - name: Prototype B Core integration smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . --script tests/prototype_b_core_integration_smoke.gd 2>&1 | tee prototype-b-core.log
+          grep -q 'FRONTLINE_PROTOTYPE_B_CORE_INTEGRATION_SMOKE_PASS' prototype-b-core.log
+          grep -q 'FRONTLINE_PROTOTYPE_B_REPRESENTATIVE_STRUCTURE_PRESERVED_PASS' prototype-b-core.log
+
+      - name: Representative Prototype B boot runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 30s "$GODOT" --headless --path . res://scenes/discovery/PrototypeB_CommandBattle.tscn --quit-after 240 2>&1 | tee prototype-b-boot.log
+          grep -q 'FRONTLINE_PROTOTYPE_B_CORE_CONSUMER_READY blue=5 red=3 sectors=3 shared_task_service=YES' prototype-b-boot.log
+          grep -q 'FRONTLINE_PROTOTYPE_B_ENEMY_COMMAND_PATH task_service=YES' prototype-b-boot.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' prototype-b-boot.log
