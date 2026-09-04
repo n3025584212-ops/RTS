@@ -1,0 +1,563 @@
+class_name GoldenWorldV1
+extends Node3D
+
+const MAP_X_MIN := -64.0
+const MAP_X_MAX := 64.0
+const MAP_Z_MIN := -44.0
+const MAP_Z_MAX := 44.0
+const RIVER_X := 6.0
+const RIVER_HALF_WIDTH := 6.2
+
+var city_resource_paths: Array[String] = []
+var nature_resource_paths: Array[String] = []
+var town_instance_count: int = 0
+var tree_instance_count: int = 0
+var bridge_member_count: int = 0
+var road_segment_count: int = 0
+var camera: Camera3D
+
+var _terrain_material: ShaderMaterial
+var _water_material: ShaderMaterial
+var _road_material: StandardMaterial3D
+var _dirt_road_material: StandardMaterial3D
+var _bridge_concrete: StandardMaterial3D
+var _bridge_steel: StandardMaterial3D
+var _field_material_a: ShaderMaterial
+var _field_material_b: ShaderMaterial
+
+
+func build() -> void:
+	city_resource_paths = _find_3d_resources("res://assets/golden_scene/city")
+	nature_resource_paths = _find_3d_resources("res://assets/golden_scene/nature")
+	if city_resource_paths.is_empty():
+		push_error("Golden Scene requires vendored city assets; none were imported.")
+	if nature_resource_paths.is_empty():
+		push_error("Golden Scene requires vendored nature assets; none were imported.")
+
+	_build_materials()
+	_build_environment()
+	_build_terrain()
+	_build_water()
+	_build_fields()
+	_build_roads()
+	_build_bridge()
+	_build_town()
+	_build_forests_and_hedgerows()
+	_build_camera()
+
+	print(
+		"FRONTLINE_GOLDEN_WORLD_READY town=%d trees=%d bridge_members=%d roads=%d" %
+		[town_instance_count, tree_instance_count, bridge_member_count, road_segment_count]
+	)
+
+
+func height_at(x: float, z: float) -> float:
+	var rolling := 0.55 * sin(x * 0.085) + 0.42 * cos(z * 0.11) + 0.24 * sin((x + z) * 0.16)
+	var west_ridge := 6.5 * exp(-pow((x + 37.0) / 19.0, 2.0) - pow((z + 18.0) / 17.0, 2.0))
+	var north_hills := 3.0 * exp(-pow((x - 4.0) / 34.0, 2.0) - pow((z + 39.0) / 13.0, 2.0))
+	var east_rise := 2.4 * exp(-pow((x - 52.0) / 17.0, 2.0) - pow((z + 19.0) / 26.0, 2.0))
+	var river_cut := 2.7 * exp(-pow((x - RIVER_X) / 5.7, 2.0))
+	var floodplain := 0.9 * exp(-pow((x - RIVER_X) / 13.0, 2.0))
+	return rolling + west_ridge + north_hills + east_rise - river_cut - floodplain
+
+
+func fit_instance_to_size(root: Node3D, target_max_dimension: float) -> float:
+	var max_dim := 0.0
+	var meshes := root.find_children("*", "MeshInstance3D", true, false)
+	for node_variant: Node in meshes:
+		var mesh_instance := node_variant as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null:
+			continue
+		var size := mesh_instance.mesh.get_aabb().size
+		max_dim = maxf(max_dim, maxf(size.x, maxf(size.y, size.z)))
+	if max_dim <= 0.0001:
+		return 1.0
+	var factor := target_max_dimension / max_dim
+	root.scale = Vector3.ONE * factor
+	return factor
+
+
+func _build_materials() -> void:
+	_terrain_material = ShaderMaterial.new()
+	var terrain_shader := Shader.new()
+	terrain_shader.code = """
+shader_type spatial;
+render_mode cull_back, depth_draw_opaque;
+varying vec3 world_normal;
+float hash21(vec2 p) {
+	p = fract(p * vec2(123.34, 345.45));
+	p += dot(p, p + 34.345);
+	return fract(p.x * p.y);
+}
+void vertex() {
+	world_normal = normalize((MODEL_NORMAL_MATRIX * NORMAL));
+}
+void fragment() {
+	float slope = 1.0 - clamp(world_normal.y, 0.0, 1.0);
+	float grain = hash21(UV * 860.0);
+	float broad = hash21(floor(UV * 90.0));
+	vec3 grass = vec3(0.145, 0.205, 0.105);
+	vec3 dry_grass = vec3(0.255, 0.285, 0.145);
+	vec3 soil = vec3(0.245, 0.185, 0.115);
+	vec3 base = mix(grass, dry_grass, broad * 0.42);
+	base = mix(base, soil, smoothstep(0.24, 0.64, slope));
+	base *= 0.86 + grain * 0.20;
+	ALBEDO = base;
+	ROUGHNESS = 0.92;
+	METALLIC = 0.0;
+	SPECULAR = 0.24;
+}
+"""
+	terrain_shader.code = terrain_shader.code
+	_terrain_material.shader = terrain_shader
+
+	_water_material = ShaderMaterial.new()
+	var water_shader := Shader.new()
+	water_shader.code = """
+shader_type spatial;
+render_mode blend_mix, depth_draw_alpha_prepass, cull_back;
+void vertex() {
+	VERTEX.y += sin(VERTEX.z * 0.72 + TIME * 0.8) * 0.055;
+	VERTEX.y += cos(VERTEX.x * 1.45 - TIME * 1.05) * 0.032;
+}
+void fragment() {
+	float ripple = sin(UV.y * 145.0 + TIME * 0.8) * 0.5 + 0.5;
+	vec3 deep = vec3(0.025, 0.115, 0.145);
+	vec3 shallow = vec3(0.060, 0.210, 0.225);
+	ALBEDO = mix(deep, shallow, 0.26 + ripple * 0.08);
+	ROUGHNESS = 0.20;
+	METALLIC = 0.08;
+	SPECULAR = 0.72;
+	ALPHA = 0.88;
+}
+"""
+	_water_material.shader = water_shader
+
+	_road_material = _standard_material(Color(0.115, 0.115, 0.105), 0.02, 0.84)
+	_dirt_road_material = _standard_material(Color(0.255, 0.205, 0.135), 0.0, 0.94)
+	_bridge_concrete = _standard_material(Color(0.35, 0.36, 0.34), 0.02, 0.72)
+	_bridge_steel = _standard_material(Color(0.19, 0.22, 0.20), 0.62, 0.38)
+
+	_field_material_a = _field_shader(Color(0.32, 0.37, 0.14), Color(0.19, 0.23, 0.08))
+	_field_material_b = _field_shader(Color(0.38, 0.31, 0.13), Color(0.22, 0.18, 0.07))
+
+
+func _build_environment() -> void:
+	var env_node := WorldEnvironment.new()
+	env_node.name = "GoldenWorldEnvironment"
+	var env := Environment.new()
+	env.background_mode = Environment.BG_SKY
+	var sky := Sky.new()
+	var procedural := ProceduralSkyMaterial.new()
+	procedural.sky_top_color = Color(0.18, 0.31, 0.43)
+	procedural.sky_horizon_color = Color(0.72, 0.72, 0.64)
+	procedural.ground_bottom_color = Color(0.08, 0.09, 0.075)
+	procedural.ground_horizon_color = Color(0.50, 0.50, 0.42)
+	procedural.sun_angle_max = 14.0
+	procedural.sun_curve = 0.08
+	sky.sky_material = procedural
+	env.sky = sky
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	env.ambient_light_energy = 0.72
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
+	env.fog_enabled = true
+	env.fog_light_color = Color(0.63, 0.66, 0.65)
+	env.fog_light_energy = 0.75
+	env.fog_density = 0.0062
+	env.fog_height = 3.0
+	env.fog_height_density = 0.055
+	env.tonemap_mode = Environment.TONE_MAPPER_ACES
+	env_node.environment = env
+	add_child(env_node)
+
+	var sun := DirectionalLight3D.new()
+	sun.name = "MorningSun"
+	sun.rotation_degrees = Vector3(-46.0, -32.0, 0.0)
+	sun.light_color = Color(1.0, 0.88, 0.72)
+	sun.light_energy = 1.35
+	sun.shadow_enabled = true
+	sun.directional_shadow_max_distance = 180.0
+	add_child(sun)
+
+	var fill := DirectionalLight3D.new()
+	fill.name = "CoolSkyFill"
+	fill.rotation_degrees = Vector3(-70.0, 145.0, 0.0)
+	fill.light_color = Color(0.42, 0.56, 0.68)
+	fill.light_energy = 0.20
+	fill.shadow_enabled = false
+	add_child(fill)
+
+
+func _build_terrain() -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var nx := 81
+	var nz := 57
+	var dx := (MAP_X_MAX - MAP_X_MIN) / float(nx - 1)
+	var dz := (MAP_Z_MAX - MAP_Z_MIN) / float(nz - 1)
+
+	for zi: int in range(nz - 1):
+		for xi: int in range(nx - 1):
+			var x0 := MAP_X_MIN + float(xi) * dx
+			var x1 := x0 + dx
+			var z0 := MAP_Z_MIN + float(zi) * dz
+			var z1 := z0 + dz
+			var p00 := Vector3(x0, height_at(x0, z0), z0)
+			var p01 := Vector3(x0, height_at(x0, z1), z1)
+			var p10 := Vector3(x1, height_at(x1, z0), z0)
+			var p11 := Vector3(x1, height_at(x1, z1), z1)
+			_add_terrain_vertex(st, p00)
+			_add_terrain_vertex(st, p01)
+			_add_terrain_vertex(st, p10)
+			_add_terrain_vertex(st, p10)
+			_add_terrain_vertex(st, p01)
+			_add_terrain_vertex(st, p11)
+
+	var mesh := st.commit()
+	var terrain := MeshInstance3D.new()
+	terrain.name = "SculptedValleyTerrain"
+	terrain.mesh = mesh
+	terrain.material_override = _terrain_material
+	terrain.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	add_child(terrain)
+
+
+func _add_terrain_vertex(st: SurfaceTool, p: Vector3) -> void:
+	st.set_normal(_terrain_normal(p.x, p.z))
+	st.set_uv(Vector2(
+		(p.x - MAP_X_MIN) / (MAP_X_MAX - MAP_X_MIN),
+		(p.z - MAP_Z_MIN) / (MAP_Z_MAX - MAP_Z_MIN)
+	))
+	st.add_vertex(p)
+
+
+func _terrain_normal(x: float, z: float) -> Vector3:
+	var e := 0.45
+	var dx := height_at(x + e, z) - height_at(x - e, z)
+	var dz := height_at(x, z + e) - height_at(x, z - e)
+	return Vector3(-dx / (2.0 * e), 1.0, -dz / (2.0 * e)).normalized()
+
+
+func _build_water() -> void:
+	var water := MeshInstance3D.new()
+	water.name = "ShadedRiverWater"
+	var plane := PlaneMesh.new()
+	plane.size = Vector2(RIVER_HALF_WIDTH * 2.0, MAP_Z_MAX - MAP_Z_MIN + 8.0)
+	plane.subdivide_width = 22
+	plane.subdivide_depth = 110
+	water.mesh = plane
+	water.position = Vector3(RIVER_X, -1.05, 0.0)
+	water.material_override = _water_material
+	add_child(water)
+
+	# Gravel/mud bank strips make the channel read as a river, not a blue plane.
+	var bank_mat := _standard_material(Color(0.29, 0.245, 0.16), 0.0, 0.98)
+	for side: float in [-1.0, 1.0]:
+		var bank := MeshInstance3D.new()
+		bank.name = "RiverBank_%s" % str(side)
+		var bank_mesh := BoxMesh.new()
+		bank_mesh.size = Vector3(2.3, 0.16, MAP_Z_MAX - MAP_Z_MIN)
+		bank.mesh = bank_mesh
+		var bx := RIVER_X + side * (RIVER_HALF_WIDTH + 1.1)
+		bank.position = Vector3(bx, height_at(bx, 0.0) + 0.03, 0.0)
+		bank.material_override = bank_mat
+		add_child(bank)
+
+
+func _build_fields() -> void:
+	var patches := [
+		[Vector3(-45, 0, 20), Vector2(21, 13), -7.0, _field_material_a],
+		[Vector3(-22, 0, 27), Vector2(17, 12), 4.0, _field_material_b],
+		[Vector3(-46, 0, 36), Vector2(18, 10), 2.0, _field_material_b],
+		[Vector3(-19, 0, -31), Vector2(22, 9), -5.0, _field_material_a],
+		[Vector3(42, 0, 31), Vector2(17, 9), 8.0, _field_material_a],
+		[Vector3(52, 0, 14), Vector2(12, 10), -4.0, _field_material_b],
+	]
+	for i: int in range(patches.size()):
+		var data: Array = patches[i]
+		var p: Vector3 = data[0]
+		p.y = height_at(p.x, p.z) + 0.08
+		var size: Vector2 = data[1]
+		var patch := MeshInstance3D.new()
+		patch.name = "FarmField_%02d" % i
+		var plane := PlaneMesh.new()
+		plane.size = size
+		plane.subdivide_width = 8
+		plane.subdivide_depth = 8
+		patch.mesh = plane
+		patch.position = p
+		patch.rotation_degrees.y = float(data[2])
+		patch.material_override = data[3]
+		add_child(patch)
+
+
+func _build_roads() -> void:
+	_add_road_polyline([
+		Vector3(-62, 0, 1.2), Vector3(-34, 0, 0.6), Vector3(-9, 0, 0.0),
+		Vector3(1.0, 0, 0.0), Vector3(15.0, 0, 0.0), Vector3(36, 0, -1.5), Vector3(62, 0, -4.0)
+	], 4.2, _road_material, "PrimaryRoad")
+	_add_road_polyline([
+		Vector3(-52, 0, 31), Vector3(-33, 0, 20), Vector3(-18, 0, 8), Vector3(-7, 0, 2)
+	], 2.2, _dirt_road_material, "FarmRoad")
+	_add_road_polyline([
+		Vector3(18, 0, -30), Vector3(23, 0, -16), Vector3(28, 0, -4), Vector3(36, 0, 9), Vector3(48, 0, 22)
+	], 3.2, _road_material, "TownSpine")
+	_add_road_polyline([
+		Vector3(14, 0, 14), Vector3(25, 0, 8), Vector3(39, 0, 4), Vector3(54, 0, 6)
+	], 2.4, _dirt_road_material, "EastApproach")
+
+
+func _add_road_polyline(points: Array, width: float, material: Material, prefix: String) -> void:
+	for i: int in range(1, points.size()):
+		var a: Vector3 = points[i - 1]
+		var b: Vector3 = points[i]
+		a.y = height_at(a.x, a.z) + 0.13
+		b.y = height_at(b.x, b.z) + 0.13
+		_add_flat_segment("%s_%02d" % [prefix, i], a, b, width, material)
+		road_segment_count += 1
+
+
+func _add_flat_segment(name_value: String, a: Vector3, b: Vector3, width: float, material: Material) -> void:
+	var delta := b - a
+	var horizontal_length := Vector2(delta.x, delta.z).length()
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(horizontal_length, 0.07, width)
+	var node := MeshInstance3D.new()
+	node.name = name_value
+	node.mesh = mesh
+	node.position = (a + b) * 0.5
+	node.rotation.y = -atan2(delta.z, delta.x)
+	node.material_override = material
+	node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(node)
+
+
+func _build_bridge() -> void:
+	var deck_y := 0.95
+	var west_x := RIVER_X - RIVER_HALF_WIDTH - 2.0
+	var east_x := RIVER_X + RIVER_HALF_WIDTH + 2.0
+	_add_flat_segment(
+		"BridgeDeck",
+		Vector3(west_x, deck_y, 0.0),
+		Vector3(east_x, deck_y, 0.0),
+		4.6,
+		_bridge_concrete
+	)
+	bridge_member_count += 1
+
+	# Four piers, side trusses and diagonal members: visually reads as engineered
+	# bridge geometry instead of a single delivery box.
+	for x: float in [RIVER_X - 4.0, RIVER_X - 1.3, RIVER_X + 1.3, RIVER_X + 4.0]:
+		var pier := MeshInstance3D.new()
+		pier.name = "BridgePier"
+		var pier_mesh := CylinderMesh.new()
+		pier_mesh.top_radius = 0.52
+		pier_mesh.bottom_radius = 0.72
+		pier_mesh.height = 3.2
+		pier_mesh.radial_segments = 12
+		pier.mesh = pier_mesh
+		pier.position = Vector3(x, -0.55, 0.0)
+		pier.material_override = _bridge_concrete
+		add_child(pier)
+		bridge_member_count += 1
+
+	for z_side: float in [-2.15, 2.15]:
+		_add_beam("BridgeTopRail", Vector3(west_x, deck_y + 1.5, z_side), Vector3(east_x, deck_y + 1.5, z_side), 0.18, _bridge_steel)
+		for section: int in range(6):
+			var xa := lerpf(west_x, east_x, float(section) / 6.0)
+			var xb := lerpf(west_x, east_x, float(section + 1) / 6.0)
+			_add_beam("BridgeVertical", Vector3(xa, deck_y + 0.15, z_side), Vector3(xa, deck_y + 1.5, z_side), 0.13, _bridge_steel)
+			if section % 2 == 0:
+				_add_beam("BridgeDiagonal", Vector3(xa, deck_y + 0.20, z_side), Vector3(xb, deck_y + 1.45, z_side), 0.13, _bridge_steel)
+			else:
+				_add_beam("BridgeDiagonal", Vector3(xa, deck_y + 1.45, z_side), Vector3(xb, deck_y + 0.20, z_side), 0.13, _bridge_steel)
+
+
+func _add_beam(name_value: String, a: Vector3, b: Vector3, thickness: float, material: Material) -> MeshInstance3D:
+	var dir := b - a
+	var length := dir.length()
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(length, thickness, thickness)
+	var node := MeshInstance3D.new()
+	node.name = name_value
+	node.mesh = mesh
+	var x_axis := dir.normalized()
+	var z_axis := x_axis.cross(Vector3.UP)
+	if z_axis.length_squared() < 0.0001:
+		z_axis = Vector3.FORWARD
+	z_axis = z_axis.normalized()
+	var y_axis := z_axis.cross(x_axis).normalized()
+	node.transform = Transform3D(Basis(x_axis, y_axis, z_axis), (a + b) * 0.5)
+	node.material_override = material
+	add_child(node)
+	bridge_member_count += 1
+	return node
+
+
+func _build_town() -> void:
+	if city_resource_paths.is_empty():
+		return
+	var building_paths := _filter_paths(city_resource_paths, ["building", "house", "commercial", "office", "store", "apartment"])
+	if building_paths.is_empty():
+		building_paths = city_resource_paths.duplicate()
+
+	var positions: Array[Vector3] = []
+	for row: int in range(4):
+		for col: int in range(6):
+			var x := 18.0 + float(col) * 6.3 + float(row % 2) * 1.3
+			var z := -18.0 + float(row) * 9.3
+			if absf(z) < 3.4:
+				z += 5.2
+			positions.append(Vector3(x, 0, z))
+
+	for i: int in range(mini(positions.size(), 24)):
+		var path := building_paths[i % building_paths.size()]
+		var instance := _instantiate_scene(path)
+		if instance == null:
+			continue
+		var pos := positions[i]
+		pos.y = height_at(pos.x, pos.z)
+		instance.position = pos
+		instance.rotation_degrees.y = float((i * 37) % 180)
+		fit_instance_to_size(instance, 7.0 + float(i % 4) * 1.1)
+		instance.name = "TownBuilding_%02d" % i
+		add_child(instance)
+		town_instance_count += 1
+
+	# A scaled real building asset provides the tall orientation landmark visible
+	# in the approved Golden Frame; it remains an imported building, not a cube.
+	var landmark := _instantiate_scene(building_paths[0])
+	if landmark != null:
+		fit_instance_to_size(landmark, 16.0)
+		landmark.position = Vector3(37.0, height_at(37.0, -20.0), -20.0)
+		landmark.rotation_degrees.y = -18.0
+		landmark.name = "TownLandmarkTower"
+		add_child(landmark)
+		town_instance_count += 1
+
+
+func _build_forests_and_hedgerows() -> void:
+	if nature_resource_paths.is_empty():
+		return
+	var tree_paths := _filter_paths(nature_resource_paths, ["tree", "trunk"])
+	if tree_paths.is_empty():
+		tree_paths = nature_resource_paths.duplicate()
+
+	# Dense west/north ridge forest.
+	for i: int in range(76):
+		var t := float(i)
+		var x := -54.0 + fmod(t * 7.7, 37.0)
+		var z := -38.0 + fmod(t * 11.3, 28.0)
+		if i % 3 == 0:
+			x = 47.0 + fmod(t * 3.1, 14.0)
+			z = -40.0 + fmod(t * 8.9, 70.0)
+		_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 3.7 + float(i % 5) * 0.45, float((i * 41) % 360))
+
+	var hedge_paths := _filter_paths(nature_resource_paths, ["bush", "plant", "fence"])
+	if hedge_paths.is_empty():
+		hedge_paths = tree_paths
+	for row: int in range(3):
+		for i: int in range(12):
+			var x := -53.0 + float(i) * 4.5
+			var z := 11.0 + float(row) * 13.0
+			_add_nature_instance(hedge_paths[(row * 12 + i) % hedge_paths.size()], Vector3(x, 0, z), 1.8, 0.0)
+
+
+func _add_nature_instance(path: String, p: Vector3, target_size: float, yaw: float) -> void:
+	var instance := _instantiate_scene(path)
+	if instance == null:
+		return
+	p.y = height_at(p.x, p.z)
+	instance.position = p
+	instance.rotation_degrees.y = yaw
+	fit_instance_to_size(instance, target_size)
+	add_child(instance)
+	tree_instance_count += 1
+
+
+func _build_camera() -> void:
+	camera = Camera3D.new()
+	camera.name = "GoldenTacticalCamera"
+	camera.current = true
+	camera.fov = 48.0
+	camera.near = 0.15
+	camera.far = 260.0
+	camera.position = Vector3(-67.0, 53.0, 66.0)
+	camera.look_at(Vector3(9.0, 1.8, -5.0), Vector3.UP)
+	add_child(camera)
+
+
+func _find_3d_resources(root: String) -> Array[String]:
+	var result: Array[String] = []
+	_scan_resources_recursive(root, result)
+	result.sort()
+	return result
+
+
+func _scan_resources_recursive(path: String, result: Array[String]) -> void:
+	var dir := DirAccess.open(path)
+	if dir == null:
+		return
+	dir.list_dir_begin()
+	while true:
+		var entry := dir.get_next()
+		if entry.is_empty():
+			break
+		if entry.begins_with("."):
+			continue
+		var full := path.path_join(entry)
+		if dir.current_is_dir():
+			_scan_resources_recursive(full, result)
+		else:
+			var ext := entry.get_extension().to_lower()
+			if ext in ["glb", "gltf"]:
+				result.append(full)
+	dir.list_dir_end()
+
+
+func _filter_paths(paths: Array[String], tokens: Array[String]) -> Array[String]:
+	var out: Array[String] = []
+	for path: String in paths:
+		var lower := path.to_lower()
+		for token: String in tokens:
+			if lower.contains(token.to_lower()):
+				out.append(path)
+				break
+	return out
+
+
+func _instantiate_scene(path: String) -> Node3D:
+	var resource := load(path)
+	if resource is PackedScene:
+		var node := (resource as PackedScene).instantiate()
+		if node is Node3D:
+			return node as Node3D
+	return null
+
+
+func _standard_material(color: Color, metallic: float, roughness: float) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.metallic = metallic
+	material.roughness = roughness
+	return material
+
+
+func _field_shader(a: Color, b: Color) -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+shader_type spatial;
+uniform vec3 color_a : source_color;
+uniform vec3 color_b : source_color;
+void fragment() {
+	float rows = smoothstep(0.35, 0.62, abs(sin(UV.x * 95.0)));
+	float cross = 0.93 + 0.07 * sin(UV.y * 55.0);
+	ALBEDO = mix(color_a, color_b, rows * 0.42) * cross;
+	ROUGHNESS = 0.96;
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("color_a", Vector3(a.r, a.g, a.b))
+	material.set_shader_parameter("color_b", Vector3(b.r, b.g, b.b))
+	return material
