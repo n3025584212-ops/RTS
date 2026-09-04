@@ -5,6 +5,8 @@ var panel_count: int = 0
 var formation_card_count: int = 0
 var minimap_marker_count: int = 0
 
+var _ui_root: Control
+
 var _blue := Color(0.20, 0.60, 1.0)
 var _red := Color(1.0, 0.24, 0.16)
 var _amber := Color(1.0, 0.68, 0.18)
@@ -14,6 +16,15 @@ var _muted := Color(0.58, 0.68, 0.72)
 
 func build() -> void:
 	layer = 20
+	# project.godot currently uses a 1600x900 logical viewport stretched to the
+	# 1920x1080 Golden capture. Author the HUD in 1920x1080 design coordinates
+	# under a 5/6 root scale so the final stretched image lands at exactly the
+	# approved Golden Frame positions instead of clipping the right/bottom edges.
+	_ui_root = Control.new()
+	_ui_root.name = "GoldenHUDDesignRoot"
+	_ui_root.scale = Vector2(5.0 / 6.0, 5.0 / 6.0)
+	_ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_ui_root)
 	_build_objectives()
 	_build_top_status()
 	_build_alerts()
@@ -171,7 +182,7 @@ func _panel(position_value: Vector2, size_value: Vector2, node_name: String) -> 
 		"panel",
 		_panel_style(Color(0.025, 0.046, 0.060, 0.91), Color(0.20, 0.38, 0.48, 0.84), 1)
 	)
-	add_child(panel)
+	_ui_root.add_child(panel)
 	panel_count += 1
 	return panel
 
