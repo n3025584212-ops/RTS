@@ -115,7 +115,7 @@ void fragment() {
 	var water_shader := Shader.new()
 	water_shader.code = """
 shader_type spatial;
-render_mode blend_mix, depth_draw_alpha_prepass, cull_back;
+render_mode blend_mix, depth_prepass_alpha, cull_back;
 void vertex() {
 	VERTEX.y += sin(VERTEX.z * 0.72 + TIME * 0.8) * 0.055;
 	VERTEX.y += cos(VERTEX.x * 1.45 - TIME * 1.05) * 0.032;
@@ -483,8 +483,8 @@ func _build_camera() -> void:
 	camera.near = 0.15
 	camera.far = 260.0
 	camera.position = Vector3(-67.0, 53.0, 66.0)
-	camera.look_at(Vector3(9.0, 1.8, -5.0), Vector3.UP)
 	add_child(camera)
+	camera.look_at(Vector3(9.0, 1.8, -5.0), Vector3.UP)
 
 
 func _find_3d_resources(root: String) -> Array[String]:
