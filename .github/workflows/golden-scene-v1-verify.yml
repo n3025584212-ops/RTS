@@ -104,7 +104,7 @@ jobs:
           grep -q 'FRONTLINE_GOLDEN_HUD_READY' golden-runtime.log
           grep -q 'FRONTLINE_GOLDEN_SCREENSHOT_CAPTURED' golden-runtime.log
           grep -q 'FRONTLINE_GOLDEN_RUNTIME_CONTENT_GATE_PASS' golden-runtime.log
-          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' golden-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Node not inside tree|GOLDEN_SCENE_REQUIRED_ASSET_MISSING|Failed to load script|Cannot open file|Invalid call|Invalid access' golden-runtime.log
 
       - name: Verify screenshot is a real 1920x1080 PNG
         shell: bash
