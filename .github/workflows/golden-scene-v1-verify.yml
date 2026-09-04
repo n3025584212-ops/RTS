@@ -24,6 +24,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: golden-scene-v1-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   golden-scene:
     name: Godot 4.7.1 real-asset Golden Scene
@@ -37,14 +41,21 @@ jobs:
           fetch-depth: 1
           persist-credentials: true
 
-      - name: Install visual toolchain
+      - name: Install render runtime
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends blender python3-numpy xvfb libgl1 mesa-utils libvulkan1 mesa-vulkan-drivers
-          blender --version | head -n 1
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 mesa-utils libvulkan1 mesa-vulkan-drivers
           glxinfo -B || true
+
+      - name: Install external asset conversion toolchain when assets are absent
+        if: ${{ hashFiles('assets/golden_scene/.bootstrap_complete') == '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
+          blender --version | head -n 1
 
       - name: Bootstrap only legally redistributable production assets
         shell: bash
