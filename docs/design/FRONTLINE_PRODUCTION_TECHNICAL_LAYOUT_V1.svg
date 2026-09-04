@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<rect width="1920" height="1080" fill="#172029"/>
+<rect x="24" y="24" width="1872" height="1032" rx="18" fill="#202b35" stroke="#8da0ad" stroke-width="2"/>
+<text x="60" y="80" font-family="Arial" font-size="34" fill="white" font-weight="700">FRONTLINE — Production Slice Technical Layout V1</text>
+<text x="60" y="114" font-family="Arial" font-size="18" fill="#b8c7d1">River Town Crossing • implementation-grade battlefield / HUD / camera target</text>
+
+<!-- battlefield -->
+<rect x="60" y="150" width="1280" height="760" rx="10" fill="#64725b"/>
+<!-- fields -->
+<rect x="75" y="615" width="400" height="270" fill="#9a935e" opacity=".8"/>
+<path d="M75 665 H475 M75 715 H475 M75 765 H475 M75 815 H475" stroke="#c0b77a" stroke-width="8" opacity=".7"/>
+<!-- ridge forest -->
+<path d="M80 180 C250 145 430 185 520 330 C450 380 300 385 130 330 Z" fill="#4a5743"/>
+<g fill="#2f3d31">
+<circle cx="145" cy="220" r="18"/><circle cx="195" cy="245" r="22"/><circle cx="255" cy="205" r="16"/><circle cx="315" cy="260" r="22"/><circle cx="385" cy="215" r="18"/><circle cx="445" cy="285" r="20"/>
+</g>
+<text x="120" y="300" font-family="Arial" font-size="24" fill="white">RIDGE / FOREST</text>
+<!-- river -->
+<path d="M850 150 C810 300 890 410 850 540 C820 690 900 810 855 910" stroke="#4d8198" stroke-width="120" fill="none"/>
+<path d="M850 150 C810 300 890 410 850 540 C820 690 900 810 855 910" stroke="#88b7c9" stroke-width="4" fill="none"/>
+<!-- roads -->
+<path d="M80 760 C340 670 520 560 760 535 C980 510 1120 430 1320 350" stroke="#b9b0a0" stroke-width="34" fill="none"/>
+<path d="M110 480 C380 500 650 495 840 535 C1010 575 1150 650 1320 770" stroke="#9d9386" stroke-width="22" fill="none"/>
+<!-- bridge -->
+<rect x="800" y="505" width="110" height="60" fill="#8d8a80" stroke="#e2d6c5" stroke-width="4"/>
+<text x="787" y="490" font-family="Arial" font-size="18" fill="white">BRIDGE</text>
+<!-- village -->
+<g fill="#c2b29a" stroke="#4c4036" stroke-width="2">
+<rect x="620" y="390" width="70" height="48"/><rect x="700" y="420" width="75" height="55"/><rect x="590" y="470" width="65" height="52"/><rect x="680" y="500" width="78" height="50"/><rect x="735" y="350" width="62" height="50"/>
+</g>
+<rect x="667" y="320" width="28" height="80" fill="#b9aa90"/>
+<polygon points="681,288 660,320 702,320" fill="#6e5241"/>
+<text x="590" y="585" font-family="Arial" font-size="24" fill="white">RIVER TOWN / CROSSING</text>
+<!-- industrial -->
+<g fill="#7a807f" stroke="#41494c" stroke-width="3">
+<rect x="1080" y="235" width="180" height="90"/><rect x="1120" y="350" width="155" height="80"/><rect x="1180" y="455" width="125" height="70"/>
+</g>
+<text x="1080" y="215" font-family="Arial" font-size="24" fill="white">INDUSTRIAL EDGE</text>
+
+<!-- unit groups -->
+<g font-family="Arial" font-size="16" font-weight="700">
+<g fill="#2c79c7" stroke="white" stroke-width="2">
+<rect x="250" y="540" width="48" height="30"/><rect x="335" y="570" width="48" height="30"/><rect x="420" y="610" width="48" height="30"/>
+</g>
+<text x="225" y="525" fill="white">BLUE MAIN BODY</text>
+<g fill="#2c79c7" stroke="white" stroke-width="2"><rect x="180" y="800" width="48" height="30"/><rect x="245" y="825" width="48" height="30"/></g>
+<text x="145" y="785" fill="white">BLUE RESERVE</text>
+<g fill="#b13a3a" stroke="white" stroke-width="2"><rect x="930" y="430" width="48" height="30"/><rect x="1040" y="520" width="48" height="30"/><rect x="1160" y="610" width="48" height="30"/></g>
+<text x="1020" y="405" fill="white">RED DEFENSE / COUNTER-COMMIT</text>
+</g>
+
+<!-- task arrows -->
+<path d="M465 600 C560 565 620 530 700 520" stroke="#65b8ff" stroke-width="8" fill="none" marker-end="url(#a)"/>
+<path d="M295 815 C490 805 650 700 770 600" stroke="#65b8ff" stroke-width="8" fill="none" stroke-dasharray="16 10" marker-end="url(#a)"/>
+<path d="M1120 520 C1030 515 980 500 920 490" stroke="#ff6969" stroke-width="8" fill="none" marker-end="url(#r)"/>
+<defs>
+<marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#65b8ff"/></marker>
+<marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#ff6969"/></marker>
+</defs>
+
+<!-- HUD wireframe -->
+<rect x="60" y="930" width="1280" height="90" fill="#0f171d" stroke="#728694"/>
+<rect x="75" y="945" width="210" height="60" fill="#22313c" stroke="#8fa3b0"/>
+<text x="95" y="980" font-family="Arial" font-size="16" fill="white">TACTICAL MAP</text>
+<rect x="320" y="945" width="520" height="60" fill="#22313c" stroke="#8fa3b0"/>
+<text x="345" y="980" font-family="Arial" font-size="16" fill="white">FORMATION CARDS • TASK • HP • SUPPRESSION • AMMO</text>
+<rect x="875" y="945" width="445" height="60" fill="#22313c" stroke="#8fa3b0"/>
+<text x="900" y="980" font-family="Arial" font-size="16" fill="white">SELECTED FORMATION / COMMANDS / SUPPORT</text>
+
+<!-- spec column -->
+<rect x="1370" y="150" width="490" height="870" rx="10" fill="#111a21" stroke="#6e808c"/>
+<text x="1400" y="195" font-family="Arial" font-size="24" fill="white" font-weight="700">IMPLEMENTATION CHECKLIST</text>
+<g font-family="Arial" font-size="18" fill="#d9e2e8">
+<text x="1400" y="240">01  Real 3D terrain relief</text>
+<text x="1400" y="278">02  River + bridge movement constraint</text>
+<text x="1400" y="316">03  Village / ridge / industrial landmarks</text>
+<text x="1400" y="354">04  MBT / IFV / infantry / recon / support</text>
+<text x="1400" y="392">05  Near-model + far-marker readability</text>
+<text x="1400" y="430">06  Formation task routes / areas</text>
+<text x="1400" y="468">07  Confirmed vs uncertain contacts</text>
+<text x="1400" y="506">08  Suppression / damage / low-ammo states</text>
+<text x="1400" y="544">09  Reserve / committed distinction</text>
+<text x="1400" y="582">10  Limited fire-support target + cooldown</text>
+<text x="1400" y="620">11  Muzzle / tracer / impact / smoke / wreck</text>
+<text x="1400" y="658">12  HUD never hides central battle</text>
+</g>
+<text x="1400" y="715" font-family="Arial" font-size="22" fill="white" font-weight="700">CAMERA</text>
+<text x="1400" y="750" font-family="Arial" font-size="17" fill="#d9e2e8">Oblique command view • ~48° pitch</text>
+<text x="1400" y="780" font-family="Arial" font-size="17" fill="#d9e2e8">Near: physical combat readable</text>
+<text x="1400" y="810" font-family="Arial" font-size="17" fill="#d9e2e8">Far: formation/sector readable</text>
+<text x="1400" y="865" font-family="Arial" font-size="22" fill="white" font-weight="700">DELIVERY RULE</text>
+<text x="1400" y="900" font-family="Arial" font-size="17" fill="#ffcf7a">Approved visible content cannot be</text>
+<text x="1400" y="927" font-family="Arial" font-size="17" fill="#ffcf7a">silently replaced by boxes/proxy art.</text>
+<text x="1400" y="965" font-family="Arial" font-size="16" fill="#a9bac5">Logic + presentation + runtime + compliance</text>
+<text x="1400" y="992" font-family="Arial" font-size="16" fill="#a9bac5">must ship together for each feature.</text>
+</svg>
