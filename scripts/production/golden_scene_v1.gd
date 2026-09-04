@@ -78,8 +78,10 @@ func _capture_after_warmup() -> void:
 		get_tree().quit(42)
 		return
 
-	var checks := _runtime_content_checks(image.get_size())
+	var image_metrics := _image_world_metrics(image)
+	var checks := _runtime_content_checks(image.get_size(), image_metrics)
 	var metrics := _metrics_payload(image.get_size(), checks)
+	metrics["central_world_image"] = image_metrics
 	_write_json(METRICS_PATH, metrics)
 	_write_text(EVIDENCE_PATH, _evidence_markdown(metrics, checks))
 
@@ -105,8 +107,48 @@ func _capture_after_warmup() -> void:
 		get_tree().quit(43)
 
 
-func _runtime_content_checks(image_size: Vector2i) -> Dictionary:
+func _image_world_metrics(image: Image) -> Dictionary:
+	# Sample the HUD-light central battlefield region. This cannot judge artistic
+	# quality, but it prevents an empty/flat clear-color frame from satisfying the
+	# Golden runtime gate just because HUD panels and scene nodes exist.
+	var x0 := int(float(image.get_width()) * 0.22)
+	var x1 := int(float(image.get_width()) * 0.78)
+	var y0 := int(float(image.get_height()) * 0.16)
+	var y1 := int(float(image.get_height()) * 0.72)
+	var stride := 12
+	var count := 0
+	var lum_sum := 0.0
+	var lum_sq_sum := 0.0
+	var chromatic_count := 0
+	var min_lum := 1.0
+	var max_lum := 0.0
+	for y: int in range(y0, y1, stride):
+		for x: int in range(x0, x1, stride):
+			var c := image.get_pixel(x, y)
+			var lum := c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722
+			lum_sum += lum
+			lum_sq_sum += lum * lum
+			min_lum = minf(min_lum, lum)
+			max_lum = maxf(max_lum, lum)
+			if maxf(c.r, maxf(c.g, c.b)) - minf(c.r, minf(c.g, c.b)) > 0.045:
+				chromatic_count += 1
+			count += 1
+	var mean := lum_sum / maxf(1.0, float(count))
+	var variance := lum_sq_sum / maxf(1.0, float(count)) - mean * mean
+	var chromatic_fraction := float(chromatic_count) / maxf(1.0, float(count))
 	return {
+		"sample_count": count,
+		"luminance_mean": snappedf(mean, 0.0001),
+		"luminance_variance": snappedf(maxf(0.0, variance), 0.0001),
+		"luminance_range": snappedf(max_lum - min_lum, 0.0001),
+		"chromatic_fraction": snappedf(chromatic_fraction, 0.0001),
+	}
+
+
+func _runtime_content_checks(image_size: Vector2i, image_metrics: Dictionary) -> Dictionary:
+	return {
+		"central_world_not_blank": float(image_metrics["luminance_variance"]) >= 0.0025 and float(image_metrics["luminance_range"]) >= 0.18,
+		"central_world_has_material_color": float(image_metrics["chromatic_fraction"]) >= 0.10,
 		"resolution_1920x1080": image_size == Vector2i(1920, 1080),
 		"sculpted_terrain": true,
 		"shaded_river": true,
