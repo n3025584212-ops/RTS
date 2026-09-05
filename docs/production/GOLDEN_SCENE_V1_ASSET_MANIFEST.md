@@ -94,7 +94,7 @@ The Golden Scene implementation must be judged visually against the approved riv
 
 
 ## Runtime visual iteration V15
-- Adds Poly Haven `Pine Tree 01` as a CC0 photoreal-source vegetation family using the public Poly Haven API. The source glTF is converted in CI to a bounded ~110k-triangle GLB for Godot rather than using the source's full 17M-triangle mesh.
+- V15 initially tested Poly Haven `Pine Tree 01`, but its ~17M-triangle source exceeded the reproducible CI conversion window. The active source is therefore Poly Haven `Pine Sapling Small` (CC0, ~398k source triangles), converted to a bounded ~85k-triangle Godot GLB.
 - Only nine real-tree instances occupy camera-visible midground zones; existing lightweight pines are pushed to far ridges/backdrop to cap renderer cost.
 - Real-tree mesh surfaces receive explicit bark vs foliage materials in Godot so missing source textures cannot create white geometry.
 - Four additional real-house instances strengthen the right-side river-town density without reintroducing apartment towers or Pack 3 signage.
