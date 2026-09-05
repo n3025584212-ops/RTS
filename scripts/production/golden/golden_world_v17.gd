@@ -13,9 +13,8 @@ func _build_environment() -> void:
 
 
 func _build_town() -> void:
-	GoldenWorldV17Town.build(self)
-	GoldenWorldV18TownDetail.add(self)
-	GoldenWorldV19TownStructure.add(self)
+	GoldenWorldV20TownCore.build(self)
+	GoldenWorldV20TownStreets.add(self)
 
 
 func _build_fields() -> void:
