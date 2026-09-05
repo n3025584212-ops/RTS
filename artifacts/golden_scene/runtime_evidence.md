@@ -5,15 +5,17 @@ ENGINE=4.7.1-stable (official)
 RENDERER=gl_compatibility
 SCREENSHOT=golden_scene_v1_actual_1920x1080.png
 CAPTURE_RESOLUTION=1920x1080
-AVG_FRAME_MS=90.331
-P95_FRAME_MS=134.722
-APPROX_FPS=11.1
+AVG_FRAME_MS=133.675
+P95_FRAME_MS=142.391
+APPROX_FPS=7.5
 PRODUCT_PASS=NO
 
 ## Engine-present compliance
 
 | Golden Frame item | Runtime evidence |
 |---|---|
+| central world not blank | PASS |
+| central world has material color | PASS |
 | resolution 1920x1080 | PASS |
 | sculpted terrain | PASS |
 | shaded river | PASS |
