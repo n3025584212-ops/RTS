@@ -801,11 +801,11 @@ func _apply_building_surface_materials(root: Node3D, wall_material: Material, ro
 		var mesh_instance := root as MeshInstance3D
 		if mesh_instance.mesh != null:
 			for surface: int in range(mesh_instance.mesh.get_surface_count()):
-				var key := (mesh_instance.name + " " + mesh_instance.mesh.surface_get_name(surface)).to_lower()
+				var key: String = (mesh_instance.name + " " + mesh_instance.mesh.surface_get_name(surface)).to_lower()
 				var source_material := mesh_instance.mesh.surface_get_material(surface)
 				if source_material != null:
 					key += " " + source_material.resource_name.to_lower()
-				var chosen := wall_material
+				var chosen: Material = wall_material
 				if key.contains("roof") or key.contains("tile") or key.contains("shingle") or key.contains("top"):
 					chosen = roof_material
 				elif key.contains("window") or key.contains("glass") or key.contains("door") or key.contains("trim") or key.contains("frame"):
