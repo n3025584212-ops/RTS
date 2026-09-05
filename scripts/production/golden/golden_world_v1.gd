@@ -12,6 +12,7 @@ var city_resource_paths: Array[String] = []
 var city_hd_resource_paths: Array[String] = []
 var city_hq_resource_paths: Array[String] = []
 var city_hq3_resource_paths: Array[String] = []
+var city_real_resource_paths: Array[String] = []
 var nature_resource_paths: Array[String] = []
 var nature_hq_resource_paths: Array[String] = []
 var town_instance_count: int = 0
@@ -40,6 +41,7 @@ func build() -> void:
 	city_hd_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hd")
 	city_hq_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hq")
 	city_hq3_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hq3")
+	city_real_resource_paths = _find_3d_resources("res://assets/golden_scene/city_real")
 	nature_resource_paths = _find_3d_resources("res://assets/golden_scene/nature")
 	nature_hq_resource_paths = _find_3d_resources("res://assets/golden_scene/nature_hq")
 	if city_resource_paths.is_empty():
@@ -572,7 +574,7 @@ func _build_town() -> void:
 				x += 3.6
 			positions.append(Vector3(x, 0, z))
 
-	for i: int in range(mini(positions.size(), 8)):
+	for i: int in range(mini(positions.size(), 6)):
 		var path := building_paths[i % building_paths.size()]
 		var instance := _instantiate_scene(path)
 		if instance == null:
@@ -599,17 +601,15 @@ func _build_town() -> void:
 	# One genuine imported tall building provides the approved orientation
 	# landmark without turning the whole village into a skyline.
 	var landmark_path: String = landmark_paths[0] if not landmark_paths.is_empty() else building_paths[0]
-	var hd_apartments := _filter_paths(city_hd_resource_paths, ["apartment"])
-	if not hd_apartments.is_empty():
-		landmark_path = hd_apartments[0]
+	var church_paths := _filter_paths(city_real_resource_paths, ["church_landmark"])
+	if not church_paths.is_empty():
+		landmark_path = church_paths[0]
 	var landmark := _instantiate_scene(landmark_path)
 	if landmark != null:
-		fit_instance_to_size(landmark, 15.5)
-		if not _building_materials.is_empty():
-			_override_materials(landmark, _building_materials[0])
-		landmark.position = Vector3(51.0, height_at(51.0, -35.0), -35.0)
-		landmark.rotation_degrees.y = 8.0
-		landmark.name = "TownLandmarkTower"
+		fit_instance_to_size(landmark, 13.5)
+		landmark.position = Vector3(52.0, height_at(52.0, -34.0), -34.0)
+		landmark.rotation_degrees.y = 10.0
+		landmark.name = "TownChurchLandmark"
 		add_child(landmark)
 		town_instance_count += 1
 
@@ -617,7 +617,7 @@ func _build_town() -> void:
 	# Treat them as street-scale frontage, not as the settlement's massing.
 	if not city_hq_resource_paths.is_empty():
 		var hq_positions: Array[Vector3] = [
-			Vector3(36.0, 0, -7.5), Vector3(48.0, 0, -7.0), Vector3(58.0, 0, 5.5)
+			Vector3(40.0, 0, -6.8), Vector3(59.0, 0, 7.0)
 		]
 		for i: int in range(hq_positions.size()):
 			var path := city_hq_resource_paths[(i + 2) % city_hq_resource_paths.size()]
@@ -633,35 +633,29 @@ func _build_town() -> void:
 			add_child(shop)
 			town_instance_count += 1
 
-	# V11: real residential geometry forms the town massing. V4 source models
-	# previously rendered white because of missing source materials; bind the
-	# project brick/concrete PBR families explicitly instead of discarding them.
-	if not city_hd_resource_paths.is_empty():
-		var residential_paths := _filter_paths(city_hd_resource_paths, ["ordinary_house", "apartment_block"])
-		if residential_paths.is_empty():
-			residential_paths = city_hd_resource_paths.duplicate()
-		var residential_positions: Array[Vector3] = [
-			Vector3(28.0, 0, -24.0), Vector3(38.0, 0, -24.5), Vector3(62.0, 0, -23.0),
-			Vector3(27.0, 0, -11.0), Vector3(61.0, 0, -10.5),
-			Vector3(29.0, 0, 7.0), Vector3(43.0, 0, 9.0), Vector3(58.0, 0, 10.0),
-			Vector3(36.0, 0, 21.0), Vector3(53.0, 0, 22.0)
+	# V12: properly exported CC0 house source retains its authored textures.
+	# Repeated rotations/scales build a low-rise river town; one real church is
+	# the sole vertical landmark.
+	var real_house_paths := _filter_paths(city_real_resource_paths, ["ordinary_house_textured"])
+	if not real_house_paths.is_empty():
+		var house_path := real_house_paths[0]
+		var house_positions: Array[Vector3] = [
+			Vector3(28.0, 0, -25.0), Vector3(39.0, 0, -24.0), Vector3(65.0, 0, -22.0),
+			Vector3(29.0, 0, -12.0), Vector3(48.0, 0, -13.0), Vector3(67.0, 0, -10.0),
+			Vector3(28.0, 0, 8.0), Vector3(43.0, 0, 10.0), Vector3(60.0, 0, 11.0),
+			Vector3(72.0, 0, 18.0), Vector3(36.0, 0, 23.0), Vector3(54.0, 0, 24.0)
 		]
-		for i: int in range(residential_positions.size()):
-			var path := residential_paths[i % residential_paths.size()]
-			var building := _instantiate_scene(path)
-			if building == null:
+		for i: int in range(house_positions.size()):
+			var house := _instantiate_scene(house_path)
+			if house == null:
 				continue
-			var p := residential_positions[i]
+			var p := house_positions[i]
 			p.y = height_at(p.x, p.z)
-			building.position = p
-			building.rotation_degrees.y = 90.0 if i % 4 == 1 else 0.0
-			var is_apartment := path.to_lower().contains("apartment")
-			var target_size := 8.7 + float(i % 3) * 0.7 if is_apartment else 5.8 + float(i % 2) * 0.5
-			fit_instance_to_size(building, target_size)
-			var material_index := 0 if is_apartment else (2 if i % 2 == 0 else 1)
-			_override_materials(building, _building_materials[material_index])
-			building.name = "TownResidential_%02d" % i
-			add_child(building)
+			house.position = p
+			house.rotation_degrees.y = float((i % 4) * 90) + sin(float(i) * 1.31) * 4.0
+			fit_instance_to_size(house, 5.4 + float(i % 3) * 0.42)
+			house.name = "TownTexturedHouse_%02d" % i
+			add_child(house)
 			town_instance_count += 1
 
 
@@ -697,9 +691,9 @@ func _build_forests_and_hedgerows() -> void:
 
 	# Distant tree screen adds scale/depth behind the defended settlement.
 	if not tree_paths.is_empty():
-		for i: int in range(12):
-			var x := 20.0 + float(i) * 2.15
-			var z := -44.0 + sin(float(i) * 1.37) * 4.5
+		for i: int in range(18):
+			var x := 22.0 + float(i) * 2.85
+			var z := -49.0 + sin(float(i) * 1.37) * 4.2
 			_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 5.0 + float(i % 4) * 0.55, float((i * 53) % 360))
 
 
