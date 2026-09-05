@@ -207,14 +207,14 @@ func _add_tactical_marker(p: Vector3, text_value: String, friendly: bool) -> voi
 func _add_world_label(p: Vector3, text_value: String, color: Color, font_size: int) -> void:
 	var label := Label3D.new()
 	label.text = text_value
-	label.font_size = font_size
+	label.font_size = maxi(font_size, 18)
 	label.outline_size = 3
 	label.modulate = color
 	label.position = p
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	label.no_depth_test = true
-	label.fixed_size = true
-	label.pixel_size = 0.0020
+	label.no_depth_test = false
+	label.fixed_size = false
+	label.pixel_size = 0.012
 	add_child(label)
 
 
