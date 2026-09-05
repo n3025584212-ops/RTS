@@ -27,6 +27,7 @@ var _field_material_b: ShaderMaterial
 var _foliage_materials: Array[StandardMaterial3D] = []
 var _rock_material: StandardMaterial3D
 var _building_materials: Array[StandardMaterial3D] = []
+var _building_materials: Array[StandardMaterial3D] = []
 
 
 func build() -> void:
@@ -125,6 +126,13 @@ void fragment() {
 		_standard_material(Color(0.115, 0.16, 0.065), 0.0, 0.98),
 	]
 	_rock_material = _standard_material(Color(0.28, 0.27, 0.235), 0.02, 0.92)
+	_building_materials = [
+		_standard_material(Color(0.48, 0.43, 0.35), 0.0, 0.88),
+		_standard_material(Color(0.38, 0.40, 0.37), 0.0, 0.90),
+		_standard_material(Color(0.54, 0.50, 0.42), 0.0, 0.86),
+		_standard_material(Color(0.34, 0.31, 0.27), 0.0, 0.92),
+		_standard_material(Color(0.43, 0.36, 0.30), 0.0, 0.89),
+	]
 	_building_materials = [
 		_standard_material(Color(0.52, 0.46, 0.37), 0.0, 0.82),
 		_standard_material(Color(0.60, 0.57, 0.49), 0.0, 0.78),
@@ -249,30 +257,84 @@ func _terrain_normal(x: float, z: float) -> Vector3:
 	return Vector3(-dx / (2.0 * e), 1.0, -dz / (2.0 * e)).normalized()
 
 
+func _river_center_x(z: float) -> float:
+	return RIVER_X + sin(z * 0.055) * 0.85 + sin(z * 0.135) * 0.28
+
+
 func _build_water() -> void:
+	# Meandering world-space river ribbon. The water and both banks follow the
+	# same centerline so the capture no longer reads as a flat rectangular plane.
+	var water_st := SurfaceTool.new()
+	water_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var bank_st_w := SurfaceTool.new()
+	bank_st_w.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var bank_st_e := SurfaceTool.new()
+	bank_st_e.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var segments := 92
+	for i: int in range(segments):
+		var z0 := lerpf(MAP_Z_MIN - 3.0, MAP_Z_MAX + 3.0, float(i) / float(segments))
+		var z1 := lerpf(MAP_Z_MIN - 3.0, MAP_Z_MAX + 3.0, float(i + 1) / float(segments))
+		var c0 := _river_center_x(z0)
+		var c1 := _river_center_x(z1)
+		var w0 := RIVER_HALF_WIDTH + sin(z0 * 0.10) * 0.45
+		var w1 := RIVER_HALF_WIDTH + sin(z1 * 0.10) * 0.45
+		_add_surface_quad(
+			water_st,
+			Vector3(c0 - w0, -1.02, z0), Vector3(c0 + w0, -1.02, z0),
+			Vector3(c1 - w1, -1.02, z1), Vector3(c1 + w1, -1.02, z1),
+			float(i) / float(segments), float(i + 1) / float(segments)
+		)
+		var outer_w0 := c0 - w0 - 2.6
+		var outer_w1 := c1 - w1 - 2.6
+		_add_surface_quad(
+			bank_st_w,
+			Vector3(outer_w0, height_at(outer_w0, z0) + 0.04, z0), Vector3(c0 - w0, -0.88, z0),
+			Vector3(outer_w1, height_at(outer_w1, z1) + 0.04, z1), Vector3(c1 - w1, -0.88, z1),
+			float(i) / float(segments), float(i + 1) / float(segments)
+		)
+		var outer_e0 := c0 + w0 + 2.6
+		var outer_e1 := c1 + w1 + 2.6
+		_add_surface_quad(
+			bank_st_e,
+			Vector3(c0 + w0, -0.88, z0), Vector3(outer_e0, height_at(outer_e0, z0) + 0.04, z0),
+			Vector3(c1 + w1, -0.88, z1), Vector3(outer_e1, height_at(outer_e1, z1) + 0.04, z1),
+			float(i) / float(segments), float(i + 1) / float(segments)
+		)
+
 	var water := MeshInstance3D.new()
 	water.name = "ShadedRiverWater"
-	var plane := PlaneMesh.new()
-	plane.size = Vector2(RIVER_HALF_WIDTH * 2.0, MAP_Z_MAX - MAP_Z_MIN + 8.0)
-	plane.subdivide_width = 22
-	plane.subdivide_depth = 110
-	water.mesh = plane
-	water.position = Vector3(RIVER_X, -1.05, 0.0)
+	water.mesh = water_st.commit()
 	water.material_override = _water_material
 	add_child(water)
 
-	# Gravel/mud bank strips make the channel read as a river, not a blue plane.
-	var bank_mat := _standard_material(Color(0.29, 0.245, 0.16), 0.0, 0.98)
-	for side: float in [-1.0, 1.0]:
+	var bank_mat := _standard_material(Color(0.265, 0.225, 0.145), 0.0, 0.98)
+	for pair: Array in [["WestRiverBank", bank_st_w.commit()], ["EastRiverBank", bank_st_e.commit()]]:
 		var bank := MeshInstance3D.new()
-		bank.name = "RiverBank_%s" % str(side)
-		var bank_mesh := BoxMesh.new()
-		bank_mesh.size = Vector3(1.4, 0.10, MAP_Z_MAX - MAP_Z_MIN)
-		bank.mesh = bank_mesh
-		var bx := RIVER_X + side * (RIVER_HALF_WIDTH + 0.75)
-		bank.position = Vector3(bx, height_at(bx, 0.0) + 0.03, 0.0)
+		bank.name = pair[0]
+		bank.mesh = pair[1]
 		bank.material_override = bank_mat
 		add_child(bank)
+
+
+func _add_surface_quad(st: SurfaceTool, a0: Vector3, b0: Vector3, a1: Vector3, b1: Vector3, v0: float, v1: float) -> void:
+	st.set_normal(Vector3.UP)
+	st.set_uv(Vector2(0.0, v0))
+	st.add_vertex(a0)
+	st.set_normal(Vector3.UP)
+	st.set_uv(Vector2(1.0, v0))
+	st.add_vertex(b0)
+	st.set_normal(Vector3.UP)
+	st.set_uv(Vector2(0.0, v1))
+	st.add_vertex(a1)
+	st.set_normal(Vector3.UP)
+	st.set_uv(Vector2(1.0, v0))
+	st.add_vertex(b0)
+	st.set_normal(Vector3.UP)
+	st.set_uv(Vector2(1.0, v1))
+	st.add_vertex(b1)
+	st.set_normal(Vector3.UP)
+	st.set_uv(Vector2(0.0, v1))
+	st.add_vertex(a1)
 
 
 func _build_fields() -> void:
@@ -309,23 +371,41 @@ func _build_roads() -> void:
 	], 3.4, _road_material, "PrimaryRoad")
 	_add_road_polyline([
 		Vector3(-52, 0, 31), Vector3(-33, 0, 20), Vector3(-18, 0, 8), Vector3(-7, 0, 2)
-	], 2.2, _dirt_road_material, "FarmRoad")
+	], 1.9, _dirt_road_material, "FarmRoad")
 	_add_road_polyline([
 		Vector3(18, 0, -30), Vector3(23, 0, -16), Vector3(28, 0, -4), Vector3(36, 0, 9), Vector3(48, 0, 22)
 	], 2.8, _road_material, "TownSpine")
 	_add_road_polyline([
 		Vector3(14, 0, 14), Vector3(25, 0, 8), Vector3(39, 0, 4), Vector3(54, 0, 6)
-	], 2.4, _dirt_road_material, "EastApproach")
+	], 2.0, _dirt_road_material, "EastApproach")
 
 
 func _add_road_polyline(points: Array, width: float, material: Material, prefix: String) -> void:
-	for i: int in range(1, points.size()):
-		var a: Vector3 = points[i - 1]
-		var b: Vector3 = points[i]
-		a.y = height_at(a.x, a.z) + 0.13
-		b.y = height_at(b.x, b.z) + 0.13
-		_add_flat_segment("%s_%02d" % [prefix, i], a, b, width, material)
+	if points.size() < 2:
+		return
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var lefts: Array[Vector3] = []
+	var rights: Array[Vector3] = []
+	for i: int in range(points.size()):
+		var p: Vector3 = points[i]
+		var prev: Vector3 = points[maxi(0, i - 1)]
+		var next: Vector3 = points[mini(points.size() - 1, i + 1)]
+		var tangent := Vector2(next.x - prev.x, next.z - prev.z).normalized()
+		var normal2 := Vector2(-tangent.y, tangent.x) * (width * 0.5)
+		var left := Vector3(p.x + normal2.x, height_at(p.x + normal2.x, p.z + normal2.y) + 0.10, p.z + normal2.y)
+		var right := Vector3(p.x - normal2.x, height_at(p.x - normal2.x, p.z - normal2.y) + 0.10, p.z - normal2.y)
+		lefts.append(left)
+		rights.append(right)
+	for i: int in range(points.size() - 1):
+		_add_surface_quad(st, lefts[i], rights[i], lefts[i + 1], rights[i + 1], float(i), float(i + 1))
 		road_segment_count += 1
+	var road := MeshInstance3D.new()
+	road.name = prefix
+	road.mesh = st.commit()
+	road.material_override = material
+	road.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(road)
 
 
 func _add_flat_segment(name_value: String, a: Vector3, b: Vector3, width: float, material: Material) -> void:
@@ -519,9 +599,9 @@ func _build_camera() -> void:
 	# Golden Frame composition: BLUE foreground at lower-left, bridge on the
 	# central diagonal, dense town and RED contact beyond it. Roughly 46 degrees
 	# downward so terrain dominates instead of the horizon/sky.
-	camera.position = Vector3(-42.0, 72.0, 42.0)
+	camera.position = Vector3(-56.0, 58.0, 58.0)
 	add_child(camera)
-	camera.look_at(Vector3(10.0, 0.6, -3.0), Vector3.UP)
+	camera.look_at(Vector3(11.0, 1.0, -3.0), Vector3.UP)
 
 
 func _find_3d_resources(root: String) -> Array[String]:
