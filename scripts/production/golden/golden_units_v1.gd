@@ -78,11 +78,12 @@ func _build_blue_infantry() -> void:
 			var unit := _spawn_model(SOLDIER_PATH, p, 1.95, 172.0 + float(soldier * 5), "BLUE_INF_%d_%d" % [squad, soldier])
 			if unit != null:
 				physical_infantry_count += 1
-		_add_tactical_marker(
-			Vector3(squad_origin.x, _world.height_at(squad_origin.x, squad_origin.z) + 3.0, squad_origin.z),
-			"MECH %d" % (squad + 1),
-			true
-		)
+		if squad == 1:
+			_add_tactical_marker(
+				Vector3(squad_origin.x, _world.height_at(squad_origin.x, squad_origin.z) + 2.7, squad_origin.z),
+				"MECH INF",
+				true
+			)
 
 
 func _build_red_defenders() -> void:
@@ -113,11 +114,12 @@ func _build_red_defenders() -> void:
 			var unit := _spawn_model(SOLDIER_PATH, p, 1.92, -8.0 + float(soldier * 7), "RED_INF_%d_%d" % [squad, soldier])
 			if unit != null:
 				physical_infantry_count += 1
-		_add_tactical_marker(
-			Vector3(origin.x, _world.height_at(origin.x, origin.z) + 3.0, origin.z),
-			"ENY INF",
-			false
-		)
+		if squad == 0:
+			_add_tactical_marker(
+				Vector3(origin.x, _world.height_at(origin.x, origin.z) + 2.7, origin.z),
+				"ENY INF",
+				false
+			)
 
 
 func _build_wreck_history() -> void:
@@ -136,9 +138,9 @@ func _build_wreck_history() -> void:
 
 
 func _build_routes_and_objective_markers() -> void:
-	_add_world_label(Vector3(6.0, 5.3, 0.0), "A • BRIDGE", Color(0.25, 0.72, 1.0), 15)
-	_add_world_label(Vector3(34.0, 7.0, -2.0), "C • RIVER TOWN", Color(1.0, 0.32, 0.20), 14)
-	_add_world_label(Vector3(-36.0, 8.0, -19.0), "B • RIDGE", Color(0.25, 0.72, 1.0), 14)
+	_add_world_label(Vector3(6.0, 4.8, 0.0), "A • BRIDGE", Color(0.25, 0.72, 1.0), 10)
+	_add_world_label(Vector3(34.0, 6.0, -2.0), "C • TOWN", Color(1.0, 0.32, 0.20), 10)
+	_add_world_label(Vector3(-36.0, 7.0, -19.0), "B • RIDGE", Color(0.25, 0.72, 1.0), 10)
 
 	var route_mat := _transparent_emissive(Color(0.10, 0.52, 1.0, 0.65), 1.4)
 	var route := [
@@ -175,8 +177,8 @@ func _add_tactical_marker(p: Vector3, text_value: String, friendly: bool) -> voi
 	var ring := MeshInstance3D.new()
 	ring.name = "FriendlyMarker" if friendly else "HostileMarker"
 	var torus := TorusMesh.new()
-	torus.inner_radius = 0.42
-	torus.outer_radius = 0.53
+	torus.inner_radius = 0.33
+	torus.outer_radius = 0.43
 	torus.rings = 24
 	torus.ring_segments = 8
 	ring.mesh = torus
@@ -186,14 +188,14 @@ func _add_tactical_marker(p: Vector3, text_value: String, friendly: bool) -> voi
 
 	var label := Label3D.new()
 	label.text = text_value
-	label.font_size = 13
-	label.outline_size = 3
+	label.font_size = 8
+	label.outline_size = 2
 	label.modulate = Color(0.45, 0.78, 1.0) if friendly else Color(1.0, 0.42, 0.30)
 	label.position = p
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
 	label.fixed_size = true
-	label.pixel_size = 0.0020
+	label.pixel_size = 0.0015
 	add_child(label)
 
 	if friendly:
