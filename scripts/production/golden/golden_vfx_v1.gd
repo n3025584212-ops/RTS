@@ -63,7 +63,7 @@ func _build_materials() -> void:
 	for i: int in range(5):
 		var m := StandardMaterial3D.new()
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		m.albedo_color = Color(0.105 + float(i) * 0.025, 0.11 + float(i) * 0.025, 0.105 + float(i) * 0.023, 0.72 - float(i) * 0.06)
+		m.albedo_color = Color(0.08 + float(i) * 0.025, 0.085 + float(i) * 0.025, 0.08 + float(i) * 0.022, 0.34 - float(i) * 0.025)
 		m.roughness = 1.0
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 		_smoke_materials.append(m)
@@ -97,8 +97,11 @@ func _add_smoke_column(base: Vector3, radius: float, height: float, puffs: int) 
 			cos(float(i) * 1.77) * radius * 0.34
 		)
 		puff.position = base + Vector3(0, 1.0, 0) + sway
-		var scale_value := radius * (0.65 + t * 1.05) * (0.84 + 0.16 * sin(float(i) * 1.9))
-		puff.scale = Vector3(scale_value, scale_value * 0.85, scale_value)
+		var scale_value := radius * (0.72 + t * 1.08) * (0.88 + 0.12 * sin(float(i) * 1.9))
+		var sx := scale_value * (0.90 + 0.22 * sin(float(i) * 1.31))
+		var sy := scale_value * (0.60 + 0.18 * cos(float(i) * 1.73))
+		var sz := scale_value * (0.88 + 0.24 * cos(float(i) * 1.17))
+		puff.scale = Vector3(sx, sy, sz)
 		puff.material_override = _smoke_materials[i % _smoke_materials.size()]
 		add_child(puff)
 	smoke_column_count += 1
