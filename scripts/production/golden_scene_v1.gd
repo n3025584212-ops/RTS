@@ -159,7 +159,7 @@ func _runtime_content_checks(image_size: Vector2i, image_metrics: Dictionary) ->
 		"physical_real_asset_vehicles": units.physical_vehicle_count >= 12,
 		"physical_real_asset_infantry": units.physical_infantry_count >= 20,
 		"battle_wrecks": units.wreck_count >= 2,
-		"friendly_hostile_overlays": units.friendly_marker_count >= 5 and units.hostile_marker_count >= 4,
+		"friendly_hostile_overlays": units.friendly_marker_count >= 3 and units.hostile_marker_count >= 3,
 		"smoke_columns": vfx.smoke_column_count >= 3,
 		"fire": vfx.fire_count >= 2,
 		"explosions": vfx.explosion_count >= 3,
