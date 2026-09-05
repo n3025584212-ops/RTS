@@ -24,6 +24,8 @@ var _bridge_concrete: StandardMaterial3D
 var _bridge_steel: StandardMaterial3D
 var _field_material_a: ShaderMaterial
 var _field_material_b: ShaderMaterial
+var _foliage_materials: Array[StandardMaterial3D] = []
+var _rock_material: StandardMaterial3D
 
 
 func build() -> void:
@@ -138,8 +140,15 @@ void fragment() {
 	_bridge_concrete = _standard_material(Color(0.35, 0.36, 0.34), 0.02, 0.72)
 	_bridge_steel = _standard_material(Color(0.19, 0.22, 0.20), 0.62, 0.38)
 
-	_field_material_a = _field_shader(Color(0.32, 0.37, 0.14), Color(0.19, 0.23, 0.08))
-	_field_material_b = _field_shader(Color(0.38, 0.31, 0.13), Color(0.22, 0.18, 0.07))
+	_field_material_a = _field_shader(Color(0.26, 0.33, 0.11), Color(0.15, 0.20, 0.065))
+	_field_material_b = _field_shader(Color(0.34, 0.28, 0.105), Color(0.19, 0.15, 0.055))
+	_foliage_materials = [
+		_standard_material(Color(0.105, 0.185, 0.075), 0.0, 0.96),
+		_standard_material(Color(0.145, 0.235, 0.095), 0.0, 0.95),
+		_standard_material(Color(0.19, 0.255, 0.105), 0.0, 0.94),
+		_standard_material(Color(0.115, 0.16, 0.065), 0.0, 0.98),
+	]
+	_rock_material = _standard_material(Color(0.28, 0.27, 0.235), 0.02, 0.92)
 
 
 func _build_environment() -> void:
@@ -158,14 +167,14 @@ func _build_environment() -> void:
 	sky.sky_material = procedural
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.72
+	env.ambient_light_energy = 0.58
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.fog_enabled = true
-	env.fog_light_color = Color(0.63, 0.66, 0.65)
-	env.fog_light_energy = 0.75
-	env.fog_density = 0.0062
+	env.fog_light_color = Color(0.54, 0.58, 0.57)
+	env.fog_light_energy = 0.52
+	env.fog_density = 0.0022
 	env.fog_height = 3.0
-	env.fog_height_density = 0.055
+	env.fog_height_density = 0.022
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env_node.environment = env
 	add_child(env_node)
@@ -174,7 +183,7 @@ func _build_environment() -> void:
 	sun.name = "MorningSun"
 	sun.rotation_degrees = Vector3(-46.0, -32.0, 0.0)
 	sun.light_color = Color(1.0, 0.88, 0.72)
-	sun.light_energy = 1.35
+	sun.light_energy = 1.08
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 180.0
 	add_child(sun)
@@ -183,7 +192,7 @@ func _build_environment() -> void:
 	fill.name = "CoolSkyFill"
 	fill.rotation_degrees = Vector3(-70.0, 145.0, 0.0)
 	fill.light_color = Color(0.42, 0.56, 0.68)
-	fill.light_energy = 0.20
+	fill.light_energy = 0.12
 	fill.shadow_enabled = false
 	add_child(fill)
 
@@ -397,20 +406,32 @@ func _add_beam(name_value: String, a: Vector3, b: Vector3, thickness: float, mat
 func _build_town() -> void:
 	if city_resource_paths.is_empty():
 		return
-	var building_paths := _filter_paths(city_resource_paths, ["building", "house", "commercial", "office", "store", "apartment"])
-	if building_paths.is_empty():
-		building_paths = city_resource_paths.duplicate()
+	var all_buildings := _filter_paths(city_resource_paths, ["building", "house", "commercial", "office", "store", "apartment"])
+	if all_buildings.is_empty():
+		all_buildings = city_resource_paths.duplicate()
 
+	var low_rise: Array[String] = []
+	var landmark_paths: Array[String] = []
+	for path: String in all_buildings:
+		var lower := path.to_lower()
+		if lower.contains("skyscraper"):
+			landmark_paths.append(path)
+		elif not lower.contains("low-detail"):
+			low_rise.append(path)
+	var building_paths := low_rise if not low_rise.is_empty() else all_buildings
+
+	# Dense but readable river-town blocks. The primary road and east approach
+	# leave real gaps through the settlement rather than creating one asset wall.
 	var positions: Array[Vector3] = []
-	for row: int in range(4):
+	for row: int in range(5):
 		for col: int in range(6):
-			var x := 18.0 + float(col) * 6.3 + float(row % 2) * 1.3
-			var z := -18.0 + float(row) * 9.3
-			if absf(z) < 3.4:
-				z += 5.2
+			var x := 18.0 + float(col) * 6.1 + float(row % 2) * 1.0
+			var z := -22.0 + float(row) * 9.2
+			if absf(z) < 3.2:
+				z += 4.6
 			positions.append(Vector3(x, 0, z))
 
-	for i: int in range(mini(positions.size(), 24)):
+	for i: int in range(mini(positions.size(), 30)):
 		var path := building_paths[i % building_paths.size()]
 		var instance := _instantiate_scene(path)
 		if instance == null:
@@ -418,18 +439,19 @@ func _build_town() -> void:
 		var pos := positions[i]
 		pos.y = height_at(pos.x, pos.z)
 		instance.position = pos
-		instance.rotation_degrees.y = float((i * 37) % 180)
-		fit_instance_to_size(instance, 7.0 + float(i % 4) * 1.1)
+		instance.rotation_degrees.y = float((i * 47 + (i % 3) * 11) % 180)
+		fit_instance_to_size(instance, 5.2 + float(i % 4) * 0.65)
 		instance.name = "TownBuilding_%02d" % i
 		add_child(instance)
 		town_instance_count += 1
 
-	# A scaled real building asset provides the tall orientation landmark visible
-	# in the approved Golden Frame; it remains an imported building, not a cube.
-	var landmark := _instantiate_scene(building_paths[0])
+	# One genuine imported tall building provides the approved orientation
+	# landmark without turning the whole village into a skyline.
+	var landmark_path: String = landmark_paths[0] if not landmark_paths.is_empty() else building_paths[0]
+	var landmark := _instantiate_scene(landmark_path)
 	if landmark != null:
-		fit_instance_to_size(landmark, 16.0)
-		landmark.position = Vector3(37.0, height_at(37.0, -20.0), -20.0)
+		fit_instance_to_size(landmark, 11.8)
+		landmark.position = Vector3(39.0, height_at(39.0, -23.0), -23.0)
 		landmark.rotation_degrees.y = -18.0
 		landmark.name = "TownLandmarkTower"
 		add_child(landmark)
@@ -471,6 +493,12 @@ func _add_nature_instance(path: String, p: Vector3, target_size: float, yaw: flo
 	instance.position = p
 	instance.rotation_degrees.y = yaw
 	fit_instance_to_size(instance, target_size)
+	var lower_path := path.to_lower()
+	if lower_path.contains("rock") or lower_path.contains("cliff"):
+		_override_materials(instance, _rock_material)
+	elif not _foliage_materials.is_empty():
+		var material_index := absi(path.hash()) % _foliage_materials.size()
+		_override_materials(instance, _foliage_materials[material_index])
 	add_child(instance)
 	tree_instance_count += 1
 
@@ -479,12 +507,15 @@ func _build_camera() -> void:
 	camera = Camera3D.new()
 	camera.name = "GoldenTacticalCamera"
 	camera.current = true
-	camera.fov = 48.0
+	camera.fov = 44.0
 	camera.near = 0.15
 	camera.far = 260.0
-	camera.position = Vector3(-67.0, 53.0, 66.0)
+	# Golden Frame composition: BLUE foreground at lower-left, bridge on the
+	# central diagonal, dense town and RED contact beyond it. Roughly 46 degrees
+	# downward so terrain dominates instead of the horizon/sky.
+	camera.position = Vector3(-42.0, 72.0, 42.0)
 	add_child(camera)
-	camera.look_at(Vector3(9.0, 1.8, -5.0), Vector3.UP)
+	camera.look_at(Vector3(10.0, 0.6, -3.0), Vector3.UP)
 
 
 func _find_3d_resources(root: String) -> Array[String]:
@@ -533,6 +564,14 @@ func _instantiate_scene(path: String) -> Node3D:
 		if node is Node3D:
 			return node as Node3D
 	return null
+
+
+func _override_materials(root: Node3D, material: Material) -> void:
+	if root is MeshInstance3D:
+		(root as MeshInstance3D).material_override = material
+	for child: Node in root.get_children():
+		if child is Node3D:
+			_override_materials(child as Node3D, material)
 
 
 func _standard_material(color: Color, metallic: float, roughness: float) -> StandardMaterial3D:
