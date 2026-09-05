@@ -19,8 +19,8 @@ fetch() {
 fetch "https://opengameart.org/sites/default/files/house.obj" "$TMP/ordinary_house.obj"
 blender -b --python "$EXPORTER" -- --source "$TMP/ordinary_house.obj" --output "$OUT/city_hd/ordinary_house.glb"
 
-# CC0 PBR-era Soviet apartment block by Mixazzz.
-fetch "https://opengameart.org/sites/default/files/residential-building-lowpoly-apartment-block.zip" "$TMP/apartment.zip"
+# CC0 Soviet panel apartment house by GGBotNet; archive explicitly contains FBX/OBJ/BLEND.
+fetch "https://opengameart.org/sites/default/files/Soviet_Panel_Apartment_House_3D.zip" "$TMP/apartment.zip"
 mkdir -p "$TMP/apartment"
 unzip -q "$TMP/apartment.zip" -d "$TMP/apartment"
 APT_SRC="$(find "$TMP/apartment" -type f \( -iname '*.blend' -o -iname '*.fbx' -o -iname '*.obj' -o -iname '*.gltf' -o -iname '*.glb' \) | sort | head -n 1 || true)"
