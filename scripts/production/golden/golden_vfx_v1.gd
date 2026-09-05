@@ -64,7 +64,7 @@ func _build_materials() -> void:
 	for i: int in range(5):
 		_smoke_materials.append(
 			_soft_billboard_material(
-				Color(0.12 + float(i) * 0.018, 0.125 + float(i) * 0.018, 0.12 + float(i) * 0.017, 0.64 - float(i) * 0.045),
+				Color(0.18 + float(i) * 0.022, 0.185 + float(i) * 0.022, 0.18 + float(i) * 0.020, 0.78 - float(i) * 0.045),
 				0.0,
 				i + 3
 			)
@@ -110,14 +110,14 @@ func _add_smoke_column(base: Vector3, radius: float, height: float, puffs: int) 
 		puff.name = "BattleSmoke"
 		var quad := QuadMesh.new()
 		var scale_value := radius * (0.78 + t * 1.08) * (0.88 + 0.12 * sin(float(i) * 1.9))
-		quad.size = Vector2(scale_value * 2.35, scale_value * 1.75)
+		quad.size = Vector2(scale_value * 3.10, scale_value * 2.30)
 		puff.mesh = quad
 		var sway := Vector3(
 			sin(float(i) * 2.31) * radius * 0.50,
-			t * height,
+			t * height * 1.05,
 			cos(float(i) * 1.77) * radius * 0.42
 		)
-		puff.position = base + Vector3(0, 0.9, 0) + sway
+		puff.position = base + Vector3(0, 1.15, 0) + sway
 		puff.material_override = _smoke_materials[i % _smoke_materials.size()]
 		add_child(puff)
 	smoke_column_count += 1
@@ -130,7 +130,7 @@ func _add_fire(base: Vector3, scale_value: float) -> void:
 		flame.name = "BattleFire"
 		var quad := QuadMesh.new()
 		var taper := 1.0 - float(i) * 0.085
-		quad.size = Vector2(0.72 * scale_value * taper, (1.0 + float(i) * 0.10) * scale_value)
+		quad.size = Vector2(0.90 * scale_value * taper, (1.28 + float(i) * 0.12) * scale_value)
 		flame.mesh = quad
 		flame.position = base + Vector3(
 			sin(float(i) * 2.2) * 0.32 * scale_value,
@@ -155,7 +155,7 @@ func _add_explosion(base: Vector3, scale_value: float) -> void:
 		var flash := MeshInstance3D.new()
 		flash.name = "ExplosionFlash"
 		var quad := QuadMesh.new()
-		var size_value := scale_value * (1.15 if i == 0 else 0.64 + float(i % 3) * 0.12)
+		var size_value := scale_value * (1.45 if i == 0 else 0.78 + float(i % 3) * 0.15)
 		quad.size = Vector2(size_value, size_value * 0.88)
 		flash.mesh = quad
 		var angle := float(i) * TAU / 8.0
