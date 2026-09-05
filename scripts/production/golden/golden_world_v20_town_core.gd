@@ -26,6 +26,9 @@ static func build(world: GoldenWorldV1) -> void:
 		var wall_cycle: Array[int] = [1, 2, 0, 3, 1, 0]
 		var wall := world._building_materials[wall_cycle[i % wall_cycle.size()]]
 		var roof := world._roof_materials[i % world._roof_materials.size()]
+		if i in [2, 8]:
+			wall = world._roof_materials[2]
+			roof = world._roof_materials[1]
 		world._apply_building_surface_materials(house, wall, roof, world._trim_material)
 		house.name = "V20FamilyHouse_%02d" % i
 		world.add_child(house)
