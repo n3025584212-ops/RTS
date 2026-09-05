@@ -9,6 +9,7 @@ const RIVER_X := 6.0
 const RIVER_HALF_WIDTH := 6.2
 
 var city_resource_paths: Array[String] = []
+var city_hd_resource_paths: Array[String] = []
 var nature_resource_paths: Array[String] = []
 var town_instance_count: int = 0
 var tree_instance_count: int = 0
@@ -33,6 +34,7 @@ var _shoulder_material: StandardMaterial3D
 
 func build() -> void:
 	city_resource_paths = _find_3d_resources("res://assets/golden_scene/city")
+	city_hd_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hd")
 	nature_resource_paths = _find_3d_resources("res://assets/golden_scene/nature")
 	if city_resource_paths.is_empty():
 		push_error("Golden Scene requires vendored city assets; none were imported.")
@@ -104,8 +106,8 @@ float hash21(vec2 p) {
 	return fract(p.x * p.y);
 }
 void fragment() {
-	vec2 uv = UV * 8.5;
-	float broad = hash21(floor(UV * 34.0));
+	vec2 uv = UV * 6.5;
+	float broad = clamp(0.5 + 0.22 * sin(world_pos.x * 0.075) + 0.18 * cos(world_pos.z * 0.095) + 0.10 * sin((world_pos.x + world_pos.z) * 0.045), 0.0, 1.0);
 	float river = 1.0 - smoothstep(8.5, 19.0, abs(world_pos.x - 6.0));
 	float dry = smoothstep(0.28, 0.72, broad);
 	vec3 g_tex = texture(grass_diff, uv).rgb;
@@ -161,8 +163,8 @@ void fragment() {
 	_water_material.shader = water_shader
 
 	_road_material = _pbr_material("asphalt_02", Vector3(12.0, 12.0, 12.0), Color(0.72, 0.72, 0.70))
-	_dirt_road_material = _pbr_material("grass_path_3", Vector3(8.0, 8.0, 8.0), Color(0.72, 0.68, 0.56))
-	_shoulder_material = _pbr_material("gravel_ground_01", Vector3(9.0, 9.0, 9.0), Color(0.78, 0.73, 0.64))
+	_dirt_road_material = _pbr_material("grass_path_3", Vector3(8.0, 8.0, 8.0), Color(0.48, 0.43, 0.32))
+	_shoulder_material = _pbr_material("gravel_ground_01", Vector3(9.0, 9.0, 9.0), Color(0.48, 0.44, 0.36))
 	_bank_material = _pbr_material("aerial_mud_1", Vector3(6.0, 6.0, 6.0), Color(0.70, 0.62, 0.48))
 	_bridge_concrete = _pbr_material("t_concrete_wall_002", Vector3(6.0, 6.0, 6.0), Color(0.62, 0.63, 0.60))
 	_bridge_steel = _standard_material(Color(0.13, 0.15, 0.14), 0.68, 0.34)
@@ -177,10 +179,10 @@ void fragment() {
 	]
 	_rock_material = _standard_material(Color(0.28, 0.27, 0.235), 0.02, 0.92)
 	_building_materials = [
-		_surface_detail_material("t_concrete_wall_002", Color(0.46, 0.47, 0.43), 0.22),
-		_surface_detail_material("t_concrete_wall_002", Color(0.58, 0.55, 0.48), 0.20),
-		_surface_detail_material("brick_wall_005", Color(0.40, 0.31, 0.25), 0.20),
-		_surface_detail_material("t_concrete_wall_002", Color(0.36, 0.385, 0.38), 0.18),
+		_surface_detail_material("t_concrete_wall_002", Color(0.34, 0.35, 0.32), 0.16),
+		_surface_detail_material("t_concrete_wall_002", Color(0.42, 0.40, 0.36), 0.15),
+		_surface_detail_material("brick_wall_005", Color(0.31, 0.25, 0.21), 0.16),
+		_surface_detail_material("t_concrete_wall_002", Color(0.29, 0.31, 0.31), 0.14),
 	]
 
 
@@ -188,7 +190,9 @@ func _build_environment() -> void:
 	var env_node := WorldEnvironment.new()
 	env_node.name = "GoldenWorldEnvironment"
 	var env := Environment.new()
-	env.background_mode = Environment.BG_SKY
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color(0.43, 0.57, 0.66)
+	env.background_energy_multiplier = 1.0
 	var sky := Sky.new()
 	var procedural := ProceduralSkyMaterial.new()
 	procedural.sky_top_color = Color(0.14, 0.285, 0.43)
@@ -208,7 +212,7 @@ func _build_environment() -> void:
 	env.fog_density = 0.00055
 	env.fog_height = 3.0
 	env.fog_height_density = 0.007
-	env.fog_sky_affect = 0.015
+	env.fog_sky_affect = 0.0
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env_node.environment = env
 	add_child(env_node)
@@ -431,7 +435,7 @@ func _add_road_polyline(points: Array, width: float, material: Material, prefix:
 	if points.size() < 2:
 		return
 	if _shoulder_material != null and not prefix.contains("Shoulder"):
-		_add_road_ribbon(points, width + 1.5, _shoulder_material, prefix + "_Shoulder", 0.055)
+		_add_road_ribbon(points, width + 0.7, _shoulder_material, prefix + "_Shoulder", 0.055)
 	_add_road_ribbon(points, width, material, prefix, 0.10)
 
 
@@ -571,6 +575,8 @@ func _build_town() -> void:
 
 	for i: int in range(mini(positions.size(), 34)):
 		var path := building_paths[i % building_paths.size()]
+		if not city_hd_resource_paths.is_empty() and i % 3 == 0:
+			path = city_hd_resource_paths[(i / 3) % city_hd_resource_paths.size()]
 		var instance := _instantiate_scene(path)
 		if instance == null:
 			continue
@@ -595,9 +601,12 @@ func _build_town() -> void:
 	# One genuine imported tall building provides the approved orientation
 	# landmark without turning the whole village into a skyline.
 	var landmark_path: String = landmark_paths[0] if not landmark_paths.is_empty() else building_paths[0]
+	var hd_apartments := _filter_paths(city_hd_resource_paths, ["apartment"])
+	if not hd_apartments.is_empty():
+		landmark_path = hd_apartments[0]
 	var landmark := _instantiate_scene(landmark_path)
 	if landmark != null:
-		fit_instance_to_size(landmark, 10.5)
+		fit_instance_to_size(landmark, 12.0)
 		if not _building_materials.is_empty():
 			_override_materials(landmark, _building_materials[0])
 		landmark.position = Vector3(39.0, height_at(39.0, -23.0), -23.0)
@@ -662,9 +671,9 @@ func _build_camera() -> void:
 	# Golden Frame composition: BLUE foreground at lower-left, bridge on the
 	# central diagonal, dense town and RED contact beyond it. Roughly 46 degrees
 	# downward so terrain dominates instead of the horizon/sky.
-	camera.position = Vector3(-59.0, 40.5, 57.0)
+	camera.position = Vector3(-54.0, 38.0, 53.0)
 	add_child(camera)
-	camera.look_at(Vector3(13.0, 0.8, -3.0), Vector3.UP)
+	camera.look_at(Vector3(14.0, 1.0, -3.0), Vector3.UP)
 
 
 func _find_3d_resources(root: String) -> Array[String]:
@@ -763,7 +772,7 @@ void fragment() {
 
 func _pbr_material(asset_id: String, tile: Vector3, tint: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
-	material.albedo_color = tint.lightened(0.06)
+	material.albedo_color = tint
 	material.albedo_texture = load("res://assets/golden_scene/pbr/%s_diff_1k.png" % asset_id)
 	material.normal_enabled = true
 	material.normal_texture = load("res://assets/golden_scene/pbr/%s_nor_gl_1k.png" % asset_id)

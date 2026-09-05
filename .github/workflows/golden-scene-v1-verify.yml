@@ -50,7 +50,7 @@ jobs:
           glxinfo -B || true
 
       - name: Install external asset conversion toolchain when assets are absent
-        if: ${{ hashFiles('assets/golden_scene/.visual_assets_v2_complete') == '' }}
+        if: ${{ hashFiles('assets/golden_scene/.visual_assets_v4_complete') == '' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -101,6 +101,19 @@ jobs:
           fi
           test -s assets/golden_scene/pbr/leafy_grass_diff_1k.png
           test -s assets/golden_scene/hdri/hochsal_field_1k.hdr
+
+      - name: Upgrade Golden visual assets V4
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tools/golden_scene/upgrade_visual_assets_v4.sh
+          if [[ ! -f assets/golden_scene/.visual_assets_v4_complete ]]; then
+            tools/golden_scene/upgrade_visual_assets_v4.sh 2>&1 | tee golden-visual-v4-assets.log
+          else
+            echo "FRONTLINE_GOLDEN_VISUAL_ASSETS_V4_ALREADY_PRESENT"
+          fi
+          test -s assets/golden_scene/city_hd/ordinary_house.glb
+          test -s assets/golden_scene/city_hd/apartment_block.glb
 
       - name: Install Godot 4.7.1
         shell: bash
