@@ -42,3 +42,9 @@ Recorded approved-frame SHA256:
 `6c9305b89a5bb1839721f12c2ae8c2507fae4fc7d4fdbbdf130f6f1ecc113362`
 
 The Golden Scene implementation must be judged visually against the approved river-town bridge battle composition; this manifest is not a substitute for the runtime screenshot.
+
+
+## Runtime visual iteration V8
+- Removed the 36-instance legacy near-camera hedge wall after visual review.
+- HQ vegetation is restricted to complete EA01 tree variants 01c/02a/03a/04a/05d/06d; detached crowns, roots, old-tree fragments and palm-like outliers are excluded from the active frame.
+- Friendly armored formation is moved into the visible midground; smoke alpha/color and tracer thickness are tuned from actual 1920x1080 review rather than content-count gates.

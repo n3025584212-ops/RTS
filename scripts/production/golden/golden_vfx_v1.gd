@@ -67,15 +67,15 @@ func _build_materials() -> void:
 	for i: int in range(5):
 		_smoke_materials.append(
 			_soft_billboard_material(
-				Color(0.18 + float(i) * 0.018, 0.185 + float(i) * 0.018, 0.18 + float(i) * 0.017, 0.78 - float(i) * 0.040),
+				Color(0.25 + float(i) * 0.022, 0.255 + float(i) * 0.022, 0.25 + float(i) * 0.020, 0.64 - float(i) * 0.035),
 				0.0,
 				i + 3
 			)
 		)
 	_fire_material = _soft_billboard_material(Color(1.0, 0.18, 0.015, 0.92), 5.5, 21)
 	_hot_material = _soft_billboard_material(Color(1.0, 0.68, 0.12, 0.96), 7.5, 29)
-	_tracer_blue = _emission_material(Color(0.48, 0.84, 1.0), 8.0)
-	_tracer_red = _emission_material(Color(1.0, 0.30, 0.12), 8.0)
+	_tracer_blue = _emission_material(Color(0.48, 0.84, 1.0), 10.0)
+	_tracer_red = _emission_material(Color(1.0, 0.30, 0.12), 10.0)
 	_dust_material = _soft_billboard_material(Color(0.43, 0.35, 0.24, 0.55), 0.0, 37)
 
 
@@ -114,7 +114,7 @@ func _add_smoke_column(base: Vector3, radius: float, height: float, puffs: int) 
 		puff.name = "BattleSmoke"
 		var quad := QuadMesh.new()
 		var scale_value := radius * (0.78 + t * 1.08) * (0.88 + 0.12 * sin(float(i) * 1.9))
-		quad.size = Vector2(scale_value * 4.25, scale_value * 3.05)
+		quad.size = Vector2(scale_value * 4.05, scale_value * 3.15)
 		puff.mesh = quad
 		var sway := Vector3(
 			sin(float(i) * 2.31) * radius * 0.82,
@@ -204,7 +204,7 @@ func _add_tracer_arc(start: Vector3, finish: Vector3, arc: float, friendly: bool
 	for center_t: float in [0.22, 0.48, 0.74]:
 		var a := _arc_point(start, finish, maxf(0.0, center_t - 0.035), arc)
 		var b := _arc_point(start, finish, minf(1.0, center_t + 0.035), arc)
-		_add_segment(a, b, 0.026, mat, "Tracer")
+		_add_segment(a, b, 0.040, mat, "Tracer")
 		tracer_segment_count += 1
 
 
@@ -215,7 +215,7 @@ func _add_shell_arc(start: Vector3, finish: Vector3, arc: float, friendly: bool)
 	for center_t: float in [0.18, 0.38, 0.60, 0.80]:
 		var a := _arc_point(start, finish, maxf(0.0, center_t - 0.020), arc)
 		var b := _arc_point(start, finish, minf(1.0, center_t + 0.020), arc)
-		_add_segment(a, b, 0.020, mat, "ShellTrajectory")
+		_add_segment(a, b, 0.030, mat, "ShellTrajectory")
 		tracer_segment_count += 1
 
 

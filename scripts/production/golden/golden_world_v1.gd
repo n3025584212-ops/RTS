@@ -632,7 +632,7 @@ func _build_forests_and_hedgerows() -> void:
 	var tree_paths: Array[String] = []
 	for hq_path: String in nature_hq_resource_paths:
 		var lower := hq_path.to_lower()
-		if lower.contains("/ea01_env_tree_") and not lower.contains("crown") and not lower.contains("root") and not lower.contains("old") and not lower.contains(".00"):
+		if (lower.contains("ea01_env_tree_01c.glb") or lower.contains("ea01_env_tree_02a.glb") or lower.contains("ea01_env_tree_03a.glb") or lower.contains("ea01_env_tree_04a.glb") or lower.contains("ea01_env_tree_05d.glb") or lower.contains("ea01_env_tree_06d.glb")):
 			tree_paths.append(hq_path)
 	if tree_paths.is_empty():
 		tree_paths = _filter_paths(nature_resource_paths, ["tree", "trunk"])
@@ -640,7 +640,7 @@ func _build_forests_and_hedgerows() -> void:
 		tree_paths = nature_resource_paths.duplicate()
 
 	# Dense west/north ridge forest.
-	for i: int in range(68):
+	for i: int in range(56):
 		var t := float(i)
 		var x := -54.0 + fmod(t * 7.7, 37.0)
 		var z := -38.0 + fmod(t * 11.3, 28.0)
@@ -649,18 +649,16 @@ func _build_forests_and_hedgerows() -> void:
 			z = -40.0 + fmod(t * 8.9, 70.0)
 		_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 4.6 + float(i % 5) * 0.55, float((i * 41) % 360))
 
-	var hedge_paths := _filter_paths(nature_resource_paths, ["bush", "plant", "fence"])
-	if hedge_paths.is_empty():
-		hedge_paths = tree_paths
-	for row: int in range(3):
-		for i: int in range(12):
-			var x := -53.0 + float(i) * 4.5
-			var z := 11.0 + float(row) * 13.0
-			_add_nature_instance(hedge_paths[(row * 12 + i) % hedge_paths.size()], Vector3(x, 0, z), 1.8, 0.0)
+	var hedge_paths := _filter_paths(nature_hq_resource_paths, ["Env_Bush_02b.glb", "Env_Bush_02c.glb", "Env_Bush_02d.glb", "Env_Bush_02f.glb"])
+	if not hedge_paths.is_empty():
+		for i: int in range(14):
+			var x := -48.0 + float(i) * 4.1
+			var z := 31.0 + sin(float(i) * 1.43) * 2.8
+			_add_nature_instance(hedge_paths[i % hedge_paths.size()], Vector3(x, 0, z), 1.15 + float(i % 3) * 0.14, float((i * 29) % 360))
 
 	# Distant tree screen adds scale/depth behind the defended settlement.
 	if not tree_paths.is_empty():
-		for i: int in range(22):
+		for i: int in range(18):
 			var x := 20.0 + float(i) * 2.15
 			var z := -44.0 + sin(float(i) * 1.37) * 4.5
 			_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 5.0 + float(i % 4) * 0.55, float((i * 53) % 360))
