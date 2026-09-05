@@ -1,5 +1,23 @@
 extends GoldenWorldV1
 
+func _build_materials() -> void:
+	super._build_materials()
+	GoldenWorldV17Materials.apply(self)
+
+
+func _build_environment() -> void:
+	super._build_environment()
+	GoldenWorldV17Materials.apply_environment(self)
+
+
+func _build_town() -> void:
+	GoldenWorldV17Town.build(self)
+
+
+func _build_forests_and_hedgerows() -> void:
+	GoldenWorldV17Forest.build(self)
+
+
 func _build_camera() -> void:
 	super._build_camera()
 	if camera != null:
