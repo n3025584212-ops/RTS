@@ -190,38 +190,27 @@ func _build_environment() -> void:
 	var env_node := WorldEnvironment.new()
 	env_node.name = "GoldenWorldEnvironment"
 	var env := Environment.new()
+
+	# Compatibility-render proof must never fall back to a black horizon.
+	# Keep the visible background independent from Sky/fog/tonemap while using
+	# explicit ambient and directional lighting for world readability.
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.43, 0.57, 0.66)
-	env.background_energy_multiplier = 1.0
-	var sky := Sky.new()
-	var procedural := ProceduralSkyMaterial.new()
-	procedural.sky_top_color = Color(0.14, 0.285, 0.43)
-	procedural.sky_horizon_color = Color(0.62, 0.69, 0.72)
-	procedural.ground_bottom_color = Color(0.075, 0.085, 0.065)
-	procedural.ground_horizon_color = Color(0.34, 0.38, 0.31)
-	procedural.sun_angle_max = 10.0
-	procedural.sun_curve = 0.08
-	sky.sky_material = procedural
-	env.sky = sky
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.78
-	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
-	env.fog_enabled = true
-	env.fog_light_color = Color(0.54, 0.58, 0.57)
-	env.fog_light_energy = 0.24
-	env.fog_density = 0.00055
-	env.fog_height = 3.0
-	env.fog_height_density = 0.007
-	env.fog_sky_affect = 0.0
-	env.tonemap_mode = Environment.TONE_MAPPER_ACES
+	env.background_color = Color(0.41, 0.55, 0.66)
+	env.background_energy_multiplier = 1.35
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(0.48, 0.53, 0.56)
+	env.ambient_light_energy = 0.82
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
+	env.fog_enabled = false
+	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	env_node.environment = env
 	add_child(env_node)
 
 	var sun := DirectionalLight3D.new()
 	sun.name = "MorningSun"
 	sun.rotation_degrees = Vector3(-43.0, -38.0, 0.0)
-	sun.light_color = Color(1.0, 0.965, 0.90)
-	sun.light_energy = 1.16
+	sun.light_color = Color(1.0, 0.96, 0.88)
+	sun.light_energy = 1.28
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 180.0
 	add_child(sun)
@@ -229,8 +218,8 @@ func _build_environment() -> void:
 	var fill := DirectionalLight3D.new()
 	fill.name = "CoolSkyFill"
 	fill.rotation_degrees = Vector3(-70.0, 145.0, 0.0)
-	fill.light_color = Color(0.42, 0.56, 0.68)
-	fill.light_energy = 0.14
+	fill.light_color = Color(0.50, 0.62, 0.72)
+	fill.light_energy = 0.18
 	fill.shadow_enabled = false
 	add_child(fill)
 
