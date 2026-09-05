@@ -26,7 +26,7 @@ var _field_material_a: ShaderMaterial
 var _field_material_b: ShaderMaterial
 var _foliage_materials: Array[StandardMaterial3D] = []
 var _rock_material: StandardMaterial3D
-var _building_materials: Array[StandardMaterial3D] = []
+var _building_materials: Array[Material] = []
 var _bank_material: StandardMaterial3D
 var _shoulder_material: StandardMaterial3D
 
@@ -581,7 +581,12 @@ func _build_town() -> void:
 		instance.rotation_degrees.y = street_yaw + sin(float(i) * 1.71) * 7.0
 		fit_instance_to_size(instance, 4.8 + float(i % 5) * 0.58)
 		if not _building_materials.is_empty():
-			var building_material_index := 2 if i % 7 == 0 else [0, 1, 3][i % 3]
+			var building_material_index: int = 0
+			if i % 7 == 0:
+				building_material_index = 2
+			else:
+				var concrete_cycle: Array[int] = [0, 1, 3]
+				building_material_index = concrete_cycle[i % concrete_cycle.size()]
 			_override_materials(instance, _building_materials[building_material_index])
 		instance.name = "TownBuilding_%02d" % i
 		add_child(instance)
