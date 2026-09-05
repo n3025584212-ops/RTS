@@ -33,9 +33,9 @@ done
 COUNT="$(find "$DEST" -maxdepth 1 -type f -iname '*.glb' | wc -l)"
 test "$COUNT" -ge 3
 sha256sum "$TMP/houses.zip" > "$OUT/VISUAL_V20_SOURCE_CHECKSUMS.txt"
-cat > "$OUT/.visual_assets_v20_textured_complete" <<EOF
+cat > "$OUT/.visual_assets_v20_color_complete" <<EOF
 TASK_ID=BUILD_GODOT_GOLDEN_SCENE_VISUAL_SPIKE_V1
-VISUAL_RECOVERY=V20_TEXTURED
+VISUAL_RECOVERY=V20_COLOR_TEXTURED
 FAMILY_HOUSE_GLBS=$COUNT
 SOURCE_LICENSE=CC0_1_0
 SOURCE_PAGE=https://opengameart.org/content/family-house-collection
