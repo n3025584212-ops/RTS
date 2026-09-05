@@ -2,19 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://i4107w0e7bpl"
-path="res://.godot/imported/family_house_03_ao_house4.png-039e7b7f567a4fb88756848973cfc280.ctex"
+uid="uid://cluvcw8b1b8a0"
+path="res://.godot/imported/family_house_02_house_original_work_texture.png-d996fe641fb4b0df1e5f6537291956df.ctex"
 metadata={
 "vram_texture": false
 }
 generator_parameters={
-"md5": "7017b6fe7aa2b29fcad133a17befa959"
+"md5": "3672b59469aa7981cf3964dc6274b837"
 }
 
 [deps]
 
-source_file="res://assets/golden_scene/city_v20/family_house_03_ao_house4.png"
-dest_files=["res://.godot/imported/family_house_03_ao_house4.png-039e7b7f567a4fb88756848973cfc280.ctex"]
+source_file="res://assets/golden_scene/city_v20/family_house_02_house_original_work_texture.png"
+dest_files=["res://.godot/imported/family_house_02_house_original_work_texture.png-d996fe641fb4b0df1e5f6537291956df.ctex"]
 
 [params]
 
