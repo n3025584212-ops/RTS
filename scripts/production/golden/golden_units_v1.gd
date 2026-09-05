@@ -61,7 +61,7 @@ func _build_blue_armored_column() -> void:
 	]
 	for i: int in range(mbt_positions.size()):
 		var p: Vector3 = mbt_positions[i]
-		var unit := _spawn_model(MBT_PATH, p, 9.4, -8.0 + float(i) * 2.0, "BLUE_MBT_%02d" % i)
+		var unit := _spawn_model(MBT_PATH, p, 7.8, -8.0 + float(i) * 2.0, "BLUE_MBT_%02d" % i)
 		if unit != null:
 			if i == 2:
 				_add_tactical_marker(unit.position + Vector3(0, 3.2, 0), "1-1 ARMOR", true)
@@ -73,7 +73,7 @@ func _build_blue_armored_column() -> void:
 	]
 	for i: int in range(ifv_positions.size()):
 		var p: Vector3 = ifv_positions[i]
-		var unit := _spawn_model(IFV_PATH, p, 8.1, -12.0 + float(i) * 3.0, "BLUE_IFV_%02d" % i)
+		var unit := _spawn_model(IFV_PATH, p, 6.7, -12.0 + float(i) * 3.0, "BLUE_IFV_%02d" % i)
 		if unit != null:
 			if i == 1:
 				_add_tactical_marker(unit.position + Vector3(0, 3.0, 0), "2-1 IFV", true)
@@ -103,7 +103,7 @@ func _build_red_defenders() -> void:
 		Vector3(30, 0, -8), Vector3(39, 0, -5), Vector3(48, 0, -9)
 	]
 	for i: int in range(red_mbt_positions.size()):
-		var unit := _spawn_model(MBT_PATH, red_mbt_positions[i], 8.3, 165.0 + float(i) * 4.0, "RED_MBT_%02d" % i)
+		var unit := _spawn_model(MBT_PATH, red_mbt_positions[i], 7.2, 165.0 + float(i) * 4.0, "RED_MBT_%02d" % i)
 		if unit != null:
 			if i == 1:
 				_add_tactical_marker(unit.position + Vector3(0, 3.1, 0), "ENY ARMOR", false)
@@ -113,7 +113,7 @@ func _build_red_defenders() -> void:
 		Vector3(24, 0, -18), Vector3(43, 0, 12)
 	]
 	for i: int in range(red_ifv_positions.size()):
-		var unit := _spawn_model(IFV_PATH, red_ifv_positions[i], 7.0, 178.0 - float(i) * 10.0, "RED_IFV_%02d" % i)
+		var unit := _spawn_model(IFV_PATH, red_ifv_positions[i], 6.0, 178.0 - float(i) * 10.0, "RED_IFV_%02d" % i)
 		if unit != null:
 			if i == 0:
 				_add_tactical_marker(unit.position + Vector3(0, 3.0, 0), "ENY IFV", false)
@@ -140,7 +140,7 @@ func _build_wreck_history() -> void:
 	]
 	for i: int in range(wreck_positions.size()):
 		var path := MBT_PATH if i != 1 else IFV_PATH
-		var wreck := _spawn_model(path, wreck_positions[i], 6.9, 76.0 + float(i) * 31.0, "WRECK_%02d" % i)
+		var wreck := _spawn_model(path, wreck_positions[i], 5.9, 76.0 + float(i) * 31.0, "WRECK_%02d" % i)
 		if wreck == null:
 			continue
 		wreck.rotation_degrees.z = -4.0 - float(i) * 3.0
