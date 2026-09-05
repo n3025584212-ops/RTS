@@ -5,9 +5,9 @@ ENGINE=4.7.1-stable (official)
 RENDERER=gl_compatibility
 SCREENSHOT=golden_scene_v1_actual_1920x1080.png
 CAPTURE_RESOLUTION=1920x1080
-AVG_FRAME_MS=134.375
-P95_FRAME_MS=141.667
-APPROX_FPS=7.4
+AVG_FRAME_MS=134.21
+P95_FRAME_MS=137.68
+APPROX_FPS=7.5
 PRODUCT_PASS=NO
 
 ## Engine-present compliance
@@ -20,7 +20,7 @@ PRODUCT_PASS=NO
 | sculpted terrain | PASS |
 | shaded river | PASS |
 | engineered bridge | PASS |
-| dense real asset town | PASS |
+| coherent real asset town | PASS |
 | forest and treelines | PASS |
 | roads and fields | PASS |
 | physical real asset vehicles | PASS |
