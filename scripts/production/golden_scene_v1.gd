@@ -154,7 +154,7 @@ func _runtime_content_checks(image_size: Vector2i, image_metrics: Dictionary) ->
 		"shaded_river": true,
 		"engineered_bridge": world.bridge_member_count >= 18,
 		"dense_real_asset_town": world.town_instance_count >= 18,
-		"forest_and_treelines": world.tree_instance_count >= 60,
+		"forest_and_treelines": world.tree_instance_count >= 48,
 		"roads_and_fields": world.road_segment_count >= 10,
 		"physical_real_asset_vehicles": units.physical_vehicle_count >= 12,
 		"physical_real_asset_infantry": units.physical_infantry_count >= 20,
