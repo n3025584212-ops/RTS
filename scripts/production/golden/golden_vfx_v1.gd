@@ -68,10 +68,10 @@ func _build_materials() -> void:
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 		_smoke_materials.append(m)
 
-	_fire_material = _emission_material(Color(1.0, 0.20, 0.025), 5.0)
-	_hot_material = _emission_material(Color(1.0, 0.72, 0.16), 7.0)
-	_tracer_blue = _emission_material(Color(0.48, 0.84, 1.0), 8.0)
-	_tracer_red = _emission_material(Color(1.0, 0.30, 0.12), 8.0)
+	_fire_material = _emission_material(Color(1.0, 0.18, 0.02), 3.6)
+	_hot_material = _emission_material(Color(1.0, 0.58, 0.10), 4.8)
+	_tracer_blue = _emission_material(Color(0.92, 0.82, 0.46), 4.0)
+	_tracer_red = _emission_material(Color(1.0, 0.42, 0.16), 4.0)
 
 	_dust_material = StandardMaterial3D.new()
 	_dust_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -180,30 +180,32 @@ func _add_muzzle_flash(base: Vector3, direction: Vector3, friendly: bool) -> voi
 	muzzle_flash_count += 1
 
 
+func _arc_point(start: Vector3, finish: Vector3, t: float, arc: float) -> Vector3:
+	var p := start.lerp(finish, t)
+	p.y += sin(t * PI) * arc
+	return p
+
+
 func _add_tracer_arc(start: Vector3, finish: Vector3, arc: float, friendly: bool) -> void:
+	# Golden still frame: short luminous streaks imply projectile flight without
+	# drawing a full wire between attacker and target.
 	var mat := _tracer_blue if friendly else _tracer_red
-	var previous := start
-	for i: int in range(1, 10):
-		var t := float(i) / 9.0
-		var current := start.lerp(finish, t)
-		current.y += sin(t * PI) * arc
-		_add_segment(previous, current, 0.030, mat, "Tracer")
+	for center_t: float in [0.22, 0.48, 0.74]:
+		var a := _arc_point(start, finish, maxf(0.0, center_t - 0.035), arc)
+		var b := _arc_point(start, finish, minf(1.0, center_t + 0.035), arc)
+		_add_segment(a, b, 0.026, mat, "Tracer")
 		tracer_segment_count += 1
-		previous = current
 
 
 func _add_shell_arc(start: Vector3, finish: Vector3, arc: float, friendly: bool) -> void:
 	start.y = _world.height_at(start.x, start.z) + 1.2
 	finish.y = _world.height_at(finish.x, finish.z) + 1.0
 	var mat := _tracer_blue if friendly else _tracer_red
-	var previous := start
-	for i: int in range(1, 18):
-		var t := float(i) / 17.0
-		var current := start.lerp(finish, t)
-		current.y += sin(t * PI) * arc
-		_add_segment(previous, current, 0.024, mat, "ShellTrajectory")
+	for center_t: float in [0.18, 0.38, 0.60, 0.80]:
+		var a := _arc_point(start, finish, maxf(0.0, center_t - 0.020), arc)
+		var b := _arc_point(start, finish, minf(1.0, center_t + 0.020), arc)
+		_add_segment(a, b, 0.020, mat, "ShellTrajectory")
 		tracer_segment_count += 1
-		previous = current
 
 
 func _add_impact_dust(base: Vector3) -> void:
