@@ -83,6 +83,7 @@ func fit_instance_to_size(root: Node3D, target_max_dimension: float) -> float:
 func _build_materials() -> void:
 	_terrain_material = StandardMaterial3D.new()
 	_terrain_material.vertex_color_use_as_albedo = true
+	_terrain_material.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_terrain_material.metallic = 0.0
 	_terrain_material.roughness = 0.94
 	_terrain_material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
@@ -109,8 +110,8 @@ void fragment() {
 """
 	_water_material.shader = water_shader
 
-	_road_material = _standard_material(Color(0.115, 0.115, 0.105), 0.02, 0.84)
-	_dirt_road_material = _standard_material(Color(0.255, 0.205, 0.135), 0.0, 0.94)
+	_road_material = _standard_material(Color(0.155, 0.15, 0.135), 0.02, 0.88)
+	_dirt_road_material = _standard_material(Color(0.285, 0.225, 0.145), 0.0, 0.95)
 	_bridge_concrete = _standard_material(Color(0.35, 0.36, 0.34), 0.02, 0.72)
 	_bridge_steel = _standard_material(Color(0.19, 0.22, 0.20), 0.62, 0.38)
 
@@ -263,9 +264,9 @@ func _build_water() -> void:
 		var bank := MeshInstance3D.new()
 		bank.name = "RiverBank_%s" % str(side)
 		var bank_mesh := BoxMesh.new()
-		bank_mesh.size = Vector3(2.3, 0.16, MAP_Z_MAX - MAP_Z_MIN)
+		bank_mesh.size = Vector3(1.4, 0.10, MAP_Z_MAX - MAP_Z_MIN)
 		bank.mesh = bank_mesh
-		var bx := RIVER_X + side * (RIVER_HALF_WIDTH + 1.1)
+		var bx := RIVER_X + side * (RIVER_HALF_WIDTH + 0.75)
 		bank.position = Vector3(bx, height_at(bx, 0.0) + 0.03, 0.0)
 		bank.material_override = bank_mat
 		add_child(bank)
@@ -302,13 +303,13 @@ func _build_roads() -> void:
 	_add_road_polyline([
 		Vector3(-62, 0, 1.2), Vector3(-34, 0, 0.6), Vector3(-9, 0, 0.0),
 		Vector3(1.0, 0, 0.0), Vector3(15.0, 0, 0.0), Vector3(36, 0, -1.5), Vector3(62, 0, -4.0)
-	], 4.2, _road_material, "PrimaryRoad")
+	], 3.4, _road_material, "PrimaryRoad")
 	_add_road_polyline([
 		Vector3(-52, 0, 31), Vector3(-33, 0, 20), Vector3(-18, 0, 8), Vector3(-7, 0, 2)
 	], 2.2, _dirt_road_material, "FarmRoad")
 	_add_road_polyline([
 		Vector3(18, 0, -30), Vector3(23, 0, -16), Vector3(28, 0, -4), Vector3(36, 0, 9), Vector3(48, 0, 22)
-	], 3.2, _road_material, "TownSpine")
+	], 2.8, _road_material, "TownSpine")
 	_add_road_polyline([
 		Vector3(14, 0, 14), Vector3(25, 0, 8), Vector3(39, 0, 4), Vector3(54, 0, 6)
 	], 2.4, _dirt_road_material, "EastApproach")
