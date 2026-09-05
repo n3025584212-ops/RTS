@@ -44,8 +44,8 @@ func build(world: GoldenWorldV1) -> void:
 
 func _build_blue_armored_column() -> void:
 	var mbt_positions := [
-		Vector3(-34, 0, 14), Vector3(-27, 0, 12), Vector3(-20, 0, 9),
-		Vector3(-13, 0, 7), Vector3(-7, 0, 5)
+		Vector3(-34, 0, 10), Vector3(-27, 0, 8), Vector3(-20, 0, 6),
+		Vector3(-13, 0, 4), Vector3(-7, 0, 2)
 	]
 	for i: int in range(mbt_positions.size()):
 		var p: Vector3 = mbt_positions[i]
@@ -56,8 +56,8 @@ func _build_blue_armored_column() -> void:
 			physical_vehicle_count += 1
 
 	var ifv_positions := [
-		Vector3(-39, 0, 22), Vector3(-31, 0, 23), Vector3(-22, 0, 20),
-		Vector3(-14, 0, 18)
+		Vector3(-39, 0, 18), Vector3(-31, 0, 17), Vector3(-22, 0, 15),
+		Vector3(-14, 0, 13)
 	]
 	for i: int in range(ifv_positions.size()):
 		var p: Vector3 = ifv_positions[i]
@@ -70,7 +70,7 @@ func _build_blue_armored_column() -> void:
 
 func _build_blue_infantry() -> void:
 	for squad: int in range(3):
-		var squad_origin := Vector3(-26.0 + float(squad) * 9.0, 0.0, 28.0 - float(squad) * 3.0)
+		var squad_origin := Vector3(-28.0 + float(squad) * 8.0, 0.0, 19.0 - float(squad) * 2.0)
 		for soldier: int in range(6):
 			var lateral := float(soldier % 3) * 1.45 - 1.45
 			var depth := float(soldier / 3) * 1.65
