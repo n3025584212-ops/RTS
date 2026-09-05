@@ -1,16 +1,16 @@
 {
 	"approx_fps": 7.4,
-	"avg_frame_ms": 134.838,
+	"avg_frame_ms": 135.417,
 	"bridge_members": 31,
 	"capture_resolution": {
 		"height": 1080,
 		"width": 1920
 	},
 	"central_world_image": {
-		"chromatic_fraction": 0.9037,
-		"luminance_mean": 0.413,
-		"luminance_range": 0.8594,
-		"luminance_variance": 0.0079,
+		"chromatic_fraction": 0.8057,
+		"luminance_mean": 0.4006,
+		"luminance_range": 0.8868,
+		"luminance_variance": 0.0167,
 		"sample_count": 4590
 	},
 	"engine": "4.7.1-stable (official)",
@@ -18,7 +18,7 @@
 	"frame_samples": 8,
 	"golden_frame_sha256": "6c9305b89a5bb1839721f12c2ae8c2507fae4fc7d4fdbbdf130f6f1ecc113362",
 	"hud_panels": 6,
-	"p95_frame_ms": 136.667,
+	"p95_frame_ms": 143.098,
 	"physical_infantry": 28,
 	"physical_vehicles": 17,
 	"product_pass": false,
@@ -52,7 +52,7 @@
 	"task_id": "BUILD_GODOT_GOLDEN_SCENE_VISUAL_SPIKE_V1",
 	"town_instances": 25,
 	"tracer_segments": 20,
-	"tree_instances": 51,
+	"tree_instances": 42,
 	"visual_authority": "FRONTLINE_GOLDEN_FRAME_V1",
 	"wrecks": 3
 }
