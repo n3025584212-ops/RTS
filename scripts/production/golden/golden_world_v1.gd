@@ -59,7 +59,7 @@ func height_at(x: float, z: float) -> float:
 	var west_ridge := 6.5 * exp(-pow((x + 37.0) / 19.0, 2.0) - pow((z + 18.0) / 17.0, 2.0))
 	var north_hills := 3.0 * exp(-pow((x - 4.0) / 34.0, 2.0) - pow((z + 39.0) / 13.0, 2.0))
 	var east_rise := 2.4 * exp(-pow((x - 52.0) / 17.0, 2.0) - pow((z + 19.0) / 26.0, 2.0))
-	var river_cut := 2.7 * exp(-pow((x - RIVER_X) / 5.7, 2.0))
+	var river_cut := 4.9 * exp(-pow((x - RIVER_X) / 6.8, 2.0))
 	var floodplain := 0.9 * exp(-pow((x - RIVER_X) / 13.0, 2.0))
 	return rolling + west_ridge + north_hills + east_rise - river_cut - floodplain
 
@@ -82,7 +82,7 @@ func fit_instance_to_size(root: Node3D, target_max_dimension: float) -> float:
 
 func _build_materials() -> void:
 	_terrain_material = StandardMaterial3D.new()
-	_terrain_material.albedo_color = Color(0.19, 0.255, 0.115)
+	_terrain_material.albedo_color = Color(0.225, 0.295, 0.135)
 	_terrain_material.vertex_color_use_as_albedo = false
 	_terrain_material.cull_mode = BaseMaterial3D.CULL_BACK
 	_terrain_material.metallic = 0.0
@@ -158,7 +158,7 @@ func _build_environment() -> void:
 	sky.sky_material = procedural
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.58
+	env.ambient_light_energy = 0.72
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.54, 0.58, 0.57)
@@ -174,7 +174,7 @@ func _build_environment() -> void:
 	sun.name = "MorningSun"
 	sun.rotation_degrees = Vector3(-46.0, -32.0, 0.0)
 	sun.light_color = Color(1.0, 0.88, 0.72)
-	sun.light_energy = 1.08
+	sun.light_energy = 1.26
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 180.0
 	add_child(sun)
@@ -183,7 +183,7 @@ func _build_environment() -> void:
 	fill.name = "CoolSkyFill"
 	fill.rotation_degrees = Vector3(-70.0, 145.0, 0.0)
 	fill.light_color = Color(0.42, 0.56, 0.68)
-	fill.light_energy = 0.12
+	fill.light_energy = 0.18
 	fill.shadow_enabled = false
 	add_child(fill)
 
