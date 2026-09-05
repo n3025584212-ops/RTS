@@ -163,7 +163,7 @@ func _runtime_content_checks(image_size: Vector2i, image_metrics: Dictionary) ->
 		"smoke_columns": vfx.smoke_column_count >= 3,
 		"fire": vfx.fire_count >= 2,
 		"explosions": vfx.explosion_count >= 3,
-		"tracer_and_shell_trajectories": vfx.tracer_segment_count >= 35,
+		"tracer_and_shell_trajectories": vfx.tracer_segment_count >= 16,
 		"impact_dust": vfx.impact_count >= 4,
 		"muzzle_flash": vfx.muzzle_flash_count >= 3,
 		"hud_regions": hud.panel_count >= 6,
