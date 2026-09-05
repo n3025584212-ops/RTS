@@ -27,7 +27,6 @@ var _field_material_b: ShaderMaterial
 var _foliage_materials: Array[StandardMaterial3D] = []
 var _rock_material: StandardMaterial3D
 var _building_materials: Array[StandardMaterial3D] = []
-var _building_materials: Array[StandardMaterial3D] = []
 
 
 func build() -> void:
