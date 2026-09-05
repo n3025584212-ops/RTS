@@ -16,8 +16,8 @@ blender -b --python "$ROOT/tools/golden_scene/decimate_tree_to_glb.py" -- \
   --output "$OUT/pine_sapling_small_lod.glb" \
   --target-tris 85000
 
-test -s "$OUT/pine_tree_01_lod.glb"
-sha256sum "$OUT/pine_tree_01_lod.glb" > "$ROOT/assets/golden_scene/VISUAL_V15_SOURCE_CHECKSUMS.txt"
+test -s "$OUT/pine_sapling_small_lod.glb"
+sha256sum "$OUT/pine_sapling_small_lod.glb" > "$ROOT/assets/golden_scene/VISUAL_V15_SOURCE_CHECKSUMS.txt"
 cat > "$ROOT/assets/golden_scene/.visual_assets_v15_complete" <<EOF
 TASK_ID=BUILD_GODOT_GOLDEN_SCENE_VISUAL_SPIKE_V1
 VISUAL_ASSET_UPGRADE=V15
