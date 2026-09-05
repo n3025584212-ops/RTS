@@ -566,7 +566,7 @@ func _build_town() -> void:
 				x += 3.6
 			positions.append(Vector3(x, 0, z))
 
-	for i: int in range(mini(positions.size(), 27)):
+	for i: int in range(mini(positions.size(), 21)):
 		var path := building_paths[i % building_paths.size()]
 		if not city_hd_resource_paths.is_empty() and i % 3 == 0:
 			path = city_hd_resource_paths[(i / 3) % city_hd_resource_paths.size()]
@@ -579,7 +579,8 @@ func _build_town() -> void:
 		var street_yaw := 0.0 if i % 3 != 0 else 90.0
 		instance.rotation_degrees.y = street_yaw + sin(float(i) * 1.71) * 7.0
 		fit_instance_to_size(instance, 4.8 + float(i % 5) * 0.58)
-		if not _building_materials.is_empty():
+		var preserve_source_materials := path.begins_with("res://assets/golden_scene/city_hd/") or path.begins_with("res://assets/golden_scene/city_hq/")
+		if not preserve_source_materials and not _building_materials.is_empty():
 			var building_material_index: int = 0
 			if i % 7 == 0:
 				building_material_index = 2
@@ -600,7 +601,7 @@ func _build_town() -> void:
 	var landmark := _instantiate_scene(landmark_path)
 	if landmark != null:
 		fit_instance_to_size(landmark, 12.0)
-		if not _building_materials.is_empty():
+		if not landmark_path.begins_with("res://assets/golden_scene/city_hd/") and not _building_materials.is_empty():
 			_override_materials(landmark, _building_materials[0])
 		landmark.position = Vector3(39.0, height_at(39.0, -23.0), -23.0)
 		landmark.rotation_degrees.y = -18.0
@@ -608,16 +609,27 @@ func _build_town() -> void:
 		add_child(landmark)
 		town_instance_count += 1
 
-	# Photo-textured CC0 urban pack forms the deep settlement mass. It is kept as
-	# authored multi-building geometry rather than reskinned into the old kit.
+	# V6: Buildings Pack 4 is split in Blender into independent GLBs. Place
+	# individual photo-textured structures on actual town blocks; never instance
+	# the whole source pack as one oversized wall.
 	if not city_hq_resource_paths.is_empty():
-		var hq_pack := _instantiate_scene(city_hq_resource_paths[0])
-		if hq_pack != null:
-			fit_instance_to_size(hq_pack, 31.0)
-			hq_pack.position = Vector3(48.0, height_at(48.0, -15.0), -15.0)
-			hq_pack.rotation_degrees.y = -8.0
-			hq_pack.name = "TownHQUrbanBackdrop"
-			add_child(hq_pack)
+		var hq_positions: Array[Vector3] = [
+			Vector3(27.0, 0, -25.0), Vector3(36.0, 0, -26.0), Vector3(47.0, 0, -23.0),
+			Vector3(54.0, 0, -16.0), Vector3(24.0, 0, 10.0), Vector3(38.0, 0, 12.0),
+			Vector3(51.0, 0, 10.0), Vector3(58.0, 0, -4.0)
+		]
+		for i: int in range(hq_positions.size()):
+			var path := city_hq_resource_paths[i % city_hq_resource_paths.size()]
+			var hq_building := _instantiate_scene(path)
+			if hq_building == null:
+				continue
+			var p := hq_positions[i]
+			p.y = height_at(p.x, p.z)
+			hq_building.position = p
+			hq_building.rotation_degrees.y = 90.0 if i % 3 == 0 else 0.0
+			fit_instance_to_size(hq_building, 6.4 + float(i % 4) * 0.9)
+			hq_building.name = "TownHQBuilding_%02d" % i
+			add_child(hq_building)
 			town_instance_count += 1
 
 
