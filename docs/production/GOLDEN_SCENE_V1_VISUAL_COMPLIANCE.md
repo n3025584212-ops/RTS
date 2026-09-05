@@ -12,12 +12,12 @@ MERGE=NO
 - Scene: `res://scenes/production/GoldenSceneV1.tscn`
 - Engine: Godot 4.7.1 stable official
 - Actual runtime capture: `artifacts/golden_scene/golden_scene_v1_actual_1920x1080.png`
-- Actual screenshot Git blob SHA: `a4342339555935e9db9d1ec0ed408cff464f0d1c`
+- Actual screenshot Git blob SHA: `e4a5a779e33112a23553cd52f4b3957ef97e2014`
 - Capture resolution: 1920×1080
 - Golden visual workflow: `FRONTLINE Golden Scene V1 Visual Spike`
-- Accepted visual run: #23 / run id `33941250681`
-- Run source head: `b2cdc874e6fe1d0dd0626aabc1dfdcbbf3c38ca5`
-- Evidence-vendoring branch head after run: `a37e3e6931782d2a2f518f5d9951f1388251fd5a`
+- Accepted visual run: #38 / run id `33942068259`
+- Run source head: `e59a93b9a1abae93e3406162fdda50a9ec8ce138`
+- Evidence-vendoring branch head after run: `485b3cf416ceb632c2e4c630fab7e8dedb116c45`
 - Approved Golden Frame recorded SHA256: `6c9305b89a5bb1839721f12c2ae8c2507fae4fc7d4fdbbdf130f6f1ecc113362`
 - Asset/license manifest: `docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md`
 
@@ -41,8 +41,8 @@ This compliance record therefore compares the actual runtime frame against the c
 | Explosions | 3 |
 | Short tracer / shell streak segments | 20 |
 | HUD regions | 6 |
-| Average frame time | 133.66 ms |
-| P95 frame time | 144.628 ms |
+| Average frame time | 133.42 ms |
+| P95 frame time | 143.325 ms |
 | Approx. FPS | 7.5 |
 
 Performance was measured in GitHub Actions using Mesa llvmpipe software OpenGL Compatibility rendering. It is valid evidence that the scene rendered and captured, but it is **not representative GPU performance** and must not be treated as a production hardware FPS result.
@@ -54,7 +54,7 @@ Performance was measured in GitHub Actions using Mesa llvmpipe software OpenGL C
 | Oblique high tactical 16:9 camera | PASS | BLUE foreground, bridge/river center and RED/town depth read in one 1920×1080 frame. |
 | Terrain visually dominant | PARTIAL | Sculpted valley is visible and grounded, but the current single PBR terrain treatment lacks the approved reference's surface richness and local terrain detail. |
 | Meaningful 3D relief | PASS | Ridge/rolling valley geometry is actual 3D and affects the frame silhouette. |
-| Broad river with banks and water shading | PASS | Real shaded water, channel and banks are visible; bank detail remains simplified. |
+| Broad river with banks and water shading | PASS | Continuous meandering shaded river and sloped banks are now visible across the tactical frame; shoreline finishing remains simplified. |
 | Real bridge geometry | PASS | 31-member deck/pier/truss bridge is visible and spatially coherent; modeling fidelity remains below production target. |
 | Dense river-town | PARTIAL | 31 real building instances form a readable town beyond the bridge, but the current CC0 low-poly family still reads more like a stylized city kit than the approved realistic river-town target. |
 | Varied buildings + tall landmark | PARTIAL | Multiple building shapes/material colors and one tall landmark exist, but architectural variation and realism remain insufficient for PASS. |
@@ -70,8 +70,8 @@ Performance was measured in GitHub Actions using Mesa llvmpipe software OpenGL C
 | Tracers / projectile flight | PASS | Full wire-like trajectories were removed; short bright projectile streaks now read as combat fire. |
 | Artillery / shell trajectory | PASS | Short high-arc shell streaks are present without covering the scene. |
 | Impact dust / debris cue | PASS | Distributed impact-dust cues exist. |
-| Smoke columns | PARTIAL | Four smoke columns create battle history, but the current procedural puff construction still lacks production-quality volumetric detail. |
-| Fire / explosion | PARTIAL | Fires and explosion cores are visible and distributed, but remain stylized/procedural rather than production VFX quality. |
+| Smoke columns | PARTIAL | Four soft-billboard smoke columns are present without visible sphere proxies; they still lack production volumetric density and turbulence. |
+| Fire / explosion | PARTIAL | Fires and soft-billboard blast flashes are distributed around the bridge/town fight, but remain below production particle/volumetric quality. |
 | Damaged / wreck state | PASS | Three physical darkened vehicle wrecks and associated fire/smoke establish battle history. |
 | Lighting / atmosphere | PARTIAL | Directional warm sun, cool fill and restrained fog now reveal the battlefield; atmospheric depth/shadow/material response remain below Golden Frame. |
 | Tactical map | PASS | Lower-left map is present and readable. |
@@ -99,7 +99,7 @@ Performance was measured in GitHub Actions using Mesa llvmpipe software OpenGL C
 
 `RESULT=PARTIAL_PASS`
 
-Reason: the actual Godot 4.7.1 1920×1080 frame now satisfies the minimum structural intent of a recognizable modern-war tactical RTS scene using real assets, real physical units, world geometry, battle VFX and HUD in one frame. It does **not** yet reproduce the approved Golden Frame's realistic production fidelity closely enough for PASS.
+Reason: after repeated real-engine capture/fix cycles, the latest Godot 4.7.1 1920×1080 frame now clearly reads as a modern-war tactical RTS: BLUE armor occupies the foreground, a continuous river and engineered bridge define the center, the dense defended town forms the depth target, and physical units/VFX/HUD are visible together. It does **not** yet reproduce the approved Golden Frame's realistic production fidelity closely enough for PASS.
 
 `PRODUCT_PASS=NO`  
 `ENGINE_LOCK=NO`  
