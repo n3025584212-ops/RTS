@@ -9,8 +9,8 @@ static func add(world: GoldenWorldV1) -> void:
 		return
 
 	var positions: Array[Vector3] = [
-		Vector3(72.0,0,-28.0),
-		Vector3(82.0,0,14.0)
+		Vector3(62.0,0,-28.0),
+		Vector3(74.0,0,14.0)
 	]
 	for i: int in range(mini(positions.size(), detailed_paths.size())):
 		var node := world._instantiate_scene(detailed_paths[i])
@@ -20,7 +20,7 @@ static func add(world: GoldenWorldV1) -> void:
 		p.y = world.height_at(p.x, p.z)
 		node.position = p
 		node.rotation_degrees.y = 90.0 if i == 0 else 0.0
-		world.fit_instance_to_size(node, 6.6 if i == 0 else 5.4)
+		world.fit_instance_to_size(node, 8.2 if i == 0 else 6.2)
 		node.name = "TownDetailedWarEdge_%02d" % i
 		world.add_child(node)
 		world.town_instance_count += 1
