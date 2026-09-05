@@ -10,7 +10,9 @@ const RIVER_HALF_WIDTH := 6.2
 
 var city_resource_paths: Array[String] = []
 var city_hd_resource_paths: Array[String] = []
+var city_hq_resource_paths: Array[String] = []
 var nature_resource_paths: Array[String] = []
+var nature_hq_resource_paths: Array[String] = []
 var town_instance_count: int = 0
 var tree_instance_count: int = 0
 var bridge_member_count: int = 0
@@ -35,7 +37,9 @@ var _shoulder_material: StandardMaterial3D
 func build() -> void:
 	city_resource_paths = _find_3d_resources("res://assets/golden_scene/city")
 	city_hd_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hd")
+	city_hq_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hq")
 	nature_resource_paths = _find_3d_resources("res://assets/golden_scene/nature")
+	nature_hq_resource_paths = _find_3d_resources("res://assets/golden_scene/nature_hq")
 	if city_resource_paths.is_empty():
 		push_error("Golden Scene requires vendored city assets; none were imported.")
 	if nature_resource_paths.is_empty():
@@ -562,7 +566,7 @@ func _build_town() -> void:
 				x += 3.6
 			positions.append(Vector3(x, 0, z))
 
-	for i: int in range(mini(positions.size(), 34)):
+	for i: int in range(mini(positions.size(), 27)):
 		var path := building_paths[i % building_paths.size()]
 		if not city_hd_resource_paths.is_empty() and i % 3 == 0:
 			path = city_hd_resource_paths[(i / 3) % city_hd_resource_paths.size()]
@@ -604,23 +608,37 @@ func _build_town() -> void:
 		add_child(landmark)
 		town_instance_count += 1
 
+	# Photo-textured CC0 urban pack forms the deep settlement mass. It is kept as
+	# authored multi-building geometry rather than reskinned into the old kit.
+	if not city_hq_resource_paths.is_empty():
+		var hq_pack := _instantiate_scene(city_hq_resource_paths[0])
+		if hq_pack != null:
+			fit_instance_to_size(hq_pack, 31.0)
+			hq_pack.position = Vector3(48.0, height_at(48.0, -15.0), -15.0)
+			hq_pack.rotation_degrees.y = -8.0
+			hq_pack.name = "TownHQUrbanBackdrop"
+			add_child(hq_pack)
+			town_instance_count += 1
+
 
 func _build_forests_and_hedgerows() -> void:
 	if nature_resource_paths.is_empty():
 		return
-	var tree_paths := _filter_paths(nature_resource_paths, ["tree", "trunk"])
+	var tree_paths := _filter_paths(nature_hq_resource_paths, ["tree", "Tree"])
+	if tree_paths.is_empty():
+		tree_paths = _filter_paths(nature_resource_paths, ["tree", "trunk"])
 	if tree_paths.is_empty():
 		tree_paths = nature_resource_paths.duplicate()
 
 	# Dense west/north ridge forest.
-	for i: int in range(76):
+	for i: int in range(88):
 		var t := float(i)
 		var x := -54.0 + fmod(t * 7.7, 37.0)
 		var z := -38.0 + fmod(t * 11.3, 28.0)
 		if i % 3 == 0:
 			x = 47.0 + fmod(t * 3.1, 14.0)
 			z = -40.0 + fmod(t * 8.9, 70.0)
-		_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 3.7 + float(i % 5) * 0.45, float((i * 41) % 360))
+		_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 4.6 + float(i % 5) * 0.55, float((i * 41) % 360))
 
 	var hedge_paths := _filter_paths(nature_resource_paths, ["bush", "plant", "fence"])
 	if hedge_paths.is_empty():
@@ -630,6 +648,13 @@ func _build_forests_and_hedgerows() -> void:
 			var x := -53.0 + float(i) * 4.5
 			var z := 11.0 + float(row) * 13.0
 			_add_nature_instance(hedge_paths[(row * 12 + i) % hedge_paths.size()], Vector3(x, 0, z), 1.8, 0.0)
+
+	# Distant tree screen adds scale/depth behind the defended settlement.
+	if not tree_paths.is_empty():
+		for i: int in range(26):
+			var x := 20.0 + float(i) * 2.15
+			var z := -44.0 + sin(float(i) * 1.37) * 4.5
+			_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 5.0 + float(i % 4) * 0.55, float((i * 53) % 360))
 
 
 func _add_nature_instance(path: String, p: Vector3, target_size: float, yaw: float) -> void:
@@ -654,15 +679,15 @@ func _build_camera() -> void:
 	camera = Camera3D.new()
 	camera.name = "GoldenTacticalCamera"
 	camera.current = true
-	camera.fov = 47.0
+	camera.fov = 45.5
 	camera.near = 0.15
 	camera.far = 260.0
 	# Golden Frame composition: BLUE foreground at lower-left, bridge on the
 	# central diagonal, dense town and RED contact beyond it. Roughly 46 degrees
 	# downward so terrain dominates instead of the horizon/sky.
-	camera.position = Vector3(-54.0, 38.0, 53.0)
+	camera.position = Vector3(-58.0, 44.0, 58.0)
 	add_child(camera)
-	camera.look_at(Vector3(14.0, 1.0, -3.0), Vector3.UP)
+	camera.look_at(Vector3(8.0, 0.8, 2.0), Vector3.UP)
 
 
 func _find_3d_resources(root: String) -> Array[String]:

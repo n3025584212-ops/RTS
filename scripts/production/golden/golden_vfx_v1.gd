@@ -67,7 +67,7 @@ func _build_materials() -> void:
 	for i: int in range(5):
 		_smoke_materials.append(
 			_soft_billboard_material(
-				Color(0.12 + float(i) * 0.020, 0.125 + float(i) * 0.020, 0.12 + float(i) * 0.018, 0.84 - float(i) * 0.045),
+				Color(0.18 + float(i) * 0.018, 0.185 + float(i) * 0.018, 0.18 + float(i) * 0.017, 0.78 - float(i) * 0.040),
 				0.0,
 				i + 3
 			)
@@ -114,12 +114,12 @@ func _add_smoke_column(base: Vector3, radius: float, height: float, puffs: int) 
 		puff.name = "BattleSmoke"
 		var quad := QuadMesh.new()
 		var scale_value := radius * (0.78 + t * 1.08) * (0.88 + 0.12 * sin(float(i) * 1.9))
-		quad.size = Vector2(scale_value * 3.65, scale_value * 2.70)
+		quad.size = Vector2(scale_value * 4.25, scale_value * 3.05)
 		puff.mesh = quad
 		var sway := Vector3(
-			sin(float(i) * 2.31) * radius * 0.50,
+			sin(float(i) * 2.31) * radius * 0.82,
 			t * height * 1.05,
-			cos(float(i) * 1.77) * radius * 0.42
+			cos(float(i) * 1.77) * radius * 0.66
 		)
 		puff.position = base + Vector3(0, 1.15, 0) + sway
 		puff.material_override = _smoke_materials[i % _smoke_materials.size()]
