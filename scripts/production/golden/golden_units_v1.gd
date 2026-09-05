@@ -1,7 +1,7 @@
 class_name GoldenUnitsV1
 extends Node3D
 
-const MBT_PATH := "res://assets/golden_scene/vehicles/mbt.glb"
+const MBT_PATH := "res://assets/golden_scene/vehicles/mbt_abrams.glb"
 const IFV_PATH := "res://assets/golden_scene/vehicles/ifv.glb"
 const SOLDIER_PATH := "res://assets/golden_scene/infantry/soldier.glb"
 
@@ -15,6 +15,9 @@ var _world: GoldenWorldV1
 var _blue_marker_material: StandardMaterial3D
 var _red_marker_material: StandardMaterial3D
 var _wreck_material: StandardMaterial3D
+var _friendly_vehicle_material: ShaderMaterial
+var _hostile_vehicle_material: ShaderMaterial
+var _infantry_material: StandardMaterial3D
 
 
 func build(world: GoldenWorldV1) -> void:
@@ -25,6 +28,15 @@ func build(world: GoldenWorldV1) -> void:
 	_wreck_material.albedo_color = Color(0.075, 0.068, 0.055)
 	_wreck_material.metallic = 0.48
 	_wreck_material.roughness = 0.82
+	_friendly_vehicle_material = _vehicle_camo_material(
+		Color(0.22, 0.27, 0.14), Color(0.11, 0.14, 0.075), Color(0.31, 0.27, 0.15)
+	)
+	_hostile_vehicle_material = _vehicle_camo_material(
+		Color(0.25, 0.22, 0.13), Color(0.12, 0.115, 0.075), Color(0.32, 0.30, 0.22)
+	)
+	_infantry_material = StandardMaterial3D.new()
+	_infantry_material.albedo_color = Color(0.19, 0.22, 0.13)
+	_infantry_material.roughness = 0.86
 
 	_require_model(MBT_PATH, "MBT")
 	_require_model(IFV_PATH, "IFV")
@@ -169,6 +181,10 @@ func _spawn_model(path: String, p: Vector3, target_size: float, yaw: float, node
 	p.y = _world.height_at(p.x, p.z) + 0.10
 	root.position = p
 	root.rotation_degrees.y = yaw
+	if path == MBT_PATH or path == IFV_PATH:
+		_override_mesh_materials(root, _hostile_vehicle_material if node_name.begins_with("RED_") else _friendly_vehicle_material)
+	elif path == SOLDIER_PATH:
+		_override_mesh_materials(root, _infantry_material)
 	add_child(root)
 	return root
 
@@ -247,6 +263,32 @@ func _override_mesh_materials(root: Node3D, material: Material) -> void:
 func _require_model(path: String, label: String) -> void:
 	if not ResourceLoader.exists(path):
 		push_error("Golden Scene missing required %s model at %s" % [label, path])
+
+
+func _vehicle_camo_material(c1: Color, c2: Color, c3: Color) -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+shader_type spatial;
+uniform vec3 camo_a : source_color;
+uniform vec3 camo_b : source_color;
+uniform vec3 camo_c : source_color;
+void fragment() {
+	float p1 = sin(VERTEX.x * 2.3 + VERTEX.z * 1.7);
+	float p2 = cos(VERTEX.z * 3.1 - VERTEX.y * 2.0);
+	vec3 color = mix(camo_a, camo_b, smoothstep(-0.18, 0.28, p1));
+	color = mix(color, camo_c, smoothstep(0.35, 0.72, p2) * 0.45);
+	ALBEDO = color;
+	METALLIC = 0.30;
+	ROUGHNESS = 0.58;
+	SPECULAR = 0.42;
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("camo_a", Vector3(c1.r, c1.g, c1.b))
+	material.set_shader_parameter("camo_b", Vector3(c2.r, c2.g, c2.b))
+	material.set_shader_parameter("camo_c", Vector3(c3.r, c3.g, c3.b))
+	return material
 
 
 func _emissive_material(color: Color, emission: Color, energy: float) -> StandardMaterial3D:

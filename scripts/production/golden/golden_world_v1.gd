@@ -16,7 +16,7 @@ var bridge_member_count: int = 0
 var road_segment_count: int = 0
 var camera: Camera3D
 
-var _terrain_material: StandardMaterial3D
+var _terrain_material: ShaderMaterial
 var _water_material: ShaderMaterial
 var _road_material: StandardMaterial3D
 var _dirt_road_material: StandardMaterial3D
@@ -27,6 +27,8 @@ var _field_material_b: ShaderMaterial
 var _foliage_materials: Array[StandardMaterial3D] = []
 var _rock_material: StandardMaterial3D
 var _building_materials: Array[StandardMaterial3D] = []
+var _bank_material: StandardMaterial3D
+var _shoulder_material: StandardMaterial3D
 
 
 func build() -> void:
@@ -81,13 +83,56 @@ func fit_instance_to_size(root: Node3D, target_max_dimension: float) -> float:
 
 
 func _build_materials() -> void:
-	_terrain_material = StandardMaterial3D.new()
-	_terrain_material.albedo_color = Color(0.225, 0.295, 0.135)
-	_terrain_material.vertex_color_use_as_albedo = false
-	_terrain_material.cull_mode = BaseMaterial3D.CULL_BACK
-	_terrain_material.metallic = 0.0
-	_terrain_material.roughness = 0.94
-	_terrain_material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	_terrain_material = ShaderMaterial.new()
+	var terrain_shader := Shader.new()
+	terrain_shader.code = """
+shader_type spatial;
+render_mode cull_back;
+uniform sampler2D grass_diff : source_color, repeat_enable;
+uniform sampler2D grass_nor : hint_normal, repeat_enable;
+uniform sampler2D dirt_diff : source_color, repeat_enable;
+uniform sampler2D dirt_nor : hint_normal, repeat_enable;
+uniform sampler2D mud_diff : source_color, repeat_enable;
+uniform sampler2D mud_nor : hint_normal, repeat_enable;
+varying vec3 world_pos;
+void vertex() {
+	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+}
+float hash21(vec2 p) {
+	p = fract(p * vec2(123.34, 456.21));
+	p += dot(p, p + 45.32);
+	return fract(p.x * p.y);
+}
+void fragment() {
+	vec2 uv = UV * 30.0;
+	float broad = hash21(floor(UV * 70.0));
+	float river = 1.0 - smoothstep(8.5, 19.0, abs(world_pos.x - 6.0));
+	float dry = smoothstep(0.28, 0.72, broad);
+	vec3 g = texture(grass_diff, uv).rgb;
+	vec3 d = texture(dirt_diff, uv * 0.82).rgb;
+	vec3 m = texture(mud_diff, uv * 0.65).rgb;
+	vec3 gn = texture(grass_nor, uv).rgb;
+	vec3 dn = texture(dirt_nor, uv * 0.82).rgb;
+	vec3 mn = texture(mud_nor, uv * 0.65).rgb;
+	float dirt_mix = clamp(dry * 0.42 + river * 0.30, 0.0, 0.72);
+	float mud_mix = river * 0.38;
+	vec3 base = mix(g, d, dirt_mix);
+	base = mix(base, m, mud_mix);
+	ALBEDO = base * vec3(0.78, 0.82, 0.70);
+	NORMAL_MAP = mix(mix(gn, dn, dirt_mix), mn, mud_mix);
+	NORMAL_MAP_DEPTH = 0.72;
+	ROUGHNESS = mix(0.93, 0.68, mud_mix);
+	METALLIC = 0.0;
+	SPECULAR = 0.30;
+}
+"""
+	_terrain_material.shader = terrain_shader
+	_terrain_material.set_shader_parameter("grass_diff", load("res://assets/golden_scene/pbr/grass_path_3_diff_1k.png"))
+	_terrain_material.set_shader_parameter("grass_nor", load("res://assets/golden_scene/pbr/grass_path_3_nor_gl_1k.png"))
+	_terrain_material.set_shader_parameter("dirt_diff", load("res://assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png"))
+	_terrain_material.set_shader_parameter("dirt_nor", load("res://assets/golden_scene/pbr/dirt_aerial_03_nor_gl_1k.png"))
+	_terrain_material.set_shader_parameter("mud_diff", load("res://assets/golden_scene/pbr/aerial_mud_1_diff_1k.png"))
+	_terrain_material.set_shader_parameter("mud_nor", load("res://assets/golden_scene/pbr/aerial_mud_1_nor_gl_1k.png"))
 
 	_water_material = ShaderMaterial.new()
 	var water_shader := Shader.new()
@@ -111,10 +156,12 @@ void fragment() {
 """
 	_water_material.shader = water_shader
 
-	_road_material = _standard_material(Color(0.155, 0.15, 0.135), 0.02, 0.88)
-	_dirt_road_material = _standard_material(Color(0.285, 0.225, 0.145), 0.0, 0.95)
-	_bridge_concrete = _standard_material(Color(0.35, 0.36, 0.34), 0.02, 0.72)
-	_bridge_steel = _standard_material(Color(0.19, 0.22, 0.20), 0.62, 0.38)
+	_road_material = _pbr_material("asphalt_02", Vector3(12.0, 12.0, 12.0), Color(0.72, 0.72, 0.70))
+	_dirt_road_material = _pbr_material("grass_path_3", Vector3(8.0, 8.0, 8.0), Color(0.72, 0.68, 0.56))
+	_shoulder_material = _pbr_material("gravel_ground_01", Vector3(9.0, 9.0, 9.0), Color(0.78, 0.73, 0.64))
+	_bank_material = _pbr_material("aerial_mud_1", Vector3(6.0, 6.0, 6.0), Color(0.70, 0.62, 0.48))
+	_bridge_concrete = _pbr_material("t_concrete_wall_002", Vector3(6.0, 6.0, 6.0), Color(0.62, 0.63, 0.60))
+	_bridge_steel = _standard_material(Color(0.13, 0.15, 0.14), 0.68, 0.34)
 
 	_field_material_a = _field_shader(Color(0.26, 0.33, 0.11), Color(0.15, 0.20, 0.065))
 	_field_material_b = _field_shader(Color(0.34, 0.28, 0.105), Color(0.19, 0.15, 0.055))
@@ -133,12 +180,10 @@ void fragment() {
 		_standard_material(Color(0.43, 0.36, 0.30), 0.0, 0.89),
 	]
 	_building_materials = [
-		_standard_material(Color(0.52, 0.46, 0.37), 0.0, 0.82),
-		_standard_material(Color(0.60, 0.57, 0.49), 0.0, 0.78),
-		_standard_material(Color(0.39, 0.38, 0.35), 0.02, 0.86),
-		_standard_material(Color(0.46, 0.31, 0.23), 0.0, 0.88),
-		_standard_material(Color(0.66, 0.61, 0.50), 0.0, 0.80),
-		_standard_material(Color(0.33, 0.36, 0.35), 0.02, 0.84),
+		_pbr_material("brick_wall_005", Vector3(3.2, 3.2, 3.2), Color(0.72, 0.62, 0.52)),
+		_pbr_material("t_concrete_wall_002", Vector3(3.0, 3.0, 3.0), Color(0.66, 0.67, 0.63)),
+		_pbr_material("brick_wall_005", Vector3(4.0, 4.0, 4.0), Color(0.54, 0.48, 0.43)),
+		_pbr_material("t_concrete_wall_002", Vector3(4.0, 4.0, 4.0), Color(0.50, 0.52, 0.50)),
 	]
 
 
@@ -148,24 +193,29 @@ func _build_environment() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
-	var procedural := ProceduralSkyMaterial.new()
-	procedural.sky_top_color = Color(0.18, 0.31, 0.43)
-	procedural.sky_horizon_color = Color(0.72, 0.72, 0.64)
-	procedural.ground_bottom_color = Color(0.08, 0.09, 0.075)
-	procedural.ground_horizon_color = Color(0.50, 0.50, 0.42)
-	procedural.sun_angle_max = 14.0
-	procedural.sun_curve = 0.08
-	sky.sky_material = procedural
+	var hdri := load("res://assets/golden_scene/hdri/kloppenheim_05_1k.hdr") as Texture2D
+	if hdri != null:
+		var panorama := PanoramaSkyMaterial.new()
+		panorama.panorama = hdri
+		panorama.energy_multiplier = 0.78
+		sky.sky_material = panorama
+	else:
+		var procedural := ProceduralSkyMaterial.new()
+		procedural.sky_top_color = Color(0.18, 0.31, 0.43)
+		procedural.sky_horizon_color = Color(0.72, 0.72, 0.64)
+		procedural.ground_bottom_color = Color(0.08, 0.09, 0.075)
+		procedural.ground_horizon_color = Color(0.50, 0.50, 0.42)
+		sky.sky_material = procedural
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.72
+	env.ambient_light_energy = 0.84
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.54, 0.58, 0.57)
 	env.fog_light_energy = 0.35
-	env.fog_density = 0.00065
+	env.fog_density = 0.0012
 	env.fog_height = 3.0
-	env.fog_height_density = 0.006
+	env.fog_height_density = 0.012
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env_node.environment = env
 	add_child(env_node)
@@ -306,12 +356,11 @@ func _build_water() -> void:
 	water.material_override = _water_material
 	add_child(water)
 
-	var bank_mat := _standard_material(Color(0.265, 0.225, 0.145), 0.0, 0.98)
 	for pair: Array in [["WestRiverBank", bank_st_w.commit()], ["EastRiverBank", bank_st_e.commit()]]:
 		var bank := MeshInstance3D.new()
 		bank.name = pair[0]
 		bank.mesh = pair[1]
-		bank.material_override = bank_mat
+		bank.material_override = _bank_material
 		add_child(bank)
 
 
@@ -382,6 +431,12 @@ func _build_roads() -> void:
 func _add_road_polyline(points: Array, width: float, material: Material, prefix: String) -> void:
 	if points.size() < 2:
 		return
+	if _shoulder_material != null and not prefix.contains("Shoulder"):
+		_add_road_ribbon(points, width + 1.5, _shoulder_material, prefix + "_Shoulder", 0.055)
+	_add_road_ribbon(points, width, material, prefix, 0.10)
+
+
+func _add_road_ribbon(points: Array, width: float, material: Material, prefix: String, lift: float) -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var lefts: Array[Vector3] = []
@@ -392,8 +447,8 @@ func _add_road_polyline(points: Array, width: float, material: Material, prefix:
 		var next: Vector3 = points[mini(points.size() - 1, i + 1)]
 		var tangent := Vector2(next.x - prev.x, next.z - prev.z).normalized()
 		var normal2 := Vector2(-tangent.y, tangent.x) * (width * 0.5)
-		var left := Vector3(p.x + normal2.x, height_at(p.x + normal2.x, p.z + normal2.y) + 0.10, p.z + normal2.y)
-		var right := Vector3(p.x - normal2.x, height_at(p.x - normal2.x, p.z - normal2.y) + 0.10, p.z - normal2.y)
+		var left := Vector3(p.x + normal2.x, height_at(p.x + normal2.x, p.z + normal2.y) + lift, p.z + normal2.y)
+		var right := Vector3(p.x - normal2.x, height_at(p.x - normal2.x, p.z - normal2.y) + lift, p.z - normal2.y)
 		lefts.append(left)
 		rights.append(right)
 	for i: int in range(points.size() - 1):
@@ -592,15 +647,15 @@ func _build_camera() -> void:
 	camera = Camera3D.new()
 	camera.name = "GoldenTacticalCamera"
 	camera.current = true
-	camera.fov = 44.0
+	camera.fov = 48.0
 	camera.near = 0.15
 	camera.far = 260.0
 	# Golden Frame composition: BLUE foreground at lower-left, bridge on the
 	# central diagonal, dense town and RED contact beyond it. Roughly 46 degrees
 	# downward so terrain dominates instead of the horizon/sky.
-	camera.position = Vector3(-56.0, 58.0, 58.0)
+	camera.position = Vector3(-62.0, 47.0, 62.0)
 	add_child(camera)
-	camera.look_at(Vector3(11.0, 1.0, -3.0), Vector3.UP)
+	camera.look_at(Vector3(12.0, 0.8, -2.0), Vector3.UP)
 
 
 func _find_3d_resources(root: String) -> Array[String]:
@@ -664,6 +719,18 @@ func _standard_material(color: Color, metallic: float, roughness: float) -> Stan
 	material.albedo_color = color
 	material.metallic = metallic
 	material.roughness = roughness
+	return material
+
+
+func _pbr_material(asset_id: String, tile: Vector3, tint: Color) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = tint
+	material.albedo_texture = load("res://assets/golden_scene/pbr/%s_diff_1k.png" % asset_id)
+	material.normal_enabled = true
+	material.normal_texture = load("res://assets/golden_scene/pbr/%s_nor_gl_1k.png" % asset_id)
+	material.roughness = 0.82
+	material.uv1_scale = tile
+	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	return material
 
 
