@@ -49,9 +49,10 @@ func _build_blue_armored_column() -> void:
 	]
 	for i: int in range(mbt_positions.size()):
 		var p: Vector3 = mbt_positions[i]
-		var unit := _spawn_model(MBT_PATH, p, 7.0, -8.0 + float(i) * 2.0, "BLUE_MBT_%02d" % i)
+		var unit := _spawn_model(MBT_PATH, p, 8.0, -8.0 + float(i) * 2.0, "BLUE_MBT_%02d" % i)
 		if unit != null:
-			_add_tactical_marker(unit.position + Vector3(0, 3.6, 0), "▲ 1-%d  MBT" % (i + 1), true)
+			if i == 2:
+				_add_tactical_marker(unit.position + Vector3(0, 3.2, 0), "1-1 ARMOR", true)
 			physical_vehicle_count += 1
 
 	var ifv_positions := [
@@ -60,9 +61,10 @@ func _build_blue_armored_column() -> void:
 	]
 	for i: int in range(ifv_positions.size()):
 		var p: Vector3 = ifv_positions[i]
-		var unit := _spawn_model(IFV_PATH, p, 6.5, -12.0 + float(i) * 3.0, "BLUE_IFV_%02d" % i)
+		var unit := _spawn_model(IFV_PATH, p, 7.2, -12.0 + float(i) * 3.0, "BLUE_IFV_%02d" % i)
 		if unit != null:
-			_add_tactical_marker(unit.position + Vector3(0, 3.4, 0), "◆ 2-%d  IFV" % (i + 1), true)
+			if i == 1:
+				_add_tactical_marker(unit.position + Vector3(0, 3.0, 0), "2-1 IFV", true)
 			physical_vehicle_count += 1
 
 
@@ -73,12 +75,12 @@ func _build_blue_infantry() -> void:
 			var lateral := float(soldier % 3) * 1.45 - 1.45
 			var depth := float(soldier / 3) * 1.65
 			var p := squad_origin + Vector3(lateral, 0.0, depth)
-			var unit := _spawn_model(SOLDIER_PATH, p, 1.82, 172.0 + float(soldier * 5), "BLUE_INF_%d_%d" % [squad, soldier])
+			var unit := _spawn_model(SOLDIER_PATH, p, 1.95, 172.0 + float(soldier * 5), "BLUE_INF_%d_%d" % [squad, soldier])
 			if unit != null:
 				physical_infantry_count += 1
 		_add_tactical_marker(
 			Vector3(squad_origin.x, _world.height_at(squad_origin.x, squad_origin.z) + 3.0, squad_origin.z),
-			"● MECH INF %d" % (squad + 1),
+			"MECH %d" % (squad + 1),
 			true
 		)
 
@@ -88,30 +90,32 @@ func _build_red_defenders() -> void:
 		Vector3(30, 0, -8), Vector3(39, 0, -5), Vector3(48, 0, -9)
 	]
 	for i: int in range(red_mbt_positions.size()):
-		var unit := _spawn_model(MBT_PATH, red_mbt_positions[i], 6.8, 165.0 + float(i) * 4.0, "RED_MBT_%02d" % i)
+		var unit := _spawn_model(MBT_PATH, red_mbt_positions[i], 7.8, 165.0 + float(i) * 4.0, "RED_MBT_%02d" % i)
 		if unit != null:
-			_add_tactical_marker(unit.position + Vector3(0, 3.6, 0), "▼ ENY ARMOR", false)
+			if i == 1:
+				_add_tactical_marker(unit.position + Vector3(0, 3.1, 0), "ENY ARMOR", false)
 			physical_vehicle_count += 1
 
 	var red_ifv_positions := [
 		Vector3(24, 0, -18), Vector3(43, 0, 12)
 	]
 	for i: int in range(red_ifv_positions.size()):
-		var unit := _spawn_model(IFV_PATH, red_ifv_positions[i], 6.3, 178.0 - float(i) * 10.0, "RED_IFV_%02d" % i)
+		var unit := _spawn_model(IFV_PATH, red_ifv_positions[i], 7.0, 178.0 - float(i) * 10.0, "RED_IFV_%02d" % i)
 		if unit != null:
-			_add_tactical_marker(unit.position + Vector3(0, 3.3, 0), "▼ ENY IFV", false)
+			if i == 0:
+				_add_tactical_marker(unit.position + Vector3(0, 3.0, 0), "ENY IFV", false)
 			physical_vehicle_count += 1
 
 	for squad: int in range(2):
 		var origin := Vector3(28.0 + float(squad) * 13.0, 0.0, 16.0 - float(squad) * 26.0)
 		for soldier: int in range(5):
 			var p := origin + Vector3(float(soldier % 3) * 1.25, 0, float(soldier / 3) * 1.45)
-			var unit := _spawn_model(SOLDIER_PATH, p, 1.78, -8.0 + float(soldier * 7), "RED_INF_%d_%d" % [squad, soldier])
+			var unit := _spawn_model(SOLDIER_PATH, p, 1.92, -8.0 + float(soldier * 7), "RED_INF_%d_%d" % [squad, soldier])
 			if unit != null:
 				physical_infantry_count += 1
 		_add_tactical_marker(
 			Vector3(origin.x, _world.height_at(origin.x, origin.z) + 3.0, origin.z),
-			"▼ ENY INF",
+			"ENY INF",
 			false
 		)
 
@@ -132,9 +136,9 @@ func _build_wreck_history() -> void:
 
 
 func _build_routes_and_objective_markers() -> void:
-	_add_world_label(Vector3(6.0, 7.5, 0.0), "A  BRIDGE", Color(0.25, 0.72, 1.0), 30)
-	_add_world_label(Vector3(34.0, 10.5, -2.0), "C  RIVER TOWN", Color(1.0, 0.32, 0.20), 28)
-	_add_world_label(Vector3(-36.0, 12.0, -19.0), "B  RIDGE", Color(0.25, 0.72, 1.0), 27)
+	_add_world_label(Vector3(6.0, 5.3, 0.0), "A • BRIDGE", Color(0.25, 0.72, 1.0), 15)
+	_add_world_label(Vector3(34.0, 7.0, -2.0), "C • RIVER TOWN", Color(1.0, 0.32, 0.20), 14)
+	_add_world_label(Vector3(-36.0, 8.0, -19.0), "B • RIDGE", Color(0.25, 0.72, 1.0), 14)
 
 	var route_mat := _transparent_emissive(Color(0.10, 0.52, 1.0, 0.65), 1.4)
 	var route := [
@@ -171,25 +175,25 @@ func _add_tactical_marker(p: Vector3, text_value: String, friendly: bool) -> voi
 	var ring := MeshInstance3D.new()
 	ring.name = "FriendlyMarker" if friendly else "HostileMarker"
 	var torus := TorusMesh.new()
-	torus.inner_radius = 0.62
-	torus.outer_radius = 0.76
+	torus.inner_radius = 0.42
+	torus.outer_radius = 0.53
 	torus.rings = 24
 	torus.ring_segments = 8
 	ring.mesh = torus
-	ring.position = Vector3(p.x, p.y - 2.9, p.z)
+	ring.position = Vector3(p.x, p.y - 2.65, p.z)
 	ring.material_override = _blue_marker_material if friendly else _red_marker_material
 	add_child(ring)
 
 	var label := Label3D.new()
 	label.text = text_value
-	label.font_size = 32
-	label.outline_size = 7
+	label.font_size = 13
+	label.outline_size = 3
 	label.modulate = Color(0.45, 0.78, 1.0) if friendly else Color(1.0, 0.42, 0.30)
 	label.position = p
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
 	label.fixed_size = true
-	label.pixel_size = 0.0036
+	label.pixel_size = 0.0020
 	add_child(label)
 
 	if friendly:
@@ -202,13 +206,13 @@ func _add_world_label(p: Vector3, text_value: String, color: Color, font_size: i
 	var label := Label3D.new()
 	label.text = text_value
 	label.font_size = font_size
-	label.outline_size = 8
+	label.outline_size = 3
 	label.modulate = color
 	label.position = p
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
 	label.fixed_size = true
-	label.pixel_size = 0.0038
+	label.pixel_size = 0.0020
 	add_child(label)
 
 
