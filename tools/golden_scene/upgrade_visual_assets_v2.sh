@@ -33,7 +33,10 @@ download_pbr aerial_mud_1
 download_pbr asphalt_02
 download_pbr gravel_ground_01
 download_pbr brick_wall_005
-download_pbr t_concrete_wall_002
+# This Poly Haven asset uses "diffuse" rather than "diff" in its source filename.
+fetch "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/t_concrete_wall_002/t_concrete_wall_002_diffuse_1k.png" "$OUT/pbr/t_concrete_wall_002_diff_1k.png"
+fetch "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/t_concrete_wall_002/t_concrete_wall_002_nor_gl_1k.png" "$OUT/pbr/t_concrete_wall_002_nor_gl_1k.png"
+fetch "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/t_concrete_wall_002/t_concrete_wall_002_arm_1k.png" "$OUT/pbr/t_concrete_wall_002_arm_1k.png"
 
 # CC0 Abrams model by Sketlux, OpenGameArt.
 fetch "https://opengameart.org/sites/default/files/abrams-tank.blend" "$TMP/abrams-tank.blend"
