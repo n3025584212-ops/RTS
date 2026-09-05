@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/production/golden_scene_v1.gd" id="1_root"]
 [ext_resource type="Script" path="res://scripts/production/golden/golden_world_v17.gd" id="2_world"]
 [ext_resource type="Script" path="res://scripts/production/golden/golden_units_v1.gd" id="3_units"]
-[ext_resource type="Script" path="res://scripts/production/golden/golden_vfx_v18.gd" id="4_vfx"]
+[ext_resource type="Script" path="res://scripts/production/golden/golden_vfx_v20.gd" id="4_vfx"]
 [ext_resource type="Script" path="res://scripts/production/golden/golden_hud_v1.gd" id="5_hud"]
 
 [node name="GoldenSceneV1" type="Node3D"]
