@@ -1,16 +1,17 @@
 class_name GoldenWorldV1
 extends Node3D
 
-const MAP_X_MIN := -96.0
-const MAP_X_MAX := 96.0
-const MAP_Z_MIN := -72.0
-const MAP_Z_MAX := 72.0
+const MAP_X_MIN := -132.0
+const MAP_X_MAX := 148.0
+const MAP_Z_MIN := -108.0
+const MAP_Z_MAX := 104.0
 const RIVER_X := 6.0
 const RIVER_HALF_WIDTH := 6.2
 
 var city_resource_paths: Array[String] = []
 var city_hd_resource_paths: Array[String] = []
 var city_hq_resource_paths: Array[String] = []
+var city_hq3_resource_paths: Array[String] = []
 var nature_resource_paths: Array[String] = []
 var nature_hq_resource_paths: Array[String] = []
 var town_instance_count: int = 0
@@ -38,6 +39,7 @@ func build() -> void:
 	city_resource_paths = _find_3d_resources("res://assets/golden_scene/city")
 	city_hd_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hd")
 	city_hq_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hq")
+	city_hq3_resource_paths = _find_3d_resources("res://assets/golden_scene/city_hq3")
 	nature_resource_paths = _find_3d_resources("res://assets/golden_scene/nature")
 	nature_hq_resource_paths = _find_3d_resources("res://assets/golden_scene/nature_hq")
 	if city_resource_paths.is_empty():
@@ -67,9 +69,11 @@ func height_at(x: float, z: float) -> float:
 	var west_ridge := 6.5 * exp(-pow((x + 37.0) / 19.0, 2.0) - pow((z + 18.0) / 17.0, 2.0))
 	var north_hills := 3.0 * exp(-pow((x - 4.0) / 34.0, 2.0) - pow((z + 39.0) / 13.0, 2.0))
 	var east_rise := 2.4 * exp(-pow((x - 52.0) / 17.0, 2.0) - pow((z + 19.0) / 26.0, 2.0))
+	var distant_ridge := 5.2 * exp(-pow((z + 82.0) / 25.0, 2.0)) * (0.78 + 0.22 * cos(x * 0.043))
+	var far_east_hill := 3.4 * exp(-pow((x - 78.0) / 35.0, 2.0) - pow((z + 62.0) / 31.0, 2.0))
 	var river_cut := 4.9 * exp(-pow((x - RIVER_X) / 6.8, 2.0))
 	var floodplain := 0.9 * exp(-pow((x - RIVER_X) / 13.0, 2.0))
-	return rolling + west_ridge + north_hills + east_rise - river_cut - floodplain
+	return rolling + west_ridge + north_hills + east_rise + distant_ridge + far_east_hill - river_cut - floodplain
 
 
 func fit_instance_to_size(root: Node3D, target_max_dimension: float) -> float:
@@ -128,6 +132,8 @@ void fragment() {
 	float mud_mix = river * 0.18;
 	vec3 base = mix(g, d, dirt_mix);
 	base = mix(base, m, mud_mix);
+	float far_mix = smoothstep(48.0, 105.0, -world_pos.z);
+	base = mix(base, vec3(0.22, 0.245, 0.19), far_mix * 0.42);
 	ALBEDO = base;
 	NORMAL_MAP = mix(mix(gn, dn, dirt_mix), mn, mud_mix);
 	NORMAL_MAP_DEPTH = 0.22;
@@ -231,8 +237,8 @@ func _build_environment() -> void:
 func _build_terrain() -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var nx := 81
-	var nz := 57
+	var nx := 109
+	var nz := 83
 	var dx := (MAP_X_MAX - MAP_X_MIN) / float(nx - 1)
 	var dz := (MAP_Z_MAX - MAP_Z_MIN) / float(nz - 1)
 
@@ -566,7 +572,7 @@ func _build_town() -> void:
 				x += 3.6
 			positions.append(Vector3(x, 0, z))
 
-	for i: int in range(mini(positions.size(), 25)):
+	for i: int in range(mini(positions.size(), 16)):
 		var path := building_paths[i % building_paths.size()]
 		var instance := _instantiate_scene(path)
 		if instance == null:
@@ -595,10 +601,10 @@ func _build_town() -> void:
 	var landmark_path: String = landmark_paths[0] if not landmark_paths.is_empty() else building_paths[0]
 	var landmark := _instantiate_scene(landmark_path)
 	if landmark != null:
-		fit_instance_to_size(landmark, 12.0)
+		fit_instance_to_size(landmark, 14.0)
 		if not _building_materials.is_empty():
 			_override_materials(landmark, _building_materials[0])
-		landmark.position = Vector3(39.0, height_at(39.0, -23.0), -23.0)
+		landmark.position = Vector3(40.0, height_at(40.0, -31.0), -31.0)
 		landmark.rotation_degrees.y = -18.0
 		landmark.name = "TownLandmarkTower"
 		add_child(landmark)
@@ -623,6 +629,28 @@ func _build_town() -> void:
 			fit_instance_to_size(shop, 4.4 + float(i % 3) * 0.45)
 			shop.name = "TownPhotoShop_%02d" % i
 			add_child(shop)
+			town_instance_count += 1
+
+	# V10: Pack 3 contributes full photo-derived urban buildings with normals.
+	# A curated set occupies the high-visibility core; source materials are kept.
+	if not city_hq3_resource_paths.is_empty():
+		var core_positions: Array[Vector3] = [
+			Vector3(23.0, 0, -20.0), Vector3(33.0, 0, -18.0),
+			Vector3(45.0, 0, -18.5), Vector3(53.0, 0, -10.0),
+			Vector3(22.0, 0, 11.0), Vector3(48.0, 0, 12.0)
+		]
+		for i: int in range(core_positions.size()):
+			var path := city_hq3_resource_paths[i % city_hq3_resource_paths.size()]
+			var building := _instantiate_scene(path)
+			if building == null:
+				continue
+			var p := core_positions[i]
+			p.y = height_at(p.x, p.z)
+			building.position = p
+			building.rotation_degrees.y = 90.0 if i in [1, 4] else 0.0
+			fit_instance_to_size(building, 7.2 + float(i % 3) * 1.15)
+			building.name = "TownHQ3_%02d" % i
+			add_child(building)
 			town_instance_count += 1
 
 
@@ -691,7 +719,7 @@ func _build_camera() -> void:
 	camera.current = true
 	camera.fov = 44.5
 	camera.near = 0.15
-	camera.far = 260.0
+	camera.far = 360.0
 	# Golden Frame composition: BLUE foreground at lower-left, bridge on the
 	# central diagonal, dense town and RED contact beyond it. Roughly 46 degrees
 	# downward so terrain dominates instead of the horizon/sky.
