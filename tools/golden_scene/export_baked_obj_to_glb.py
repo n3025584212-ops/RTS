@@ -26,11 +26,22 @@ def texture_from_obj(obj_path):
     for root,_,files in os.walk(base):
         for name in files:
             low=name.lower()
-            if low.endswith((".png",".jpg",".jpeg")):
-                score=(100 if stem in low else 0)+(40 if "baked" in low else 0)
-                imgs.append((-score,os.path.join(root,name)))
+            if not low.endswith((".png",".jpg",".jpeg")):
+                continue
+            score=0
+            if stem in low:
+                score+=120
+            if "baked" in low:
+                score+=70
+            if any(token in low for token in ("diff","albedo","basecolor","base_color","color","colour","texture","tex_")):
+                score+=110
+            if any(token in low for token in ("ao_","_ao","ambient","normal","_nor","rough","metal","spec","height","disp")):
+                score-=220
+            imgs.append((-score,os.path.join(root,name),score))
     imgs.sort()
-    return imgs[0][1] if imgs else None
+    for item in imgs[:12]:
+        print("FRONTLINE_V20_TEXTURE_CANDIDATE",item[2],item[1])
+    return imgs[0][1] if imgs and imgs[0][2] > 0 else None
 
 ap=argparse.ArgumentParser()
 ap.add_argument("--source",required=True)
