@@ -108,9 +108,13 @@ void fragment() {
 	float broad = hash21(floor(UV * 34.0));
 	float river = 1.0 - smoothstep(8.5, 19.0, abs(world_pos.x - 6.0));
 	float dry = smoothstep(0.28, 0.72, broad);
-	vec3 g = texture(grass_diff, uv).rgb;
-	vec3 d = texture(dirt_diff, uv * 0.82).rgb;
-	vec3 m = texture(mud_diff, uv * 0.65).rgb;
+	vec3 g_tex = texture(grass_diff, uv).rgb;
+	vec3 d_tex = texture(dirt_diff, uv * 0.72).rgb;
+	vec3 m_tex = texture(mud_diff, uv * 0.58).rgb;
+	vec3 grass_macro = mix(vec3(0.13, 0.225, 0.075), vec3(0.205, 0.31, 0.115), broad);
+	vec3 g = mix(grass_macro, g_tex, 0.20);
+	vec3 d = mix(vec3(0.225, 0.175, 0.105), d_tex, 0.30);
+	vec3 m = mix(vec3(0.18, 0.145, 0.095), m_tex, 0.34);
 	vec3 gn = texture(grass_nor, uv).rgb;
 	vec3 dn = texture(dirt_nor, uv * 0.82).rgb;
 	vec3 mn = texture(mud_nor, uv * 0.65).rgb;
@@ -118,11 +122,9 @@ void fragment() {
 	float mud_mix = river * 0.18;
 	vec3 base = mix(g, d, dirt_mix);
 	base = mix(base, m, mud_mix);
-	vec3 broad_green = vec3(0.17, 0.255, 0.105);
-	base = mix(base, broad_green, 0.18);
-	ALBEDO = base * vec3(0.86, 0.91, 0.82);
+	ALBEDO = base;
 	NORMAL_MAP = mix(mix(gn, dn, dirt_mix), mn, mud_mix);
-	NORMAL_MAP_DEPTH = 0.30;
+	NORMAL_MAP_DEPTH = 0.22;
 	ROUGHNESS = mix(0.93, 0.68, mud_mix);
 	METALLIC = 0.0;
 	SPECULAR = 0.30;
@@ -175,9 +177,10 @@ void fragment() {
 	]
 	_rock_material = _standard_material(Color(0.28, 0.27, 0.235), 0.02, 0.92)
 	_building_materials = [
-		_pbr_material("t_concrete_wall_002", Vector3(1.25, 1.25, 1.25), Color(0.66, 0.66, 0.61)),
-		_pbr_material("t_concrete_wall_002", Vector3(1.55, 1.55, 1.55), Color(0.49, 0.51, 0.49)),
-		_pbr_material("brick_wall_005", Vector3(1.25, 1.25, 1.25), Color(0.44, 0.38, 0.34)),
+		_surface_detail_material("t_concrete_wall_002", Color(0.46, 0.47, 0.43), 0.22),
+		_surface_detail_material("t_concrete_wall_002", Color(0.58, 0.55, 0.48), 0.20),
+		_surface_detail_material("brick_wall_005", Color(0.40, 0.31, 0.25), 0.20),
+		_surface_detail_material("t_concrete_wall_002", Color(0.36, 0.385, 0.38), 0.18),
 	]
 
 
@@ -187,39 +190,34 @@ func _build_environment() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
-	var hdri := load("res://assets/golden_scene/hdri/hochsal_field_1k.hdr") as Texture2D
-	if hdri != null:
-		var panorama := PanoramaSkyMaterial.new()
-		panorama.panorama = hdri
-		panorama.energy_multiplier = 0.92
-		sky.sky_material = panorama
-	else:
-		var procedural := ProceduralSkyMaterial.new()
-		procedural.sky_top_color = Color(0.18, 0.31, 0.43)
-		procedural.sky_horizon_color = Color(0.72, 0.72, 0.64)
-		procedural.ground_bottom_color = Color(0.08, 0.09, 0.075)
-		procedural.ground_horizon_color = Color(0.50, 0.50, 0.42)
-		sky.sky_material = procedural
+	var procedural := ProceduralSkyMaterial.new()
+	procedural.sky_top_color = Color(0.14, 0.285, 0.43)
+	procedural.sky_horizon_color = Color(0.62, 0.69, 0.72)
+	procedural.ground_bottom_color = Color(0.075, 0.085, 0.065)
+	procedural.ground_horizon_color = Color(0.34, 0.38, 0.31)
+	procedural.sun_angle_max = 10.0
+	procedural.sun_curve = 0.08
+	sky.sky_material = procedural
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.72
+	env.ambient_light_energy = 0.78
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.54, 0.58, 0.57)
 	env.fog_light_energy = 0.24
-	env.fog_density = 0.00075
+	env.fog_density = 0.00055
 	env.fog_height = 3.0
-	env.fog_height_density = 0.010
-	env.fog_sky_affect = 0.04
+	env.fog_height_density = 0.007
+	env.fog_sky_affect = 0.015
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env_node.environment = env
 	add_child(env_node)
 
 	var sun := DirectionalLight3D.new()
 	sun.name = "MorningSun"
-	sun.rotation_degrees = Vector3(-46.0, -32.0, 0.0)
+	sun.rotation_degrees = Vector3(-43.0, -38.0, 0.0)
 	sun.light_color = Color(1.0, 0.965, 0.90)
-	sun.light_energy = 1.08
+	sun.light_energy = 1.16
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 180.0
 	add_child(sun)
@@ -561,14 +559,17 @@ func _build_town() -> void:
 	# leave real gaps through the settlement rather than creating one asset wall.
 	var positions: Array[Vector3] = []
 	for row: int in range(5):
-		for col: int in range(6):
-			var x := 18.0 + float(col) * 6.1 + float(row % 2) * 1.0
-			var z := -22.0 + float(row) * 9.2
-			if absf(z) < 3.2:
-				z += 4.6
+		for col: int in range(7):
+			var x := 17.0 + float(col) * 5.9 + sin(float(row * 7 + col) * 1.17) * 1.15
+			var z := -23.5 + float(row) * 9.8 + cos(float(col * 5 + row) * 0.91) * 1.20
+			# Preserve the east-west main street and a north-south town spine.
+			if absf(z + 5.8) < 2.0:
+				z += 3.8
+			if absf(x - 33.0) < 2.3:
+				x += 3.6
 			positions.append(Vector3(x, 0, z))
 
-	for i: int in range(mini(positions.size(), 30)):
+	for i: int in range(mini(positions.size(), 34)):
 		var path := building_paths[i % building_paths.size()]
 		var instance := _instantiate_scene(path)
 		if instance == null:
@@ -576,12 +577,11 @@ func _build_town() -> void:
 		var pos := positions[i]
 		pos.y = height_at(pos.x, pos.z)
 		instance.position = pos
-		instance.rotation_degrees.y = float((i * 47 + (i % 3) * 11) % 180)
-		fit_instance_to_size(instance, 5.0 + float(i % 4) * 0.60)
-		# Preserve the imported kit material on half of the town. Concrete is the
-		# dominant override; brick is limited to a minority to avoid tiled-wall repetition.
-		if not _building_materials.is_empty() and i % 2 == 0:
-			var building_material_index := 2 if i % 6 == 0 else (i / 2) % 2
+		var street_yaw := 0.0 if i % 3 != 0 else 90.0
+		instance.rotation_degrees.y = street_yaw + sin(float(i) * 1.71) * 7.0
+		fit_instance_to_size(instance, 4.8 + float(i % 5) * 0.58)
+		if not _building_materials.is_empty():
+			var building_material_index := 2 if i % 7 == 0 else [0, 1, 3][i % 3]
 			_override_materials(instance, _building_materials[building_material_index])
 		instance.name = "TownBuilding_%02d" % i
 		add_child(instance)
@@ -723,6 +723,36 @@ func _standard_material(color: Color, metallic: float, roughness: float) -> Stan
 	material.albedo_color = color
 	material.metallic = metallic
 	material.roughness = roughness
+	return material
+
+
+func _surface_detail_material(asset_id: String, base_color: Color, detail_strength: float) -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+shader_type spatial;
+uniform sampler2D detail_diff : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D detail_nor : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform vec3 base_color : source_color;
+uniform float detail_strength = 0.2;
+void fragment() {
+	vec2 uv = UV * 1.6;
+	vec3 tex = texture(detail_diff, uv).rgb;
+	float l = dot(tex, vec3(0.2126, 0.7152, 0.0722));
+	vec3 normalized_detail = mix(vec3(l), tex, 0.45);
+	ALBEDO = mix(base_color, normalized_detail * base_color * 1.75, detail_strength);
+	NORMAL_MAP = texture(detail_nor, uv).rgb;
+	NORMAL_MAP_DEPTH = 0.18;
+	ROUGHNESS = 0.84;
+	METALLIC = 0.0;
+	SPECULAR = 0.28;
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("detail_diff", load("res://assets/golden_scene/pbr/%s_diff_1k.png" % asset_id))
+	material.set_shader_parameter("detail_nor", load("res://assets/golden_scene/pbr/%s_nor_gl_1k.png" % asset_id))
+	material.set_shader_parameter("base_color", Vector3(base_color.r, base_color.g, base_color.b))
+	material.set_shader_parameter("detail_strength", detail_strength)
 	return material
 
 
