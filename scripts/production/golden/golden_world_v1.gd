@@ -84,7 +84,7 @@ func _build_materials() -> void:
 	_terrain_material = StandardMaterial3D.new()
 	_terrain_material.albedo_color = Color(0.19, 0.255, 0.115)
 	_terrain_material.vertex_color_use_as_albedo = false
-	_terrain_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_terrain_material.cull_mode = BaseMaterial3D.CULL_BACK
 	_terrain_material.metallic = 0.0
 	_terrain_material.roughness = 0.94
 	_terrain_material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
@@ -199,12 +199,14 @@ func _build_terrain() -> void:
 			var p01 := Vector3(x0, height_at(x0, z1), z1)
 			var p10 := Vector3(x1, height_at(x1, z0), z0)
 			var p11 := Vector3(x1, height_at(x1, z1), z1)
+			# Godot front faces use clockwise winding. Keep the valley top surface
+			# front-facing so lighting, shadows and PBR material read correctly.
 			_add_terrain_vertex(st, p00)
-			_add_terrain_vertex(st, p01)
-			_add_terrain_vertex(st, p10)
 			_add_terrain_vertex(st, p10)
 			_add_terrain_vertex(st, p01)
+			_add_terrain_vertex(st, p10)
 			_add_terrain_vertex(st, p11)
+			_add_terrain_vertex(st, p01)
 
 	var mesh := st.commit()
 	var terrain := MeshInstance3D.new()
