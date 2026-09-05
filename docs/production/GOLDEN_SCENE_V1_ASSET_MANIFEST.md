@@ -91,3 +91,11 @@ The Golden Scene implementation must be judged visually against the approved riv
 - Field count increases from six to twelve with three crop/soil palettes, creating visible parcel structure on both sides of the river.
 - Conservative non-volumetric depth fog is enabled only on the proven BG_COLOR Compatibility environment; no HDRI/panorama fog chain is restored.
 - Wrecks, smoke and fires are repositioned onto the bridgehead and visible town streets. Two real houses receive darker burn-state PBR materials to strengthen battle-history readability without primitive damage proxies.
+
+
+## Runtime visual iteration V15
+- Adds Poly Haven `Pine Tree 01` as a CC0 photoreal-source vegetation family using the public Poly Haven API. The source glTF is converted in CI to a bounded ~110k-triangle GLB for Godot rather than using the source's full 17M-triangle mesh.
+- Only nine real-tree instances occupy camera-visible midground zones; existing lightweight pines are pushed to far ridges/backdrop to cap renderer cost.
+- Real-tree mesh surfaces receive explicit bark vs foliage materials in Godot so missing source textures cannot create white geometry.
+- Four additional real-house instances strengthen the right-side river-town density without reintroducing apartment towers or Pack 3 signage.
+- V14 depth fog is reduced to preserve contrast after actual-frame review while retaining aerial separation.

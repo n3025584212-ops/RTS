@@ -15,6 +15,7 @@ var city_hq3_resource_paths: Array[String] = []
 var city_real_resource_paths: Array[String] = []
 var nature_resource_paths: Array[String] = []
 var nature_hq_resource_paths: Array[String] = []
+var nature_real_resource_paths: Array[String] = []
 var town_instance_count: int = 0
 var tree_instance_count: int = 0
 var bridge_member_count: int = 0
@@ -36,6 +37,8 @@ var _building_materials: Array[Material] = []
 var _roof_materials: Array[Material] = []
 var _trim_material: Material
 var _church_wall_material: Material
+var _real_tree_bark_material: Material
+var _real_tree_leaf_material: Material
 var _bank_material: StandardMaterial3D
 var _shoulder_material: StandardMaterial3D
 
@@ -48,6 +51,7 @@ func build() -> void:
 	city_real_resource_paths = _find_3d_resources("res://assets/golden_scene/city_real")
 	nature_resource_paths = _find_3d_resources("res://assets/golden_scene/nature")
 	nature_hq_resource_paths = _find_3d_resources("res://assets/golden_scene/nature_hq")
+	nature_real_resource_paths = _find_3d_resources("res://assets/golden_scene/nature_real")
 	if city_resource_paths.is_empty():
 		push_error("Golden Scene requires vendored city assets; none were imported.")
 	if nature_resource_paths.is_empty():
@@ -208,6 +212,8 @@ void fragment() {
 	]
 	_trim_material = _standard_material(Color(0.16, 0.17, 0.16), 0.02, 0.74)
 	_church_wall_material = _surface_detail_material("t_concrete_wall_002", Color(0.56, 0.52, 0.43), 0.24)
+	_real_tree_bark_material = _surface_detail_material("t_concrete_wall_002", Color(0.17, 0.12, 0.075), 0.10)
+	_real_tree_leaf_material = _standard_material(Color(0.075, 0.115, 0.052), 0.0, 0.94)
 
 
 func _build_environment() -> void:
@@ -230,9 +236,9 @@ func _build_environment() -> void:
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.43, 0.49, 0.50)
 	env.fog_light_energy = 0.72
-	env.fog_density = 0.0026
+	env.fog_density = 0.0018
 	env.fog_height = 5.0
-	env.fog_height_density = 0.018
+	env.fog_height_density = 0.012
 	env.fog_aerial_perspective = 0.18
 	env.fog_sky_affect = 0.10
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
@@ -671,7 +677,9 @@ func _build_town() -> void:
 			Vector3(28.0, 0, -25.0), Vector3(39.0, 0, -24.0), Vector3(65.0, 0, -22.0),
 			Vector3(29.0, 0, -12.0), Vector3(48.0, 0, -13.0), Vector3(67.0, 0, -10.0),
 			Vector3(28.0, 0, 8.0), Vector3(43.0, 0, 10.0), Vector3(60.0, 0, 11.0),
-			Vector3(72.0, 0, 18.0), Vector3(36.0, 0, 23.0), Vector3(54.0, 0, 24.0)
+			Vector3(72.0, 0, 18.0), Vector3(36.0, 0, 23.0), Vector3(54.0, 0, 24.0),
+			Vector3(76.0, 0, -15.0), Vector3(68.0, 0, 3.0), Vector3(47.0, 0, 27.0),
+			Vector3(82.0, 0, 7.0)
 		]
 		for i: int in range(house_positions.size()):
 			var house := _instantiate_scene(house_path)
@@ -700,52 +708,75 @@ func _build_forests_and_hedgerows() -> void:
 	if nature_resource_paths.is_empty():
 		return
 
-	# V14: use the most coherent verified pine silhouettes and keep forest mass
-	# on the far ridges. The foreground is intentionally open for armor/bridge.
-	var tree_paths := _filter_paths(nature_resource_paths, [
-		"pineTallA_detailed", "pineTallB_detailed", "pineTallC_detailed", "pineTallD_detailed",
-		"pineDefaultA", "pineDefaultB"
+	var light_tree_paths := _filter_paths(nature_resource_paths, [
+		"pineTallA_detailed", "pineTallB_detailed", "pineTallC_detailed", "pineTallD_detailed"
 	])
-	if tree_paths.is_empty():
-		tree_paths = _filter_paths(nature_resource_paths, ["pineTall", "pineDefault"])
-	if tree_paths.is_empty():
-		tree_paths = _filter_paths(nature_resource_paths, ["tree"])
+	if light_tree_paths.is_empty():
+		light_tree_paths = _filter_paths(nature_resource_paths, ["pineTall", "pineDefault"])
 
-	for i: int in range(28):
-		var t := float(i)
-		var x := -76.0 + fmod(t * 8.7, 60.0)
-		var z := -57.0 + fmod(t * 9.1, 19.0)
-		_add_nature_instance(
-			tree_paths[i % tree_paths.size()],
-			Vector3(x, 0, z),
-			4.0 + float(i % 4) * 0.55,
-			float((i * 47) % 360)
-		)
+	# V15: photoreal-source Poly Haven pine geometry occupies only the
+	# camera-visible midground. It is deliberately bounded to control runtime.
+	if not nature_real_resource_paths.is_empty():
+		var real_tree_path := nature_real_resource_paths[0]
+		var real_positions: Array[Vector3] = [
+			Vector3(-48,0,-28), Vector3(-38,0,-31), Vector3(-27,0,-34),
+			Vector3(-16,0,-39), Vector3(25,0,-43), Vector3(36,0,-46),
+			Vector3(48,0,-47), Vector3(61,0,-45), Vector3(71,0,-42)
+		]
+		for i: int in range(real_positions.size()):
+			_add_real_tree_instance(real_tree_path, real_positions[i], 7.4 + float(i % 3) * 0.8, float((i * 43) % 360))
 
-	# Low hedgerow boundary is moved away from camera and follows farmland.
+	# Lightweight trees stay only on far ridges where silhouette matters more
+	# than polygon-level detail.
+	for i: int in range(24):
+		var x := -92.0 + fmod(float(i) * 9.4, 83.0)
+		var z := -64.0 + fmod(float(i) * 7.3, 11.0)
+		_add_nature_instance(light_tree_paths[i % light_tree_paths.size()], Vector3(x,0,z), 3.5 + float(i % 4) * 0.45, float((i * 47) % 360))
+
+	for i: int in range(12):
+		var x := 24.0 + float(i) * 5.1
+		var z := -59.0 + sin(float(i) * 1.37) * 2.6
+		_add_nature_instance(light_tree_paths[i % light_tree_paths.size()], Vector3(x,0,z), 3.4 + float(i % 3) * 0.4, float((i * 53) % 360))
+
+	# Small farmland boundary vegetation remains sparse and outside armor read.
 	var hedge_paths := _filter_paths(nature_resource_paths, ["tree_small", "tree_thin"])
 	if hedge_paths.is_empty():
-		hedge_paths = tree_paths
+		hedge_paths = light_tree_paths
 	for i: int in range(6):
-		var x := -57.0 + float(i) * 9.0
-		var z := 43.0 + sin(float(i) * 1.7) * 1.5
-		_add_nature_instance(
-			hedge_paths[i % hedge_paths.size()],
-			Vector3(x, 0, z),
-			2.1 + float(i % 2) * 0.2,
-			float((i * 33) % 360)
-		)
+		var x := -58.0 + float(i) * 9.2
+		var z := 44.0 + sin(float(i) * 1.7) * 1.4
+		_add_nature_instance(hedge_paths[i % hedge_paths.size()], Vector3(x,0,z), 2.0 + float(i % 2) * 0.18, float((i * 33) % 360))
 
-	# Distant screen behind the town creates depth without crowding the church.
-	for i: int in range(18):
-		var x := 24.0 + float(i) * 3.15
-		var z := -54.0 + sin(float(i) * 1.37) * 3.2
-		_add_nature_instance(
-			tree_paths[i % tree_paths.size()],
-			Vector3(x, 0, z),
-			3.9 + float(i % 4) * 0.45,
-			float((i * 53) % 360)
-		)
+
+func _add_real_tree_instance(path: String, p: Vector3, target_size: float, yaw: float) -> void:
+	var instance := _instantiate_scene(path)
+	if instance == null:
+		return
+	p.y = height_at(p.x, p.z)
+	instance.position = p
+	instance.rotation_degrees.y = yaw
+	fit_instance_to_size(instance, target_size)
+	_apply_real_tree_materials(instance)
+	add_child(instance)
+	tree_instance_count += 1
+
+
+func _apply_real_tree_materials(root: Node3D) -> void:
+	if root is MeshInstance3D:
+		var mesh_instance := root as MeshInstance3D
+		if mesh_instance.mesh != null:
+			for surface: int in range(mesh_instance.mesh.get_surface_count()):
+				var key: String = (mesh_instance.name + " " + mesh_instance.mesh.surface_get_name(surface)).to_lower()
+				var source_material := mesh_instance.mesh.surface_get_material(surface)
+				if source_material != null:
+					key += " " + source_material.resource_name.to_lower()
+				var chosen: Material = _real_tree_leaf_material
+				if key.contains("bark") or key.contains("trunk") or key.contains("wood") or key.contains("branch"):
+					chosen = _real_tree_bark_material
+				mesh_instance.set_surface_override_material(surface, chosen)
+	for child: Node in root.get_children():
+		if child is Node3D:
+			_apply_real_tree_materials(child as Node3D)
 
 
 func _add_nature_instance(path: String, p: Vector3, target_size: float, yaw: float) -> void:
