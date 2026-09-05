@@ -136,11 +136,11 @@ func _build_red_defenders() -> void:
 
 func _build_wreck_history() -> void:
 	var wreck_positions := [
-		Vector3(8.5, 0, -3.2), Vector3(20.0, 0, 4.5), Vector3(33.0, 0, 19.0)
+		Vector3(13.5, 0, -2.8), Vector3(31.0, 0, -6.5), Vector3(52.0, 0, 8.5)
 	]
 	for i: int in range(wreck_positions.size()):
 		var path := MBT_PATH if i != 1 else IFV_PATH
-		var wreck := _spawn_model(path, wreck_positions[i], 6.4, 76.0 + float(i) * 31.0, "WRECK_%02d" % i)
+		var wreck := _spawn_model(path, wreck_positions[i], 6.9, 76.0 + float(i) * 31.0, "WRECK_%02d" % i)
 		if wreck == null:
 			continue
 		wreck.rotation_degrees.z = -4.0 - float(i) * 3.0

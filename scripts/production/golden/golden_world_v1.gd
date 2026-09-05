@@ -29,6 +29,7 @@ var _bridge_concrete: StandardMaterial3D
 var _bridge_steel: StandardMaterial3D
 var _field_material_a: ShaderMaterial
 var _field_material_b: ShaderMaterial
+var _field_material_c: ShaderMaterial
 var _foliage_materials: Array[StandardMaterial3D] = []
 var _rock_material: StandardMaterial3D
 var _building_materials: Array[Material] = []
@@ -186,6 +187,7 @@ void fragment() {
 
 	_field_material_a = _field_shader(Color(0.26, 0.33, 0.11), Color(0.15, 0.20, 0.065))
 	_field_material_b = _field_shader(Color(0.34, 0.28, 0.105), Color(0.19, 0.15, 0.055))
+	_field_material_c = _field_shader(Color(0.29, 0.20, 0.10), Color(0.15, 0.105, 0.055))
 	_foliage_materials = [
 		_standard_material(Color(0.105, 0.155, 0.070), 0.0, 0.96),
 		_standard_material(Color(0.135, 0.190, 0.082), 0.0, 0.95),
@@ -223,7 +225,16 @@ func _build_environment() -> void:
 	env.ambient_light_color = Color(0.48, 0.53, 0.56)
 	env.ambient_light_energy = 0.62
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
-	env.fog_enabled = false
+	# V14: conservative depth fog is tested on the safe BG_COLOR path only.
+	# No panorama sky/volumetric chain is re-enabled.
+	env.fog_enabled = true
+	env.fog_light_color = Color(0.43, 0.49, 0.50)
+	env.fog_light_energy = 0.72
+	env.fog_density = 0.0026
+	env.fog_height = 5.0
+	env.fog_height_density = 0.018
+	env.fog_aerial_perspective = 0.18
+	env.fog_sky_affect = 0.10
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	env_node.environment = env
 	add_child(env_node)
@@ -395,12 +406,18 @@ func _add_surface_quad(st: SurfaceTool, a0: Vector3, b0: Vector3, a1: Vector3, b
 
 func _build_fields() -> void:
 	var patches := [
-		[Vector3(-45, 0, 20), Vector2(21, 13), -7.0, _field_material_a],
-		[Vector3(-22, 0, 27), Vector2(17, 12), 4.0, _field_material_b],
-		[Vector3(-46, 0, 36), Vector2(18, 10), 2.0, _field_material_b],
-		[Vector3(-19, 0, -31), Vector2(22, 9), -5.0, _field_material_a],
-		[Vector3(42, 0, 31), Vector2(17, 9), 8.0, _field_material_a],
-		[Vector3(52, 0, 14), Vector2(12, 10), -4.0, _field_material_b],
+		[Vector3(-55, 0, 17), Vector2(24, 14), -8.0, _field_material_c],
+		[Vector3(-34, 0, 23), Vector2(18, 13), -3.0, _field_material_a],
+		[Vector3(-15, 0, 29), Vector2(16, 11), 5.0, _field_material_b],
+		[Vector3(-53, 0, 39), Vector2(22, 11), 3.0, _field_material_b],
+		[Vector3(-22, 0, -34), Vector2(25, 10), -5.0, _field_material_a],
+		[Vector3(-50, 0, -29), Vector2(18, 9), 7.0, _field_material_c],
+		[Vector3(43, 0, 34), Vector2(18, 10), 8.0, _field_material_a],
+		[Vector3(67, 0, 31), Vector2(20, 12), -5.0, _field_material_c],
+		[Vector3(77, 0, 12), Vector2(16, 10), 4.0, _field_material_b],
+		[Vector3(77, 0, -31), Vector2(20, 10), -6.0, _field_material_a],
+		[Vector3(52, 0, -47), Vector2(18, 9), 3.0, _field_material_c],
+		[Vector3(12, 0, 47), Vector2(19, 10), -2.0, _field_material_b],
 	]
 	for i: int in range(patches.size()):
 		var data: Array = patches[i]
@@ -668,6 +685,11 @@ func _build_town() -> void:
 			var wall_cycle: Array[int] = [1, 2, 0, 3]
 			var wall_material := _building_materials[wall_cycle[i % wall_cycle.size()]]
 			var roof_material := _roof_materials[i % _roof_materials.size()]
+			# Two damaged town structures read darker under smoke without changing
+			# the real imported building geometry into a proxy.
+			if i in [2, 9]:
+				wall_material = _roof_materials[2]
+				roof_material = _roof_materials[1]
 			_apply_building_surface_materials(house, wall_material, roof_material, _trim_material)
 			house.name = "TownTexturedHouse_%02d" % i
 			add_child(house)
@@ -677,39 +699,53 @@ func _build_town() -> void:
 func _build_forests_and_hedgerows() -> void:
 	if nature_resource_paths.is_empty():
 		return
-	var tree_paths: Array[String] = []
-	for hq_path: String in nature_hq_resource_paths:
-		var lower := hq_path.to_lower()
-		if (lower.contains("ea01_env_tree_01c.glb") or lower.contains("ea01_env_tree_02a.glb") or lower.contains("ea01_env_tree_03a.glb") or lower.contains("ea01_env_tree_04a.glb") or lower.contains("ea01_env_tree_05d.glb") or lower.contains("ea01_env_tree_06d.glb")):
-			tree_paths.append(hq_path)
-	if tree_paths.is_empty():
-		tree_paths = _filter_paths(nature_resource_paths, ["tree", "trunk"])
-	if tree_paths.is_empty():
-		tree_paths = nature_resource_paths.duplicate()
 
-	# Dense west/north ridge forest.
-	for i: int in range(36):
+	# V14: use the most coherent verified pine silhouettes and keep forest mass
+	# on the far ridges. The foreground is intentionally open for armor/bridge.
+	var tree_paths := _filter_paths(nature_resource_paths, [
+		"pineTallA_detailed", "pineTallB_detailed", "pineTallC_detailed", "pineTallD_detailed",
+		"pineDefaultA", "pineDefaultB"
+	])
+	if tree_paths.is_empty():
+		tree_paths = _filter_paths(nature_resource_paths, ["pineTall", "pineDefault"])
+	if tree_paths.is_empty():
+		tree_paths = _filter_paths(nature_resource_paths, ["tree"])
+
+	for i: int in range(28):
 		var t := float(i)
-		var x := -54.0 + fmod(t * 7.7, 37.0)
-		var z := -38.0 + fmod(t * 11.3, 28.0)
-		if i % 3 == 0:
-			x = 47.0 + fmod(t * 3.1, 14.0)
-			z = -40.0 + fmod(t * 8.9, 70.0)
-		_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 4.6 + float(i % 5) * 0.55, float((i * 41) % 360))
+		var x := -76.0 + fmod(t * 8.7, 60.0)
+		var z := -57.0 + fmod(t * 9.1, 19.0)
+		_add_nature_instance(
+			tree_paths[i % tree_paths.size()],
+			Vector3(x, 0, z),
+			4.0 + float(i % 4) * 0.55,
+			float((i * 47) % 360)
+		)
 
-	var hedge_paths := _filter_paths(nature_hq_resource_paths, ["Env_Bush_02b.glb", "Env_Bush_02c.glb", "Env_Bush_02d.glb", "Env_Bush_02f.glb"])
-	if not hedge_paths.is_empty():
-		for i: int in range(8):
-			var x := -48.0 + float(i) * 4.1
-			var z := 31.0 + sin(float(i) * 1.43) * 2.8
-			_add_nature_instance(hedge_paths[i % hedge_paths.size()], Vector3(x, 0, z), 1.15 + float(i % 3) * 0.14, float((i * 29) % 360))
+	# Low hedgerow boundary is moved away from camera and follows farmland.
+	var hedge_paths := _filter_paths(nature_resource_paths, ["tree_small", "tree_thin"])
+	if hedge_paths.is_empty():
+		hedge_paths = tree_paths
+	for i: int in range(6):
+		var x := -57.0 + float(i) * 9.0
+		var z := 43.0 + sin(float(i) * 1.7) * 1.5
+		_add_nature_instance(
+			hedge_paths[i % hedge_paths.size()],
+			Vector3(x, 0, z),
+			2.1 + float(i % 2) * 0.2,
+			float((i * 33) % 360)
+		)
 
-	# Distant tree screen adds scale/depth behind the defended settlement.
-	if not tree_paths.is_empty():
-		for i: int in range(18):
-			var x := 22.0 + float(i) * 2.85
-			var z := -49.0 + sin(float(i) * 1.37) * 4.2
-			_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 5.0 + float(i % 4) * 0.55, float((i * 53) % 360))
+	# Distant screen behind the town creates depth without crowding the church.
+	for i: int in range(18):
+		var x := 24.0 + float(i) * 3.15
+		var z := -54.0 + sin(float(i) * 1.37) * 3.2
+		_add_nature_instance(
+			tree_paths[i % tree_paths.size()],
+			Vector3(x, 0, z),
+			3.9 + float(i % 4) * 0.45,
+			float((i * 53) % 360)
+		)
 
 
 func _add_nature_instance(path: String, p: Vector3, target_size: float, yaw: float) -> void:

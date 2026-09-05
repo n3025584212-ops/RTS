@@ -83,3 +83,11 @@ The Golden Scene implementation must be judged visually against the approved riv
 - V13 explicitly assigns every imported house/church mesh surface a project PBR material at runtime; roof/tile/shingle surfaces get dark roof materials, window/door/trim surfaces get a dark trim material, and every unidentified surface falls back to a colored wall material.
 - House walls cycle through warm concrete, brick, neutral concrete and gray plaster; the church uses a light stone/concrete wall with a dark roof.
 - This is a hard visual fallback: source material failure can no longer leave a final white building in the proof frame.
+
+
+## Runtime visual iteration V14
+- Actual #65 capture confirmed V13 eliminated pure-white town buildings and established the intended BLUE→bridge→right-side-town composition, but the scene still read too stylized and flat for Golden Frame acceptance.
+- Foreground Mid Poly tree masses are removed from active framing; verified Kenney pine silhouettes are pushed onto far ridges and the town backdrop so vegetation supports depth instead of dominating the camera.
+- Field count increases from six to twelve with three crop/soil palettes, creating visible parcel structure on both sides of the river.
+- Conservative non-volumetric depth fog is enabled only on the proven BG_COLOR Compatibility environment; no HDRI/panorama fog chain is restored.
+- Wrecks, smoke and fires are repositioned onto the bridgehead and visible town streets. Two real houses receive darker burn-state PBR materials to strengthen battle-history readability without primitive damage proxies.

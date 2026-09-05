@@ -21,17 +21,17 @@ func build(world: GoldenWorldV1) -> void:
 	_world = world
 	_build_materials()
 
-	_add_smoke_column(Vector3(9.0, 0, -3.0), 1.5, 9.0, 9)
-	_add_smoke_column(Vector3(31.0, 0, -10.0), 2.0, 14.0, 12)
-	_add_smoke_column(Vector3(44.0, 0, 15.0), 1.7, 11.0, 10)
-	_add_smoke_column(Vector3(21.0, 0, 5.0), 1.2, 8.0, 8)
-	_add_smoke_column(Vector3(49.0, 0, -21.0), 1.45, 12.5, 10)
-	_add_smoke_column(Vector3(38.0, 0, 19.0), 1.25, 10.5, 9)
+	_add_smoke_column(Vector3(12.5, 0, -2.8), 1.75, 10.5, 10)
+	_add_smoke_column(Vector3(31.0, 0, -10.0), 2.35, 15.5, 13)
+	_add_smoke_column(Vector3(45.0, 0, 15.0), 1.80, 12.0, 10)
+	_add_smoke_column(Vector3(22.0, 0, 5.0), 1.25, 8.5, 8)
+	_add_smoke_column(Vector3(50.0, 0, -22.0), 2.05, 15.0, 12)
+	_add_smoke_column(Vector3(54.0, 0, 8.5), 1.45, 11.5, 9)
 
-	_add_fire(Vector3(9.0, 0, -3.0), 1.1)
-	_add_fire(Vector3(21.0, 0, 5.0), 0.9)
-	_add_fire(Vector3(32.0, 0, -11.0), 1.45)
-	_add_fire(Vector3(27.0, 0, -16.0), 1.0)
+	_add_fire(Vector3(13.5, 0, -2.8), 1.15)
+	_add_fire(Vector3(31.0, 0, -6.5), 1.05)
+	_add_fire(Vector3(50.0, 0, -22.0), 1.25)
+	_add_fire(Vector3(52.0, 0, 8.5), 1.10)
 
 	_add_explosion(Vector3(13.0, 0, 2.0), 2.35)
 	_add_explosion(Vector3(37.0, 0, 7.0), 3.0)
@@ -67,7 +67,7 @@ func _build_materials() -> void:
 	for i: int in range(5):
 		_smoke_materials.append(
 			_soft_billboard_material(
-				Color(0.34 + float(i) * 0.020, 0.345 + float(i) * 0.020, 0.34 + float(i) * 0.018, 0.50 - float(i) * 0.028),
+				Color(0.29 + float(i) * 0.022, 0.295 + float(i) * 0.022, 0.29 + float(i) * 0.020, 0.52 - float(i) * 0.030),
 				0.0,
 				i + 3
 			)
