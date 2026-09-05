@@ -132,21 +132,21 @@ void fragment() {
 	vec3 d_tex = texture(dirt_diff, uv * 0.72).rgb;
 	vec3 m_tex = texture(mud_diff, uv * 0.58).rgb;
 	vec3 grass_macro = mix(vec3(0.13, 0.225, 0.075), vec3(0.205, 0.31, 0.115), broad);
-	vec3 g = mix(grass_macro, g_tex, 0.20);
-	vec3 d = mix(vec3(0.225, 0.175, 0.105), d_tex, 0.30);
-	vec3 m = mix(vec3(0.18, 0.145, 0.095), m_tex, 0.34);
+	vec3 g = mix(grass_macro, g_tex, 0.46);
+	vec3 d = mix(vec3(0.225, 0.175, 0.105), d_tex, 0.48);
+	vec3 m = mix(vec3(0.18, 0.145, 0.095), m_tex, 0.52);
 	vec3 gn = texture(grass_nor, uv).rgb;
 	vec3 dn = texture(dirt_nor, uv * 0.82).rgb;
 	vec3 mn = texture(mud_nor, uv * 0.65).rgb;
-	float dirt_mix = clamp(dry * 0.10 + river * 0.10, 0.0, 0.22);
-	float mud_mix = river * 0.18;
+	float dirt_mix = clamp(dry * 0.22 + river * 0.12, 0.0, 0.36);
+	float mud_mix = river * 0.24;
 	vec3 base = mix(g, d, dirt_mix);
 	base = mix(base, m, mud_mix);
 	float far_mix = smoothstep(48.0, 105.0, -world_pos.z);
 	base = mix(base, vec3(0.22, 0.245, 0.20), far_mix * 0.58);
 	ALBEDO = base;
 	NORMAL_MAP = mix(mix(gn, dn, dirt_mix), mn, mud_mix);
-	NORMAL_MAP_DEPTH = 0.22;
+	NORMAL_MAP_DEPTH = 0.34;
 	ROUGHNESS = mix(0.93, 0.68, mud_mix);
 	METALLIC = 0.0;
 	SPECULAR = 0.30;
@@ -182,9 +182,9 @@ void fragment() {
 """
 	_water_material.shader = water_shader
 
-	_road_material = _pbr_material("asphalt_02", Vector3(12.0, 12.0, 12.0), Color(0.72, 0.72, 0.70))
+	_road_material = _pbr_material("asphalt_02", Vector3(12.0, 12.0, 12.0), Color(0.54, 0.55, 0.53))
 	_dirt_road_material = _pbr_material("grass_path_3", Vector3(8.0, 8.0, 8.0), Color(0.48, 0.43, 0.32))
-	_shoulder_material = _pbr_material("gravel_ground_01", Vector3(9.0, 9.0, 9.0), Color(0.48, 0.44, 0.36))
+	_shoulder_material = _pbr_material("gravel_ground_01", Vector3(9.0, 9.0, 9.0), Color(0.39, 0.36, 0.31))
 	_bank_material = _pbr_material("aerial_mud_1", Vector3(6.0, 6.0, 6.0), Color(0.70, 0.62, 0.48))
 	_bridge_concrete = _pbr_material("t_concrete_wall_002", Vector3(6.0, 6.0, 6.0), Color(0.62, 0.63, 0.60))
 	_bridge_steel = _standard_material(Color(0.13, 0.15, 0.14), 0.68, 0.34)
@@ -224,9 +224,20 @@ func _build_environment() -> void:
 	# Compatibility-render proof must never fall back to a black horizon.
 	# Keep the visible background independent from Sky/fog/tonemap while using
 	# explicit ambient and directional lighting for world readability.
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.32, 0.43, 0.53)
-	env.background_energy_multiplier = 1.02
+	# V16: procedural sky restores a real horizon gradient without the HDRI
+	# panorama chain that previously produced a black Compatibility capture.
+	var sky_material := ProceduralSkyMaterial.new()
+	sky_material.sky_top_color = Color(0.18, 0.31, 0.45)
+	sky_material.sky_horizon_color = Color(0.62, 0.68, 0.68)
+	sky_material.ground_bottom_color = Color(0.16, 0.17, 0.14)
+	sky_material.ground_horizon_color = Color(0.52, 0.51, 0.43)
+	sky_material.sun_angle_max = 18.0
+	sky_material.sun_curve = 0.08
+	var procedural_sky := Sky.new()
+	procedural_sky.sky_material = sky_material
+	env.background_mode = Environment.BG_SKY
+	env.sky = procedural_sky
+	env.background_energy_multiplier = 0.92
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.48, 0.53, 0.56)
 	env.ambient_light_energy = 0.62
@@ -235,12 +246,12 @@ func _build_environment() -> void:
 	# No panorama sky/volumetric chain is re-enabled.
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.43, 0.49, 0.50)
-	env.fog_light_energy = 0.72
-	env.fog_density = 0.0018
+	env.fog_light_energy = 0.62
+	env.fog_density = 0.00135
 	env.fog_height = 5.0
-	env.fog_height_density = 0.012
+	env.fog_height_density = 0.009
 	env.fog_aerial_perspective = 0.18
-	env.fog_sky_affect = 0.10
+	env.fog_sky_affect = 0.22
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	env_node.environment = env
 	add_child(env_node)
@@ -719,23 +730,24 @@ func _build_forests_and_hedgerows() -> void:
 	if not nature_real_resource_paths.is_empty():
 		var real_tree_path := nature_real_resource_paths[0]
 		var real_positions: Array[Vector3] = [
-			Vector3(-48,0,-28), Vector3(-38,0,-31), Vector3(-27,0,-34),
-			Vector3(-16,0,-39), Vector3(25,0,-43), Vector3(36,0,-46),
-			Vector3(48,0,-47), Vector3(61,0,-45), Vector3(71,0,-42)
+			Vector3(-55,0,-31), Vector3(-46,0,-29), Vector3(-37,0,-33),
+			Vector3(-28,0,-35), Vector3(-18,0,-40), Vector3(22,0,-45),
+			Vector3(31,0,-47), Vector3(40,0,-48), Vector3(50,0,-47),
+			Vector3(60,0,-46), Vector3(69,0,-43), Vector3(77,0,-39)
 		]
 		for i: int in range(real_positions.size()):
-			_add_real_tree_instance(real_tree_path, real_positions[i], 7.4 + float(i % 3) * 0.8, float((i * 43) % 360))
+			_add_real_tree_instance(real_tree_path, real_positions[i], 7.0 + float(i % 4) * 0.65, float((i * 43) % 360))
 
 	# Lightweight trees stay only on far ridges where silhouette matters more
 	# than polygon-level detail.
-	for i: int in range(24):
+	for i: int in range(16):
 		var x := -92.0 + fmod(float(i) * 9.4, 83.0)
-		var z := -64.0 + fmod(float(i) * 7.3, 11.0)
+		var z := -72.0 + fmod(float(i) * 7.3, 9.0)
 		_add_nature_instance(light_tree_paths[i % light_tree_paths.size()], Vector3(x,0,z), 3.5 + float(i % 4) * 0.45, float((i * 47) % 360))
 
-	for i: int in range(12):
+	for i: int in range(8):
 		var x := 24.0 + float(i) * 5.1
-		var z := -59.0 + sin(float(i) * 1.37) * 2.6
+		var z := -68.0 + sin(float(i) * 1.37) * 2.2
 		_add_nature_instance(light_tree_paths[i % light_tree_paths.size()], Vector3(x,0,z), 3.4 + float(i % 3) * 0.4, float((i * 53) % 360))
 
 	# Small farmland boundary vegetation remains sparse and outside armor read.
@@ -756,7 +768,8 @@ func _add_real_tree_instance(path: String, p: Vector3, target_size: float, yaw: 
 	instance.position = p
 	instance.rotation_degrees.y = yaw
 	fit_instance_to_size(instance, target_size)
-	_apply_real_tree_materials(instance)
+	# V16: the V15 GLB already embeds the Poly Haven 1K glTF materials.
+	# Do not flatten twig/needle alpha textures into safety colors.
 	add_child(instance)
 	tree_instance_count += 1
 
@@ -947,15 +960,20 @@ func _field_shader(a: Color, b: Color) -> ShaderMaterial:
 shader_type spatial;
 uniform vec3 color_a : source_color;
 uniform vec3 color_b : source_color;
+uniform sampler2D ground_diff : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
 void fragment() {
-	float rows = smoothstep(0.42, 0.68, abs(sin(UV.x * 82.0)));
-	float cross = 0.975 + 0.025 * sin(UV.y * 42.0);
-	ALBEDO = mix(color_a, color_b, rows * 0.20) * cross;
-	ROUGHNESS = 0.96;
+	vec2 tiled_uv = UV * vec2(7.0, 5.0);
+	float rows = smoothstep(0.38, 0.72, abs(sin(UV.x * 92.0)));
+	float cross = 0.965 + 0.035 * sin(UV.y * 48.0);
+	vec3 soil = texture(ground_diff, tiled_uv).rgb;
+	vec3 row_color = mix(color_a, color_b, rows * 0.34) * cross;
+	ALBEDO = mix(row_color, soil * mix(color_a, vec3(1.0), 0.38), 0.34);
+	ROUGHNESS = 0.93;
 }
 """
 	var material := ShaderMaterial.new()
 	material.shader = shader
 	material.set_shader_parameter("color_a", Vector3(a.r, a.g, a.b))
 	material.set_shader_parameter("color_b", Vector3(b.r, b.g, b.b))
+	material.set_shader_parameter("ground_diff", load("res://assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png"))
 	return material

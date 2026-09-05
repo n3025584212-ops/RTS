@@ -99,3 +99,12 @@ The Golden Scene implementation must be judged visually against the approved riv
 - Real-tree mesh surfaces receive explicit bark vs foliage materials in Godot so missing source textures cannot create white geometry.
 - Four additional real-house instances strengthen the right-side river-town density without reintroducing apartment towers or Pack 3 signage.
 - V14 depth fog is reduced to preserve contrast after actual-frame review while retaining aerial separation.
+
+
+## Runtime visual iteration V16
+- Restores the embedded Poly Haven Pine Sapling Small glTF/GLB materials after #72 proved that the V15 flat safety override destroyed needle/twig texture readability.
+- Increases bounded real-tree placement from 9 to 12 midground instances while reducing lightweight far-ridge tree counts and pushing them farther from the camera.
+- Raises terrain PBR diffuse/normal contribution and broadens dirt/mud blending so the battlefield no longer reads as a mostly procedural green sheet.
+- Field patches now mix the existing CC0 dirt aerial texture under crop-row variation.
+- Tests Godot ProceduralSkyMaterial on the Compatibility-safe path to replace the flat blue clear-color horizon without reintroducing the previously rejected HDRI panorama chain.
+- Road and shoulder tints are darkened to integrate with the terrain instead of reading as clean gray ribbons.
