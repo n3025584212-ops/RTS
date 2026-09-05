@@ -133,7 +133,7 @@ void fragment() {
 	vec3 base = mix(g, d, dirt_mix);
 	base = mix(base, m, mud_mix);
 	float far_mix = smoothstep(48.0, 105.0, -world_pos.z);
-	base = mix(base, vec3(0.22, 0.245, 0.19), far_mix * 0.42);
+	base = mix(base, vec3(0.22, 0.245, 0.20), far_mix * 0.58);
 	ALBEDO = base;
 	NORMAL_MAP = mix(mix(gn, dn, dirt_mix), mn, mud_mix);
 	NORMAL_MAP_DEPTH = 0.22;
@@ -205,11 +205,11 @@ func _build_environment() -> void:
 	# Keep the visible background independent from Sky/fog/tonemap while using
 	# explicit ambient and directional lighting for world readability.
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.36, 0.49, 0.60)
-	env.background_energy_multiplier = 1.18
+	env.background_color = Color(0.32, 0.43, 0.53)
+	env.background_energy_multiplier = 1.02
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.48, 0.53, 0.56)
-	env.ambient_light_energy = 0.82
+	env.ambient_light_energy = 0.62
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	env.fog_enabled = false
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
@@ -220,7 +220,7 @@ func _build_environment() -> void:
 	sun.name = "MorningSun"
 	sun.rotation_degrees = Vector3(-43.0, -38.0, 0.0)
 	sun.light_color = Color(1.0, 0.96, 0.88)
-	sun.light_energy = 1.28
+	sun.light_energy = 1.42
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 180.0
 	add_child(sun)
@@ -229,7 +229,7 @@ func _build_environment() -> void:
 	fill.name = "CoolSkyFill"
 	fill.rotation_degrees = Vector3(-70.0, 145.0, 0.0)
 	fill.light_color = Color(0.50, 0.62, 0.72)
-	fill.light_energy = 0.18
+	fill.light_energy = 0.10
 	fill.shadow_enabled = false
 	add_child(fill)
 
@@ -563,8 +563,8 @@ func _build_town() -> void:
 	var positions: Array[Vector3] = []
 	for row: int in range(5):
 		for col: int in range(7):
-			var x := 17.0 + float(col) * 5.9 + sin(float(row * 7 + col) * 1.17) * 1.15
-			var z := -23.5 + float(row) * 9.8 + cos(float(col * 5 + row) * 0.91) * 1.20
+			var x := 23.0 + float(col) * 6.1 + sin(float(row * 7 + col) * 1.17) * 1.05
+			var z := -27.0 + float(row) * 9.6 + cos(float(col * 5 + row) * 0.91) * 1.05
 			# Preserve the east-west main street and a north-south town spine.
 			if absf(z + 5.8) < 2.0:
 				z += 3.8
@@ -572,7 +572,7 @@ func _build_town() -> void:
 				x += 3.6
 			positions.append(Vector3(x, 0, z))
 
-	for i: int in range(mini(positions.size(), 16)):
+	for i: int in range(mini(positions.size(), 8)):
 		var path := building_paths[i % building_paths.size()]
 		var instance := _instantiate_scene(path)
 		if instance == null:
@@ -599,13 +599,16 @@ func _build_town() -> void:
 	# One genuine imported tall building provides the approved orientation
 	# landmark without turning the whole village into a skyline.
 	var landmark_path: String = landmark_paths[0] if not landmark_paths.is_empty() else building_paths[0]
+	var hd_apartments := _filter_paths(city_hd_resource_paths, ["apartment"])
+	if not hd_apartments.is_empty():
+		landmark_path = hd_apartments[0]
 	var landmark := _instantiate_scene(landmark_path)
 	if landmark != null:
-		fit_instance_to_size(landmark, 14.0)
+		fit_instance_to_size(landmark, 15.5)
 		if not _building_materials.is_empty():
 			_override_materials(landmark, _building_materials[0])
-		landmark.position = Vector3(40.0, height_at(40.0, -31.0), -31.0)
-		landmark.rotation_degrees.y = -18.0
+		landmark.position = Vector3(51.0, height_at(51.0, -35.0), -35.0)
+		landmark.rotation_degrees.y = 8.0
 		landmark.name = "TownLandmarkTower"
 		add_child(landmark)
 		town_instance_count += 1
@@ -614,8 +617,7 @@ func _build_town() -> void:
 	# Treat them as street-scale frontage, not as the settlement's massing.
 	if not city_hq_resource_paths.is_empty():
 		var hq_positions: Array[Vector3] = [
-			Vector3(26.0, 0, -8.5), Vector3(35.0, 0, -8.2), Vector3(44.0, 0, -7.8),
-			Vector3(31.0, 0, 4.5), Vector3(41.0, 0, 4.8)
+			Vector3(36.0, 0, -7.5), Vector3(48.0, 0, -7.0), Vector3(58.0, 0, 5.5)
 		]
 		for i: int in range(hq_positions.size()):
 			var path := city_hq_resource_paths[(i + 2) % city_hq_resource_paths.size()]
@@ -626,30 +628,39 @@ func _build_town() -> void:
 			p.y = height_at(p.x, p.z)
 			shop.position = p
 			shop.rotation_degrees.y = 0.0
-			fit_instance_to_size(shop, 4.4 + float(i % 3) * 0.45)
+			fit_instance_to_size(shop, 4.0 + float(i % 3) * 0.35)
 			shop.name = "TownPhotoShop_%02d" % i
 			add_child(shop)
 			town_instance_count += 1
 
-	# V10: Pack 3 contributes full photo-derived urban buildings with normals.
-	# A curated set occupies the high-visibility core; source materials are kept.
-	if not city_hq3_resource_paths.is_empty():
-		var core_positions: Array[Vector3] = [
-			Vector3(23.0, 0, -20.0), Vector3(33.0, 0, -18.0),
-			Vector3(45.0, 0, -18.5), Vector3(53.0, 0, -10.0),
-			Vector3(22.0, 0, 11.0), Vector3(48.0, 0, 12.0)
+	# V11: real residential geometry forms the town massing. V4 source models
+	# previously rendered white because of missing source materials; bind the
+	# project brick/concrete PBR families explicitly instead of discarding them.
+	if not city_hd_resource_paths.is_empty():
+		var residential_paths := _filter_paths(city_hd_resource_paths, ["ordinary_house", "apartment_block"])
+		if residential_paths.is_empty():
+			residential_paths = city_hd_resource_paths.duplicate()
+		var residential_positions: Array[Vector3] = [
+			Vector3(28.0, 0, -24.0), Vector3(38.0, 0, -24.5), Vector3(62.0, 0, -23.0),
+			Vector3(27.0, 0, -11.0), Vector3(61.0, 0, -10.5),
+			Vector3(29.0, 0, 7.0), Vector3(43.0, 0, 9.0), Vector3(58.0, 0, 10.0),
+			Vector3(36.0, 0, 21.0), Vector3(53.0, 0, 22.0)
 		]
-		for i: int in range(core_positions.size()):
-			var path := city_hq3_resource_paths[i % city_hq3_resource_paths.size()]
+		for i: int in range(residential_positions.size()):
+			var path := residential_paths[i % residential_paths.size()]
 			var building := _instantiate_scene(path)
 			if building == null:
 				continue
-			var p := core_positions[i]
+			var p := residential_positions[i]
 			p.y = height_at(p.x, p.z)
 			building.position = p
-			building.rotation_degrees.y = 90.0 if i in [1, 4] else 0.0
-			fit_instance_to_size(building, 7.2 + float(i % 3) * 1.15)
-			building.name = "TownHQ3_%02d" % i
+			building.rotation_degrees.y = 90.0 if i % 4 == 1 else 0.0
+			var is_apartment := path.to_lower().contains("apartment")
+			var target_size := 8.7 + float(i % 3) * 0.7 if is_apartment else 5.8 + float(i % 2) * 0.5
+			fit_instance_to_size(building, target_size)
+			var material_index := 0 if is_apartment else (2 if i % 2 == 0 else 1)
+			_override_materials(building, _building_materials[material_index])
+			building.name = "TownResidential_%02d" % i
 			add_child(building)
 			town_instance_count += 1
 
@@ -717,15 +728,15 @@ func _build_camera() -> void:
 	camera = Camera3D.new()
 	camera.name = "GoldenTacticalCamera"
 	camera.current = true
-	camera.fov = 44.5
+	camera.fov = 42.0
 	camera.near = 0.15
 	camera.far = 360.0
 	# Golden Frame composition: BLUE foreground at lower-left, bridge on the
 	# central diagonal, dense town and RED contact beyond it. Roughly 46 degrees
 	# downward so terrain dominates instead of the horizon/sky.
-	camera.position = Vector3(-55.0, 40.0, 54.0)
+	camera.position = Vector3(-60.0, 33.0, 56.0)
 	add_child(camera)
-	camera.look_at(Vector3(9.0, 0.8, 0.0), Vector3.UP)
+	camera.look_at(Vector3(4.0, 1.0, -1.5), Vector3.UP)
 
 
 func _find_3d_resources(root: String) -> Array[String]:
