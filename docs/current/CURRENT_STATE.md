@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V22
+STATE_VERSION=V23
 INTEGRATION_AUTHORITY=PROJECT_DIRECTOR
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V2.md
@@ -195,7 +195,7 @@ Only after representative readiness should the user judge command quality, workl
 
 WINDOW_00=ACTIVE
 WINDOW_01=ACTIVE_IMPLEMENTATION_GRADE_DESIGN
-WINDOW_02=ACTIVE_G0_GOLDEN_FRAME_FEASIBILITY
+WINDOW_02=ACTIVE_GOLDEN_SCENE_VISUAL_FIX
 WINDOW_03=ACTIVE_INDEPENDENT_REVIEW_PR30
 
 CURRENT_RUNTIME_REASON=
@@ -220,18 +220,23 @@ H5_STATE_DRIVEN_OPPOSITION_AND_LIMITED_SUPPORT=TECHNICALLY_IMPLEMENTED_PENDING_R
 
 ## CURRENT_TASK
 
-ACTIVE_PRIMARY_TASK=BUILD_PROTOTYPE_B_REPRESENTATIVE_COMMAND_BATTLE_SLICE_V1
-ACTIVE_ISSUE=#20
-ACTIVE_ISSUE_URL=https://github.com/n3025584212-ops/RTS/issues/20
+ACTIVE_PRIMARY_TASK=BUILD_GODOT_GOLDEN_SCENE_VISUAL_SPIKE_V1
+ACTIVE_ISSUE=#33
+ACTIVE_ISSUE_URL=https://github.com/n3025584212-ops/RTS/issues/33
 
-CURRENT_TECHNICAL_INTEGRATION=REVIEW_REPRESENTATIVE_BATTLE_CONTENT_BATCH1_PR30
-IMPLEMENTATION_ISSUE=#29
-REVIEW_ISSUE=#31
-TECHNICAL_PR=#30
-TECHNICAL_REVIEW_HEAD=9769196db09cc57e38db4d2c2fdea2445484a21d
+GOLDEN_SCENE_RESULT=FAIL_CONTINUE_FIXING
+REAL_ASSET_INTEGRATION=PASS
+GODOT_4_7_1_IMPORT=PASS
+FINAL_1920x1080_VISUAL=NOT_ACCEPTED
+GOLDEN_FRAME_VISUAL_COMPLIANCE=NOT_PASSED
+GOLDEN_SCENE_PR=NOT_CREATED
+GOLDEN_SCENE_MERGE=NO
+
+PARALLEL_EXISTING_REVIEW=PR30_UNDER_ISSUE31
+PARALLEL_REVIEW_AUTHORITY=WINDOW_03
 
 Immediate goal:
-Independently determine whether Batch 1 is merge-ready without confusing technical integration with PRODUCT_PASS.
+Continue real-asset Godot Golden Scene visual iterations until the actual 1920x1080 frame reaches at least PARTIAL_PASS against Approved Golden Frame V1. Technical import/runtime success does not override visual failure.
 
 ---
 
@@ -239,6 +244,7 @@ Independently determine whether Batch 1 is merge-ready without confusing technic
 
 CURRENT_PRODUCT_BLOCKERS:
 1. FRONTLINE has not yet passed representative command-battle readiness for direct human judgment.
+GOLDEN_SCENE_VISUAL_BLOCKER=APPROVED_GOLDEN_FRAME_V1_NOT_YET_REPRODUCED_IN_ENGINE
 2. Ordinary combat remains primarily sector aggregate attrition rather than a convincing formation-vs-formation local engagement process.
 3. The interaction among command responsibilities, formation autonomy, enemy reaction, information, combat, support and reserves remains unproven as a product experience under sustained battle load.
 4. The game must demonstrate that higher-level command reduces babysitting without making the player passive.
@@ -253,7 +259,7 @@ Formation-vs-formation local engagement — contact, suppression, damage, diseng
 
 ## NEXT_DECISION
 
-NEXT=WINDOW_02_BUILD_GODOT_GOLDEN_SCENE_VISUAL_SPIKE
+NEXT=WINDOW_02_CONTINUE_GOLDEN_SCENE_VISUAL_FIX_ITERATIONS
 
 Required sequence:
 1. WINDOW_03 reviews PR #30 / head `9769196db09cc57e38db4d2c2fdea2445484a21d` under Issue #31.
