@@ -16,6 +16,8 @@ func build(world: GoldenWorldV1) -> void:
 	_add_fire(Vector3(50,0,-20), 1.1)
 	_add_explosion(Vector3(35,0,5), 2.5)
 	_add_explosion(Vector3(52,0,-4), 2.0)
+	_add_muzzle_flash(Vector3(-12,0,7), Vector3(1,0.05,-0.10), true)
+	_add_muzzle_flash(Vector3(40,0,-8), Vector3(-1,0.05,0.08), false)
 
 	_add_tracer_arc(Vector3(-12,2,7), Vector3(31,2,-7), 1.0, true)
 	_add_tracer_arc(Vector3(40,2,-8), Vector3(-7,2,4), 0.8, false)
