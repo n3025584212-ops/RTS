@@ -62,7 +62,7 @@ func _preflight_assets() -> void:
 func _capture_after_warmup() -> void:
 	# Defer through enough rendered frames for imported models, sky, shader
 	# compilation and the software CI renderer to settle.
-	for _frame: int in range(210):
+	for _frame: int in range(36):
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 
