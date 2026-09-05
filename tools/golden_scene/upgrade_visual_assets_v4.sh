@@ -23,7 +23,11 @@ blender -b --python "$EXPORTER" -- --source "$TMP/ordinary_house.obj" --output "
 fetch "https://opengameart.org/sites/default/files/Soviet_Panel_Apartment_House_3D.zip" "$TMP/apartment.zip"
 mkdir -p "$TMP/apartment"
 unzip -q "$TMP/apartment.zip" -d "$TMP/apartment"
-APT_SRC="$(find "$TMP/apartment" -type f \( -iname '*.blend' -o -iname '*.fbx' -o -iname '*.obj' -o -iname '*.gltf' -o -iname '*.glb' \) | sort | head -n 1 || true)"
+APT_SRC="$(find "$TMP/apartment" -type f -iname '*.blend' | sort | head -n 1 || true)"
+if [[ -z "$APT_SRC" ]]; then APT_SRC="$(find "$TMP/apartment" -type f -iname '*.obj' | sort | head -n 1 || true)"; fi
+if [[ -z "$APT_SRC" ]]; then APT_SRC="$(find "$TMP/apartment" -type f -iname '*.gltf' | sort | head -n 1 || true)"; fi
+if [[ -z "$APT_SRC" ]]; then APT_SRC="$(find "$TMP/apartment" -type f -iname '*.glb' | sort | head -n 1 || true)"; fi
+if [[ -z "$APT_SRC" ]]; then APT_SRC="$(find "$TMP/apartment" -type f -iname '*.fbx' | sort | head -n 1 || true)"; fi
 if [[ -z "$APT_SRC" ]]; then
   echo "ERROR: CC0 apartment archive has no supported source model" >&2
   find "$TMP/apartment" -type f | sort >&2
