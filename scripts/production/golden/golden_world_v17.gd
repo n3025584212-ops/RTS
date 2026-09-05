@@ -3,13 +3,11 @@ extends GoldenWorldV1
 func _build_materials() -> void:
 	super._build_materials()
 	GoldenWorldV17Materials.apply(self)
-	GoldenWorldV18Materials.apply(self)
 
 
 func _build_environment() -> void:
 	super._build_environment()
 	GoldenWorldV17Materials.apply_environment(self)
-	GoldenWorldV18Materials.apply_environment(self)
 
 
 func _build_town() -> void:
