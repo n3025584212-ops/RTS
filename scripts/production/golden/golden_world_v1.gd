@@ -16,7 +16,7 @@ var bridge_member_count: int = 0
 var road_segment_count: int = 0
 var camera: Camera3D
 
-var _terrain_material: ShaderMaterial
+var _terrain_material: StandardMaterial3D
 var _water_material: ShaderMaterial
 var _road_material: StandardMaterial3D
 var _dirt_road_material: StandardMaterial3D
@@ -26,6 +26,7 @@ var _field_material_a: ShaderMaterial
 var _field_material_b: ShaderMaterial
 var _foliage_materials: Array[StandardMaterial3D] = []
 var _rock_material: StandardMaterial3D
+var _building_materials: Array[StandardMaterial3D] = []
 
 
 func build() -> void:
@@ -80,38 +81,11 @@ func fit_instance_to_size(root: Node3D, target_max_dimension: float) -> float:
 
 
 func _build_materials() -> void:
-	_terrain_material = ShaderMaterial.new()
-	var terrain_shader := Shader.new()
-	terrain_shader.code = """
-shader_type spatial;
-render_mode cull_back, depth_draw_opaque;
-varying vec3 world_normal;
-float hash21(vec2 p) {
-	p = fract(p * vec2(123.34, 345.45));
-	p += dot(p, p + 34.345);
-	return fract(p.x * p.y);
-}
-void vertex() {
-	world_normal = normalize((MODEL_NORMAL_MATRIX * NORMAL));
-}
-void fragment() {
-	float slope = 1.0 - clamp(world_normal.y, 0.0, 1.0);
-	float grain = hash21(UV * 860.0);
-	float broad = hash21(floor(UV * 90.0));
-	vec3 grass = vec3(0.145, 0.205, 0.105);
-	vec3 dry_grass = vec3(0.255, 0.285, 0.145);
-	vec3 soil = vec3(0.245, 0.185, 0.115);
-	vec3 base = mix(grass, dry_grass, broad * 0.42);
-	base = mix(base, soil, smoothstep(0.24, 0.64, slope));
-	base *= 0.86 + grain * 0.20;
-	ALBEDO = base;
-	ROUGHNESS = 0.92;
-	METALLIC = 0.0;
-	SPECULAR = 0.24;
-}
-"""
-	terrain_shader.code = terrain_shader.code
-	_terrain_material.shader = terrain_shader
+	_terrain_material = StandardMaterial3D.new()
+	_terrain_material.vertex_color_use_as_albedo = true
+	_terrain_material.metallic = 0.0
+	_terrain_material.roughness = 0.94
+	_terrain_material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 
 	_water_material = ShaderMaterial.new()
 	var water_shader := Shader.new()
@@ -149,6 +123,14 @@ void fragment() {
 		_standard_material(Color(0.115, 0.16, 0.065), 0.0, 0.98),
 	]
 	_rock_material = _standard_material(Color(0.28, 0.27, 0.235), 0.02, 0.92)
+	_building_materials = [
+		_standard_material(Color(0.52, 0.46, 0.37), 0.0, 0.82),
+		_standard_material(Color(0.60, 0.57, 0.49), 0.0, 0.78),
+		_standard_material(Color(0.39, 0.38, 0.35), 0.02, 0.86),
+		_standard_material(Color(0.46, 0.31, 0.23), 0.0, 0.88),
+		_standard_material(Color(0.66, 0.61, 0.50), 0.0, 0.80),
+		_standard_material(Color(0.33, 0.36, 0.35), 0.02, 0.84),
+	]
 
 
 func _build_environment() -> void:
@@ -171,10 +153,10 @@ func _build_environment() -> void:
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.54, 0.58, 0.57)
-	env.fog_light_energy = 0.52
-	env.fog_density = 0.0022
+	env.fog_light_energy = 0.35
+	env.fog_density = 0.00065
 	env.fog_height = 3.0
-	env.fog_height_density = 0.022
+	env.fog_height_density = 0.006
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env_node.environment = env
 	add_child(env_node)
@@ -233,11 +215,27 @@ func _build_terrain() -> void:
 
 func _add_terrain_vertex(st: SurfaceTool, p: Vector3) -> void:
 	st.set_normal(_terrain_normal(p.x, p.z))
+	st.set_color(_terrain_color(p.x, p.z))
 	st.set_uv(Vector2(
 		(p.x - MAP_X_MIN) / (MAP_X_MAX - MAP_X_MIN),
 		(p.z - MAP_Z_MIN) / (MAP_Z_MAX - MAP_Z_MIN)
 	))
 	st.add_vertex(p)
+
+
+func _terrain_color(x: float, z: float) -> Color:
+	var h := height_at(x, z)
+	var broad := 0.5 + 0.5 * sin(x * 0.17 + z * 0.11)
+	var micro := 0.5 + 0.5 * sin(x * 0.73 - z * 0.49)
+	var grass := Color(0.14, 0.22, 0.09)
+	var dry := Color(0.28, 0.27, 0.115)
+	var soil := Color(0.25, 0.18, 0.09)
+	var c := grass.lerp(dry, clampf(0.22 + broad * 0.34, 0.0, 1.0))
+	if h > 3.2:
+		c = c.lerp(Color(0.105, 0.16, 0.075), 0.38)
+	if absf(x - RIVER_X) < 11.5:
+		c = c.lerp(soil, 0.34)
+	return c * (0.88 + micro * 0.16)
 
 
 func _terrain_normal(x: float, z: float) -> Vector3:
@@ -440,7 +438,9 @@ func _build_town() -> void:
 		pos.y = height_at(pos.x, pos.z)
 		instance.position = pos
 		instance.rotation_degrees.y = float((i * 47 + (i % 3) * 11) % 180)
-		fit_instance_to_size(instance, 5.2 + float(i % 4) * 0.65)
+		fit_instance_to_size(instance, 5.0 + float(i % 4) * 0.60)
+		if not _building_materials.is_empty():
+			_override_materials(instance, _building_materials[i % _building_materials.size()])
 		instance.name = "TownBuilding_%02d" % i
 		add_child(instance)
 		town_instance_count += 1
@@ -450,7 +450,9 @@ func _build_town() -> void:
 	var landmark_path: String = landmark_paths[0] if not landmark_paths.is_empty() else building_paths[0]
 	var landmark := _instantiate_scene(landmark_path)
 	if landmark != null:
-		fit_instance_to_size(landmark, 11.8)
+		fit_instance_to_size(landmark, 10.5)
+		if not _building_materials.is_empty():
+			_override_materials(landmark, _building_materials[1])
 		landmark.position = Vector3(39.0, height_at(39.0, -23.0), -23.0)
 		landmark.rotation_degrees.y = -18.0
 		landmark.name = "TownLandmarkTower"
@@ -589,9 +591,9 @@ shader_type spatial;
 uniform vec3 color_a : source_color;
 uniform vec3 color_b : source_color;
 void fragment() {
-	float rows = smoothstep(0.35, 0.62, abs(sin(UV.x * 95.0)));
-	float cross = 0.93 + 0.07 * sin(UV.y * 55.0);
-	ALBEDO = mix(color_a, color_b, rows * 0.42) * cross;
+	float rows = smoothstep(0.42, 0.68, abs(sin(UV.x * 82.0)));
+	float cross = 0.975 + 0.025 * sin(UV.y * 42.0);
+	ALBEDO = mix(color_a, color_b, rows * 0.20) * cross;
 	ROUGHNESS = 0.96;
 }
 """
