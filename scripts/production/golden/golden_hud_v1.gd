@@ -31,7 +31,6 @@ func build() -> void:
 	_build_minimap()
 	_build_formation_strip()
 	_build_selected_formation()
-	_build_world_legend()
 	print(
 		"FRONTLINE_GOLDEN_HUD_READY panels=%d cards=%d minimap_markers=%d" %
 		[panel_count, formation_card_count, minimap_marker_count]
@@ -85,44 +84,44 @@ func _alert_row(parent: Control, pos: Vector2, value: String, color: Color) -> v
 
 
 func _build_minimap() -> void:
-	var panel := _panel(Vector2(22, 790), Vector2(340, 266), "TacticalMapPanel")
+	var panel := _panel(Vector2(22, 820), Vector2(315, 236), "TacticalMapPanel")
 	_label(panel, "TACTICAL MAP", Vector2(15, 11), 15, _text)
 
 	var map := Panel.new()
-	map.position = Vector2(14, 42)
-	map.size = Vector2(312, 205)
+	map.position = Vector2(12, 38)
+	map.size = Vector2(291, 183)
 	map.add_theme_stylebox_override("panel", _panel_style(Color(0.032, 0.052, 0.052, 0.96), Color(0.28, 0.39, 0.40, 0.9), 2))
 	panel.add_child(map)
 
 	var river := ColorRect.new()
-	river.position = Vector2(165, 0)
-	river.size = Vector2(28, 205)
+	river.position = Vector2(154, 0)
+	river.size = Vector2(25, 183)
 	river.color = Color(0.07, 0.30, 0.38, 0.94)
 	map.add_child(river)
 
-	_add_map_line(map, Vector2(7, 105), Vector2(304, 95), 6.0, Color(0.30, 0.31, 0.28))
-	_add_map_line(map, Vector2(35, 165), Vector2(156, 108), 3.0, Color(0.37, 0.29, 0.18))
-	_add_map_line(map, Vector2(194, 35), Vector2(286, 153), 4.0, Color(0.28, 0.29, 0.26))
+	_add_map_line(map, Vector2(7, 94), Vector2(283, 85), 6.0, Color(0.30, 0.31, 0.28))
+	_add_map_line(map, Vector2(31, 147), Vector2(146, 97), 3.0, Color(0.37, 0.29, 0.18))
+	_add_map_line(map, Vector2(181, 31), Vector2(266, 137), 4.0, Color(0.28, 0.29, 0.26))
 
-	for p: Vector2 in [Vector2(52, 128), Vector2(78, 116), Vector2(104, 142), Vector2(126, 109), Vector2(148, 122)]:
+	for p: Vector2 in [Vector2(48, 114), Vector2(72, 104), Vector2(96, 127), Vector2(117, 98), Vector2(137, 109)]:
 		_map_marker(map, p, _blue, 8)
-	for p: Vector2 in [Vector2(223, 75), Vector2(253, 98), Vector2(270, 132), Vector2(235, 145)]:
+	for p: Vector2 in [Vector2(208, 67), Vector2(236, 88), Vector2(251, 118), Vector2(218, 130)]:
 		_map_marker(map, p, _red, 8)
 
-	_label(map, "A", Vector2(168, 82), 14, _text)
-	_label(map, "B", Vector2(93, 46), 14, _blue)
-	_label(map, "C", Vector2(225, 80), 14, _red)
+	_label(map, "A", Vector2(157, 73), 13, _text)
+	_label(map, "B", Vector2(86, 41), 13, _blue)
+	_label(map, "C", Vector2(210, 72), 13, _red)
 	_label(map, "N", Vector2(9, 7), 12, _muted)
 
 
 func _build_formation_strip() -> void:
-	var panel := _panel(Vector2(382, 874), Vector2(1012, 182), "FormationStrip")
+	var panel := _panel(Vector2(350, 910), Vector2(1035, 146), "FormationStrip")
 	_label(panel, "FORMATIONS", Vector2(16, 10), 14, _muted)
 	var names := ["1-1 ARMOR", "1-2 ARMOR", "2-1 IFV", "2-2 MECH", "R  RESERVE"]
 	for i: int in range(names.size()):
 		var card := Panel.new()
-		card.position = Vector2(14 + float(i) * 192.0, 40)
-		card.size = Vector2(180, 124)
+		card.position = Vector2(14 + float(i) * 199.0, 31)
+		card.size = Vector2(187, 101)
 		card.add_theme_stylebox_override(
 			"panel",
 			_panel_style(
@@ -133,37 +132,37 @@ func _build_formation_strip() -> void:
 		)
 		panel.add_child(card)
 		_label(card, names[i], Vector2(11, 10), 14, _text)
-		_label(card, "TASK  " + (["ADVANCE", "HOLD", "SUPPORT", "ASSAULT", "READY"][i]), Vector2(11, 39), 11, _muted)
-		_status_bar(card, Vector2(11, 67), 156, 0.90 - float(i) * 0.08, Color(0.31, 0.78, 0.35))
-		_status_bar(card, Vector2(11, 86), 156, 0.72 - float(i) * 0.05, Color(0.28, 0.62, 0.95))
-		_label(card, "HP", Vector2(12, 103), 9, _muted)
-		_label(card, "AMMO", Vector2(113, 103), 9, _muted)
+		_label(card, "TASK  " + (["ADVANCE", "HOLD", "SUPPORT", "ASSAULT", "READY"][i]), Vector2(11, 34), 10, _muted)
+		_status_bar(card, Vector2(11, 58), 163, 0.90 - float(i) * 0.08, Color(0.31, 0.78, 0.35))
+		_status_bar(card, Vector2(11, 74), 163, 0.72 - float(i) * 0.05, Color(0.28, 0.62, 0.95))
+		_label(card, "HP", Vector2(12, 86), 8, _muted)
+		_label(card, "AMMO", Vector2(122, 86), 8, _muted)
 		formation_card_count += 1
 
 
 func _build_selected_formation() -> void:
-	var panel := _panel(Vector2(1414, 764), Vector2(482, 292), "SelectedFormationPanel")
+	var panel := _panel(Vector2(1425, 798), Vector2(470, 258), "SelectedFormationPanel")
 	_label(panel, "SELECTED • 1-1 ARMOR COMPANY", Vector2(18, 14), 17, _text)
 	_label(panel, "MBT PLATOON   4 / 4", Vector2(18, 48), 14, _blue)
 	_label(panel, "COMBAT EFFECTIVENESS", Vector2(18, 82), 11, _muted)
 	_status_bar(panel, Vector2(18, 101), 250, 0.92, Color(0.32, 0.80, 0.39))
 	_label(panel, "AMMUNITION", Vector2(18, 128), 11, _muted)
 	_status_bar(panel, Vector2(18, 147), 250, 0.68, Color(0.28, 0.64, 0.98))
-	_label(panel, "CURRENT TASK", Vector2(18, 176), 11, _muted)
-	_label(panel, "ASSAULT AREA • BRIDGE", Vector2(18, 196), 14, _text)
+	_label(panel, "CURRENT TASK", Vector2(18, 167), 11, _muted)
+	_label(panel, "ASSAULT AREA • BRIDGE", Vector2(18, 186), 14, _text)
 
 	var commands := ["MOVE", "ASSAULT", "HOLD", "FALL BACK", "FIRE SUPPORT", "SMOKE"]
 	for i: int in range(commands.size()):
 		var button := Panel.new()
 		var col := i % 3
 		var row := i / 3
-		button.position = Vector2(290 + float(col) * 60, 52 + float(row) * 77)
-		button.size = Vector2(54, 62)
+		button.position = Vector2(282 + float(col) * 58, 48 + float(row) * 70)
+		button.size = Vector2(52, 56)
 		button.add_theme_stylebox_override("panel", _panel_style(Color(0.055, 0.085, 0.10, 0.96), Color(0.25, 0.40, 0.48), 1))
 		panel.add_child(button)
 		var glyphs := ["→", "▲", "▣", "↙", "✦", "≈"]
 		_label(button, glyphs[i], Vector2(17, 7), 22, _blue if i != 3 else _amber)
-		_label(button, commands[i], Vector2(4, 36), 8, _text)
+		_label(button, commands[i], Vector2(4, 32), 8, _text)
 
 
 func _build_world_legend() -> void:
