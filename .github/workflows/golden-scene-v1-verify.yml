@@ -65,6 +65,7 @@ jobs:
           if [[ ! -f assets/golden_scene/.bootstrap_complete ]]; then
             tools/golden_scene/bootstrap_assets.sh 2>&1 | tee golden-assets.log
             golden-visual-v2-assets.log
+            golden-visual-v3-assets.log
           else
             echo "FRONTLINE_GOLDEN_ASSET_BOOTSTRAP_ALREADY_PRESENT"
           fi
@@ -87,6 +88,19 @@ jobs:
           test -s assets/golden_scene/vehicles/mbt_abrams.glb
           test -s assets/golden_scene/hdri/kloppenheim_05_1k.hdr
           test -s assets/golden_scene/pbr/grass_path_3_diff_1k.png
+
+      - name: Upgrade Golden visual assets V3
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tools/golden_scene/upgrade_visual_assets_v3.sh
+          if [[ ! -f assets/golden_scene/.visual_assets_v3_complete ]]; then
+            tools/golden_scene/upgrade_visual_assets_v3.sh 2>&1 | tee golden-visual-v3-assets.log
+          else
+            echo "FRONTLINE_GOLDEN_VISUAL_ASSETS_V3_ALREADY_PRESENT"
+          fi
+          test -s assets/golden_scene/pbr/leafy_grass_diff_1k.png
+          test -s assets/golden_scene/hdri/hochsal_field_1k.hdr
 
       - name: Install Godot 4.7.1
         shell: bash

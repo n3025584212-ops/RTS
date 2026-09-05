@@ -25,6 +25,8 @@ func build(world: GoldenWorldV1) -> void:
 	_add_smoke_column(Vector3(31.0, 0, -10.0), 2.0, 14.0, 12)
 	_add_smoke_column(Vector3(44.0, 0, 15.0), 1.7, 11.0, 10)
 	_add_smoke_column(Vector3(21.0, 0, 5.0), 1.2, 8.0, 8)
+	_add_smoke_column(Vector3(49.0, 0, -21.0), 1.45, 12.5, 10)
+	_add_smoke_column(Vector3(38.0, 0, 19.0), 1.25, 10.5, 9)
 
 	_add_fire(Vector3(9.0, 0, -3.0), 1.1)
 	_add_fire(Vector3(21.0, 0, 5.0), 0.9)
@@ -64,7 +66,7 @@ func _build_materials() -> void:
 	for i: int in range(5):
 		_smoke_materials.append(
 			_soft_billboard_material(
-				Color(0.18 + float(i) * 0.022, 0.185 + float(i) * 0.022, 0.18 + float(i) * 0.020, 0.78 - float(i) * 0.045),
+				Color(0.12 + float(i) * 0.020, 0.125 + float(i) * 0.020, 0.12 + float(i) * 0.018, 0.84 - float(i) * 0.045),
 				0.0,
 				i + 3
 			)
@@ -94,6 +96,7 @@ func _soft_billboard_material(color: Color, emission_energy: float, seed: int) -
 	material.albedo_texture = texture
 	material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 	material.roughness = 1.0
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	if emission_energy > 0.0:
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		material.emission_enabled = true
@@ -110,7 +113,7 @@ func _add_smoke_column(base: Vector3, radius: float, height: float, puffs: int) 
 		puff.name = "BattleSmoke"
 		var quad := QuadMesh.new()
 		var scale_value := radius * (0.78 + t * 1.08) * (0.88 + 0.12 * sin(float(i) * 1.9))
-		quad.size = Vector2(scale_value * 3.10, scale_value * 2.30)
+		quad.size = Vector2(scale_value * 3.65, scale_value * 2.70)
 		puff.mesh = quad
 		var sway := Vector3(
 			sin(float(i) * 2.31) * radius * 0.50,
