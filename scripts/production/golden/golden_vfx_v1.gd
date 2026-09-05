@@ -30,11 +30,12 @@ func build(world: GoldenWorldV1) -> void:
 
 	_add_fire(Vector3(9.0, 0, -3.0), 1.1)
 	_add_fire(Vector3(21.0, 0, 5.0), 0.9)
-	_add_fire(Vector3(32.0, 0, -11.0), 1.3)
+	_add_fire(Vector3(32.0, 0, -11.0), 1.45)
+	_add_fire(Vector3(27.0, 0, -16.0), 1.0)
 
-	_add_explosion(Vector3(13.0, 0, 2.0), 1.9)
-	_add_explosion(Vector3(37.0, 0, 7.0), 2.4)
-	_add_explosion(Vector3(48.0, 0, -5.0), 1.6)
+	_add_explosion(Vector3(13.0, 0, 2.0), 2.35)
+	_add_explosion(Vector3(37.0, 0, 7.0), 3.0)
+	_add_explosion(Vector3(48.0, 0, -5.0), 2.1)
 
 	_add_muzzle_flash(Vector3(-12.0, 0, 7.0), Vector3(1, 0.08, -0.12), true)
 	_add_muzzle_flash(Vector3(-21.0, 0, 9.5), Vector3(1, 0.05, -0.04), true)

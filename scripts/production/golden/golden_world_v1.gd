@@ -88,12 +88,12 @@ func _build_materials() -> void:
 	terrain_shader.code = """
 shader_type spatial;
 render_mode cull_back;
-uniform sampler2D grass_diff : source_color, repeat_enable;
-uniform sampler2D grass_nor : hint_normal, repeat_enable;
-uniform sampler2D dirt_diff : source_color, repeat_enable;
-uniform sampler2D dirt_nor : hint_normal, repeat_enable;
-uniform sampler2D mud_diff : source_color, repeat_enable;
-uniform sampler2D mud_nor : hint_normal, repeat_enable;
+uniform sampler2D grass_diff : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D grass_nor : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D dirt_diff : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D dirt_nor : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D mud_diff : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D mud_nor : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
 varying vec3 world_pos;
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
@@ -104,8 +104,8 @@ float hash21(vec2 p) {
 	return fract(p.x * p.y);
 }
 void fragment() {
-	vec2 uv = UV * 17.0;
-	float broad = hash21(floor(UV * 70.0));
+	vec2 uv = UV * 8.5;
+	float broad = hash21(floor(UV * 34.0));
 	float river = 1.0 - smoothstep(8.5, 19.0, abs(world_pos.x - 6.0));
 	float dry = smoothstep(0.28, 0.72, broad);
 	vec3 g = texture(grass_diff, uv).rgb;
@@ -114,13 +114,15 @@ void fragment() {
 	vec3 gn = texture(grass_nor, uv).rgb;
 	vec3 dn = texture(dirt_nor, uv * 0.82).rgb;
 	vec3 mn = texture(mud_nor, uv * 0.65).rgb;
-	float dirt_mix = clamp(dry * 0.18 + river * 0.16, 0.0, 0.36);
-	float mud_mix = river * 0.24;
+	float dirt_mix = clamp(dry * 0.10 + river * 0.10, 0.0, 0.22);
+	float mud_mix = river * 0.18;
 	vec3 base = mix(g, d, dirt_mix);
 	base = mix(base, m, mud_mix);
-	ALBEDO = base * vec3(0.82, 0.90, 0.76);
+	vec3 broad_green = vec3(0.17, 0.255, 0.105);
+	base = mix(base, broad_green, 0.18);
+	ALBEDO = base * vec3(0.86, 0.91, 0.82);
 	NORMAL_MAP = mix(mix(gn, dn, dirt_mix), mn, mud_mix);
-	NORMAL_MAP_DEPTH = 0.48;
+	NORMAL_MAP_DEPTH = 0.30;
 	ROUGHNESS = mix(0.93, 0.68, mud_mix);
 	METALLIC = 0.0;
 	SPECULAR = 0.30;
@@ -173,17 +175,9 @@ void fragment() {
 	]
 	_rock_material = _standard_material(Color(0.28, 0.27, 0.235), 0.02, 0.92)
 	_building_materials = [
-		_standard_material(Color(0.48, 0.43, 0.35), 0.0, 0.88),
-		_standard_material(Color(0.38, 0.40, 0.37), 0.0, 0.90),
-		_standard_material(Color(0.54, 0.50, 0.42), 0.0, 0.86),
-		_standard_material(Color(0.34, 0.31, 0.27), 0.0, 0.92),
-		_standard_material(Color(0.43, 0.36, 0.30), 0.0, 0.89),
-	]
-	_building_materials = [
-		_pbr_material("brick_wall_005", Vector3(1.8, 1.8, 1.8), Color(0.48, 0.42, 0.38)),
-		_pbr_material("t_concrete_wall_002", Vector3(1.8, 1.8, 1.8), Color(0.58, 0.59, 0.56)),
-		_pbr_material("brick_wall_005", Vector3(2.4, 2.4, 2.4), Color(0.38, 0.35, 0.33)),
-		_pbr_material("t_concrete_wall_002", Vector3(2.2, 2.2, 2.2), Color(0.44, 0.46, 0.45)),
+		_pbr_material("t_concrete_wall_002", Vector3(1.25, 1.25, 1.25), Color(0.66, 0.66, 0.61)),
+		_pbr_material("t_concrete_wall_002", Vector3(1.55, 1.55, 1.55), Color(0.49, 0.51, 0.49)),
+		_pbr_material("brick_wall_005", Vector3(1.25, 1.25, 1.25), Color(0.44, 0.38, 0.34)),
 	]
 
 
@@ -212,10 +206,11 @@ func _build_environment() -> void:
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.54, 0.58, 0.57)
-	env.fog_light_energy = 0.35
-	env.fog_density = 0.0016
+	env.fog_light_energy = 0.24
+	env.fog_density = 0.00075
 	env.fog_height = 3.0
-	env.fog_height_density = 0.016
+	env.fog_height_density = 0.010
+env.fog_sky_affect = 0.04
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env_node.environment = env
 	add_child(env_node)
@@ -223,8 +218,8 @@ func _build_environment() -> void:
 	var sun := DirectionalLight3D.new()
 	sun.name = "MorningSun"
 	sun.rotation_degrees = Vector3(-46.0, -32.0, 0.0)
-	sun.light_color = Color(1.0, 0.88, 0.72)
-	sun.light_energy = 1.26
+	sun.light_color = Color(1.0, 0.965, 0.90)
+	sun.light_energy = 1.08
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 180.0
 	add_child(sun)
@@ -233,7 +228,7 @@ func _build_environment() -> void:
 	fill.name = "CoolSkyFill"
 	fill.rotation_degrees = Vector3(-70.0, 145.0, 0.0)
 	fill.light_color = Color(0.42, 0.56, 0.68)
-	fill.light_energy = 0.18
+	fill.light_energy = 0.14
 	fill.shadow_enabled = false
 	add_child(fill)
 
@@ -583,8 +578,11 @@ func _build_town() -> void:
 		instance.position = pos
 		instance.rotation_degrees.y = float((i * 47 + (i % 3) * 11) % 180)
 		fit_instance_to_size(instance, 5.0 + float(i % 4) * 0.60)
-		if not _building_materials.is_empty():
-			_override_materials(instance, _building_materials[i % _building_materials.size()])
+		# Preserve the imported kit material on half of the town. Concrete is the
+		# dominant override; brick is limited to a minority to avoid tiled-wall repetition.
+		if not _building_materials.is_empty() and i % 2 == 0:
+			var building_material_index := 2 if i % 6 == 0 else (i / 2) % 2
+			_override_materials(instance, _building_materials[building_material_index])
 		instance.name = "TownBuilding_%02d" % i
 		add_child(instance)
 		town_instance_count += 1
@@ -596,7 +594,7 @@ func _build_town() -> void:
 	if landmark != null:
 		fit_instance_to_size(landmark, 10.5)
 		if not _building_materials.is_empty():
-			_override_materials(landmark, _building_materials[1])
+			_override_materials(landmark, _building_materials[0])
 		landmark.position = Vector3(39.0, height_at(39.0, -23.0), -23.0)
 		landmark.rotation_degrees.y = -18.0
 		landmark.name = "TownLandmarkTower"
@@ -730,7 +728,7 @@ func _standard_material(color: Color, metallic: float, roughness: float) -> Stan
 
 func _pbr_material(asset_id: String, tile: Vector3, tint: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
-	material.albedo_color = tint
+	material.albedo_color = tint.lightened(0.06)
 	material.albedo_texture = load("res://assets/golden_scene/pbr/%s_diff_1k.png" % asset_id)
 	material.normal_enabled = true
 	material.normal_texture = load("res://assets/golden_scene/pbr/%s_nor_gl_1k.png" % asset_id)
