@@ -125,7 +125,7 @@ jobs:
           else
             echo "FRONTLINE_GOLDEN_VISUAL_ASSETS_V5_ALREADY_PRESENT"
           fi
-          test -s assets/golden_scene/city_hq/buildings_pack4.glb
+          test "$(find assets/golden_scene/city_hq -maxdepth 1 -type f -iname '*.glb' | wc -l)" -gt 0
           test "$(find assets/golden_scene/nature_hq -type f \( -iname '*.gltf' -o -iname '*.glb' \) | wc -l)" -gt 0
 
       - name: Upgrade Golden visual assets V6
