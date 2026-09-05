@@ -1,10 +1,10 @@
 class_name GoldenWorldV1
 extends Node3D
 
-const MAP_X_MIN := -64.0
-const MAP_X_MAX := 64.0
-const MAP_Z_MIN := -44.0
-const MAP_Z_MAX := 44.0
+const MAP_X_MIN := -96.0
+const MAP_X_MAX := 96.0
+const MAP_Z_MIN := -72.0
+const MAP_Z_MAX := 72.0
 const RIVER_X := 6.0
 const RIVER_HALF_WIDTH := 6.2
 
@@ -82,7 +82,8 @@ func fit_instance_to_size(root: Node3D, target_max_dimension: float) -> float:
 
 func _build_materials() -> void:
 	_terrain_material = StandardMaterial3D.new()
-	_terrain_material.vertex_color_use_as_albedo = true
+	_terrain_material.albedo_color = Color(0.19, 0.255, 0.115)
+	_terrain_material.vertex_color_use_as_albedo = false
 	_terrain_material.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_terrain_material.metallic = 0.0
 	_terrain_material.roughness = 0.94
