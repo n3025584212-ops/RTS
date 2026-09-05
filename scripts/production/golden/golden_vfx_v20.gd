@@ -45,3 +45,11 @@ func _build_materials() -> void:
 		)
 	_tracer_blue = _emission_material(Color(0.25,0.52,0.78), 2.3)
 	_tracer_red = _emission_material(Color(0.90,0.18,0.04), 2.5)
+
+
+func _add_tracer_arc(start: Vector3, finish: Vector3, arc: float, friendly: bool) -> void:
+	var mat := _tracer_blue if friendly else _tracer_red
+	var a := _arc_point(start, finish, 0.47, arc)
+	var b := _arc_point(start, finish, 0.53, arc)
+	_add_segment(a, b, 0.022, mat, "Tracer")
+	tracer_segment_count += 1
