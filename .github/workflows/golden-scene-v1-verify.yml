@@ -175,7 +175,7 @@ jobs:
           else
             echo "FRONTLINE_GOLDEN_VISUAL_ASSETS_V15_ALREADY_PRESENT"
           fi
-          test -s assets/golden_scene/nature_real/pine_tree_01_lod.glb
+          test -s assets/golden_scene/nature_real/pine_sapling_small_lod.glb
 
       - name: Install Godot 4.7.1
         shell: bash
