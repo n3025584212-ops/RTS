@@ -56,24 +56,24 @@ func build(world: GoldenWorldV1) -> void:
 
 func _build_blue_armored_column() -> void:
 	var mbt_positions := [
-		Vector3(-34, 0, 10), Vector3(-27, 0, 8), Vector3(-20, 0, 6),
-		Vector3(-13, 0, 4), Vector3(-7, 0, 2)
+		Vector3(-27, 0, 7), Vector3(-20, 0, 5), Vector3(-13, 0, 3),
+		Vector3(-6, 0, 1), Vector3(0, 0, -1)
 	]
 	for i: int in range(mbt_positions.size()):
 		var p: Vector3 = mbt_positions[i]
-		var unit := _spawn_model(MBT_PATH, p, 8.8, -8.0 + float(i) * 2.0, "BLUE_MBT_%02d" % i)
+		var unit := _spawn_model(MBT_PATH, p, 9.4, -8.0 + float(i) * 2.0, "BLUE_MBT_%02d" % i)
 		if unit != null:
 			if i == 2:
 				_add_tactical_marker(unit.position + Vector3(0, 3.2, 0), "1-1 ARMOR", true)
 			physical_vehicle_count += 1
 
 	var ifv_positions := [
-		Vector3(-39, 0, 18), Vector3(-31, 0, 17), Vector3(-22, 0, 15),
-		Vector3(-14, 0, 13)
+		Vector3(-33, 0, 14), Vector3(-25, 0, 13), Vector3(-17, 0, 11),
+		Vector3(-9, 0, 9)
 	]
 	for i: int in range(ifv_positions.size()):
 		var p: Vector3 = ifv_positions[i]
-		var unit := _spawn_model(IFV_PATH, p, 7.7, -12.0 + float(i) * 3.0, "BLUE_IFV_%02d" % i)
+		var unit := _spawn_model(IFV_PATH, p, 8.1, -12.0 + float(i) * 3.0, "BLUE_IFV_%02d" % i)
 		if unit != null:
 			if i == 1:
 				_add_tactical_marker(unit.position + Vector3(0, 3.0, 0), "2-1 IFV", true)
@@ -82,7 +82,7 @@ func _build_blue_armored_column() -> void:
 
 func _build_blue_infantry() -> void:
 	for squad: int in range(3):
-		var squad_origin := Vector3(-28.0 + float(squad) * 8.0, 0.0, 19.0 - float(squad) * 2.0)
+		var squad_origin := Vector3(-22.0 + float(squad) * 8.0, 0.0, 14.0 - float(squad) * 2.0)
 		for soldier: int in range(6):
 			var lateral := float(soldier % 3) * 1.45 - 1.45
 			var depth := float(soldier / 3) * 1.65

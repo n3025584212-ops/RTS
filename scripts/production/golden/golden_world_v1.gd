@@ -566,10 +566,8 @@ func _build_town() -> void:
 				x += 3.6
 			positions.append(Vector3(x, 0, z))
 
-	for i: int in range(mini(positions.size(), 21)):
+	for i: int in range(mini(positions.size(), 25)):
 		var path := building_paths[i % building_paths.size()]
-		if not city_hd_resource_paths.is_empty() and i % 3 == 0:
-			path = city_hd_resource_paths[(i / 3) % city_hd_resource_paths.size()]
 		var instance := _instantiate_scene(path)
 		if instance == null:
 			continue
@@ -579,7 +577,7 @@ func _build_town() -> void:
 		var street_yaw := 0.0 if i % 3 != 0 else 90.0
 		instance.rotation_degrees.y = street_yaw + sin(float(i) * 1.71) * 7.0
 		fit_instance_to_size(instance, 4.8 + float(i % 5) * 0.58)
-		var preserve_source_materials := path.begins_with("res://assets/golden_scene/city_hd/") or path.begins_with("res://assets/golden_scene/city_hq/")
+		var preserve_source_materials := path.begins_with("res://assets/golden_scene/city_hq/")
 		if not preserve_source_materials and not _building_materials.is_empty():
 			var building_material_index: int = 0
 			if i % 7 == 0:
@@ -595,13 +593,10 @@ func _build_town() -> void:
 	# One genuine imported tall building provides the approved orientation
 	# landmark without turning the whole village into a skyline.
 	var landmark_path: String = landmark_paths[0] if not landmark_paths.is_empty() else building_paths[0]
-	var hd_apartments := _filter_paths(city_hd_resource_paths, ["apartment"])
-	if not hd_apartments.is_empty():
-		landmark_path = hd_apartments[0]
 	var landmark := _instantiate_scene(landmark_path)
 	if landmark != null:
 		fit_instance_to_size(landmark, 12.0)
-		if not landmark_path.begins_with("res://assets/golden_scene/city_hd/") and not _building_materials.is_empty():
+		if not _building_materials.is_empty():
 			_override_materials(landmark, _building_materials[0])
 		landmark.position = Vector3(39.0, height_at(39.0, -23.0), -23.0)
 		landmark.rotation_degrees.y = -18.0
@@ -609,41 +604,43 @@ func _build_town() -> void:
 		add_child(landmark)
 		town_instance_count += 1
 
-	# V6: Buildings Pack 4 is split in Blender into independent GLBs. Place
-	# individual photo-textured structures on actual town blocks; never instance
-	# the whole source pack as one oversized wall.
+	# V7: the split photo-textured assets are shallow shopfront buildings.
+	# Treat them as street-scale frontage, not as the settlement's massing.
 	if not city_hq_resource_paths.is_empty():
 		var hq_positions: Array[Vector3] = [
-			Vector3(27.0, 0, -25.0), Vector3(36.0, 0, -26.0), Vector3(47.0, 0, -23.0),
-			Vector3(54.0, 0, -16.0), Vector3(24.0, 0, 10.0), Vector3(38.0, 0, 12.0),
-			Vector3(51.0, 0, 10.0), Vector3(58.0, 0, -4.0)
+			Vector3(26.0, 0, -8.5), Vector3(35.0, 0, -8.2), Vector3(44.0, 0, -7.8),
+			Vector3(31.0, 0, 4.5), Vector3(41.0, 0, 4.8)
 		]
 		for i: int in range(hq_positions.size()):
-			var path := city_hq_resource_paths[i % city_hq_resource_paths.size()]
-			var hq_building := _instantiate_scene(path)
-			if hq_building == null:
+			var path := city_hq_resource_paths[(i + 2) % city_hq_resource_paths.size()]
+			var shop := _instantiate_scene(path)
+			if shop == null:
 				continue
 			var p := hq_positions[i]
 			p.y = height_at(p.x, p.z)
-			hq_building.position = p
-			hq_building.rotation_degrees.y = 90.0 if i % 3 == 0 else 0.0
-			fit_instance_to_size(hq_building, 6.4 + float(i % 4) * 0.9)
-			hq_building.name = "TownHQBuilding_%02d" % i
-			add_child(hq_building)
+			shop.position = p
+			shop.rotation_degrees.y = 0.0
+			fit_instance_to_size(shop, 4.4 + float(i % 3) * 0.45)
+			shop.name = "TownPhotoShop_%02d" % i
+			add_child(shop)
 			town_instance_count += 1
 
 
 func _build_forests_and_hedgerows() -> void:
 	if nature_resource_paths.is_empty():
 		return
-	var tree_paths := _filter_paths(nature_hq_resource_paths, ["tree", "Tree"])
+	var tree_paths: Array[String] = []
+	for hq_path: String in nature_hq_resource_paths:
+		var lower := hq_path.to_lower()
+		if lower.contains("/ea01_env_tree_") and not lower.contains("crown") and not lower.contains("root") and not lower.contains("old") and not lower.contains(".00"):
+			tree_paths.append(hq_path)
 	if tree_paths.is_empty():
 		tree_paths = _filter_paths(nature_resource_paths, ["tree", "trunk"])
 	if tree_paths.is_empty():
 		tree_paths = nature_resource_paths.duplicate()
 
 	# Dense west/north ridge forest.
-	for i: int in range(88):
+	for i: int in range(68):
 		var t := float(i)
 		var x := -54.0 + fmod(t * 7.7, 37.0)
 		var z := -38.0 + fmod(t * 11.3, 28.0)
@@ -663,7 +660,7 @@ func _build_forests_and_hedgerows() -> void:
 
 	# Distant tree screen adds scale/depth behind the defended settlement.
 	if not tree_paths.is_empty():
-		for i: int in range(26):
+		for i: int in range(22):
 			var x := 20.0 + float(i) * 2.15
 			var z := -44.0 + sin(float(i) * 1.37) * 4.5
 			_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 5.0 + float(i % 4) * 0.55, float((i * 53) % 360))
@@ -678,7 +675,9 @@ func _add_nature_instance(path: String, p: Vector3, target_size: float, yaw: flo
 	instance.rotation_degrees.y = yaw
 	fit_instance_to_size(instance, target_size)
 	var lower_path := path.to_lower()
-	if lower_path.contains("rock") or lower_path.contains("cliff"):
+	if path.begins_with("res://assets/golden_scene/nature_hq/"):
+		pass
+	elif lower_path.contains("rock") or lower_path.contains("cliff"):
 		_override_materials(instance, _rock_material)
 	elif not _foliage_materials.is_empty():
 		var material_index := absi(path.hash()) % _foliage_materials.size()
@@ -691,15 +690,15 @@ func _build_camera() -> void:
 	camera = Camera3D.new()
 	camera.name = "GoldenTacticalCamera"
 	camera.current = true
-	camera.fov = 45.5
+	camera.fov = 44.5
 	camera.near = 0.15
 	camera.far = 260.0
 	# Golden Frame composition: BLUE foreground at lower-left, bridge on the
 	# central diagonal, dense town and RED contact beyond it. Roughly 46 degrees
 	# downward so terrain dominates instead of the horizon/sky.
-	camera.position = Vector3(-58.0, 44.0, 58.0)
+	camera.position = Vector3(-55.0, 40.0, 54.0)
 	add_child(camera)
-	camera.look_at(Vector3(8.0, 0.8, 2.0), Vector3.UP)
+	camera.look_at(Vector3(9.0, 0.8, 0.0), Vector3.UP)
 
 
 func _find_3d_resources(root: String) -> Array[String]:
