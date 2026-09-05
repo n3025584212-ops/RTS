@@ -23,13 +23,12 @@ static func build(world: GoldenWorldV1) -> void:
 		house.position = p
 		house.rotation_degrees.y = float((i % 4) * 90) + sin(float(i) * 0.73) * 4.0
 		world.fit_instance_to_size(house, 5.6 + float(i % 3) * 0.35)
-		var wall_cycle: Array[int] = [1, 2, 0, 3, 1, 0]
-		var wall := world._building_materials[wall_cycle[i % wall_cycle.size()]]
-		var roof := world._roof_materials[i % world._roof_materials.size()]
+		# Healthy V20 houses keep their authored baked materials. Only two
+		# deliberately damaged structures use the dark project fallback.
 		if i in [2, 8]:
-			wall = world._roof_materials[2]
-			roof = world._roof_materials[1]
-		world._apply_building_surface_materials(house, wall, roof, world._trim_material)
+			world._apply_building_surface_materials(
+				house, world._roof_materials[2], world._roof_materials[1], world._trim_material
+			)
 		house.name = "V20FamilyHouse_%02d" % i
 		world.add_child(house)
 		world.town_instance_count += 1
