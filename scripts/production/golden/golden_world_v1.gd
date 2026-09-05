@@ -32,6 +32,9 @@ var _field_material_b: ShaderMaterial
 var _foliage_materials: Array[StandardMaterial3D] = []
 var _rock_material: StandardMaterial3D
 var _building_materials: Array[Material] = []
+var _roof_materials: Array[Material] = []
+var _trim_material: Material
+var _church_wall_material: Material
 var _bank_material: StandardMaterial3D
 var _shoulder_material: StandardMaterial3D
 
@@ -192,10 +195,17 @@ void fragment() {
 	_rock_material = _standard_material(Color(0.28, 0.27, 0.235), 0.02, 0.92)
 	_building_materials = [
 		_surface_detail_material("t_concrete_wall_002", Color(0.34, 0.35, 0.32), 0.16),
-		_surface_detail_material("t_concrete_wall_002", Color(0.42, 0.40, 0.36), 0.15),
-		_surface_detail_material("brick_wall_005", Color(0.31, 0.25, 0.21), 0.16),
+		_surface_detail_material("t_concrete_wall_002", Color(0.50, 0.45, 0.36), 0.17),
+		_surface_detail_material("brick_wall_005", Color(0.40, 0.27, 0.19), 0.20),
 		_surface_detail_material("t_concrete_wall_002", Color(0.29, 0.31, 0.31), 0.14),
 	]
+	_roof_materials = [
+		_surface_detail_material("brick_wall_005", Color(0.16, 0.11, 0.085), 0.24),
+		_surface_detail_material("brick_wall_005", Color(0.12, 0.13, 0.13), 0.20),
+		_surface_detail_material("t_concrete_wall_002", Color(0.20, 0.19, 0.17), 0.16),
+	]
+	_trim_material = _standard_material(Color(0.16, 0.17, 0.16), 0.02, 0.74)
+	_church_wall_material = _surface_detail_material("t_concrete_wall_002", Color(0.56, 0.52, 0.43), 0.24)
 
 
 func _build_environment() -> void:
@@ -609,6 +619,7 @@ func _build_town() -> void:
 		fit_instance_to_size(landmark, 13.5)
 		landmark.position = Vector3(52.0, height_at(52.0, -34.0), -34.0)
 		landmark.rotation_degrees.y = 10.0
+		_apply_building_surface_materials(landmark, _church_wall_material, _roof_materials[1], _trim_material)
 		landmark.name = "TownChurchLandmark"
 		add_child(landmark)
 		town_instance_count += 1
@@ -654,6 +665,10 @@ func _build_town() -> void:
 			house.position = p
 			house.rotation_degrees.y = float((i % 4) * 90) + sin(float(i) * 1.31) * 4.0
 			fit_instance_to_size(house, 5.4 + float(i % 3) * 0.42)
+			var wall_cycle: Array[int] = [1, 2, 0, 3]
+			var wall_material := _building_materials[wall_cycle[i % wall_cycle.size()]]
+			var roof_material := _roof_materials[i % _roof_materials.size()]
+			_apply_building_surface_materials(house, wall_material, roof_material, _trim_material)
 			house.name = "TownTexturedHouse_%02d" % i
 			add_child(house)
 			town_instance_count += 1
@@ -779,6 +794,26 @@ func _instantiate_scene(path: String) -> Node3D:
 		if node is Node3D:
 			return node as Node3D
 	return null
+
+
+func _apply_building_surface_materials(root: Node3D, wall_material: Material, roof_material: Material, trim_material: Material) -> void:
+	if root is MeshInstance3D:
+		var mesh_instance := root as MeshInstance3D
+		if mesh_instance.mesh != null:
+			for surface: int in range(mesh_instance.mesh.get_surface_count()):
+				var key := (mesh_instance.name + " " + mesh_instance.mesh.surface_get_name(surface)).to_lower()
+				var source_material := mesh_instance.mesh.surface_get_material(surface)
+				if source_material != null:
+					key += " " + source_material.resource_name.to_lower()
+				var chosen := wall_material
+				if key.contains("roof") or key.contains("tile") or key.contains("shingle") or key.contains("top"):
+					chosen = roof_material
+				elif key.contains("window") or key.contains("glass") or key.contains("door") or key.contains("trim") or key.contains("frame"):
+					chosen = trim_material
+				mesh_instance.set_surface_override_material(surface, chosen)
+	for child: Node in root.get_children():
+		if child is Node3D:
+			_apply_building_surface_materials(child as Node3D, wall_material, roof_material, trim_material)
 
 
 func _override_materials(root: Node3D, material: Material) -> void:

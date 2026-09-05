@@ -76,3 +76,10 @@ The Golden Scene implementation must be judged visually against the approved riv
 - Adds Daniel Andersson's CC0 Medieval Church as the town's single vertical landmark.
 - Removes the oversized V11 apartment blocks from active placement; active town massing is low-rise textured housing, six small legacy background buildings, two photo-shop accents, and one church landmark.
 - Distant treeline is extended behind the town to reduce the bare-hill/tabletop read.
+
+
+## Runtime visual iteration V13
+- Actual #63 capture proved the V12 house/church geometry and placement were usable, but source materials still resolved white in Godot Compatibility.
+- V13 explicitly assigns every imported house/church mesh surface a project PBR material at runtime; roof/tile/shingle surfaces get dark roof materials, window/door/trim surfaces get a dark trim material, and every unidentified surface falls back to a colored wall material.
+- House walls cycle through warm concrete, brick, neutral concrete and gray plaster; the church uses a light stone/concrete wall with a dark roof.
+- This is a hard visual fallback: source material failure can no longer leave a final white building in the proof frame.
