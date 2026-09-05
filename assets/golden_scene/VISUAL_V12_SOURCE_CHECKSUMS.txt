@@ -1,0 +1,3 @@
+# FRONTLINE Golden Scene V12 source checksums
+7a9a3424f97c78e05ef89053eff1cd303f01bf30ba665ba6235fad383a59859d  /home/runner/work/_temp/frontline-golden-v12/house.zip
+3ae3570511aa016a89aefc1249b38170969ca27ad51684ffa63bee5ca047bd08  /home/runner/work/_temp/frontline-golden-v12/church.zip
