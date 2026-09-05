@@ -48,3 +48,9 @@ The Golden Scene implementation must be judged visually against the approved riv
 - Removed the 36-instance legacy near-camera hedge wall after visual review.
 - HQ vegetation is restricted to complete EA01 tree variants 01c/02a/03a/04a/05d/06d; detached crowns, roots, old-tree fragments and palm-like outliers are excluded from the active frame.
 - Friendly armored formation is moved into the visible midground; smoke alpha/color and tracer thickness are tuned from actual 1920x1080 review rather than content-count gates.
+
+
+## Runtime visual iteration V9
+- Mid Poly Meadows geometry remains active, but its upstream material graph is overridden in Compatibility rendering because the actual V8 capture rendered the vegetation white.
+- Active foliage count is reduced and pushed to peripheral/distant roles so armored combat, river, bridge and town remain the primary hierarchy.
+- Smoke opacity was reduced after actual-frame review showed alpha stacking still reading as black blur.

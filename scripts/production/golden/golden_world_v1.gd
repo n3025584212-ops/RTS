@@ -176,10 +176,10 @@ void fragment() {
 	_field_material_a = _field_shader(Color(0.26, 0.33, 0.11), Color(0.15, 0.20, 0.065))
 	_field_material_b = _field_shader(Color(0.34, 0.28, 0.105), Color(0.19, 0.15, 0.055))
 	_foliage_materials = [
-		_standard_material(Color(0.105, 0.185, 0.075), 0.0, 0.96),
-		_standard_material(Color(0.145, 0.235, 0.095), 0.0, 0.95),
-		_standard_material(Color(0.19, 0.255, 0.105), 0.0, 0.94),
-		_standard_material(Color(0.115, 0.16, 0.065), 0.0, 0.98),
+		_standard_material(Color(0.105, 0.155, 0.070), 0.0, 0.96),
+		_standard_material(Color(0.135, 0.190, 0.082), 0.0, 0.95),
+		_standard_material(Color(0.165, 0.215, 0.095), 0.0, 0.94),
+		_standard_material(Color(0.090, 0.130, 0.060), 0.0, 0.98),
 	]
 	_rock_material = _standard_material(Color(0.28, 0.27, 0.235), 0.02, 0.92)
 	_building_materials = [
@@ -199,8 +199,8 @@ func _build_environment() -> void:
 	# Keep the visible background independent from Sky/fog/tonemap while using
 	# explicit ambient and directional lighting for world readability.
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.41, 0.55, 0.66)
-	env.background_energy_multiplier = 1.35
+	env.background_color = Color(0.36, 0.49, 0.60)
+	env.background_energy_multiplier = 1.18
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.48, 0.53, 0.56)
 	env.ambient_light_energy = 0.82
@@ -640,7 +640,7 @@ func _build_forests_and_hedgerows() -> void:
 		tree_paths = nature_resource_paths.duplicate()
 
 	# Dense west/north ridge forest.
-	for i: int in range(56):
+	for i: int in range(36):
 		var t := float(i)
 		var x := -54.0 + fmod(t * 7.7, 37.0)
 		var z := -38.0 + fmod(t * 11.3, 28.0)
@@ -651,14 +651,14 @@ func _build_forests_and_hedgerows() -> void:
 
 	var hedge_paths := _filter_paths(nature_hq_resource_paths, ["Env_Bush_02b.glb", "Env_Bush_02c.glb", "Env_Bush_02d.glb", "Env_Bush_02f.glb"])
 	if not hedge_paths.is_empty():
-		for i: int in range(14):
+		for i: int in range(8):
 			var x := -48.0 + float(i) * 4.1
 			var z := 31.0 + sin(float(i) * 1.43) * 2.8
 			_add_nature_instance(hedge_paths[i % hedge_paths.size()], Vector3(x, 0, z), 1.15 + float(i % 3) * 0.14, float((i * 29) % 360))
 
 	# Distant tree screen adds scale/depth behind the defended settlement.
 	if not tree_paths.is_empty():
-		for i: int in range(18):
+		for i: int in range(12):
 			var x := 20.0 + float(i) * 2.15
 			var z := -44.0 + sin(float(i) * 1.37) * 4.5
 			_add_nature_instance(tree_paths[i % tree_paths.size()], Vector3(x, 0, z), 5.0 + float(i % 4) * 0.55, float((i * 53) % 360))
@@ -674,7 +674,8 @@ func _add_nature_instance(path: String, p: Vector3, target_size: float, yaw: flo
 	fit_instance_to_size(instance, target_size)
 	var lower_path := path.to_lower()
 	if path.begins_with("res://assets/golden_scene/nature_hq/"):
-		pass
+		var hq_material_index := absi(path.hash()) % _foliage_materials.size()
+		_override_materials(instance, _foliage_materials[hq_material_index])
 	elif lower_path.contains("rock") or lower_path.contains("cliff"):
 		_override_materials(instance, _rock_material)
 	elif not _foliage_materials.is_empty():
