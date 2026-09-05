@@ -210,7 +210,7 @@ func _build_environment() -> void:
 	env.fog_density = 0.00075
 	env.fog_height = 3.0
 	env.fog_height_density = 0.010
-env.fog_sky_affect = 0.04
+	env.fog_sky_affect = 0.04
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env_node.environment = env
 	add_child(env_node)
