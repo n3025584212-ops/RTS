@@ -63,7 +63,7 @@ func _build_materials() -> void:
 	for i: int in range(5):
 		var m := StandardMaterial3D.new()
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		m.albedo_color = Color(0.20 + float(i) * 0.025, 0.21 + float(i) * 0.022, 0.205 + float(i) * 0.02, 0.62 - float(i) * 0.055)
+		m.albedo_color = Color(0.105 + float(i) * 0.025, 0.11 + float(i) * 0.025, 0.105 + float(i) * 0.023, 0.72 - float(i) * 0.06)
 		m.roughness = 1.0
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 		_smoke_materials.append(m)
@@ -154,9 +154,9 @@ func _add_explosion(base: Vector3, scale_value: float) -> void:
 	var light := OmniLight3D.new()
 	light.position = base
 	light.light_color = Color(1.0, 0.52, 0.16)
-	light.light_energy = 5.0 * scale_value
+	light.light_energy = 3.4 * scale_value
 	light.omni_range = 13.0 * scale_value
-	light.shadow_enabled = true
+	light.shadow_enabled = false
 	add_child(light)
 	explosion_count += 1
 
@@ -184,7 +184,7 @@ func _add_tracer_arc(start: Vector3, finish: Vector3, arc: float, friendly: bool
 		var t := float(i) / 9.0
 		var current := start.lerp(finish, t)
 		current.y += sin(t * PI) * arc
-		_add_segment(previous, current, 0.045, mat, "Tracer")
+		_add_segment(previous, current, 0.030, mat, "Tracer")
 		tracer_segment_count += 1
 		previous = current
 
@@ -198,7 +198,7 @@ func _add_shell_arc(start: Vector3, finish: Vector3, arc: float, friendly: bool)
 		var t := float(i) / 17.0
 		var current := start.lerp(finish, t)
 		current.y += sin(t * PI) * arc
-		_add_segment(previous, current, 0.035, mat, "ShellTrajectory")
+		_add_segment(previous, current, 0.024, mat, "ShellTrajectory")
 		tracer_segment_count += 1
 		previous = current
 
