@@ -51,6 +51,9 @@ jobs:
           test -s assets/golden_scene/nature_hq/glTF/EA01_Env_Tree_05d.glb
           test -s assets/golden_scene/nature_real/pine_sapling_small_lod.glb
           test -s assets/golden_scene/hdri/hochsal_field_1k.hdr
+          test -s assets/golden_scene/nature/034_fence_simple.glb
+          test -s assets/golden_scene/nature/032_fence_planks.glb
+          test -s assets/golden_scene/nature/031_fence_gate.glb
           test -s assets/golden_scene/pbr/leafy_grass_diff_1k.png
           test -s assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png
           test -s assets/golden_scene/pbr/asphalt_02_diff_1k.png
