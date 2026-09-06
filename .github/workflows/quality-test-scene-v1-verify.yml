@@ -31,8 +31,18 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends xvfb libgl1 mesa-utils libvulkan1 mesa-vulkan-drivers
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 mesa-utils libvulkan1 mesa-vulkan-drivers blender python3-numpy
           vulkaninfo --summary || true
+          blender --version | head -n 1
+
+      - name: Acquire V7 Poly Haven quality assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/production/quality/acquire_quality_v7_assets.sh
+          scripts/production/quality/acquire_quality_v7_assets.sh 2>&1 | tee quality-v7-assets.log
+          test -s assets/golden_scene/quality_v7/tree_small_02_lod.glb
+          test -s assets/golden_scene/quality_v7/modular_factory_facade.glb
 
       - name: Verify required real assets
         shell: bash
