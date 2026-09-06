@@ -79,7 +79,7 @@ jobs:
           grep -q 'FRONTLINE_QUALITY_VFX_READY' quality-runtime.log
           grep -q 'FRONTLINE_QUALITY_SCREENSHOT_CAPTURED' quality-runtime.log
           grep -q 'FRONTLINE_QUALITY_TECH_GATE_PASS' quality-runtime.log
-          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|QUALITY_TEST_REQUIRED_ASSET_MISSING|Failed to load script|Cannot open file|Invalid call|Invalid access' quality-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Node not inside tree|QUALITY_TEST_REQUIRED_ASSET_MISSING|Failed to load script|Cannot open file|Invalid call|Invalid access' quality-runtime.log
 
       - name: Verify real PNG
         shell: bash
