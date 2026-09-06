@@ -1,0 +1,113 @@
+name: FRONTLINE Quality Test Scene V1
+
+on:
+  push:
+    branches:
+      - dev/godot-golden-scene-v1
+    paths:
+      - "scenes/production/QualityTestSceneV1.tscn"
+      - "scripts/production/quality/**"
+      - ".github/workflows/quality-test-scene-v1-verify.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality-test:
+    name: Godot 4.7.1 Forward+ quality slice
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vulkan render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 mesa-utils libvulkan1 mesa-vulkan-drivers
+          vulkaninfo --summary || true
+
+      - name: Verify required real assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/golden_scene/vehicles/mbt_abrams.glb
+          test -s assets/golden_scene/vehicles/ifv.glb
+          test -s assets/golden_scene/city_hq3/00_warehouse_front.glb
+          test -s assets/golden_scene/city_hq3/02_shop_front17_derelict.glb
+          test -s assets/golden_scene/city_hq3/03_shop_front15.glb
+          test -s assets/golden_scene/nature_real/pine_sapling_small_lod.glb
+          test -s assets/golden_scene/pbr/leafy_grass_diff_1k.png
+          test -s assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png
+          test -s assets/golden_scene/pbr/asphalt_02_diff_1k.png
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" --version
+
+      - name: Import quality scene with Forward Plus
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 150s "$GODOT" --headless --editor --path . --rendering-method forward_plus --quit 2>&1 | tee quality-editor-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' quality-editor-import.log
+
+      - name: Render actual 1920x1080 quality slice
+        shell: bash
+        env:
+          FRONTLINE_CAPTURE_QUALITY_SLICE: "1"
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/quality_test_scene
+          timeout 180s xvfb-run -a -s "-screen 0 1920x1080x24"             "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy             --resolution 1920x1080 res://scenes/production/QualityTestSceneV1.tscn             2>&1 | tee quality-runtime.log
+          grep -q 'FRONTLINE_QUALITY_TEST_SCENE_READY' quality-runtime.log
+          grep -q 'FRONTLINE_QUALITY_WORLD_READY' quality-runtime.log
+          grep -q 'FRONTLINE_QUALITY_VFX_READY' quality-runtime.log
+          grep -q 'FRONTLINE_QUALITY_SCREENSHOT_CAPTURED' quality-runtime.log
+          grep -q 'FRONTLINE_QUALITY_TECH_GATE_PASS' quality-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|QUALITY_TEST_REQUIRED_ASSET_MISSING|Failed to load script|Cannot open file|Invalid call|Invalid access' quality-runtime.log
+
+      - name: Verify real PNG
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, struct
+          p="artifacts/quality_test_scene/quality_test_scene_v1_actual_1920x1080.png"
+          data=open(p,"rb").read()
+          if data[:8] != b"\x89PNG\r\n\x1a\n":
+              raise SystemExit("not png")
+          w,h=struct.unpack(">II",data[16:24])
+          if (w,h)!=(1920,1080):
+              raise SystemExit((w,h))
+          if len(data)<180000:
+              raise SystemExit(f"png too small {len(data)}")
+          print("FRONTLINE_QUALITY_PNG_PASS",w,h,len(data),hashlib.sha256(data).hexdigest())
+          print(json.load(open("artifacts/quality_test_scene/quality_test_scene_v1_metrics.json")))
+          PY
+
+      - name: Upload quality proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-quality-test-scene-v1-proof
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            artifacts/quality_test_scene/quality_test_scene_v1_actual_1920x1080.png
+            artifacts/quality_test_scene/quality_test_scene_v1_metrics.json
+            quality-runtime.log
+            quality-editor-import.log
