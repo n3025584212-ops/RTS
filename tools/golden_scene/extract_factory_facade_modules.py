@@ -77,7 +77,10 @@ exported=0
 # not a tall catalogue/display stack.
 z_lo=zmin-0.01
 z_hi=min(zmax,zmin+6.5)
+y_lo=ymin-0.01
+y_hi=min(ymax,ymin+1.6)
 print("FRONTLINE_V11_HEIGHT_CROP",z_lo,z_hi)
+print("FRONTLINE_V11_DEPTH_CROP",y_lo,y_hi)
 
 for idx,cx in enumerate(centers):
     lo=cx-slice_width*0.5
@@ -110,9 +113,20 @@ for idx,cx in enumerate(centers):
         bm,geom=geom,dist=0.0001,
         plane_co=Vector((0,0,z_hi)),plane_no=Vector((0,0,1))
     )
+    geom=list(bm.verts)+list(bm.edges)+list(bm.faces)
+    bmesh.ops.bisect_plane(
+        bm,geom=geom,dist=0.0001,
+        plane_co=Vector((0,y_lo,0)),plane_no=Vector((0,1,0))
+    )
+    geom=list(bm.verts)+list(bm.edges)+list(bm.faces)
+    bmesh.ops.bisect_plane(
+        bm,geom=geom,dist=0.0001,
+        plane_co=Vector((0,y_hi,0)),plane_no=Vector((0,1,0))
+    )
     outside=[
         v for v in bm.verts
         if v.co.x < lo-0.001 or v.co.x > hi+0.001
+        or v.co.y < y_lo-0.001 or v.co.y > y_hi+0.001
         or v.co.z < z_lo-0.001 or v.co.z > z_hi+0.001
     ]
     if outside:
