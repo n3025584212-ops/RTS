@@ -96,7 +96,7 @@ func _apply_tree_materials(root: Node3D, variant: int) -> void:
 		if mi == null or mi.mesh == null:
 			continue
 		for surface: int in range(mi.mesh.get_surface_count()):
-			var key := (mi.name + " " + mi.mesh.surface_get_name(surface)).to_lower()
+			var key: String = (str(mi.name) + " " + str(mi.mesh.surface_get_name(surface))).to_lower()
 			var src := mi.mesh.surface_get_material(surface)
 			if src != null:
 				key += " " + src.resource_name.to_lower()
