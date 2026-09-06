@@ -50,14 +50,29 @@ zmin=min(p.z for p in coords); zmax=max(p.z for p in coords)
 width=xmax-xmin
 print("FRONTLINE_V11_FACTORY_BOUNDS",xmin,xmax,ymin,ymax,zmin,zmax,"width",width)
 
-# Use three separated 18%-wide slices across the facade. This avoids exporting
-# the entire 53m kit while preserving complete material layers within each slice.
-centers=[0.20,0.50,0.80]
-slice_width=width*0.18
+# Use actual face-density quantiles rather than raw bbox fractions. The Poly
+# Haven presentation contains empty lateral space, so bbox-only slicing can hit
+# empty regions even though usable facade geometry exists elsewhere.
+face_centers=[]
+for poly in base.data.polygons:
+    if not poly.vertices:
+        continue
+    xs=[base.data.vertices[i].co.x for i in poly.vertices]
+    face_centers.append(sum(xs)/float(len(xs)))
+face_centers.sort()
+if len(face_centers)<32:
+    raise SystemExit("V11 factory geometry too sparse for module extraction")
+
+quantiles=[0.18,0.50,0.82]
+centers=[]
+for q in quantiles[:ns.count]:
+    pos=int(round(q*float(len(face_centers)-1)))
+    centers.append(face_centers[max(0,min(len(face_centers)-1,pos))])
+slice_width=min(width*0.18,10.0)
+print("FRONTLINE_V11_DENSITY_CENTERS",centers,"slice_width",slice_width)
 exported=0
 
-for idx,frac in enumerate(centers[:ns.count]):
-    cx=xmin+width*frac
+for idx,cx in enumerate(centers):
     lo=cx-slice_width*0.5
     hi=cx+slice_width*0.5
 
