@@ -14,6 +14,16 @@ curl -fL --retry 4 --retry-all-errors --retry-delay 2   -A "FRONTLINE-QualitySli
 test -s "$TMP/residential.zip"
 unzip -q "$TMP/residential.zip" -d "$TMP/src"
 
+# The upstream package nests its actual model source in source/334.zip.
+# Expand nested archives before selecting the largest supported 3D source.
+mapfile -t NESTED_ZIPS < <(find "$TMP/src" -type f -iname '*.zip' | sort)
+for nested in "${NESTED_ZIPS[@]}"; do
+  dest="${nested%.zip}_unpacked"
+  mkdir -p "$dest"
+  unzip -q "$nested" -d "$dest"
+  echo "FRONTLINE_QUALITY_V10_NESTED_ARCHIVE $nested -> $dest"
+done
+
 SOURCE=""
 for ext in blend fbx obj gltf glb; do
   candidate="$(find "$TMP/src" -type f -iname "*.$ext" -printf '%s %p
