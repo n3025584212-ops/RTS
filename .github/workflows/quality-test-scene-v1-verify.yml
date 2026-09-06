@@ -13,6 +13,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: quality-test-scene-v1-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality-test:
     name: Godot 4.7.1 Forward+ quality slice
@@ -36,10 +40,13 @@ jobs:
           set -euo pipefail
           test -s assets/golden_scene/vehicles/mbt_abrams.glb
           test -s assets/golden_scene/vehicles/ifv.glb
-          test -s assets/golden_scene/city_hq3/00_warehouse_front.glb
-          test -s assets/golden_scene/city_hq3/02_shop_front17_derelict.glb
-          test -s assets/golden_scene/city_hq3/03_shop_front15.glb
-          test -s assets/golden_scene/nature_real/pine_sapling_small_lod.glb
+          test -s assets/golden_scene/city_v20/family_house_00.glb
+          test -s assets/golden_scene/city_v20/family_house_01.glb
+          test -s assets/golden_scene/city_v20/family_house_02.glb
+          test -s assets/golden_scene/city_v20/family_house_03.glb
+          test -s assets/golden_scene/nature_hq/glTF/EA01_Env_Tree_01c.glb
+          test -s assets/golden_scene/nature_hq/glTF/EA01_Env_Tree_03a.glb
+          test -s assets/golden_scene/nature_hq/glTF/EA01_Env_Tree_05d.glb
           test -s assets/golden_scene/pbr/leafy_grass_diff_1k.png
           test -s assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png
           test -s assets/golden_scene/pbr/asphalt_02_diff_1k.png
