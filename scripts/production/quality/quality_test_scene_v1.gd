@@ -43,7 +43,7 @@ func _capture() -> void:
 		"resolution": image.get_size() == Vector2i(1920,1080),
 		"real_buildings": world.building_count >= 3,
 		"real_vehicles": world.vehicle_count >= 3,
-		"real_trees": world.tree_count >= 5,
+		"real_trees": world.tree_count >= 4,
 		"particle_smoke": vfx.smoke_emitters >= 1,
 		"particle_fire": vfx.fire_emitters >= 1,
 		"particle_sparks": vfx.spark_emitters >= 1,
