@@ -170,11 +170,11 @@ func _build_trees() -> void:
 func _build_camera() -> void:
 	camera = Camera3D.new()
 	camera.name = "QualityCamera"
-	camera.fov = 43.0
-	camera.position = Vector3(-31.0, 21.5, 32.0)
-	camera.look_at(Vector3(6.0, 1.7, 0.5), Vector3.UP)
-	camera.current = true
+	camera.fov = 44.0
+	camera.position = Vector3(-29.0, 27.0, 31.0)
 	add_child(camera)
+	camera.look_at(Vector3(7.0, 0.8, 0.5), Vector3.UP)
+	camera.current = true
 
 
 func _add_patch(name_value: String, p: Vector3, size: Vector2, yaw: float, mat: Material) -> void:
