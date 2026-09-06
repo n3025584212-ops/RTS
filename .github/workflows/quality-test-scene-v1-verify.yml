@@ -44,6 +44,8 @@ jobs:
           test -s assets/golden_scene/city_v20/family_house_01.glb
           test -s assets/golden_scene/city_v20/family_house_02.glb
           test -s assets/golden_scene/city_v20/family_house_03.glb
+          test -s assets/golden_scene/city_v20/family_house_04.glb
+          test -s assets/golden_scene/city_v20/family_house_05.glb
           test -s assets/golden_scene/nature_hq/glTF/EA01_Env_Tree_01c.glb
           test -s assets/golden_scene/nature_hq/glTF/EA01_Env_Tree_03a.glb
           test -s assets/golden_scene/nature_hq/glTF/EA01_Env_Tree_05d.glb
