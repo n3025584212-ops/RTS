@@ -72,6 +72,13 @@ slice_width=min(width*0.18,10.0)
 print("FRONTLINE_V11_DENSITY_CENTERS",centers,"slice_width",slice_width)
 exported=0
 
+# The source also presents modules in vertical rows. Keep only the lowest
+# architectural row so each export is a single-storey usable facade segment,
+# not a tall catalogue/display stack.
+z_lo=zmin-0.01
+z_hi=min(zmax,zmin+6.5)
+print("FRONTLINE_V11_HEIGHT_CROP",z_lo,z_hi)
+
 for idx,cx in enumerate(centers):
     lo=cx-slice_width*0.5
     hi=cx+slice_width*0.5
@@ -93,7 +100,21 @@ for idx,cx in enumerate(centers):
         bm,geom=geom,dist=0.0001,
         plane_co=Vector((hi,0,0)),plane_no=Vector((1,0,0))
     )
-    outside=[v for v in bm.verts if v.co.x < lo-0.001 or v.co.x > hi+0.001]
+    geom=list(bm.verts)+list(bm.edges)+list(bm.faces)
+    bmesh.ops.bisect_plane(
+        bm,geom=geom,dist=0.0001,
+        plane_co=Vector((0,0,z_lo)),plane_no=Vector((0,0,1))
+    )
+    geom=list(bm.verts)+list(bm.edges)+list(bm.faces)
+    bmesh.ops.bisect_plane(
+        bm,geom=geom,dist=0.0001,
+        plane_co=Vector((0,0,z_hi)),plane_no=Vector((0,0,1))
+    )
+    outside=[
+        v for v in bm.verts
+        if v.co.x < lo-0.001 or v.co.x > hi+0.001
+        or v.co.z < z_lo-0.001 or v.co.z > z_hi+0.001
+    ]
     if outside:
         bmesh.ops.delete(bm,geom=outside,context="VERTS")
     bm.to_mesh(dup.data)
