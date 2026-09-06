@@ -43,6 +43,14 @@ jobs:
           scripts/production/quality/acquire_quality_v7_assets.sh 2>&1 | tee quality-v7-assets.log
           test -s assets/golden_scene/quality_v7/tree_small_02_lod.glb
 
+      - name: Acquire V10 CC0 residential block
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/production/quality/acquire_quality_v10_assets.sh
+          scripts/production/quality/acquire_quality_v10_assets.sh 2>&1 | tee quality-v10-assets.log
+          test -s assets/golden_scene/quality_v10/residential_block.glb
+
       - name: Verify required real assets
         shell: bash
         run: |
