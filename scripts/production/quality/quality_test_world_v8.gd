@@ -85,7 +85,7 @@ func _mesh_bottom_local(root: Node3D) -> float:
 			minimum = minf(minimum,p.y)
 	if is_inf(minimum):
 		return 0.0
-	return minimum
+	return minimum * root.scale.y
 
 
 func _relative_transform(root: Node3D, node: Node3D) -> Transform3D:
