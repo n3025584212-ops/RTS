@@ -1,6 +1,6 @@
 {
-	"approx_fps": 7.5,
-	"avg_frame_ms": 133.527,
+	"approx_fps": 7.4,
+	"avg_frame_ms": 134.893,
 	"bridge_members": 31,
 	"capture_resolution": {
 		"height": 1080,
@@ -18,7 +18,7 @@
 	"frame_samples": 8,
 	"golden_frame_sha256": "6c9305b89a5bb1839721f12c2ae8c2507fae4fc7d4fdbbdf130f6f1ecc113362",
 	"hud_panels": 6,
-	"p95_frame_ms": 134.834,
+	"p95_frame_ms": 144.114,
 	"physical_infantry": 28,
 	"physical_vehicles": 17,
 	"product_pass": false,
