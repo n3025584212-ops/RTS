@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/production/quality/quality_test_scene_v1.gd" id="1_root"]
-[ext_resource type="Script" path="res://scripts/production/quality/quality_test_world_v16.gd" id="2_world"]
-[ext_resource type="Script" path="res://scripts/production/quality/quality_test_vfx_v7.gd" id="3_vfx"]
+[ext_resource type="Script" path="res://scripts/production/quality/quality_test_world_v16_1.gd" id="2_world"]
+[ext_resource type="Script" path="res://scripts/production/quality/quality_test_vfx_v8.gd" id="3_vfx"]
 
 [node name="QualityTestSceneV1" type="Node3D"]
 script = ExtResource("1_root")
