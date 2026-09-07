@@ -43,22 +43,14 @@ jobs:
           scripts/production/quality/acquire_quality_v7_assets.sh 2>&1 | tee quality-v7-assets.log
           test -s assets/golden_scene/quality_v7/tree_small_02_lod.glb
 
-      - name: Acquire V11 split industrial facade modules
-        shell: bash
-        run: |
-          set -euo pipefail
-          chmod +x scripts/production/quality/acquire_quality_v11_factory_modules.sh
-          scripts/production/quality/acquire_quality_v11_factory_modules.sh 2>&1 | tee quality-v11-factory.log
-          test -s assets/golden_scene/quality_v11_factory/factory_module_00.glb
-          test -s assets/golden_scene/quality_v11_factory/factory_module_01.glb
-          test -s assets/golden_scene/quality_v11_factory/factory_module_02.glb
-
       - name: Verify required real assets
         shell: bash
         run: |
           set -euo pipefail
           test -s assets/golden_scene/vehicles/mbt_abrams.glb
           test -s assets/golden_scene/vehicles/ifv.glb
+          test -s assets/golden_scene/infantry/soldier.glb
+          test -s assets/golden_scene/nature/048_plant_bushDetailed.glb
           test -s assets/golden_scene/city_v20/family_house_00.glb
           test -s assets/golden_scene/city_v20/family_house_01.glb
           test -s assets/golden_scene/city_v20/family_house_02.glb
