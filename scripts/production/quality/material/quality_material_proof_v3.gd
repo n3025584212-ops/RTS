@@ -126,9 +126,9 @@ void fragment(){
 """
 	var mat: ShaderMaterial = ShaderMaterial.new()
 	mat.shader = shader
-	mat.set_shader_parameter("grass_diff",load("res://assets/golden_scene/pbr/leafy_grass_diff_1k.png"))
-	mat.set_shader_parameter("grass_nor",load("res://assets/golden_scene/pbr/leafy_grass_nor_gl_1k.png"))
-	mat.set_shader_parameter("grass_arm",load("res://assets/golden_scene/pbr/leafy_grass_arm_1k.png"))
+	mat.set_shader_parameter("grass_diff",load("res://assets/golden_scene/pbr/grass_path_3_diff_1k.png"))
+	mat.set_shader_parameter("grass_nor",load("res://assets/golden_scene/pbr/grass_path_3_nor_gl_1k.png"))
+	mat.set_shader_parameter("grass_arm",load("res://assets/golden_scene/pbr/grass_path_3_arm_1k.png"))
 	mat.set_shader_parameter("dirt_diff",load("res://assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png"))
 	mat.set_shader_parameter("dirt_nor",load("res://assets/golden_scene/pbr/dirt_aerial_03_nor_gl_1k.png"))
 	mat.set_shader_parameter("dirt_arm",load("res://assets/golden_scene/pbr/dirt_aerial_03_arm_1k.png"))
@@ -345,15 +345,27 @@ uniform sampler2D mud_arm : repeat_enable, filter_linear_mipmap_anisotropic;
 uniform float panel_variant = 0.5;
 uniform float panel_dust = 0.5;
 varying vec3 wp;
-void vertex(){ wp=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
+varying vec3 wn;
+void vertex(){
+	wp=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;
+	wn=normalize((MODEL_MATRIX*vec4(NORMAL,0.0)).xyz);
+}
 void fragment(){
 	vec2 uv=UV*3.2;
-	vec3 d_diff=texture(dirt_diff,uv).rgb;
+	vec3 weights=pow(abs(wn),vec3(4.0));
+	weights/=max(weights.x+weights.y+weights.z,0.001);
+	vec3 d_yz=texture(dirt_diff,wp.yz*0.82).rgb;
+	vec3 d_xz=texture(dirt_diff,wp.xz*0.82).rgb;
+	vec3 d_xy=texture(dirt_diff,wp.xy*0.82).rgb;
+	vec3 d_diff=d_yz*weights.x+d_xz*weights.y+d_xy*weights.z;
+	vec3 a_yz=texture(dirt_arm,wp.yz*0.82).rgb;
+	vec3 a_xz=texture(dirt_arm,wp.xz*0.82).rgb;
+	vec3 a_xy=texture(dirt_arm,wp.xy*0.82).rgb;
+	vec3 d_arm=a_yz*weights.x+a_xz*weights.y+a_xy*weights.z;
 	vec3 d_nor=texture(dirt_nor,uv).rgb;
-	vec3 d_arm=texture(dirt_arm,uv).rgb;
-	vec3 m_diff=texture(mud_diff,uv*0.78+vec2(0.17,0.09)).rgb;
+	vec3 m_diff=texture(mud_diff,wp.xz*0.68+vec2(0.17,0.09)).rgb;
 	vec3 m_nor=texture(mud_nor,uv*0.78+vec2(0.17,0.09)).rgb;
-	vec3 m_arm=texture(mud_arm,uv*0.78+vec2(0.17,0.09)).rgb;
+	vec3 m_arm=texture(mud_arm,wp.xz*0.68+vec2(0.17,0.09)).rgb;
 	float tex_luma=dot(d_diff,vec3(0.2126,0.7152,0.0722));
 	float macro=0.5+0.5*sin(wp.x*0.61+wp.z*0.49+sin(wp.y*0.43)*1.7);
 	float low=1.0-smoothstep(0.42,1.38,wp.y);
@@ -361,11 +373,11 @@ void fragment(){
 	float splash=low*smoothstep(0.34,0.68,1.0-tex_luma)*(0.18+0.18*panel_dust);
 	float grime=clamp(low*(0.22+0.34*(1.0-tex_luma))+dry_patch*0.24+splash,0.0,0.58);
 	vec3 olive=mix(vec3(0.090,0.108,0.038),vec3(0.165,0.174,0.058),macro*0.58);
-	olive*=mix(0.91,1.055,panel_variant);
-	olive*=mix(0.73,1.16,tex_luma);
+	olive*=mix(0.84,1.11,panel_variant);
+	olive*=mix(0.66,1.20,tex_luma);
 	vec3 dust=vec3(0.235,0.192,0.112)*mix(0.76,1.20,1.0-tex_luma);
 	vec3 dry_mud=m_diff*vec3(0.66,0.53,0.36);
-	vec3 base=mix(olive,dust,clamp(dry_patch*0.42+panel_dust*0.035,0.0,0.28));
+	vec3 base=mix(olive,dust,clamp(dry_patch*0.52+panel_dust*0.055,0.0,0.38));
 	base=mix(base,dry_mud,grime);
 	float fleck=0.5+0.5*sin(wp.x*23.0-wp.z*19.0+wp.y*17.0);
 	float wear=(1.0-low)*smoothstep(0.92,0.995,fleck)*0.10;
@@ -541,7 +553,7 @@ void fragment(){
 	vec2 uv=UV*8.1;
 	float n1=0.5+0.5*sin(p.x*0.67+p.y*0.49+sin(p.y*0.37)*1.5);
 	float n2=0.5+0.5*sin(p.x*1.57-p.y*1.29+sin(p.x*0.71));
-	float dirt_mask=clamp(0.12+0.36*n1+0.16*n2,0.0,0.62);
+	float grass_island=smoothstep(0.60,0.88,0.5+0.5*sin(p.x*0.57-p.y*0.49+sin(p.x*0.31)*1.4));\n\tfloat dirt_mask=clamp(0.12+0.36*n1+0.16*n2-grass_island*0.23,0.0,0.62);
 	float gravel_mask=smoothstep(0.72,0.92,0.5+0.5*sin(p.x*0.91-p.y*0.83+1.4))*0.22;
 	float rut=track_mask(p);
 	float churn=(1.0-smoothstep(0.72,2.22,length(p-vec2(0.48,0.38))))*(0.45+0.35*n2);
@@ -579,9 +591,9 @@ void fragment(){
 """
 	var mat: ShaderMaterial = ShaderMaterial.new()
 	mat.shader = shader
-	mat.set_shader_parameter("grass_diff",load("res://assets/golden_scene/pbr/grass_path_3_diff_1k.png"))
-	mat.set_shader_parameter("grass_nor",load("res://assets/golden_scene/pbr/grass_path_3_nor_gl_1k.png"))
-	mat.set_shader_parameter("grass_arm",load("res://assets/golden_scene/pbr/grass_path_3_arm_1k.png"))
+	mat.set_shader_parameter("grass_diff",load("res://assets/golden_scene/pbr/leafy_grass_diff_1k.png"))
+	mat.set_shader_parameter("grass_nor",load("res://assets/golden_scene/pbr/leafy_grass_nor_gl_1k.png"))
+	mat.set_shader_parameter("grass_arm",load("res://assets/golden_scene/pbr/leafy_grass_arm_1k.png"))
 	mat.set_shader_parameter("dirt_diff",load("res://assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png"))
 	mat.set_shader_parameter("dirt_nor",load("res://assets/golden_scene/pbr/dirt_aerial_03_nor_gl_1k.png"))
 	mat.set_shader_parameter("dirt_arm",load("res://assets/golden_scene/pbr/dirt_aerial_03_arm_1k.png"))
@@ -801,7 +813,7 @@ func _ground_abrams_by_wheels(root: Node3D,target_y: float) -> void:
 
 func _capture_all() -> void:
 	await _capture_view(HOUSE_SHOT_V2,Vector3(10.2,5.25,12.2),Vector3(0,2.20,0))
-	await _capture_view(ABRAMS_SHOT_V2,Vector3(53.8,3.35,8.6),Vector3(45,1.18,0))
+	await _capture_view(ABRAMS_SHOT_V2,Vector3(53.0,3.15,7.9),Vector3(45,1.16,0))
 	await _capture_view(GROUND_SHOT_V2,Vector3(93.5,3.85,5.1),Vector3(90,0.05,0))
 	_write_metrics_v3()
 	var all_pass := true
