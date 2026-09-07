@@ -292,6 +292,54 @@ for side in (-1,1):
     for i,y in enumerate((-1.15,-0.75,-0.35,0.05,0.45)):
         add_cylinder(f"Body_TurretBolt_{side}_{i}", (x,y,2.18), 0.035, 0.035, BODY, axis="X", verts=16, bevel=0.004)
 
+# --- V6 production-detail pass ---
+# Driver hatch and forward periscopes.
+add_box("Body_DriverHatch", (0.0,2.22,1.52), (0.78,0.72,0.12), BODY, rot=(math.radians(-4),0,0), bevel=0.025)
+for i,x in enumerate((-0.28,0.0,0.28)):
+    add_box(f"Optic_DriverPeriscope_{i}", (x,2.52,1.64), (0.18,0.12,0.10), OPTIC, bevel=0.012)
+
+# Side-skirt hinges/fasteners and lower rubber strips.
+skirt_ys = [-2.85,-2.05,-1.25,-0.45,0.35,1.15,1.95,2.75]
+for side in (-1,1):
+    sx=side*1.855
+    for i,y in enumerate(skirt_ys):
+        add_cylinder(f"Body_SkirtHinge_{side}_{i:02d}", (sx,y+0.23,1.12), 0.045, 0.06, TRACK, axis="X", verts=16, bevel=0.004)
+        add_cylinder(f"Body_SkirtBolt_{side}_{i:02d}", (sx,y-0.22,0.94), 0.032, 0.055, TRACK, axis="X", verts=14, bevel=0.003)
+    add_box(f"Wheel_SkirtRubber_{side}", (side*1.84,-0.05,0.47), (0.055,6.05,0.14), WHEEL, bevel=0.014)
+
+# Suspension arms and wheel-center caps.
+for side in (-1,1):
+    for i,y in enumerate(wheel_ys):
+        add_bar(f"Track_SuspensionArm_{side}_{i:02d}", (side*1.18,y,0.82), (side*1.48,y,0.61), 0.045, TRACK, verts=14)
+        add_cylinder(f"Body_WheelCap_{side}_{i:02d}", (side*1.625,y,0.58), 0.075, 0.070, BODY, axis="X", verts=20, bevel=0.006)
+
+# Track guide teeth on the visible lower run.
+for side in (-1,1):
+    for i in range(13):
+        y=-2.75+i*(5.50/12.0)
+        add_box(f"Track_GuideTooth_{side}_{i:02d}", (side*1.67,y,0.31), (0.12,0.11,0.15), TRACK, bevel=0.005)
+
+# Barrel thermal sleeve bands and muzzle detail.
+for i,y in enumerate((2.35,2.72,3.10,3.48,3.86,4.22)):
+    add_cylinder(f"MetalBarrel_SleeveBand_{i:02d}", (0,y,2.08), 0.105, 0.045, GUN, axis="Y", verts=24, bevel=0.005)
+add_cylinder("MetalBarrel_MuzzleCollar", (0,4.91,2.08), 0.125, 0.08, GUN, axis="Y", verts=28, bevel=0.006)
+
+# Turret weld/panel seam cues.
+for side in (-1,1):
+    add_bar(f"Body_TurretWeldUpper_{side}", (side*1.38,-1.30,2.36), (side*1.38,0.62,2.34), 0.018, BODY, verts=12)
+    add_bar(f"Body_TurretWeldLower_{side}", (side*1.43,-1.30,1.84), (side*1.43,0.58,1.92), 0.016, BODY, verts=12)
+
+# Bustle stowage: tarp rolls, jerry cans and antenna cable boxes.
+for i,x in enumerate((-0.95,-0.45,0.55,1.00)):
+    add_cylinder(f"Body_TarpRoll_{i:02d}", (x,-2.28,2.42), 0.12, 0.48, BODY, axis="X", verts=18, bevel=0.010)
+for i,x in enumerate((-0.72,0.72)):
+    add_box(f"Body_JerryCan_{i:02d}", (x,-2.42,2.10), (0.30,0.18,0.42), BODY, bevel=0.022)
+    add_box(f"Body_JerryCanHandle_{i:02d}", (x,-2.52,2.34), (0.15,0.06,0.05), TRACK, bevel=0.008)
+
+# Small neutral identification panels (geometry, not UI).
+add_box("Body_IDPanel_Left", (-1.525,-0.18,2.16), (0.035,0.42,0.20), SIDE, bevel=0.006)
+add_box("Body_IDPanel_Right", (1.525,-0.18,2.16), (0.035,0.42,0.20), SIDE, bevel=0.006)
+
 # Ground entire procedural asset at Z=0 and center XY.
 meshes = [o for o in bpy.context.scene.objects if o.type=="MESH"]
 mins = [1e30,1e30,1e30]
