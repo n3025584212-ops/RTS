@@ -58,7 +58,8 @@ func _add_rubble_cluster(center: Vector3,yaw: float) -> void:
 	rubble_mat.roughness = 0.97
 	for i: int in range(placements.size()):
 		var d: Array = placements[i]
-		var p := center+d[1]
+		var offset: Vector3 = d[1]
+		var p: Vector3 = center + offset
 		p.y = _terrain_height(p.x,p.z)+0.02
 		var rock := _add_asset(d[0],p,d[2],d[3],"BattleRubble_%02d" % i)
 		if rock != null:
@@ -95,7 +96,7 @@ func _build_trees() -> void:
 		Vector3(35,0,18),Vector3(43,0,-10)
 	]
 	for i: int in range(bushes.size()):
-		var p := bushes[i]
+		var p: Vector3 = bushes[i]
 		p.y = _terrain_height(p.x,p.z)+0.02
 		var bush := _add_asset(BUSH,p,1.9,17.0+float(i)*39.0,"DesignHedge_%02d" % i)
 		if bush != null:
