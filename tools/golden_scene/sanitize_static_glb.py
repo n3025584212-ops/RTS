@@ -10,6 +10,7 @@ def argv():
 ap=argparse.ArgumentParser()
 ap.add_argument("--source",required=True)
 ap.add_argument("--output",required=True)
+ap.add_argument("--quality-bevel",action="store_true")
 ns=ap.parse_args(argv())
 
 bpy.ops.object.select_all(action="SELECT")
@@ -61,6 +62,51 @@ for obj in meshes:
         bpy.ops.object.transform_apply(location=False,rotation=True,scale=True)
     except Exception as exc:
         print("FRONTLINE_STATIC_APPLY_WARN",obj.name,exc)
+
+
+# Optional Material Proof quality pass: add small physical edge bevels before
+# export so hard-surface panels catch real highlights instead of relying on
+# shader-only fake edge variation. This is intentionally opt-in.
+if ns.quality_bevel:
+    for obj in meshes:
+        mat_names=[slot.material.name.lower() for slot in obj.material_slots if slot.material]
+        joined=" ".join(mat_names)
+        if "nukclearsign" in joined:
+            print("FRONTLINE_STATIC_BEVEL_SKIP",obj.name,"reason=marking")
+            continue
+
+        width=0.004
+        if "body" in joined or "material.001" in joined:
+            width=0.012
+        elif "metal barrel" in joined:
+            width=0.006
+        elif "wheels" in joined:
+            width=0.006
+
+        min_dim=min(max(float(d),0.0) for d in obj.dimensions)
+        if min_dim <= 0.018:
+            print("FRONTLINE_STATIC_BEVEL_SKIP",obj.name,"reason=thin","min_dim",min_dim)
+            continue
+        width=min(width,min_dim*0.18)
+        if width <= 0.0005:
+            continue
+
+        bpy.ops.object.select_all(action="DESELECT")
+        obj.select_set(True)
+        bpy.context.view_layer.objects.active=obj
+        try:
+            bevel=obj.modifiers.new(name="MaterialProofBevel",type="BEVEL")
+            bevel.width=width
+            bevel.segments=2
+            bevel.limit_method="ANGLE"
+            bevel.angle_limit=0.48
+            bevel.profile=0.5
+            if hasattr(bevel,"harden_normals"):
+                bevel.harden_normals=True
+            bpy.ops.object.modifier_apply(modifier=bevel.name)
+            print("FRONTLINE_STATIC_BEVEL",obj.name,"width",width)
+        except Exception as exc:
+            print("FRONTLINE_STATIC_BEVEL_WARN",obj.name,exc)
 
 mins=[1e30,1e30,1e30]
 maxs=[-1e30,-1e30,-1e30]
