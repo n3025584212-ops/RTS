@@ -118,6 +118,54 @@ def add_wedge(name, front_y, back_y, z0, zf, zb, half_front, half_back, material
     apply_bevel(obj, bevel)
     return obj
 
+def add_side_cheek(name, side, material=BODY, bevel=0.035):
+    # Abrams-style faceted turret cheek: narrow inner front, broad outer rear,
+    # sloped roof and tapered lower edge. Built as real wedge geometry.
+    sx = float(side)
+    inner_front = 0.20 * sx
+    outer_front = 1.18 * sx
+    inner_back = 0.32 * sx
+    outer_back = 1.42 * sx
+    front_y = 1.43
+    back_y = 0.38
+    z0_front = 1.73
+    z0_back = 1.78
+    z1_front_inner = 2.17
+    z1_front_outer = 2.25
+    z1_back_inner = 2.31
+    z1_back_outer = 2.36
+    verts = [
+        (inner_front, front_y, z0_front),
+        (outer_front, front_y, z0_front),
+        (inner_back, back_y, z0_back),
+        (outer_back, back_y, z0_back),
+        (inner_front, front_y, z1_front_inner),
+        (outer_front, front_y, z1_front_outer),
+        (inner_back, back_y, z1_back_inner),
+        (outer_back, back_y, z1_back_outer),
+    ]
+    if side < 0:
+        faces = [(1,0,4,5),(3,7,6,2),(1,5,7,3),(0,2,6,4),(4,6,7,5),(1,3,2,0)]
+    else:
+        faces = [(0,1,5,4),(2,6,7,3),(0,4,6,2),(1,3,7,5),(4,5,7,6),(0,2,3,1)]
+    mesh = bpy.data.meshes.new(name+"_Mesh")
+    mesh.from_pydata(verts, [], faces)
+    mesh.update()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.collection.objects.link(obj)
+    obj.data.materials.append(material)
+    active(obj)
+    try:
+        bpy.ops.object.mode_set(mode="EDIT")
+        bpy.ops.mesh.select_all(action="SELECT")
+        bpy.ops.uv.smart_project(island_margin=0.025)
+        bpy.ops.object.mode_set(mode="OBJECT")
+    except Exception:
+        try: bpy.ops.object.mode_set(mode="OBJECT")
+        except Exception: pass
+    apply_bevel(obj, bevel)
+    return obj
+
 def add_bar(name, a, b, radius, material=BODY, verts=12):
     a = Vector(a); b = Vector(b)
     d = b-a
@@ -191,16 +239,24 @@ for i in range(9):
 for side in (-1,1):
     add_box(f"Exhaust_Rear_{side}", (side*1.18,-3.47,1.20), (0.52,0.15,0.28), EXHAUST, bevel=0.020)
 
+# V10 front-hull production cues.
+for side in (-1,1):
+    add_bar(f"Body_GlacisSeam_{side}", (side*0.12,3.62,1.10), (side*1.38,2.72,1.40), 0.012, BODY, verts=10)
+    add_box(f"Optic_FrontLight_{side}", (side*1.18,3.45,1.12), (0.22,0.12,0.16), OPTIC, bevel=0.018)
+    add_bar(f"Track_FrontLightGuardA_{side}", (side*1.38,3.40,1.00), (side*1.38,3.40,1.28), 0.018, TRACK, verts=10)
+    add_bar(f"Track_FrontLightGuardB_{side}", (side*1.38,3.40,1.28), (side*0.98,3.40,1.28), 0.018, TRACK, verts=10)
+for i,x in enumerate((-1.15,-0.78,-0.40,0.40,0.78,1.15)):
+    add_cylinder(f"Body_GlacisFastener_{i:02d}", (x,2.92,1.35), 0.025, 0.035, BODY, axis="Y", verts=12, bevel=0.003)
+
 # --- Turret ---
 add_cylinder("Body_TurretRing", (0,-0.38,1.60), 1.28, 0.20, BODY, axis="Z", verts=48, bevel=0.025)
 add_wedge("Body_TurretShell", 1.35, -1.90, 1.60, 2.28, 2.42, 1.42, 1.50, BODY, 0.055)
 add_box("Body_TurretRoof", (0,-0.58,2.35), (2.28,2.42,0.12), BODY, rot=(math.radians(-2.2),0,0), bevel=0.032)
-# Cheek wedges: angled faceted armor masses.
+# V10 cheek wedges: real faceted armor geometry rather than rotated boxes.
 for side in (-1,1):
-    add_box(f"Body_TurretCheek_{side}", (side*0.78,1.03,1.99), (0.66,1.02,0.58), BODY,
-            rot=(0,0,math.radians(side*14.0)), bevel=0.050)
-    add_box(f"Body_TurretSide_{side}", (side*1.35,-0.38,2.01), (0.18,1.74,0.48), BODY,
-            rot=(0,0,math.radians(side*3.0)), bevel=0.038)
+    add_side_cheek(f"Body_TurretCheekWedge_{side}", side, BODY, bevel=0.032)
+    add_box(f"Body_TurretSide_{side}", (side*1.38,-0.46,2.02), (0.16,1.58,0.45), BODY,
+            rot=(0,0,math.radians(side*4.0)), bevel=0.030)
 
 # Mantlet and M256 gun.
 add_box("Body_Mantlet", (0,1.42,2.06), (1.10,0.28,0.58), BODY, bevel=0.045)
