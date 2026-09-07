@@ -282,6 +282,15 @@ func _build_abrams_proof() -> void:
 	inspection_fill.shadow_enabled = false
 	add_child(inspection_fill)
 
+	var side_fill: OmniLight3D = OmniLight3D.new()
+	side_fill.name = "AbramsSideMaterialFill"
+	side_fill.position = center+Vector3(7.4,2.8,-1.5)
+	side_fill.light_color = Color(0.88,0.91,0.86)
+	side_fill.light_energy = 4.4
+	side_fill.omni_range = 16.0
+	side_fill.shadow_enabled = false
+	add_child(side_fill)
+
 	var hull: ShaderMaterial = _vehicle_hull_shader_v3()
 	var side_skirt: ShaderMaterial = hull.duplicate() as ShaderMaterial
 	side_skirt.set_shader_parameter("panel_variant",0.34)
@@ -375,11 +384,13 @@ void fragment(){
 	vec3 m_arm=texture(mud_arm,wp.xz*0.68+vec2(0.17,0.09)).rgb;
 	float tex_luma=dot(d_diff,vec3(0.2126,0.7152,0.0722));
 	float macro=0.5+0.5*sin(wp.x*0.61+wp.z*0.49+sin(wp.y*0.43)*1.7);
+	float vertical=clamp(1.0-abs(wn.y),0.0,1.0);
 	float low=1.0-smoothstep(0.42,1.38,wp.y);
 	float paint_break=smoothstep(0.42,0.68,tex_luma+0.13*sin(wp.x*1.07-wp.z*0.91+wp.y*0.73));
 	float dry_patch=smoothstep(0.24,0.68,1.0-tex_luma)*(0.23+0.28*macro);
 	float splash=low*smoothstep(0.30,0.66,1.0-tex_luma)*(0.22+0.26*panel_dust);
-	float grime=clamp(low*(0.26+0.40*(1.0-tex_luma))+dry_patch*0.28+splash+side_skirt_factor*0.16,0.0,0.70);
+	float face_dust=vertical*(0.06+0.20*(1.0-tex_luma))*(0.45+0.55*panel_dust);
+	float grime=clamp(low*(0.26+0.40*(1.0-tex_luma))+dry_patch*0.28+splash+face_dust+side_skirt_factor*0.16,0.0,0.74);
 	vec3 olive_dark=vec3(0.075,0.094,0.031);
 	vec3 olive_mid=vec3(0.135,0.148,0.046);
 	vec3 olive_light=vec3(0.190,0.185,0.070);
@@ -389,8 +400,9 @@ void fragment(){
 	olive*=mix(0.64,1.23,tex_luma);
 	vec3 dust=vec3(0.255,0.205,0.118)*mix(0.76,1.24,1.0-tex_luma);
 	vec3 dry_mud=m_diff*vec3(0.66,0.53,0.36);
-	vec3 base=mix(olive,dust,clamp(dry_patch*0.60+panel_dust*0.075+side_skirt_factor*0.08,0.0,0.48));
-	base=mix(base,dry_mud,grime);
+	vec3 base=mix(olive,dust,clamp(dry_patch*0.60+panel_dust*0.075+side_skirt_factor*0.08+face_dust*0.42,0.0,0.52));
+	base=mix(base,dry_mud,grime*0.82);
+	base=mix(base,dust,face_dust*0.24);
 	float fleck=0.5+0.5*sin(wp.x*23.0-wp.z*19.0+wp.y*17.0);
 	float wear=(1.0-low)*smoothstep(0.92,0.995,fleck)*0.10;
 	ALBEDO=base+vec3(0.085,0.080,0.055)*wear;
@@ -398,7 +410,7 @@ void fragment(){
 	NORMAL_MAP_DEPTH=0.80;
 	METALLIC=0.025+wear*0.46;
 	float rough=mix(clamp(0.50+d_arm.g*0.38,0.50,0.90),clamp(0.68+m_arm.g*0.27,0.68,0.97),grime);
-	ROUGHNESS=clamp(rough+dry_patch*0.15+side_skirt_factor*0.08-wear*0.25,0.44,0.98);
+	ROUGHNESS=clamp(rough+dry_patch*0.15+face_dust*0.18+side_skirt_factor*0.08-wear*0.25,0.44,0.98);
 	AO=clamp(mix(d_arm.r,m_arm.r,grime),0.68,1.0);
 	SPECULAR=0.31;
 }
@@ -416,10 +428,10 @@ void fragment(){
 
 func _track_material_v3() -> StandardMaterial3D:
 	var mat: StandardMaterial3D = StandardMaterial3D.new()
-	mat.albedo_color = Color(0.105,0.098,0.082)
-	mat.metallic = 0.56
+	mat.albedo_color = Color(0.145,0.128,0.098)
+	mat.metallic = 0.44
 	mat.metallic_specular = 0.42
-	mat.roughness = 0.63
+	mat.roughness = 0.68
 	return mat
 
 
@@ -825,7 +837,7 @@ func _ground_abrams_by_wheels(root: Node3D,target_y: float) -> void:
 
 func _capture_all() -> void:
 	await _capture_view(HOUSE_SHOT_V2,Vector3(10.2,5.25,12.2),Vector3(0,2.20,0))
-	await _capture_view(ABRAMS_SHOT_V2,Vector3(52.5,2.95,7.3),Vector3(45,1.12,0))
+	await _capture_view(ABRAMS_SHOT_V2,Vector3(51.8,2.75,6.8),Vector3(45,1.10,0))
 	await _capture_view(GROUND_SHOT_V2,Vector3(93.5,3.85,5.1),Vector3(90,0.05,0))
 	_write_metrics_v3()
 	var all_pass := true
