@@ -38,6 +38,7 @@ WHEEL = mat("wheels", (0.055, 0.055, 0.045), 0.02, 0.88)
 GUN = mat("metal barrel", (0.12, 0.13, 0.055), 0.10, 0.56)
 OPTIC = mat("optics", (0.020, 0.035, 0.030), 0.15, 0.22)
 EXHAUST = mat("exhaust", (0.07, 0.065, 0.055), 0.55, 0.72)
+MARKING = mat("marking", (0.48, 0.46, 0.34), 0.02, 0.72)
 
 def active(obj):
     bpy.ops.object.select_all(action="DESELECT")
@@ -375,6 +376,13 @@ for side in (-1,1):
         y=-2.75+i*(5.50/12.0)
         add_box(f"Track_GuideTooth_{side}_{i:02d}", (side*1.67,y,0.31), (0.12,0.11,0.15), TRACK, bevel=0.005)
 
+# V11 rubber track-pad blocks on the outer lower run.
+for side in (-1,1):
+    for i in range(25):
+        y=-2.95+i*(5.90/24.0)
+        add_box(f"Wheel_TrackRubberPad_{side}_{i:02d}",
+                (side*1.815,y,0.218),(0.055,0.145,0.042),WHEEL,bevel=0.004)
+
 # Barrel thermal sleeve bands and muzzle detail.
 for i,y in enumerate((2.35,2.72,3.10,3.48,3.86,4.22)):
     add_cylinder(f"MetalBarrel_SleeveBand_{i:02d}", (0,y,2.08), 0.105, 0.045, GUN, axis="Y", verts=24, bevel=0.005)
@@ -392,9 +400,9 @@ for i,x in enumerate((-0.72,0.72)):
     add_box(f"Body_JerryCan_{i:02d}", (x,-2.42,2.10), (0.30,0.18,0.42), BODY, bevel=0.022)
     add_box(f"Body_JerryCanHandle_{i:02d}", (x,-2.52,2.34), (0.15,0.06,0.05), TRACK, bevel=0.008)
 
-# Small neutral identification panels (geometry, not UI).
-add_box("Body_IDPanel_Left", (-1.525,-0.18,2.16), (0.035,0.42,0.20), SIDE, bevel=0.006)
-add_box("Body_IDPanel_Right", (1.525,-0.18,2.16), (0.035,0.42,0.20), SIDE, bevel=0.006)
+# Small weathered identification panels (geometry, not UI).
+add_box("Marking_TurretID_Left", (-1.525,-0.18,2.16), (0.035,0.34,0.14), MARKING, bevel=0.004)
+add_box("Marking_TurretID_Right", (1.525,-0.18,2.16), (0.035,0.34,0.14), MARKING, bevel=0.004)
 
 # Ground entire procedural asset at Z=0 and center XY.
 meshes = [o for o in bpy.context.scene.objects if o.type=="MESH"]
