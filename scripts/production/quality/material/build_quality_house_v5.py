@@ -231,6 +231,50 @@ cyl("HouseServicePipe",(-3.72,3.13,2.15),0.035,2.60,METAL,axis="Z",verts=12,bev=
 box("HouseExteriorLamp",(0.95,3.18,2.82),(0.18,0.16,0.28),METAL,bev=0.025)
 box("HouseExteriorLampGlass",(0.95,3.28,2.80),(0.12,0.06,0.15),GLASS,bev=0.014)
 
+# --- V10 authored weather / damage geometry ---
+# Uneven roof repair plates and displaced shingles break the perfect roof read.
+for i,(x,y,z,side,rz) in enumerate([
+    (-2.95,1.55,5.82,-1,-5.0),(-2.45,1.36,6.05,-1,4.0),
+    (2.82,-1.20,5.88,1,6.0),(3.20,-0.82,5.68,1,-7.0)
+]):
+    pitch=-side*roof_pitch
+    box(f"HouseRoofRepair_{i:02d}",(x,y,z),(0.72,0.95,0.055),PATCH,
+        rot=(0,pitch,math.radians(rz)),bev=0.010)
+
+for i,(x,y,z,side) in enumerate([
+    (-3.45,2.15,5.48,-1),(-3.12,2.38,5.60,-1),
+    (2.65,2.00,5.93,1),(2.98,2.28,5.78,1)
+]):
+    box(f"HouseLooseShingle_{i:02d}",(x,y,z),(0.34,0.52,0.035),ROOF,
+        rot=(0,-side*roof_pitch,math.radians(-8+5*i)),bev=0.006)
+
+# Front-wall crack segments and chipped sill/foundation blocks.
+cracks=[
+    ((-3.55,3.205,3.88),(-3.30,3.215,3.56)),
+    ((-3.30,3.215,3.56),(-3.46,3.220,3.28)),
+    ((1.58,3.205,4.68),(1.76,3.215,4.35)),
+    ((1.76,3.215,4.35),(1.62,3.220,4.08)),
+]
+for i,(a,b) in enumerate(cracks):
+    av=Vector(a); bv=Vector(b)
+    mid=(av+bv)*0.5
+    d=bv-av
+    length=d.length
+    angle=math.atan2(d.x,d.z)
+    box(f"HouseCrack_{i:02d}",tuple(mid),(0.035,0.035,length),TRIM,
+        rot=(0,0,-angle),bev=0.004)
+
+for i,(x,z,sx,sz) in enumerate([
+    (-3.62,0.76,0.52,0.22),(2.98,0.82,0.66,0.20),(-0.92,0.70,0.44,0.18)
+]):
+    box(f"HouseFoundationChip_{i:02d}",(x,3.14,z),(sx,0.08,sz),PATCH,
+        rot=(0,0,math.radians(-6+5*i)),bev=0.008)
+
+# Small bent sheet-metal scraps at the facade base.
+for i,(x,y,rz) in enumerate([(-2.75,3.48,12.0),(3.25,3.42,-9.0)]):
+    box(f"HouseFacadeScrap_{i:02d}",(x,y,0.34),(0.42,0.26,0.035),METAL,
+        rot=(math.radians(10),0,math.radians(rz)),bev=0.006)
+
 # Ground whole asset.
 meshes=[o for o in bpy.context.scene.objects if o.type=="MESH"]
 mins=[1e30,1e30,1e30]; maxs=[-1e30,-1e30,-1e30]
