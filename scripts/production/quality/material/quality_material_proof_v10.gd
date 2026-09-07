@@ -6,9 +6,13 @@ var _grass_clump_mesh_v10: ArrayMesh
 
 
 func _preflight() -> void:
-	super._preflight()
-	if not ResourceLoader.exists(HDRI_V10):
-		push_error("MATERIAL_PROOF_REQUIRED_ASSET_MISSING path=%s" % HDRI_V10)
+	var required: Array[String] = [
+		HOUSE_STATIC_V5,ABRAMS_STATIC,HDRI_V10,
+		GRASS,WEED,HQ_ROCK_A,HQ_ROCK_B,HQ_BRANCH,HQ_FENCE
+	]
+	for path: String in required:
+		if not ResourceLoader.exists(path):
+			push_error("MATERIAL_PROOF_REQUIRED_ASSET_MISSING path=%s" % path)
 
 
 func _build_environment() -> void:
