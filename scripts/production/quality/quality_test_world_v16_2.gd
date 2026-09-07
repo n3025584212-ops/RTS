@@ -27,12 +27,17 @@ func _add_background_landscape() -> void:
 			var p10 := Vector3(x1,_background_height(x1,z0),z0)
 			var p01 := Vector3(x0,_background_height(x0,z1),z1)
 			var p11 := Vector3(x1,_background_height(x1,z1),z1)
-			_add_background_vertex(st,p00,x_min,x_max,z_near,z_far)
-			_add_background_vertex(st,p10,x_min,x_max,z_near,z_far)
-			_add_background_vertex(st,p01,x_min,x_max,z_near,z_far)
-			_add_background_vertex(st,p10,x_min,x_max,z_near,z_far)
-			_add_background_vertex(st,p11,x_min,x_max,z_near,z_far)
-			_add_background_vertex(st,p01,x_min,x_max,z_near,z_far)
+			var tri_points: Array[Vector3] = [p00,p10,p01,p10,p11,p01]
+			for p: Vector3 in tri_points:
+				var e := 1.0
+				var ndx := _background_height(p.x+e,p.z)-_background_height(p.x-e,p.z)
+				var ndz := _background_height(p.x,p.z+e)-_background_height(p.x,p.z-e)
+				st.set_normal(Vector3(-ndx/(2.0*e),1.0,-ndz/(2.0*e)).normalized())
+				st.set_uv(Vector2(
+					(p.x-x_min)/(x_max-x_min),
+					(p.z-z_near)/(z_far-z_near)
+				))
+				st.add_vertex(p)
 
 	var bg := MeshInstance3D.new()
 	bg.name = "V16BackgroundLandscape"
@@ -50,15 +55,6 @@ func _background_height(x: float,z: float) -> float:
 	hills += 1.8*cos(x*0.016-z*0.021)
 	var center_ridge := 3.2*exp(-pow((x-18.0)/72.0,2.0))*smoothstep(0.18,0.72,t)
 	return lerpf(seam,hills+center_ridge,smoothstep(0.0,0.42,t))
-
-
-func _background_vertex(st: SurfaceTool,p: Vector3,x_min: float,x_max: float,z_near: float,z_far: float) -> void:
-	var e := 1.0
-	var dx := _background_height(p.x+e,p.z)-_background_height(p.x-e,p.z)
-	var dz := _background_height(p.x,p.z+e)-_background_height(p.x,p.z-e)
-	st.set_normal(Vector3(-dx/(2.0*e),1.0,-dz/(2.0*e)).normalized())
-	st.set_uv(Vector2((p.x-x_min)/(x_max-x_min),(p.z-z_near)/(z_far-z_near)))
-	st.add_vertex(p)
 
 
 func _background_material() -> ShaderMaterial:
