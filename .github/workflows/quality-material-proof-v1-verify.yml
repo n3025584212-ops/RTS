@@ -60,6 +60,14 @@ jobs:
           test -s assets/golden_scene/pbr/aerial_mud_1_diff_1k.png
           test -s assets/golden_scene/pbr/aerial_mud_1_nor_gl_1k.png
 
+      - name: Prepare Material Proof V3 static armor
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/production/quality/material/prepare_quality_material_v3_assets.sh
+          scripts/production/quality/material/prepare_quality_material_v3_assets.sh 2>&1 | tee material-proof-v3-assets.log
+          test -s assets/golden_scene/quality_material_v3/mbt_abrams_static.glb
+
       - name: Install Godot 4.7.1
         shell: bash
         run: |
