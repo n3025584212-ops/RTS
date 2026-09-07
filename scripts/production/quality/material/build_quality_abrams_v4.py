@@ -39,7 +39,7 @@ GUN = mat("metal barrel", (0.12, 0.13, 0.055), 0.10, 0.56)
 OPTIC = mat("optics", (0.020, 0.035, 0.030), 0.15, 0.22)
 EXHAUST = mat("exhaust", (0.07, 0.065, 0.055), 0.55, 0.72)
 MARKING = mat("marking", (0.48, 0.46, 0.34), 0.02, 0.72)
-
+MUDPATCH = mat("mud_patch", (0.20, 0.145, 0.085), 0.0, 0.90)\n
 def active(obj):
     bpy.ops.object.select_all(action="DESELECT")
     obj.select_set(True)
@@ -399,6 +399,26 @@ for i,x in enumerate((-0.95,-0.45,0.55,1.00)):
 for i,x in enumerate((-0.72,0.72)):
     add_box(f"Body_JerryCan_{i:02d}", (x,-2.42,2.10), (0.30,0.18,0.42), BODY, bevel=0.022)
     add_box(f"Body_JerryCanHandle_{i:02d}", (x,-2.52,2.34), (0.15,0.06,0.05), TRACK, bevel=0.008)
+
+# V13 authored mud/dust geometry layers on the lower armor and side skirts.
+for side in (-1,1):
+    sx=side*1.842
+    for i in range(14):
+        y=-2.75+i*(5.50/13.0)
+        z=0.60+0.10*float((i*3)%5)
+        height=0.10+0.035*float(i%4)
+        length=0.16+0.055*float((i*5)%5)
+        add_box(f"MudPatch_Side_{side}_{i:02d}",(sx,y,z),(0.030,length,height),MUDPATCH,
+                rot=(math.radians((i%3-1)*3.0),0,math.radians((i%5-2)*2.0)),bevel=0.010)
+
+# Front glacis and fender splashes: small irregular raised patches.
+for i,(x,y,z,sx,sy,sz) in enumerate([
+    (-1.15,3.13,1.02,0.28,0.12,0.06),(-0.70,3.22,1.12,0.34,0.14,0.05),
+    (0.62,3.20,1.10,0.30,0.13,0.05),(1.18,3.10,1.00,0.26,0.11,0.06),
+    (-1.38,2.58,0.78,0.18,0.20,0.08),(1.40,2.55,0.80,0.17,0.18,0.08)
+]):
+    add_box(f"MudPatch_Glacis_{i:02d}",(x,y,z),(sx,sy,sz),MUDPATCH,
+            rot=(math.radians(-8.0),0,math.radians(-5.0+2.5*i)),bevel=0.012)
 
 # Small weathered identification panels (geometry, not UI).
 add_box("Marking_TurretID_Left", (-1.525,-0.18,2.16), (0.035,0.34,0.14), MARKING, bevel=0.004)
