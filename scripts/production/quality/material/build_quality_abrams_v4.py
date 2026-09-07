@@ -39,7 +39,8 @@ GUN = mat("metal barrel", (0.12, 0.13, 0.055), 0.10, 0.56)
 OPTIC = mat("optics", (0.020, 0.035, 0.030), 0.15, 0.22)
 EXHAUST = mat("exhaust", (0.07, 0.065, 0.055), 0.55, 0.72)
 MARKING = mat("marking", (0.48, 0.46, 0.34), 0.02, 0.72)
-MUDPATCH = mat("mud_patch", (0.20, 0.145, 0.085), 0.0, 0.90)\n
+MUDPATCH = mat("mud_patch", (0.20, 0.145, 0.085), 0.0, 0.90)
+
 def active(obj):
     bpy.ops.object.select_all(action="DESELECT")
     obj.select_set(True)
