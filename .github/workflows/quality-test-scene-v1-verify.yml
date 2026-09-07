@@ -43,6 +43,18 @@ jobs:
           scripts/production/quality/acquire_quality_v7_assets.sh 2>&1 | tee quality-v7-assets.log
           test -s assets/golden_scene/quality_v7/tree_small_02_lod.glb
 
+      - name: Acquire V16 environment-art assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/production/quality/acquire_quality_v16_environment_assets.sh
+          scripts/production/quality/acquire_quality_v16_environment_assets.sh 2>&1 | tee quality-v16-assets.log
+          test -s assets/golden_scene/quality_v16/shrub_01_lod.glb
+          test -s assets/golden_scene/quality_v16/shrub_02_lod.glb
+          test -s assets/golden_scene/quality_v16/shrub_03_lod.glb
+          test -s assets/golden_scene/quality_v16/grass_medium_02_lod.glb
+          test -s assets/golden_scene/quality_v16/weed_plant_02_lod.glb
+
       - name: Verify required real assets
         shell: bash
         run: |
