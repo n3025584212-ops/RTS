@@ -126,9 +126,9 @@ void fragment(){
 """
 	var mat: ShaderMaterial = ShaderMaterial.new()
 	mat.shader = shader
-	mat.set_shader_parameter("grass_diff",load("res://assets/golden_scene/pbr/grass_path_3_diff_1k.png"))
-	mat.set_shader_parameter("grass_nor",load("res://assets/golden_scene/pbr/grass_path_3_nor_gl_1k.png"))
-	mat.set_shader_parameter("grass_arm",load("res://assets/golden_scene/pbr/grass_path_3_arm_1k.png"))
+	mat.set_shader_parameter("grass_diff",load("res://assets/golden_scene/pbr/leafy_grass_diff_1k.png"))
+	mat.set_shader_parameter("grass_nor",load("res://assets/golden_scene/pbr/leafy_grass_nor_gl_1k.png"))
+	mat.set_shader_parameter("grass_arm",load("res://assets/golden_scene/pbr/leafy_grass_arm_1k.png"))
 	mat.set_shader_parameter("dirt_diff",load("res://assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png"))
 	mat.set_shader_parameter("dirt_nor",load("res://assets/golden_scene/pbr/dirt_aerial_03_nor_gl_1k.png"))
 	mat.set_shader_parameter("dirt_arm",load("res://assets/golden_scene/pbr/dirt_aerial_03_arm_1k.png"))
@@ -288,6 +288,7 @@ func _build_abrams_proof() -> void:
 	var gun: StandardMaterial3D = _gun_material_v3()
 	var optics: StandardMaterial3D = _optics_material()
 	var layered_count: int = 0
+	var body_index: int = 0
 
 	for mi: MeshInstance3D in _collect_meshes(abrams_root):
 		if mi.mesh == null:
@@ -313,6 +314,14 @@ func _build_abrams_proof() -> void:
 				apply_override = false
 			elif key.contains("exhaust"):
 				chosen = track
+			elif key.contains("body"):
+				var panel: ShaderMaterial = hull.duplicate() as ShaderMaterial
+				var panel_variant: float = float((body_index*37)%101)/100.0
+				var panel_dust: float = float((body_index*23+17)%89)/88.0
+				panel.set_shader_parameter("panel_variant",panel_variant)
+				panel.set_shader_parameter("panel_dust",panel_dust)
+				chosen = panel
+				body_index += 1
 			if apply_override:
 				mi.set_surface_override_material(surface,chosen)
 				layered_count += 1
@@ -333,6 +342,8 @@ uniform sampler2D dirt_arm : repeat_enable, filter_linear_mipmap_anisotropic;
 uniform sampler2D mud_diff : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
 uniform sampler2D mud_nor : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
 uniform sampler2D mud_arm : repeat_enable, filter_linear_mipmap_anisotropic;
+uniform float panel_variant = 0.5;
+uniform float panel_dust = 0.5;
 varying vec3 wp;
 void vertex(){ wp=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
 void fragment(){
@@ -346,19 +357,21 @@ void fragment(){
 	float tex_luma=dot(d_diff,vec3(0.2126,0.7152,0.0722));
 	float macro=0.5+0.5*sin(wp.x*0.61+wp.z*0.49+sin(wp.y*0.43)*1.7);
 	float low=1.0-smoothstep(0.42,1.38,wp.y);
-	float dry_patch=smoothstep(0.30,0.72,1.0-tex_luma)*(0.18+0.18*macro);
-	float grime=clamp(low*(0.18+0.30*(1.0-tex_luma))+dry_patch*0.20,0.0,0.46);
-	vec3 olive=mix(vec3(0.095,0.112,0.040),vec3(0.170,0.177,0.061),macro*0.58);
-	olive*=mix(0.76,1.13,tex_luma);
-	vec3 dust=vec3(0.21,0.175,0.105)*mix(0.74,1.18,1.0-tex_luma);
-	vec3 dry_mud=m_diff*vec3(0.58,0.48,0.34);
-	vec3 base=mix(olive,dust,dry_patch*0.34);
+	float dry_patch=smoothstep(0.28,0.70,1.0-tex_luma)*(0.20+0.22*macro);
+	float splash=low*smoothstep(0.34,0.68,1.0-tex_luma)*(0.18+0.18*panel_dust);
+	float grime=clamp(low*(0.22+0.34*(1.0-tex_luma))+dry_patch*0.24+splash,0.0,0.58);
+	vec3 olive=mix(vec3(0.090,0.108,0.038),vec3(0.165,0.174,0.058),macro*0.58);
+	olive*=mix(0.91,1.055,panel_variant);
+	olive*=mix(0.73,1.16,tex_luma);
+	vec3 dust=vec3(0.235,0.192,0.112)*mix(0.76,1.20,1.0-tex_luma);
+	vec3 dry_mud=m_diff*vec3(0.66,0.53,0.36);
+	vec3 base=mix(olive,dust,clamp(dry_patch*0.42+panel_dust*0.035,0.0,0.28));
 	base=mix(base,dry_mud,grime);
 	float fleck=0.5+0.5*sin(wp.x*23.0-wp.z*19.0+wp.y*17.0);
 	float wear=(1.0-low)*smoothstep(0.92,0.995,fleck)*0.10;
 	ALBEDO=base+vec3(0.085,0.080,0.055)*wear;
 	NORMAL_MAP=mix(d_nor,m_nor,clamp(grime*1.18,0.0,0.70));
-	NORMAL_MAP_DEPTH=0.68;
+	NORMAL_MAP_DEPTH=0.80;
 	METALLIC=0.025+wear*0.46;
 	float rough=mix(clamp(0.50+d_arm.g*0.38,0.50,0.90),clamp(0.68+m_arm.g*0.27,0.68,0.97),grime);
 	ROUGHNESS=clamp(rough+dry_patch*0.12-wear*0.25,0.44,0.97);
@@ -528,13 +541,13 @@ void fragment(){
 	vec2 uv=UV*8.1;
 	float n1=0.5+0.5*sin(p.x*0.67+p.y*0.49+sin(p.y*0.37)*1.5);
 	float n2=0.5+0.5*sin(p.x*1.57-p.y*1.29+sin(p.x*0.71));
-	float dirt_mask=clamp(0.10+0.26*n1+0.14*n2,0.0,0.48);
+	float dirt_mask=clamp(0.12+0.36*n1+0.16*n2,0.0,0.62);
 	float gravel_mask=smoothstep(0.72,0.92,0.5+0.5*sin(p.x*0.91-p.y*0.83+1.4))*0.22;
 	float rut=track_mask(p);
 	float churn=(1.0-smoothstep(0.72,2.22,length(p-vec2(0.48,0.38))))*(0.45+0.35*n2);
 	float ellipse=length(vec2((p.x-1.10)/1.10,(p.y-0.58)/0.52));
 	float wet=1.0-smoothstep(0.80+0.05*sin(p.x*4.6+p.y*3.8),1.05,ellipse);
-	vec3 grass=texture(grass_diff,uv).rgb*vec3(0.76,0.76,0.66);
+	vec3 grass=texture(grass_diff,uv).rgb*vec3(0.68,0.82,0.48);
 	vec3 dirt=texture(dirt_diff,uv*0.88).rgb*vec3(0.74,0.69,0.59);
 	vec3 mud=texture(mud_diff,uv*0.79).rgb*vec3(0.67,0.60,0.50);
 	vec3 gravel=texture(gravel_diff,uv*0.94).rgb*vec3(0.72,0.70,0.64);
@@ -542,11 +555,11 @@ void fragment(){
 	vec3 darm=texture(dirt_arm,uv*0.88).rgb;
 	vec3 marm=texture(mud_arm,uv*0.79).rgb;
 	vec3 rarm=texture(gravel_arm,uv*0.94).rgb;
-	float mud_mix=clamp(rut*0.40+churn*0.26+wet*0.30,0.0,0.60);
+	float mud_mix=clamp(rut*0.34+churn*0.24+wet*0.12,0.0,0.52);
 	vec3 base=mix(grass,dirt,dirt_mask);
 	base=mix(base,gravel,gravel_mask);
 	base=mix(base,mud,mud_mix);
-	base=mix(base,base*vec3(0.68,0.72,0.74),wet*0.22);
+	base=mix(base,base*vec3(0.78,0.81,0.82),wet*0.08);
 	vec3 nrm=mix(texture(grass_nor,uv).rgb,texture(dirt_nor,uv*0.88).rgb,dirt_mask);
 	nrm=mix(nrm,texture(gravel_nor,uv*0.94).rgb,gravel_mask);
 	nrm=mix(nrm,texture(mud_nor,uv*0.79).rgb,mud_mix);
@@ -789,7 +802,7 @@ func _ground_abrams_by_wheels(root: Node3D,target_y: float) -> void:
 func _capture_all() -> void:
 	await _capture_view(HOUSE_SHOT_V2,Vector3(10.2,5.25,12.2),Vector3(0,2.20,0))
 	await _capture_view(ABRAMS_SHOT_V2,Vector3(53.8,3.35,8.6),Vector3(45,1.18,0))
-	await _capture_view(GROUND_SHOT_V2,Vector3(93.9,4.45,5.7),Vector3(90,0.0,0))
+	await _capture_view(GROUND_SHOT_V2,Vector3(93.5,3.85,5.1),Vector3(90,0.05,0))
 	_write_metrics_v3()
 	var all_pass := true
 	for value: Variant in proof_checks.values():
