@@ -1,10 +1,6 @@
 extends "res://scripts/production/quality/material/quality_material_proof_v2.gd"
 
 const ABRAMS_STATIC := "res://assets/golden_scene/quality_material_v3/mbt_abrams_static.glb"
-const HQ_ROCK_A := "res://assets/golden_scene/nature_hq/glTF/EA01_Env_Rock_01a.glb"
-const HQ_ROCK_B := "res://assets/golden_scene/nature_hq/glTF/EA01_Env_Rock_01b.glb"
-const HQ_BRANCH_A := "res://assets/golden_scene/nature_hq/glTF/EA01_Env_Branch_01.glb"
-
 var _grass_card_texture: Texture2D
 
 func _spawn_scaled(path: String,pos: Vector3,target_size: float,yaw: float,name_value: String) -> Node3D:
@@ -29,7 +25,7 @@ func _spawn_scaled(path: String,pos: Vector3,target_size: float,yaw: float,name_
 
 
 func _preflight() -> void:
-	for path: String in [HOUSE,ABRAMS_STATIC,GRASS,WEED,ROCK_SMALL,ROCK_LARGE,HQ_ROCK_A,HQ_ROCK_B,HQ_BRANCH_A]:
+	for path: String in [HOUSE,ABRAMS_STATIC,GRASS,WEED,ROCK_SMALL,ROCK_LARGE]:
 		if not ResourceLoader.exists(path):
 			push_error("MATERIAL_PROOF_REQUIRED_ASSET_MISSING path=%s" % path)
 
@@ -49,7 +45,7 @@ func _build_environment() -> void:
 	env.sky = sky
 	env.background_energy_multiplier = 0.82
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.70
+	env.ambient_light_energy = 0.76
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.fog_enabled = true
 	env.fog_density = 0.0008
@@ -264,8 +260,8 @@ func _add_house_debris_v3(center: Vector3) -> void:
 		Vector3(-3.10,0.03,4.60),Vector3(-2.55,0.03,4.82),Vector3(3.12,0.03,4.44)
 	]
 	for i: int in range(offsets.size()):
-		var path: String = HQ_ROCK_A if i%2 == 0 else HQ_ROCK_B
-		var rubble: Node3D = _spawn_scaled(path,center+offsets[i],0.32+0.06*float(i),17.0+41.0*float(i),"HouseRubbleV3_%02d" % i)
+		var path: String = ROCK_SMALL if i%2 == 0 else ROCK_LARGE
+		_spawn_pbr_rock_v3(path,center+offsets[i],0.28+0.045*float(i),17.0+41.0*float(i),"HouseRubbleV3_%02d" % i)
 
 
 func _build_abrams_proof() -> void:
@@ -281,7 +277,7 @@ func _build_abrams_proof() -> void:
 	inspection_fill.name = "AbramsMaterialInspectionFill"
 	inspection_fill.position = center+Vector3(5.8,4.6,7.8)
 	inspection_fill.light_color = Color(0.78,0.84,0.92)
-	inspection_fill.light_energy = 2.2
+	inspection_fill.light_energy = 2.8
 	inspection_fill.omni_range = 19.0
 	inspection_fill.shadow_enabled = false
 	add_child(inspection_fill)
@@ -340,30 +336,33 @@ uniform sampler2D mud_arm : repeat_enable, filter_linear_mipmap_anisotropic;
 varying vec3 wp;
 void vertex(){ wp=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
 void fragment(){
-	vec2 uv=UV*3.6;
+	vec2 uv=UV*3.2;
 	vec3 d_diff=texture(dirt_diff,uv).rgb;
 	vec3 d_nor=texture(dirt_nor,uv).rgb;
 	vec3 d_arm=texture(dirt_arm,uv).rgb;
-	vec3 m_diff=texture(mud_diff,uv*0.82+vec2(0.17,0.09)).rgb;
-	vec3 m_nor=texture(mud_nor,uv*0.82+vec2(0.17,0.09)).rgb;
-	vec3 m_arm=texture(mud_arm,uv*0.82+vec2(0.17,0.09)).rgb;
-	float macro=0.5+0.5*sin(wp.x*0.63+wp.z*0.51+sin(wp.y*0.47)*1.7);
-	float micro=dot(d_diff,vec3(0.333));
-	float low=1.0-smoothstep(0.42,1.34,wp.y);
-	float grime=clamp(low*(0.10+0.23*(1.0-micro))+0.028*(1.0-micro),0.0,0.35);
-	vec3 olive=mix(vec3(0.105,0.125,0.045),vec3(0.175,0.185,0.064),macro*0.58);
-	olive*=0.91+0.13*micro;
-	vec3 dry_mud=m_diff*vec3(0.54,0.45,0.32);
-	vec3 base=mix(olive,dry_mud,grime);
+	vec3 m_diff=texture(mud_diff,uv*0.78+vec2(0.17,0.09)).rgb;
+	vec3 m_nor=texture(mud_nor,uv*0.78+vec2(0.17,0.09)).rgb;
+	vec3 m_arm=texture(mud_arm,uv*0.78+vec2(0.17,0.09)).rgb;
+	float tex_luma=dot(d_diff,vec3(0.2126,0.7152,0.0722));
+	float macro=0.5+0.5*sin(wp.x*0.61+wp.z*0.49+sin(wp.y*0.43)*1.7);
+	float low=1.0-smoothstep(0.42,1.38,wp.y);
+	float dry_patch=smoothstep(0.30,0.72,1.0-tex_luma)*(0.18+0.18*macro);
+	float grime=clamp(low*(0.18+0.30*(1.0-tex_luma))+dry_patch*0.20,0.0,0.46);
+	vec3 olive=mix(vec3(0.095,0.112,0.040),vec3(0.170,0.177,0.061),macro*0.58);
+	olive*=mix(0.76,1.13,tex_luma);
+	vec3 dust=vec3(0.21,0.175,0.105)*mix(0.74,1.18,1.0-tex_luma);
+	vec3 dry_mud=m_diff*vec3(0.58,0.48,0.34);
+	vec3 base=mix(olive,dust,dry_patch*0.34);
+	base=mix(base,dry_mud,grime);
 	float fleck=0.5+0.5*sin(wp.x*23.0-wp.z*19.0+wp.y*17.0);
-	float wear=(1.0-low)*smoothstep(0.92,0.995,fleck)*0.11;
-	ALBEDO=base+vec3(0.09,0.085,0.060)*wear;
-	NORMAL_MAP=mix(d_nor,m_nor,grime*0.76);
-	NORMAL_MAP_DEPTH=0.47;
-	METALLIC=0.025+wear*0.48;
-	float rough=mix(clamp(0.58+d_arm.g*0.30,0.56,0.86),clamp(0.72+m_arm.g*0.24,0.70,0.96),grime);
-	ROUGHNESS=clamp(rough-wear*0.25,0.46,0.96);
-	AO=clamp(mix(d_arm.r,m_arm.r,grime),0.70,1.0);
+	float wear=(1.0-low)*smoothstep(0.92,0.995,fleck)*0.10;
+	ALBEDO=base+vec3(0.085,0.080,0.055)*wear;
+	NORMAL_MAP=mix(d_nor,m_nor,clamp(grime*1.18,0.0,0.70));
+	NORMAL_MAP_DEPTH=0.68;
+	METALLIC=0.025+wear*0.46;
+	float rough=mix(clamp(0.50+d_arm.g*0.38,0.50,0.90),clamp(0.68+m_arm.g*0.27,0.68,0.97),grime);
+	ROUGHNESS=clamp(rough+dry_patch*0.12-wear*0.25,0.44,0.97);
+	AO=clamp(mix(d_arm.r,m_arm.r,grime),0.68,1.0);
 	SPECULAR=0.31;
 }
 """
@@ -411,13 +410,13 @@ func _add_vehicle_context_v3(center: Vector3) -> void:
 	]
 	for i: int in range(offsets.size()):
 		var path: String = GRASS if i%2 == 0 else WEED
-		var plant: Node3D = _spawn_scaled(path,center+offsets[i],0.82+0.12*float(i%3),23.0+47.0*float(i),"VehiclePlantV3_%02d" % i)
+		_spawn_scaled(path,center+offsets[i],0.82+0.12*float(i%3),23.0+47.0*float(i),"VehiclePlantV3_%02d" % i)
 	for i: int in range(5):
 		var a: float = 0.67+float(i)*1.17
 		var rr: float = 4.1+0.28*float(i%2)
 		var p: Vector3 = center+Vector3(cos(a)*rr,0.02,sin(a)*rr)
-		var rock_path: String = HQ_ROCK_A if i%2 == 0 else HQ_ROCK_B
-		_spawn_scaled(rock_path,p,0.22+0.045*float(i%3),31.0*float(i),"VehicleRockV3_%02d" % i)
+		var rock_path: String = ROCK_SMALL if i%2 == 0 else ROCK_LARGE
+		_spawn_pbr_rock_v3(rock_path,p,0.20+0.035*float(i%3),31.0*float(i),"VehicleRockV3_%02d" % i)
 
 
 func _add_vehicle_ruts(center: Vector3,yaw: float) -> void:
@@ -615,10 +614,49 @@ func _add_ground_hq_micro_v3(center: Vector3) -> void:
 		Vector3(-3.62,0.02,2.45),Vector3(0.35,0.02,-3.25)
 	]
 	for i: int in range(rock_offsets.size()):
-		var path: String = HQ_ROCK_A if i%2 == 0 else HQ_ROCK_B
-		_spawn_scaled(path,center+rock_offsets[i],0.18+0.045*float(i%3),29.0+43.0*float(i),"GroundHQRockV3_%02d" % i)
-	var branch_a: Node3D = _spawn_scaled(HQ_BRANCH_A,center+Vector3(-1.90,0.025,-0.85),0.62,31.0,"GroundBranchV3_A")
-	var branch_b: Node3D = _spawn_scaled(HQ_BRANCH_A,center+Vector3(2.15,0.025,2.15),0.48,-18.0,"GroundBranchV3_B")
+		var path: String = ROCK_SMALL if i%2 == 0 else ROCK_LARGE
+		_spawn_pbr_rock_v3(path,center+rock_offsets[i],0.16+0.035*float(i%3),29.0+43.0*float(i),"GroundPBRRockV3_%02d" % i)
+
+
+func _spawn_pbr_rock_v3(path: String,pos: Vector3,target_size: float,yaw: float,name_value: String) -> Node3D:
+	var rock: Node3D = _spawn_scaled(path,pos,target_size,yaw,name_value)
+	if rock == null:
+		return null
+	var material: ShaderMaterial = _pbr_gravel_rock_material_v3()
+	for mi: MeshInstance3D in _collect_meshes(rock):
+		if mi.mesh == null:
+			continue
+		for surface: int in range(mi.mesh.get_surface_count()):
+			mi.set_surface_override_material(surface,material)
+	_ground_visual_to(rock,pos.y+0.006)
+	return rock
+
+
+func _pbr_gravel_rock_material_v3() -> ShaderMaterial:
+	var shader: Shader = Shader.new()
+	shader.code = """
+shader_type spatial;
+uniform sampler2D gravel_diff : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D gravel_nor : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D gravel_arm : repeat_enable, filter_linear_mipmap_anisotropic;
+void fragment(){
+	vec2 uv=UV*2.3;
+	vec3 diff=texture(gravel_diff,uv).rgb*vec3(0.76,0.73,0.66);
+	vec3 arm=texture(gravel_arm,uv).rgb;
+	ALBEDO=diff;
+	NORMAL_MAP=texture(gravel_nor,uv).rgb;
+	NORMAL_MAP_DEPTH=0.86;
+	ROUGHNESS=clamp(0.76+arm.g*0.21,0.74,0.97);
+	AO=clamp(arm.r,0.68,1.0);
+	SPECULAR=0.22;
+}
+"""
+	var mat: ShaderMaterial = ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("gravel_diff",load("res://assets/golden_scene/pbr/gravel_ground_01_diff_1k.png"))
+	mat.set_shader_parameter("gravel_nor",load("res://assets/golden_scene/pbr/gravel_ground_01_nor_gl_1k.png"))
+	mat.set_shader_parameter("gravel_arm",load("res://assets/golden_scene/pbr/gravel_ground_01_arm_1k.png"))
+	return mat
 
 
 func _add_churn_patch(center: Vector3,size: Vector2,yaw: float) -> void:
@@ -751,7 +789,7 @@ func _ground_abrams_by_wheels(root: Node3D,target_y: float) -> void:
 func _capture_all() -> void:
 	await _capture_view(HOUSE_SHOT_V2,Vector3(10.2,5.25,12.2),Vector3(0,2.20,0))
 	await _capture_view(ABRAMS_SHOT_V2,Vector3(53.8,3.35,8.6),Vector3(45,1.18,0))
-	await _capture_view(GROUND_SHOT_V2,Vector3(94.7,5.55,6.9),Vector3(90,0.0,0))
+	await _capture_view(GROUND_SHOT_V2,Vector3(93.9,4.45,5.7),Vector3(90,0.0,0))
 	_write_metrics_v3()
 	var all_pass := true
 	for value: Variant in proof_checks.values():
