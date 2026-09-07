@@ -201,24 +201,24 @@ func _add_grass_tuft(pos: Vector3,height: float,yaw: float) -> void:
 
 
 func _make_grass_card_texture() -> Texture2D:
-	var image := Image.create(128,128,false,Image.FORMAT_RGBA8)
+	var image: Image = Image.create(128,128,false,Image.FORMAT_RGBA8)
 	image.fill(Color(0,0,0,0))
 	var centers: Array[float] = [0.18,0.29,0.41,0.52,0.63,0.74,0.84]
 	var heights: Array[float] = [0.66,0.82,0.72,0.94,0.78,0.88,0.64]
 	for y: int in range(128):
 		for x: int in range(128):
-			var fx := float(x)/127.0
-			var fy := float(y)/127.0
-			var alpha := 0.0
-			var green := 0.0
+			var fx: float = float(x)/127.0
+			var fy: float = float(y)/127.0
+			var alpha: float = 0.0
+			var green: float = 0.0
 			for i: int in range(centers.size()):
-				var top := 1.0-heights[i]
+				var top: float = 1.0-heights[i]
 				if fy < top:
 					continue
-				var t := (fy-top)/maxf(heights[i],0.001)
-				var lean := (0.5-t)*0.055*sin(float(i)*1.73)
-				var width := (0.026+0.007*float(i%3))*(1.0-t*0.86)
-				var d := abs(fx-(centers[i]+lean))
+				var t: float = (fy-top)/maxf(heights[i],0.001)
+				var lean: float = (0.5-t)*0.055*sin(float(i)*1.73)
+				var width: float = (0.026+0.007*float(i%3))*(1.0-t*0.86)
+				var d: float = absf(fx-(centers[i]+lean))
 				if d < width:
 					alpha = maxf(alpha,1.0-smoothstep(width*0.45,width,d))
 					green = maxf(green,0.45+0.42*(1.0-t))
