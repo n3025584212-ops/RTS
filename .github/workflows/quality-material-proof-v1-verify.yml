@@ -102,9 +102,9 @@ jobs:
           python3 - <<'PY'
           import hashlib, json, os, struct
           files=[
-            "artifacts/quality_material_proof/house_material_proof_1920x1080.png",
-            "artifacts/quality_material_proof/abrams_material_proof_1920x1080.png",
-            "artifacts/quality_material_proof/ground_material_proof_1920x1080.png",
+            "artifacts/quality_material_proof/house_material_proof_v2_1920x1080.png",
+            "artifacts/quality_material_proof/abrams_material_proof_v2_1920x1080.png",
+            "artifacts/quality_material_proof/ground_material_proof_v2_1920x1080.png",
           ]
           for p in files:
               data=open(p,"rb").read()
@@ -127,9 +127,9 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           path: |
-            artifacts/quality_material_proof/house_material_proof_1920x1080.png
-            artifacts/quality_material_proof/abrams_material_proof_1920x1080.png
-            artifacts/quality_material_proof/ground_material_proof_1920x1080.png
+            artifacts/quality_material_proof/house_material_proof_v2_1920x1080.png
+            artifacts/quality_material_proof/abrams_material_proof_v2_1920x1080.png
+            artifacts/quality_material_proof/ground_material_proof_v2_1920x1080.png
             artifacts/quality_material_proof/quality_material_proof_metrics.json
             material-proof-runtime.log
             material-proof-import.log
