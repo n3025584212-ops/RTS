@@ -131,12 +131,10 @@ void fragment(){
 	base+=vec3(wear*0.16,wear*0.14,wear*0.08);
 	ALBEDO=base;
 	METALLIC=0.14+wear*0.65;
-	ROUGHNESS=clamp(0.57+mud_mask*0.68-f wear*0.30,0.48,0.92);
+	ROUGHNESS=clamp(0.57+mud_mask*0.68-wear*0.30,0.48,0.92);
 	SPECULAR=0.31;
 }
 """
-	# Fix the shader token above before assigning.
-	shader.code = shader.code.replace("f wear","wear")
 	var mat := ShaderMaterial.new()
 	mat.shader = shader
 	return mat
