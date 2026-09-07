@@ -25,7 +25,7 @@ for i in 00 01 02; do
 done
 
 cat > "$OUT/.quality_v11_factory_complete" <<EOF
-QUALITY_SLICE=V11_SINGLE_ROW_SPLIT
+QUALITY_SLICE=V11_SINGLE_ROW_FRONT_DEPTH
 SOURCE=https://polyhaven.com/a/modular_factory_facade
 LICENSE=CC0
 USAGE=SPATIALLY_SPLIT_MODULES_ONLY
