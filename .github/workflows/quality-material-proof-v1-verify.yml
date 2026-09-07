@@ -1,0 +1,135 @@
+name: FRONTLINE Quality Material Proof V1
+
+on:
+  push:
+    branches:
+      - dev/godot-golden-scene-v1
+    paths:
+      - "scenes/production/QualityMaterialProofV1.tscn"
+      - "scripts/production/quality/material/**"
+      - "scripts/production/quality/acquire_quality_v16_environment_assets.sh"
+      - ".github/workflows/quality-material-proof-v1-verify.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-material-proof-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  material-proof:
+    name: Godot 4.7.1 Forward+ material proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install render and conversion runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 mesa-utils libvulkan1 mesa-vulkan-drivers blender python3-numpy
+          vulkaninfo --summary || true
+          blender --version | head -n 1
+
+      - name: Acquire V16 environment-art assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/production/quality/acquire_quality_v16_environment_assets.sh
+          scripts/production/quality/acquire_quality_v16_environment_assets.sh 2>&1 | tee material-proof-assets.log
+          test -s assets/golden_scene/quality_v16/grass_medium_02_lod.glb
+          test -s assets/golden_scene/quality_v16/weed_plant_02_lod.glb
+
+      - name: Verify proof source assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/golden_scene/city_v20/family_house_00.glb
+          test -s assets/golden_scene/vehicles/mbt_abrams.glb
+          test -s assets/golden_scene/nature/062_rock_smallA.glb
+          test -s assets/golden_scene/nature/056_rock_largeA.glb
+          test -s assets/golden_scene/pbr/leafy_grass_diff_1k.png
+          test -s assets/golden_scene/pbr/leafy_grass_nor_gl_1k.png
+          test -s assets/golden_scene/pbr/dirt_aerial_03_diff_1k.png
+          test -s assets/golden_scene/pbr/dirt_aerial_03_nor_gl_1k.png
+          test -s assets/golden_scene/pbr/aerial_mud_1_diff_1k.png
+          test -s assets/golden_scene/pbr/aerial_mud_1_nor_gl_1k.png
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" --version
+
+      - name: Import material proof with Forward Plus
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 150s "$GODOT" --headless --editor --path . --rendering-method forward_plus --quit 2>&1 | tee material-proof-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' material-proof-import.log
+
+      - name: Render three actual 1920x1080 material proofs
+        shell: bash
+        env:
+          FRONTLINE_CAPTURE_MATERIAL_PROOF: "1"
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/quality_material_proof
+          timeout 180s xvfb-run -a -s "-screen 0 1920x1080x24"             "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy             --resolution 1920x1080 res://scenes/production/QualityMaterialProofV1.tscn             2>&1 | tee material-proof-runtime.log
+          grep -q 'FRONTLINE_MATERIAL_PROOF_READY' material-proof-runtime.log
+          grep -q 'FRONTLINE_MATERIAL_PROOF_CAPTURED' material-proof-runtime.log
+          grep -q 'FRONTLINE_MATERIAL_PROOF_TECH_PASS' material-proof-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|MATERIAL_PROOF_REQUIRED_ASSET_MISSING|MATERIAL_PROOF_LOAD_FAIL|Failed to load script|Cannot open file|Invalid call|Invalid access' material-proof-runtime.log
+
+      - name: Verify three real PNGs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, struct
+          files=[
+            "artifacts/quality_material_proof/house_material_proof_1920x1080.png",
+            "artifacts/quality_material_proof/abrams_material_proof_1920x1080.png",
+            "artifacts/quality_material_proof/ground_material_proof_1920x1080.png",
+          ]
+          for p in files:
+              data=open(p,"rb").read()
+              if data[:8] != b"\x89PNG\r\n\x1a\n":
+                  raise SystemExit(f"not png {p}")
+              w,h=struct.unpack(">II",data[16:24])
+              if (w,h)!=(1920,1080):
+                  raise SystemExit((p,w,h))
+              if len(data)<120000:
+                  raise SystemExit(f"png too small {p} {len(data)}")
+              print("FRONTLINE_MATERIAL_PNG_PASS",p,w,h,len(data),hashlib.sha256(data).hexdigest())
+          metrics=json.load(open("artifacts/quality_material_proof/quality_material_proof_metrics.json"))
+          print(metrics)
+          PY
+
+      - name: Upload material proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-quality-material-proof-v1
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            artifacts/quality_material_proof/house_material_proof_1920x1080.png
+            artifacts/quality_material_proof/abrams_material_proof_1920x1080.png
+            artifacts/quality_material_proof/ground_material_proof_1920x1080.png
+            artifacts/quality_material_proof/quality_material_proof_metrics.json
+            material-proof-runtime.log
+            material-proof-import.log
