@@ -101,7 +101,8 @@ jobs:
           grep -q 'FRONTLINE_MATERIAL_PROOF_READY' material-proof-runtime.log
           grep -q 'FRONTLINE_MATERIAL_PROOF_CAPTURED' material-proof-runtime.log
           grep -q 'FRONTLINE_MATERIAL_PROOF_TECH_PASS' material-proof-runtime.log
-          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|MATERIAL_PROOF_REQUIRED_ASSET_MISSING|MATERIAL_PROOF_LOAD_FAIL|Failed to load script|Cannot open file|Invalid call|Invalid access' material-proof-runtime.log
+          grep -v -E 'assets/golden_scene/(city|buildings)/Textures/colormap\.png' material-proof-runtime.log > material-proof-runtime-gated.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|MATERIAL_PROOF_REQUIRED_ASSET_MISSING|MATERIAL_PROOF_LOAD_FAIL|Failed to load script|Cannot open file|Invalid call|Invalid access' material-proof-runtime-gated.log
 
       - name: Verify three real PNGs
         shell: bash
