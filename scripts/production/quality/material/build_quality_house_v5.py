@@ -202,6 +202,35 @@ box("RearDoorFrame",(2.25,-3.02,1.55),(1.28,0.10,2.48),TRIM,bev=0.020)
 box("RearWindow",(-2.20,-3.08,2.25),(1.30,0.08,1.10),GLASS,bev=0.018)
 box("RearWindowTrim",(-2.20,-3.02,2.25),(1.52,0.10,1.32),TRIM,bev=0.018)
 
+# --- V6 roof / facade detail pass ---
+roof_pitch=math.atan2(7.10-5.20,4.55)
+for side in (-1,1):
+    for i in range(1,11):
+        t=i/11.0
+        x=side*(4.55*t)
+        z=7.10-(7.10-5.20)*t+0.035
+        box(f"HouseRoofTileRow_{side}_{i:02d}", (x,0,z), (0.055,6.86,0.045), ROOF,
+            rot=(0,-side*roof_pitch,0), bev=0.006)
+
+# Exterior shutters on the upper front pair.
+for side,x in ((-1,-2.30),(1,2.25)):
+    for wing in (-1,1):
+        sx=x+wing*0.82
+        shutter=box(f"UpperShutter_{side}_{wing}", (sx,3.15,4.30), (0.48,0.07,1.34), WOOD,
+                    rot=(0,0,math.radians(wing*2.5)), bev=0.016)
+        for slat_i in range(5):
+            box(f"UpperShutterSlat_{side}_{wing}_{slat_i}", (sx,3.20,3.88+slat_i*0.20),
+                (0.38,0.04,0.045), TRIM, bev=0.006)
+
+# Brick lintels and sill blocks for stronger opening depth.
+for i,(x,z) in enumerate(((-2.45,2.05),(2.50,2.05),(-2.30,4.30),(2.25,4.30))):
+    box(f"WindowLintel_{i}", (x,3.18,z+0.83), (1.76,0.20,0.16), FOUND, bev=0.018)
+
+# Rain chain / service piping and exterior lamp.
+cyl("HouseServicePipe",(-3.72,3.13,2.15),0.035,2.60,METAL,axis="Z",verts=12,bev=0.003)
+box("HouseExteriorLamp",(0.95,3.18,2.82),(0.18,0.16,0.28),METAL,bev=0.025)
+box("HouseExteriorLampGlass",(0.95,3.28,2.80),(0.12,0.06,0.15),GLASS,bev=0.014)
+
 # Ground whole asset.
 meshes=[o for o in bpy.context.scene.objects if o.type=="MESH"]
 mins=[1e30,1e30,1e30]; maxs=[-1e30,-1e30,-1e30]
