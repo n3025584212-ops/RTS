@@ -267,7 +267,7 @@ func _add_house_debris_v3(center: Vector3) -> void:
 func _build_abrams_proof() -> void:
 	var center: Vector3 = Vector3(45,0,0)
 	_add_pad(center,Vector2(19,19))
-	abrams_root = _spawn_scaled(ABRAMS_STATIC,center,7.4,-18.0,"MaterialProofAbramsV3")
+	abrams_root = _spawn_scaled(ABRAMS_STATIC,center,8.6,-18.0,"MaterialProofAbramsV3")
 	if abrams_root == null:
 		return
 	proof_checks["abrams_loaded"] = true
@@ -317,6 +317,8 @@ func _build_abrams_proof() -> void:
 			var apply_override: bool = true
 			if key.contains("wheel"):
 				chosen = rubber
+			elif key.contains("track") or key.contains("sprocket") or key.contains("idler") or key.contains("towcable"):
+				chosen = track
 			elif key.contains("barrel") or key.contains("gun"):
 				chosen = gun
 			elif key.contains("guide") or key.contains("optic") or key.contains("glass") or key.contains("sight"):
@@ -331,8 +333,8 @@ func _build_abrams_proof() -> void:
 				chosen = track
 			elif key.contains("body"):
 				var panel: ShaderMaterial = hull.duplicate() as ShaderMaterial
-				var panel_variant: float = float((body_index*37)%101)/100.0
-				var panel_dust: float = float((body_index*23+17)%89)/88.0
+				var panel_variant: float = 0.42+0.20*float((body_index*37)%101)/100.0
+				var panel_dust: float = 0.24+0.56*float((body_index*23+17)%89)/88.0
 				panel.set_shader_parameter("panel_variant",panel_variant)
 				panel.set_shader_parameter("panel_dust",panel_dust)
 				chosen = panel
