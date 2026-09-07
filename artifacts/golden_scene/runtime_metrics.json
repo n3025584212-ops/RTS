@@ -1,6 +1,6 @@
 {
 	"approx_fps": 7.4,
-	"avg_frame_ms": 134.375,
+	"avg_frame_ms": 134.592,
 	"bridge_members": 31,
 	"capture_resolution": {
 		"height": 1080,
@@ -8,7 +8,7 @@
 	},
 	"central_world_image": {
 		"chromatic_fraction": 0.9059,
-		"luminance_mean": 0.4336,
+		"luminance_mean": 0.4335,
 		"luminance_range": 0.8812,
 		"luminance_variance": 0.0191,
 		"sample_count": 4590
@@ -18,7 +18,7 @@
 	"frame_samples": 8,
 	"golden_frame_sha256": "6c9305b89a5bb1839721f12c2ae8c2507fae4fc7d4fdbbdf130f6f1ecc113362",
 	"hud_panels": 6,
-	"p95_frame_ms": 141.667,
+	"p95_frame_ms": 140.691,
 	"physical_infantry": 28,
 	"physical_vehicles": 17,
 	"product_pass": false,
