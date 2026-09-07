@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 OUT="$ROOT/assets/golden_scene/quality_material_v3"
 SOURCE="$ROOT/assets/golden_scene/vehicles/mbt_abrams.glb"
 TOOL="$ROOT/tools/golden_scene/sanitize_static_glb.py"
