@@ -293,13 +293,14 @@ func _build_abrams_proof() -> void:
 
 	var hull: ShaderMaterial = _vehicle_hull_shader_v3()
 	var side_skirt: ShaderMaterial = hull.duplicate() as ShaderMaterial
-	side_skirt.set_shader_parameter("panel_variant",0.34)
-	side_skirt.set_shader_parameter("panel_dust",0.92)
-	side_skirt.set_shader_parameter("side_skirt_factor",1.0)
-	var track: StandardMaterial3D = _track_material_v3()
+	side_skirt.set_shader_parameter("panel_variant",0.38)
+	side_skirt.set_shader_parameter("panel_dust",1.0)
+	side_skirt.set_shader_parameter("side_skirt_factor",1.35)
+	var track: ShaderMaterial = _track_material_v4()
 	var rubber: StandardMaterial3D = _rubber_material_v3()
-	var gun: StandardMaterial3D = _gun_material_v3()
+	var gun: ShaderMaterial = _gun_material_v4()
 	var optics: StandardMaterial3D = _optics_material()
+	var exhaust: ShaderMaterial = _exhaust_material_v4()
 	var layered_count: int = 0
 	var body_index: int = 0
 
@@ -330,11 +331,11 @@ func _build_abrams_proof() -> void:
 			elif key.contains("nukclearsign"):
 				apply_override = false
 			elif key.contains("exhaust"):
-				chosen = track
+				chosen = exhaust
 			elif key.contains("body"):
 				var panel: ShaderMaterial = hull.duplicate() as ShaderMaterial
-				var panel_variant: float = 0.42+0.20*float((body_index*37)%101)/100.0
-				var panel_dust: float = 0.24+0.56*float((body_index*23+17)%89)/88.0
+				var panel_variant: float = 0.34+0.38*float((body_index*37)%101)/100.0
+				var panel_dust: float = 0.18+0.70*float((body_index*23+17)%89)/88.0
 				panel.set_shader_parameter("panel_variant",panel_variant)
 				panel.set_shader_parameter("panel_dust",panel_dust)
 				chosen = panel
@@ -388,23 +389,24 @@ void fragment(){
 	float macro=0.5+0.5*sin(wp.x*0.61+wp.z*0.49+sin(wp.y*0.43)*1.7);
 	float vertical=clamp(1.0-abs(wn.y),0.0,1.0);
 	float low=1.0-smoothstep(0.42,1.38,wp.y);
-	float paint_break=smoothstep(0.42,0.68,tex_luma+0.13*sin(wp.x*1.07-wp.z*0.91+wp.y*0.73));
-	float dry_patch=smoothstep(0.24,0.68,1.0-tex_luma)*(0.23+0.28*macro);
-	float splash=low*smoothstep(0.30,0.66,1.0-tex_luma)*(0.22+0.26*panel_dust);
-	float face_dust=vertical*(0.06+0.20*(1.0-tex_luma))*(0.45+0.55*panel_dust);
-	float grime=clamp(low*(0.26+0.40*(1.0-tex_luma))+dry_patch*0.28+splash+face_dust+side_skirt_factor*0.16,0.0,0.74);
-	vec3 olive_dark=vec3(0.075,0.094,0.031);
-	vec3 olive_mid=vec3(0.135,0.148,0.046);
-	vec3 olive_light=vec3(0.190,0.185,0.070);
-	vec3 olive=mix(olive_dark,olive_mid,macro*0.70);
-	olive=mix(olive,olive_light,paint_break*0.30);
-	olive*=mix(0.78,1.18,panel_variant);
-	olive*=mix(0.64,1.23,tex_luma);
-	vec3 dust=vec3(0.255,0.205,0.118)*mix(0.76,1.24,1.0-tex_luma);
-	vec3 dry_mud=m_diff*vec3(0.66,0.53,0.36);
-	vec3 base=mix(olive,dust,clamp(dry_patch*0.60+panel_dust*0.075+side_skirt_factor*0.08+face_dust*0.42,0.0,0.52));
-	base=mix(base,dry_mud,grime*0.82);
-	base=mix(base,dust,face_dust*0.24);
+	float paint_break=smoothstep(0.38,0.70,tex_luma+0.16*sin(wp.x*0.83-wp.z*0.71+wp.y*0.61));
+	float dry_patch=smoothstep(0.22,0.70,1.0-tex_luma)*(0.20+0.34*macro);
+	float splash=low*smoothstep(0.28,0.68,1.0-tex_luma)*(0.24+0.30*panel_dust);
+	float streak=vertical*(0.5+0.5*sin(wp.x*1.17+wp.z*0.91+sin(wp.y*2.7)))*(0.08+0.13*panel_dust);
+	float face_dust=vertical*(0.08+0.24*(1.0-tex_luma))*(0.40+0.60*panel_dust);
+	float grime=clamp(low*(0.30+0.44*(1.0-tex_luma))+dry_patch*0.30+splash+face_dust+streak+side_skirt_factor*0.18,0.0,0.82);
+	vec3 olive_dark=vec3(0.060,0.073,0.030);
+	vec3 olive_mid=vec3(0.105,0.116,0.047);
+	vec3 olive_light=vec3(0.155,0.158,0.067);
+	vec3 olive=mix(olive_dark,olive_mid,macro*0.74);
+	olive=mix(olive,olive_light,paint_break*0.34);
+	olive*=mix(0.76,1.20,panel_variant);
+	olive*=mix(0.70,1.16,tex_luma);
+	vec3 dust=vec3(0.225,0.178,0.100)*mix(0.72,1.22,1.0-tex_luma);
+	vec3 dry_mud=m_diff*vec3(0.62,0.49,0.31);
+	vec3 base=mix(olive,dust,clamp(dry_patch*0.64+panel_dust*0.085+side_skirt_factor*0.11+face_dust*0.46,0.0,0.58));
+	base=mix(base,dry_mud,grime*0.88);
+	base=mix(base,dust,(face_dust+streak)*0.28);
 	float fleck=0.5+0.5*sin(wp.x*23.0-wp.z*19.0+wp.y*17.0);
 	float wear=(1.0-low)*smoothstep(0.92,0.995,fleck)*0.10;
 	ALBEDO=base+vec3(0.085,0.080,0.055)*wear;
@@ -428,12 +430,39 @@ void fragment(){
 	return mat
 
 
-func _track_material_v3() -> StandardMaterial3D:
-	var mat: StandardMaterial3D = StandardMaterial3D.new()
-	mat.albedo_color = Color(0.145,0.128,0.098)
-	mat.metallic = 0.44
-	mat.metallic_specular = 0.42
-	mat.roughness = 0.68
+func _track_material_v4() -> ShaderMaterial:
+	var shader: Shader = Shader.new()
+	shader.code = """
+shader_type spatial;
+uniform sampler2D mud_diff : source_color, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D mud_nor : hint_normal, repeat_enable, filter_linear_mipmap_anisotropic;
+uniform sampler2D mud_arm : repeat_enable, filter_linear_mipmap_anisotropic;
+varying vec3 wp;
+void vertex(){ wp=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
+void fragment(){
+	vec2 tuv=wp.xz*1.75+vec2(wp.y*0.21,0.0);
+	vec3 md=texture(mud_diff,tuv).rgb;
+	vec3 mn=texture(mud_nor,tuv).rgb;
+	vec3 ma=texture(mud_arm,tuv).rgb;
+	float grain=dot(md,vec3(0.2126,0.7152,0.0722));
+	float wet=1.0-smoothstep(0.18,0.58,grain);
+	float wear=0.5+0.5*sin(wp.x*17.0+wp.z*13.0+wp.y*19.0);
+	vec3 steel=vec3(0.115,0.105,0.085);
+	vec3 mud=md*vec3(0.52,0.42,0.28);
+	ALBEDO=mix(steel,mud,0.36+0.32*wet);
+	NORMAL_MAP=mn;
+	NORMAL_MAP_DEPTH=0.46;
+	METALLIC=clamp(0.48+0.20*wear-0.28*wet,0.20,0.68);
+	ROUGHNESS=clamp(0.52+0.25*wet+ma.g*0.16,0.50,0.90);
+	AO=clamp(ma.r,0.70,1.0);
+	SPECULAR=0.38;
+}
+"""
+	var mat: ShaderMaterial = ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("mud_diff",load("res://assets/golden_scene/pbr/aerial_mud_1_diff_1k.png"))
+	mat.set_shader_parameter("mud_nor",load("res://assets/golden_scene/pbr/aerial_mud_1_nor_gl_1k.png"))
+	mat.set_shader_parameter("mud_arm",load("res://assets/golden_scene/pbr/aerial_mud_1_arm_1k.png"))
 	return mat
 
 
@@ -445,12 +474,44 @@ func _rubber_material_v3() -> StandardMaterial3D:
 	return mat
 
 
-func _gun_material_v3() -> StandardMaterial3D:
-	var mat: StandardMaterial3D = StandardMaterial3D.new()
-	mat.albedo_color = Color(0.105,0.120,0.048)
-	mat.metallic = 0.08
-	mat.metallic_specular = 0.33
-	mat.roughness = 0.58
+func _gun_material_v4() -> ShaderMaterial:
+	var shader: Shader = Shader.new()
+	shader.code = """
+shader_type spatial;
+varying vec3 wp;
+void vertex(){ wp=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
+void fragment(){
+	float band=0.5+0.5*sin(wp.z*8.3+wp.x*5.1+wp.y*3.7);
+	float dust=0.5+0.5*sin(wp.z*1.4-wp.x*0.9);
+	vec3 paint=mix(vec3(0.055,0.064,0.028),vec3(0.105,0.112,0.044),band*0.34);
+	ALBEDO=mix(paint,vec3(0.15,0.12,0.075),dust*0.08);
+	METALLIC=0.16;
+	ROUGHNESS=0.48+band*0.12;
+	SPECULAR=0.38;
+}
+"""
+	var mat: ShaderMaterial = ShaderMaterial.new()
+	mat.shader = shader
+	return mat
+
+
+func _exhaust_material_v4() -> ShaderMaterial:
+	var shader: Shader = Shader.new()
+	shader.code = """
+shader_type spatial;
+varying vec3 wp;
+void vertex(){ wp=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
+void fragment(){
+	float soot=0.5+0.5*sin(wp.x*10.0+wp.z*7.0+wp.y*11.0);
+	float heat=0.5+0.5*sin(wp.x*3.0-wp.z*2.2);
+	ALBEDO=mix(vec3(0.035,0.033,0.028),vec3(0.105,0.080,0.052),heat*0.24);
+	METALLIC=0.48;
+	ROUGHNESS=clamp(0.66+soot*0.22,0.62,0.90);
+	SPECULAR=0.32;
+}
+"""
+	var mat: ShaderMaterial = ShaderMaterial.new()
+	mat.shader = shader
 	return mat
 
 
