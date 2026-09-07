@@ -7,6 +7,27 @@ const HQ_BRANCH_A := "res://assets/golden_scene/nature_hq/glTF/EA01_Env_Branch_0
 
 var _grass_card_texture: Texture2D
 
+func _spawn_scaled(path: String,pos: Vector3,target_size: float,yaw: float,name_value: String) -> Node3D:
+	var packed: PackedScene = load(path) as PackedScene
+	if packed == null:
+		push_error("MATERIAL_PROOF_LOAD_FAIL path=%s" % path)
+		return null
+	var node: Node3D = packed.instantiate() as Node3D
+	if node == null:
+		return null
+	node.name = name_value
+	add_child(node)
+	node.position = pos
+	node.rotation_degrees.y = yaw
+	var bounds: AABB = _local_bounds(node)
+	var largest: float = maxf(bounds.size.x,maxf(bounds.size.y,bounds.size.z))
+	if largest > 0.001:
+		var scale_factor: float = target_size/largest
+		node.scale = Vector3.ONE*scale_factor
+	_ground_visual_to(node,pos.y+0.012)
+	return node
+
+
 func _preflight() -> void:
 	for path: String in [HOUSE,ABRAMS_STATIC,GRASS,WEED,ROCK_SMALL,ROCK_LARGE,HQ_ROCK_A,HQ_ROCK_B,HQ_BRANCH_A]:
 		if not ResourceLoader.exists(path):
@@ -28,7 +49,7 @@ func _build_environment() -> void:
 	env.sky = sky
 	env.background_energy_multiplier = 0.82
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.58
+	env.ambient_light_energy = 0.70
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	env.fog_enabled = true
 	env.fog_density = 0.0008
@@ -40,8 +61,8 @@ func _build_environment() -> void:
 	env.ssao_power = 1.10
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env.adjustment_enabled = true
-	env.adjustment_brightness = 0.94
-	env.adjustment_contrast = 1.11
+	env.adjustment_brightness = 0.99
+	env.adjustment_contrast = 1.07
 	env.adjustment_saturation = 0.88
 	world_env.environment = env
 	add_child(world_env)
@@ -50,7 +71,7 @@ func _build_environment() -> void:
 	sun.name = "MaterialProofSunV3"
 	sun.rotation_degrees = Vector3(-47.0,-36.0,0.0)
 	sun.light_color = Color(1.0,0.95,0.87)
-	sun.light_energy = 0.98
+	sun.light_energy = 1.04
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 85.0
 	add_child(sun)
@@ -59,7 +80,7 @@ func _build_environment() -> void:
 	fill.name = "MaterialProofFillV3"
 	fill.rotation_degrees = Vector3(-58.0,142.0,0.0)
 	fill.light_color = Color(0.47,0.58,0.70)
-	fill.light_energy = 0.15
+	fill.light_energy = 0.25
 	add_child(fill)
 
 
@@ -245,8 +266,6 @@ func _add_house_debris_v3(center: Vector3) -> void:
 	for i: int in range(offsets.size()):
 		var path: String = HQ_ROCK_A if i%2 == 0 else HQ_ROCK_B
 		var rubble: Node3D = _spawn_scaled(path,center+offsets[i],0.32+0.06*float(i),17.0+41.0*float(i),"HouseRubbleV3_%02d" % i)
-		if rubble != null:
-			rubble.position.y += 0.008
 
 
 func _build_abrams_proof() -> void:
@@ -257,6 +276,15 @@ func _build_abrams_proof() -> void:
 		return
 	proof_checks["abrams_loaded"] = true
 	_ground_abrams_by_wheels(abrams_root,0.045)
+
+	var inspection_fill: OmniLight3D = OmniLight3D.new()
+	inspection_fill.name = "AbramsMaterialInspectionFill"
+	inspection_fill.position = center+Vector3(5.8,4.6,7.8)
+	inspection_fill.light_color = Color(0.78,0.84,0.92)
+	inspection_fill.light_energy = 2.2
+	inspection_fill.omni_range = 19.0
+	inspection_fill.shadow_enabled = false
+	add_child(inspection_fill)
 
 	var hull: ShaderMaterial = _vehicle_hull_shader_v3()
 	var track: StandardMaterial3D = _track_material_v3()
@@ -384,8 +412,6 @@ func _add_vehicle_context_v3(center: Vector3) -> void:
 	for i: int in range(offsets.size()):
 		var path: String = GRASS if i%2 == 0 else WEED
 		var plant: Node3D = _spawn_scaled(path,center+offsets[i],0.82+0.12*float(i%3),23.0+47.0*float(i),"VehiclePlantV3_%02d" % i)
-		if plant != null:
-			plant.position.y += 0.008
 	for i: int in range(5):
 		var a: float = 0.67+float(i)*1.17
 		var rr: float = 4.1+0.28*float(i%2)
@@ -460,6 +486,7 @@ func _build_ground_proof() -> void:
 	proof_checks["ground_built"] = true
 
 	_add_ground_natural_clumps_v3(center)
+	_add_ground_scattered_grass_v3(center)
 	_add_ground_hq_micro_v3(center)
 	proof_checks["ground_microgeometry"] = true
 
@@ -564,10 +591,21 @@ func _add_ground_natural_clumps_v3(center: Vector3) -> void:
 	]
 	for i: int in range(offsets.size()):
 		var path: String = GRASS if i%3 != 0 else WEED
-		var target: float = 0.86+0.13*float(i%4)
+		var target: float = 1.18+0.16*float(i%4)
 		var plant: Node3D = _spawn_scaled(path,center+offsets[i],target,17.0+37.0*float(i),"GroundPlantV3_%02d" % i)
+
+
+func _add_ground_scattered_grass_v3(center: Vector3) -> void:
+	var offsets: Array[Vector3] = [
+		Vector3(-2.95,0,-3.55),Vector3(-2.10,0,-2.85),Vector3(-1.20,0,-2.10),Vector3(0.15,0,-3.55),
+		Vector3(1.05,0,-2.60),Vector3(2.05,0,-3.45),Vector3(3.10,0,-2.35),Vector3(-3.45,0,0.72),
+		Vector3(-2.30,0,1.65),Vector3(-1.05,0,2.65),Vector3(0.10,0,3.35),Vector3(1.45,0,2.55),
+		Vector3(2.55,0,3.35),Vector3(3.35,0,0.82)
+	]
+	for i: int in range(offsets.size()):
+		var plant: Node3D = _spawn_scaled(GRASS,center+offsets[i],0.72+0.08*float(i%3),11.0+53.0*float(i),"GroundSmallGrassV3_%02d" % i)
 		if plant != null:
-			plant.position.y += 0.008
+			_ground_visual_to(plant,0.018)
 
 
 func _add_ground_hq_micro_v3(center: Vector3) -> void:
@@ -580,11 +618,7 @@ func _add_ground_hq_micro_v3(center: Vector3) -> void:
 		var path: String = HQ_ROCK_A if i%2 == 0 else HQ_ROCK_B
 		_spawn_scaled(path,center+rock_offsets[i],0.18+0.045*float(i%3),29.0+43.0*float(i),"GroundHQRockV3_%02d" % i)
 	var branch_a: Node3D = _spawn_scaled(HQ_BRANCH_A,center+Vector3(-1.90,0.025,-0.85),0.62,31.0,"GroundBranchV3_A")
-	if branch_a != null:
-		branch_a.position.y += 0.005
 	var branch_b: Node3D = _spawn_scaled(HQ_BRANCH_A,center+Vector3(2.15,0.025,2.15),0.48,-18.0,"GroundBranchV3_B")
-	if branch_b != null:
-		branch_b.position.y += 0.005
 
 
 func _add_churn_patch(center: Vector3,size: Vector2,yaw: float) -> void:
@@ -716,7 +750,7 @@ func _ground_abrams_by_wheels(root: Node3D,target_y: float) -> void:
 
 func _capture_all() -> void:
 	await _capture_view(HOUSE_SHOT_V2,Vector3(10.2,5.25,12.2),Vector3(0,2.20,0))
-	await _capture_view(ABRAMS_SHOT_V2,Vector3(54.6,3.55,9.3),Vector3(45,1.20,0))
+	await _capture_view(ABRAMS_SHOT_V2,Vector3(53.8,3.35,8.6),Vector3(45,1.18,0))
 	await _capture_view(GROUND_SHOT_V2,Vector3(94.7,5.55,6.9),Vector3(90,0.0,0))
 	_write_metrics_v3()
 	var all_pass := true
