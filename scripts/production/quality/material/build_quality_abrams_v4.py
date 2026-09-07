@@ -146,9 +146,9 @@ for side in (-1,1):
     # Side skirt segmented armor plates.
     ys = [-2.85,-2.05,-1.25,-0.45,0.35,1.15,1.95,2.75]
     for i,y in enumerate(ys):
-        h = 0.72 if i not in (0,7) else 0.62
-        z = 0.86 if i not in (0,7) else 0.83
-        add_box(f"SideSkirt_{side}_{i:02d}", (side*1.79,y,z), (0.115,0.70,h), SIDE, bevel=0.022)
+        h = 0.60 if i not in (0,7) else 0.52
+        z = 0.89 if i not in (0,7) else 0.85
+        add_box(f"SideSkirt_{side}_{i:02d}", (side*1.775,y,z), (0.105,0.70,h), SIDE, bevel=0.026)
 
 # Wheels, hubs, return rollers and track pads.
 wheel_ys = [-2.55,-1.72,-0.88,0.0,0.88,1.72,2.55]
@@ -194,13 +194,13 @@ for side in (-1,1):
 # --- Turret ---
 add_cylinder("Body_TurretRing", (0,-0.38,1.60), 1.28, 0.20, BODY, axis="Z", verts=48, bevel=0.025)
 add_wedge("Body_TurretShell", 1.35, -1.90, 1.60, 2.28, 2.42, 1.42, 1.50, BODY, 0.055)
-add_box("Body_TurretRoof", (0,-0.55,2.39), (2.45,2.55,0.14), BODY, rot=(math.radians(-1.5),0,0), bevel=0.035)
+add_box("Body_TurretRoof", (0,-0.58,2.35), (2.28,2.42,0.12), BODY, rot=(math.radians(-2.2),0,0), bevel=0.032)
 # Cheek wedges: angled faceted armor masses.
 for side in (-1,1):
-    add_box(f"Body_TurretCheek_{side}", (side*0.82,1.02,2.03), (0.78,0.92,0.72), BODY,
-            rot=(0,0,math.radians(side*8.0)), bevel=0.045)
-    add_box(f"Body_TurretSide_{side}", (side*1.42,-0.35,2.05), (0.22,1.90,0.58), BODY,
-            rot=(0,0,math.radians(side*1.5)), bevel=0.035)
+    add_box(f"Body_TurretCheek_{side}", (side*0.78,1.03,1.99), (0.66,1.02,0.58), BODY,
+            rot=(0,0,math.radians(side*14.0)), bevel=0.050)
+    add_box(f"Body_TurretSide_{side}", (side*1.35,-0.38,2.01), (0.18,1.74,0.48), BODY,
+            rot=(0,0,math.radians(side*3.0)), bevel=0.038)
 
 # Mantlet and M256 gun.
 add_box("Body_Mantlet", (0,1.42,2.06), (1.10,0.28,0.58), BODY, bevel=0.045)
@@ -210,7 +210,7 @@ add_cylinder("MetalBarrel_Evacuator", (0,3.05,2.08), 0.145, 0.72, GUN, axis="Y",
 add_cylinder("MetalBarrel_Muzzle", (0,4.86,2.08), 0.105, 0.22, GUN, axis="Y", verts=32, bevel=0.008)
 
 # Bustle and basket.
-add_box("Body_Bustle", (0,-1.88,2.10), (2.55,0.95,0.60), BODY, bevel=0.045)
+add_box("Body_Bustle", (0,-1.88,2.06), (2.42,0.82,0.50), BODY, bevel=0.045)
 # Bustle rack rails.
 rack_z0, rack_z1, rack_y = 1.78, 2.34, -2.48
 for side in (-1,1):
@@ -305,7 +305,7 @@ for side in (-1,1):
     for i,y in enumerate(skirt_ys):
         add_cylinder(f"Body_SkirtHinge_{side}_{i:02d}", (sx,y+0.23,1.12), 0.045, 0.06, TRACK, axis="X", verts=16, bevel=0.004)
         add_cylinder(f"Body_SkirtBolt_{side}_{i:02d}", (sx,y-0.22,0.94), 0.032, 0.055, TRACK, axis="X", verts=14, bevel=0.003)
-    add_box(f"Wheel_SkirtRubber_{side}", (side*1.84,-0.05,0.47), (0.055,6.05,0.14), WHEEL, bevel=0.014)
+    add_box(f"Wheel_SkirtRubber_{side}", (side*1.825,-0.05,0.54), (0.050,6.00,0.10), WHEEL, bevel=0.012)
 
 # Suspension arms and wheel-center caps.
 for side in (-1,1):
