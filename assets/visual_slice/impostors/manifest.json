@@ -1,0 +1,146 @@
+[
+	{
+		"center_y": 4.41435527801514,
+		"engine": {
+			"build": "official",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (official)",
+			"timestamp": 0
+		},
+		"error": 0,
+		"file": "res://assets/visual_slice/impostors/fir_sapling_medium_0_0.png",
+		"size": 9.87954040527344,
+		"source": "fir_sapling_medium_0.glb"
+	},
+	{
+		"center_y": 4.41435527801514,
+		"engine": {
+			"build": "official",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (official)",
+			"timestamp": 0
+		},
+		"error": 0,
+		"file": "res://assets/visual_slice/impostors/fir_sapling_medium_0_90.png",
+		"size": 9.87954040527344,
+		"source": "fir_sapling_medium_0.glb"
+	},
+	{
+		"center_y": 3.89820456504822,
+		"engine": {
+			"build": "official",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (official)",
+			"timestamp": 0
+		},
+		"error": 0,
+		"file": "res://assets/visual_slice/impostors/fir_sapling_medium_1_0.png",
+		"size": 8.73197822570801,
+		"source": "fir_sapling_medium_1.glb"
+	},
+	{
+		"center_y": 3.89820456504822,
+		"engine": {
+			"build": "official",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (official)",
+			"timestamp": 0
+		},
+		"error": 0,
+		"file": "res://assets/visual_slice/impostors/fir_sapling_medium_1_90.png",
+		"size": 8.73197822570801,
+		"source": "fir_sapling_medium_1.glb"
+	},
+	{
+		"center_y": 2.9492712020874,
+		"engine": {
+			"build": "official",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (official)",
+			"timestamp": 0
+		},
+		"error": 0,
+		"file": "res://assets/visual_slice/impostors/fir_sapling_medium_2_0.png",
+		"size": 6.60636749267578,
+		"source": "fir_sapling_medium_2.glb"
+	},
+	{
+		"center_y": 2.9492712020874,
+		"engine": {
+			"build": "official",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (official)",
+			"timestamp": 0
+		},
+		"error": 0,
+		"file": "res://assets/visual_slice/impostors/fir_sapling_medium_2_90.png",
+		"size": 6.60636749267578,
+		"source": "fir_sapling_medium_2.glb"
+	},
+	{
+		"center_y": 2.51383566856384,
+		"engine": {
+			"build": "official",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (official)",
+			"timestamp": 0
+		},
+		"error": 0,
+		"file": "res://assets/visual_slice/impostors/island_tree_01_0_0.png",
+		"size": 5.63099189758301,
+		"source": "island_tree_01_0.glb"
+	},
+	{
+		"center_y": 2.51383566856384,
+		"engine": {
+			"build": "official",
+			"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+			"hex": 263937,
+			"major": 4,
+			"minor": 7,
+			"patch": 1,
+			"status": "stable",
+			"string": "4.7.1-stable (official)",
+			"timestamp": 0
+		},
+		"error": 0,
+		"file": "res://assets/visual_slice/impostors/island_tree_01_0_90.png",
+		"size": 5.63099189758301,
+		"source": "island_tree_01_0.glb"
+	}
+]

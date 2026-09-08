@@ -1,0 +1,252 @@
+{
+  "repository": "DhruvBhargava007/Morv_AI",
+  "commit": "b51a51a5b58962f4d07931e1871cbc6effd27c3e",
+  "files": [
+    {
+      "path": "license.txt",
+      "bytes": 684,
+      "sha256": "7931a6d1f2afcf6d9203e624f945c058ee2216daeb569f9d6c3d371566ec08dd",
+      "git_blob": "2cab2f8cbb4d039b1869d8ac97e3eb1e71f55359"
+    },
+    {
+      "path": "scene.bin",
+      "bytes": 13537136,
+      "sha256": "d47ec05177672c53f189106cabd76f862d82c11b238806d6b65dfcf4e6c78a6d",
+      "git_blob": "04b62068546a6b7c79747bc64d43c6bb383bc9cc"
+    },
+    {
+      "path": "scene.gltf",
+      "bytes": 55912,
+      "sha256": "e74ccfac17950b1607574b05d7602c8269e93c5dba406af8d4f4f3310b3df6be",
+      "git_blob": "8d0c130bd1d0ef14bf9b684338942844240e258e"
+    },
+    {
+      "path": "textures/DMachWheels_baseColor.png",
+      "bytes": 4401215,
+      "sha256": "4393cd6f2b952a19edfe0678bb1386871acf8b5fbdc43e736c6507c7eed62fc6",
+      "git_blob": "d3bc107185583934f4c69c6f30192698414213e6"
+    },
+    {
+      "path": "textures/DMachWheels_metallicRoughness.png",
+      "bytes": 2923614,
+      "sha256": "1cfe8d8996b48d209919e95235d69b6199baf134914a22457ab350b3772b386b",
+      "git_blob": "fc9405a18616cc5f0ea3bc91cc32cbb09944aaa8"
+    },
+    {
+      "path": "textures/DMainMetal_Guns_baseColor.png",
+      "bytes": 605,
+      "sha256": "af438be07200006367d4ac1167da36be6230f19a7132c6fbb4845091271802af",
+      "git_blob": "f86981af294e680cb9f4805473579b11f7550b08"
+    },
+    {
+      "path": "textures/DMainMetal_Guns_metallicRoughness.png",
+      "bytes": 605,
+      "sha256": "376162d30626bee58c88d7f9ca41f591fe1bad970f505b84e913f3aa6f44e7e7",
+      "git_blob": "0442a54c4ff9bcae8eeb77d4ae27382a4dece0a1"
+    },
+    {
+      "path": "textures/DMainMetal_Props_baseColor.png",
+      "bytes": 1537541,
+      "sha256": "dd628054dedff966622351649f54e5ef445847a8aea9b0c28075e43d7f9eb013",
+      "git_blob": "8f071f7f129ce99b764aa914d94bf0e401af7678"
+    },
+    {
+      "path": "textures/DMainMetal_Props_metallicRoughness.png",
+      "bytes": 570043,
+      "sha256": "0c1e9cc11ee2da8d79e4e4cf0c3f61b36fc9fa957b3afaa0ff92912f5d0ef9bb",
+      "git_blob": "39ec83ae566a35da72ceafe8f0491b103fb1dcc8"
+    },
+    {
+      "path": "textures/DMainMetal_Shield_baseColor.png",
+      "bytes": 882312,
+      "sha256": "6e48d5ccba4060d3d2996feccbe6c59bd2fc1d24d76e5b45ff4e4576bbaf3205",
+      "git_blob": "bd36c1641b687852d867e1fe9700bd228e57953b"
+    },
+    {
+      "path": "textures/DMainMetal_Shield_metallicRoughness.png",
+      "bytes": 1560125,
+      "sha256": "398ba1fc7a69e57b9e565f63d5b066916992d0420fdb99b33ffba83e80ca6475",
+      "git_blob": "e05eeb94bb718fea8310c50f5891b20bb6de9dd5"
+    },
+    {
+      "path": "textures/Light_baseColor.png",
+      "bytes": 943346,
+      "sha256": "2e94fdbbc12f51709cd96e00cf35f9312c2288a54e5795e08c960989b991e6c4",
+      "git_blob": "4f4f53092d89c3472aeb8f90c289aec5457589ce"
+    },
+    {
+      "path": "textures/Light_metallicRoughness.png",
+      "bytes": 1651939,
+      "sha256": "c816f5fece664bf888a77063e3ec3b4d0bcf058fb0a3180cd999921469872b5d",
+      "git_blob": "72ea23ccac91be923c2660e10e3629696ba08f3b"
+    },
+    {
+      "path": "textures/MachWheels_baseColor.png",
+      "bytes": 15325798,
+      "sha256": "919f9a008c6a7f2b4f9deba5c5b60d2f4f2ea40d45aaf15442436158cb2785c5",
+      "git_blob": "283ebb4558090d5374bc169645f50c96f966d8b3"
+    },
+    {
+      "path": "textures/MachWheels_metallicRoughness.png",
+      "bytes": 10830985,
+      "sha256": "078f7ed347771777694aa9270ae4934736e0eb955054954720322ea1e471079a",
+      "git_blob": "c9ad145cb9f52c20a67a146fa97904a7abe390c6"
+    },
+    {
+      "path": "textures/MainMetal_Armor_baseColor.png",
+      "bytes": 1951886,
+      "sha256": "1d557a97b0d8cb04d46f7b24662ded8b28dd4d1162f0c8fb6ec1b4ea05df8459",
+      "git_blob": "4ca015ca5b42278892400a180eef34bf9339cb3b"
+    },
+    {
+      "path": "textures/MainMetal_Armor_metallicRoughness.png",
+      "bytes": 1823992,
+      "sha256": "c280c1d91bda947beceeacdf9e01f889bf4c2d79a5d676431f72648168119014",
+      "git_blob": "0a4a5fb5e1f2c420ae642ae689331eb738a23f6f"
+    },
+    {
+      "path": "textures/MainMetal_Guns_baseColor.png",
+      "bytes": 3123503,
+      "sha256": "a6069a24433e5860171395e1a81bac69aa736d9526eda0afed7357c9c7b60d99",
+      "git_blob": "f851f6e175885a30cb553c1c20805409a6c29308"
+    },
+    {
+      "path": "textures/MainMetal_Guns_metallicRoughness.png",
+      "bytes": 920193,
+      "sha256": "35eaaeaf24eb463ecfb29d3fec7c3307d57c3c6a715bf903655b492c532f9969",
+      "git_blob": "334626f37cf11206d035cce96fe7317f79cd0392"
+    },
+    {
+      "path": "textures/MainMetal_LH_baseColor.png",
+      "bytes": 4833160,
+      "sha256": "dadd5a701ab2cf0cbf396a6bd63d5366a846934e92b6f26350a3eb02d6421aba",
+      "git_blob": "14265f9b7a85aaff81267207e79181b2ceea9b8d"
+    },
+    {
+      "path": "textures/MainMetal_LH_metallicRoughness.png",
+      "bytes": 3191559,
+      "sha256": "6807c71d036a44fc9565993a78e0e213adb02199b13d929c155e7ab901ad8e32",
+      "git_blob": "4272875eb4248dc4ffcf083122e0fefed842c198"
+    },
+    {
+      "path": "textures/MainMetal_Props_baseColor.png",
+      "bytes": 1983081,
+      "sha256": "7c4888da6ad5c7d2119066e281174e682f4fcd08f501687d25236ee190b99a43",
+      "git_blob": "2588c6010ed009b49d2518d4682445c63afb7053"
+    },
+    {
+      "path": "textures/MainMetal_Props_metallicRoughness.png",
+      "bytes": 558484,
+      "sha256": "094a5f13c02b430301ba3dc0b41e90654b4281ea713ff3ed17f2f1a79eb766b0",
+      "git_blob": "9a3b878d2405cc7b168548ae0b3f72995a5dc5f3"
+    },
+    {
+      "path": "textures/MainMetal_ROT_baseColor.png",
+      "bytes": 11796792,
+      "sha256": "115c46ce1551161d30beb927898bbac017959241ff82e6d4179a76f5f1770c50",
+      "git_blob": "e7c3465f12b9b513f5c0a358e79ce566d8d4c417"
+    },
+    {
+      "path": "textures/MainMetal_ROT_metallicRoughness.png",
+      "bytes": 3104909,
+      "sha256": "e359ffa726beb5abef93c0c736ff265f712e4f000d1d5fb9ebe368aad68aa7c9",
+      "git_blob": "b4eb4f0998601b93e8721e6b0b98bdaa0f022063"
+    },
+    {
+      "path": "textures/MainMetal_Shield_baseColor.png",
+      "bytes": 16833273,
+      "sha256": "64f982c23ca96c0d20046bbc9833aba34aaf7abaeac16a6017c516c61753f12b",
+      "git_blob": "702398b3fb7ed16a6b89b0c55930fa3b1c5cd14d"
+    },
+    {
+      "path": "textures/MainMetal_Shield_metallicRoughness.png",
+      "bytes": 3629838,
+      "sha256": "306bfd6a97e60c4b4c0c67726dd5166a9f925e7b774f003b96966ff1a45d6bf4",
+      "git_blob": "bfca0ef8a9e1688ec6e4c7a248e20237f6d9ca76"
+    },
+    {
+      "path": "textures/MainMetal_baseColor.png",
+      "bytes": 17541079,
+      "sha256": "eb7830fa1e9e35a7e8ba37650670db4d78d4919d5861a8a82ffbfd6658f16bc9",
+      "git_blob": "da7a952f24ae291faef8d122cdec55579de2321d"
+    },
+    {
+      "path": "textures/MainMetal_metallicRoughness.png",
+      "bytes": 6292176,
+      "sha256": "fea5a98cb968fb621907ca7c57d0547168b2dec9cc06da511c95a130a470bdf6",
+      "git_blob": "08b4a334c8d956d84968219a9ffff7ebab847a32"
+    },
+    {
+      "path": "textures/MetalWheels_Gear_baseColor.png",
+      "bytes": 2490318,
+      "sha256": "90051f3e6a8f2a68c73b6b67e9639c341c48c94b1de5ad4293e3afc92d19ccd8",
+      "git_blob": "dc36bf4511da21c456c870054b90962da6e259ab"
+    },
+    {
+      "path": "textures/MetalWheels_Gear_metallicRoughness.png",
+      "bytes": 1790519,
+      "sha256": "3217f4aaff64d7e0e06c85374dffe973babec643d032a8ffb643d300b63a106f",
+      "git_blob": "5373fe4d0f58649c2ca750bda98cbbf93b6403c1"
+    },
+    {
+      "path": "textures/Radiator_baseColor.png",
+      "bytes": 12077455,
+      "sha256": "e7112c738dd37d45cf91f141207162e396c64642fda772c52c8eda6eb94c7dfd",
+      "git_blob": "ce006837cf8591460b045cb8d0bc7b08f25442ec"
+    },
+    {
+      "path": "textures/Radiator_metallicRoughness.png",
+      "bytes": 13679290,
+      "sha256": "c4874b8ebef40383ba3e8af302096124d4e1db529a533368d67345eb74511d1f",
+      "git_blob": "ac2fafef6b37efb96a674df636cdc8ad02dd15eb"
+    },
+    {
+      "path": "textures/Rubber_Props_baseColor.png",
+      "bytes": 2859324,
+      "sha256": "698ca95cf3c1f7b7a8871ccb89248fc8cc64d4713662caac6f9d4d89bde84b47",
+      "git_blob": "3d0e13eaa139b7ec9f63adb96e756343fc1019d3"
+    },
+    {
+      "path": "textures/Rubber_Props_metallicRoughness.png",
+      "bytes": 1245595,
+      "sha256": "9bb4bf8d546aadcd868cfbbde18f14822ef689b02990a027dcfa296504199615",
+      "git_blob": "bb63373042e321893b1b15b1d8b14a3733c269d1"
+    },
+    {
+      "path": "textures/Rubber_W_baseColor.png",
+      "bytes": 2161365,
+      "sha256": "b19ee5af4d4b61b0d799eb0b5fee2b376cc1ab6956d3dece83ce561274523212",
+      "git_blob": "ec924c81a37f3ba6fda573606066035c8e837b4a"
+    },
+    {
+      "path": "textures/Rubber_W_metallicRoughness.png",
+      "bytes": 1375825,
+      "sha256": "3f289be048ce9fa5d1f0a55507cc0d715430c93b459f0d3fab3d0fac276995f4",
+      "git_blob": "ef78e892ad5cace551f5cbc0fdf8e697968af9ee"
+    },
+    {
+      "path": "textures/Rubber_Wheels_baseColor.png",
+      "bytes": 2097733,
+      "sha256": "68db0f3aedabb06a341b7647c9db910bca62cd0503e83b238d760131bbf6dab8",
+      "git_blob": "0ced1b893d988bbcf4f8ae42e9f2f9d164e88040"
+    },
+    {
+      "path": "textures/Rubber_Wheels_metallicRoughness.png",
+      "bytes": 982126,
+      "sha256": "07dd57120c5dbab4dbab20ee56b26331100a3a07363678b3afeb533f8c15db4f",
+      "git_blob": "40fdff258abb760bbce527a6d672d2bf1d76d6c3"
+    },
+    {
+      "path": "textures/material_baseColor.png",
+      "bytes": 4811697,
+      "sha256": "5ff844f97789a94abbd8ee4872ac91a6e16eabc25f3a8d4d97259848087e8d82",
+      "git_blob": "8cba7f26cf61861b5841bdc30679305369d872b8"
+    },
+    {
+      "path": "textures/material_metallicRoughness.png",
+      "bytes": 4918371,
+      "sha256": "15fdca3ab991b38cb1953e5f87d4beb7faa375fca359a35636d16ca50d72a319",
+      "git_blob": "6ae36629d44b76bb9749c3e5fa40fa67f417a911"
+    }
+  ]
+}

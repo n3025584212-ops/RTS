@@ -1,0 +1,42 @@
+{
+  "capture": {
+    "path": "artifacts\\visual_reset\\river_town_actual_1920x1080.png",
+    "sha256": "d0364822e6937f45af05ba32f55ed6604d877b37767bc38897114ef65392dad4",
+    "captured_at_utc": "2026-09-08T12:45:50",
+    "source": "Godot Viewport.get_texture().get_image(); pixels not edited"
+  },
+  "reference": {
+    "path": "docs\\visual_reference\\approved_user_frame.png",
+    "sha256": "7f2f462d34387d32109d4feb83f197f88adbc3ff0f54b26d0142172789f16e3d"
+  },
+  "runtime_sources": [
+    {
+      "path": "scripts\\production\\river_town_visual_slice.gd",
+      "sha256": "988014f03c2d982d50849985049893a07315dcc61d6a67c024a0318cc16d7c57"
+    },
+    {
+      "path": "scenes\\production\\RiverTownVisualSlice.tscn",
+      "sha256": "bee9853d52c66134abee91beb5397d784b2447f8568adc08715ef8d5f9a8a4a4"
+    },
+    {
+      "path": "scripts\\production\\visual_slice_armor.gdshader",
+      "sha256": "68390da518d128837006ac11d81885321fcba535e132740b0874abdd670c8f65"
+    },
+    {
+      "path": "scripts\\production\\visual_slice_grass.gdshader",
+      "sha256": "619309a0edd8b7d72d56b3fffd7104c752b52ba082a4ee7d836b29603f6abf29"
+    },
+    {
+      "path": "scripts\\production\\visual_slice_plaster.gdshader",
+      "sha256": "0cb399e32a1d3fdcc5a76b71f74358e51b9fd644bbd8b090f8ce5eee10c05d23"
+    },
+    {
+      "path": "scripts\\production\\visual_slice_smoke.gdshader",
+      "sha256": "756b70c4a8a8e40a8a7bd7d5218bbb1f85b5eef228f6d6bfb1f972dfedd922a7"
+    },
+    {
+      "path": "scripts\\production\\visual_slice_terrain.gdshader",
+      "sha256": "b6157e7765ca66e94591df19411b6eb4c99af73c40aea242c23977b85b0fe164"
+    }
+  ]
+}

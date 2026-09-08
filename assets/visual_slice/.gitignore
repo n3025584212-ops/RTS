@@ -1,0 +1,6 @@
+# Godot extracts the GLBs' embedded images here on first import.
+# The self-contained GLBs are authoritative; avoid committing duplicate pixels.
+/*.jpg
+/*.png
+/*.jpg.import
+/*.png.import
