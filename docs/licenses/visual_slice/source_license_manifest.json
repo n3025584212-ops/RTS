@@ -1,0 +1,485 @@
+{
+  "recorded_date": "2026-09-08",
+  "assets": [
+    {
+      "name": "fir_sapling_medium",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/fir_sapling_medium",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "fir_sapling_medium_1k.gltf",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/fir_sapling_medium/fir_sapling_medium_1k.gltf",
+          "sha256": "2e80cd49d716c99bdead5a42aa6441e89443044d9a0edc31b56b5dbf87fc41de",
+          "publisher_md5": "19e16469d9f085b6f9a8034ddab1c010",
+          "size": 17059
+        },
+        {
+          "path": "textures/fir_sapling_medium_branches_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling_medium/fir_sapling_medium_branches_nor_gl_1k.jpg",
+          "sha256": "6a570ab53ab2249ecdfa93e7d3b9a8a2cb1a8ad391400e5a64c708914779b2c3",
+          "publisher_md5": "978d32ec721696e45b38a72411c4edf4",
+          "size": 1137533
+        },
+        {
+          "path": "textures/fir_sapling_medium_branches_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling_medium/fir_sapling_medium_branches_diff_1k.jpg",
+          "sha256": "a5d25150ba1bee10008c039f98aa3c73b4477a404d6715c511ca9b5b0f4a9077",
+          "publisher_md5": "93265c0d9fbd3cf17deabdb68aa8b5e9",
+          "size": 776567
+        },
+        {
+          "path": "textures/fir_sapling_medium_branches_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling_medium/fir_sapling_medium_branches_arm_1k.jpg",
+          "sha256": "95d4e9e62cd309fbc38a175e2306379c76c062425b09c0fb72c5b7356a719123",
+          "publisher_md5": "4e48a7fa876a1ad47401fe86277a4373",
+          "size": 789264
+        },
+        {
+          "path": "textures/fir_sapling_medium_twigs_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling_medium/fir_sapling_medium_twigs_nor_gl_1k.jpg",
+          "sha256": "d470dc39b1d02bbeba06feb0ad818680ef3c24623b4db597270301a5fb8c9369",
+          "publisher_md5": "1ef6c0d7c2dc74cc073a8c33f58f3795",
+          "size": 472604
+        },
+        {
+          "path": "textures/fir_sapling_medium_twigs_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling_medium/fir_sapling_medium_twigs_diff_1k.jpg",
+          "sha256": "db1113d37d68d960b84eb14ce67a4022d02bf10d6f0c078d689063f6296eaa1d",
+          "publisher_md5": "0b51f775416af4fac5222ac96d91a289",
+          "size": 297200
+        },
+        {
+          "path": "textures/fir_sapling_medium_twigs_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling_medium/fir_sapling_medium_twigs_arm_1k.jpg",
+          "sha256": "d66c81fc073ee7ea97a76b6da2399769f16944e50ef0e007f09c95619f597c79",
+          "publisher_md5": "b0d09189350cb716533c1590fec8f8a4",
+          "size": 407309
+        },
+        {
+          "path": "fir_sapling_medium.bin",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/fir_sapling_medium/fir_sapling_medium.bin",
+          "sha256": "e3f3fabcaa1bacfc8b1feca5e6500b13c63a0e45cd812e663d01d31b042d73b1",
+          "publisher_md5": "d3976657a03ce2e6eccfa56b378bbcd0",
+          "size": 74159400
+        }
+      ],
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+    },
+    {
+      "name": "island_tree_01",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/island_tree_01",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "island_tree_01_1k.gltf",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/island_tree_01/island_tree_01_1k.gltf",
+          "sha256": "78e905a40670bfabb2760601d4d9a6c17193a50d68e6271c66893eb7bd75906d",
+          "publisher_md5": "fbc0c570ebd71ea88cedc1f9d5edb835",
+          "size": 8576
+        },
+        {
+          "path": "textures/island_tree_01_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_nor_gl_1k.jpg",
+          "sha256": "ca22e428e1b1ebac47b2fc67ec355700c8779d6628d2fc6c3ebae9002988f63e",
+          "publisher_md5": "3871f67863453a16b866950202fa2b7f",
+          "size": 1207134
+        },
+        {
+          "path": "textures/island_tree_01_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_diff_1k.jpg",
+          "sha256": "51bff9a3a6ed7d89ff4c73f01708b7267ed8d7a82b0cb12343741894f708218f",
+          "publisher_md5": "8a67489846657df6b859d97e0b80fcf4",
+          "size": 791327
+        },
+        {
+          "path": "textures/island_tree_01_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_arm_1k.jpg",
+          "sha256": "bf972dff0fbc71f146b4c02103fc3596477a49a9eff46b87b13c89b7b90d18ca",
+          "publisher_md5": "8077da7d1a001867c0da0cde6bc807f2",
+          "size": 727403
+        },
+        {
+          "path": "textures/island_tree_01_leaves_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_leaves_nor_gl_1k.jpg",
+          "sha256": "07ba461c0c95da4e49a42981766bdb6191d4c3c4d815796c082266dcc3cecdb8",
+          "publisher_md5": "a08ffb98b5ffb7dfa682e05a1639c642",
+          "size": 379443
+        },
+        {
+          "path": "textures/island_tree_01_leaves_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_leaves_diff_1k.jpg",
+          "sha256": "f56d762a1507754752abf164cc12acbc1e87ce87fa609ac44b98a1b0037c89d8",
+          "publisher_md5": "1356cbb5a5dd1318f9f2a01eddbf03e1",
+          "size": 191886
+        },
+        {
+          "path": "textures/island_tree_01_leaves_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_leaves_arm_1k.jpg",
+          "sha256": "90da3a072dbcb052715b1313b9dbc69a4aa8a09a31a4b3868411a2bb51d72037",
+          "publisher_md5": "27b06c4a53ff115ed7d51ee94e417257",
+          "size": 489476
+        },
+        {
+          "path": "textures/island_tree_01_branches_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_branches_nor_gl_1k.jpg",
+          "sha256": "2d67393ba76a0f49cf965fa0c99d8c16268e71e87b1203d35539bfdb971a514e",
+          "publisher_md5": "789084affb01f4a22290a848558f5e12",
+          "size": 819101
+        },
+        {
+          "path": "textures/island_tree_01_branches_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_branches_diff_1k.jpg",
+          "sha256": "bee5ec22196e9e31ad0c95a5a9b4636571cc0124d5bb27a92f1e307d289cc60d",
+          "publisher_md5": "7792907fe2b2b748c129a2384192a579",
+          "size": 528304
+        },
+        {
+          "path": "textures/island_tree_01_branches_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/island_tree_01/island_tree_01_branches_arm_1k.jpg",
+          "sha256": "9e3f82263247ce4f619692cea4c4f6fe9936ff465a86623481849062642c7d05",
+          "publisher_md5": "5b6f5b3838f4a8f60fea14fa3a3fef9f",
+          "size": 484806
+        },
+        {
+          "path": "island_tree_01.bin",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/island_tree_01/island_tree_01.bin",
+          "sha256": "1faa817b46e24ed6fc90d3ec72188a0dc5ac75e82c89b3dd3c5fdaecf7cc005c",
+          "publisher_md5": "8271f2d12c2727bd647ce0c242acdcec",
+          "size": 60709812
+        }
+      ],
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+    },
+    {
+      "name": "shrub_02",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/shrub_02",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "shrub_02_1k.gltf",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_02/shrub_02_1k.gltf",
+          "sha256": "99de0a70fe88ad414615cc8d8e020617c8512e2abfe08b911b153a6fcc40d93e",
+          "publisher_md5": "8f7254d279c0c49c0b3edfe260aa5c86",
+          "size": 8083
+        },
+        {
+          "path": "textures/shrub_02_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_02/shrub_02_arm_1k.jpg",
+          "sha256": "7186bf604d5c02f873aef6de2346cc06b6fa48f47d054edbef36d2c3772c0890",
+          "publisher_md5": "28c218aeb7cab930d99ee16578984241",
+          "size": 313715
+        },
+        {
+          "path": "textures/shrub_02_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_02/shrub_02_nor_gl_1k.jpg",
+          "sha256": "54c24e433365d5410223b7ebd2b33042b80831f80976e10768114db5ef6911d7",
+          "publisher_md5": "51a7f2db7e06a207171fd725585241d5",
+          "size": 490815
+        },
+        {
+          "path": "shrub_02.bin",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/shrub_02/shrub_02.bin",
+          "sha256": "5c1b79da1cfdbac90599542ccd1f75ba433a3a4d356b1ea03655adb39b0e2c96",
+          "publisher_md5": "683b5475238310899eac1458520903e6",
+          "size": 758692
+        },
+        {
+          "path": "textures/shrub_02_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_02/shrub_02_diff_1k.jpg",
+          "sha256": "9956eff294034d70516d867e9668428a23d782feb3d4c34061dce5e44bacd5a8",
+          "publisher_md5": "3f4ae281928de030c7d4e41ad5b88a8b",
+          "size": 395120
+        }
+      ],
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+    },
+    {
+      "name": "rock_moss_set_01",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/rock_moss_set_01",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "rock_moss_set_01_1k.gltf",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_moss_set_01/rock_moss_set_01_1k.gltf",
+          "sha256": "c36675aca9c6b2be7785c2534cf413b03ec82a5a2a5407a2b1c0cdb0346c9727",
+          "publisher_md5": "75113cc1c21806cca5d8badad4737af7",
+          "size": 9987
+        },
+        {
+          "path": "textures/rock_moss_set_01_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_nor_gl_1k.jpg",
+          "sha256": "eb4aad3f207f1dc5b624d74ae240372171626a66912bd71adf7bd3e518181d6e",
+          "publisher_md5": "eb7ebd31ad08e78d0497900652ff1568",
+          "size": 209975
+        },
+        {
+          "path": "rock_moss_set_01.bin",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_moss_set_01/rock_moss_set_01.bin",
+          "sha256": "de8360e6175879aaf02c171911069cf5f1852547f9ca7f10e440085dbcc3315e",
+          "publisher_md5": "207a51c9f56d34732e9814bbf9cc07b1",
+          "size": 1466380
+        },
+        {
+          "path": "textures/rock_moss_set_01_rough_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_rough_1k.jpg",
+          "sha256": "4d6ec46623abd8e2cdb855f59c7ce31873ad61b36b60e4de579e9e776a497c6b",
+          "publisher_md5": "ed9d8a2c863262f76f881346e8047c6a",
+          "size": 82624
+        },
+        {
+          "path": "textures/rock_moss_set_01_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_diff_1k.jpg",
+          "sha256": "40cea65d8aa4ee73a93b04af19963834d061eee9779c3fc2c1cba76eef812ccc",
+          "publisher_md5": "b8742301e6b4bc5683d2de712e83f772",
+          "size": 168099
+        }
+      ],
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+    },
+    {
+      "name": "barrel_03",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/barrel_03",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "barrel_03_1k.gltf",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/barrel_03/barrel_03_1k.gltf",
+          "sha256": "80e2faf48b7423bb522b573e459d99c5656a16763285ec8268e957fc7d41f9b8",
+          "publisher_md5": "204eec2159a38a1dc4b826ef255f9468",
+          "size": 2638
+        },
+        {
+          "path": "textures/barrel_03_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/barrel_03/barrel_03_diff_1k.jpg",
+          "sha256": "62feb27dfa9a0daf3f323fdc1ddc2d8e4a5996cf2c72fe50197b55c2b9cba7f3",
+          "publisher_md5": "6e77dc1af60c48787fd80dbbcf125040",
+          "size": 149997
+        },
+        {
+          "path": "barrel_03.bin",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/barrel_03/barrel_03.bin",
+          "sha256": "10f3202e9ac9acf8dd896f1562c64db58311ffef89efb402d8433e03ad486427",
+          "publisher_md5": "6993587e3ef8e0603334e615ab292288",
+          "size": 44872
+        },
+        {
+          "path": "textures/barrel_03_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/barrel_03/barrel_03_nor_gl_1k.jpg",
+          "sha256": "ade97c52985047858a4f38226a9b8a888e3a766ba0434700b4618fb25424c4b6",
+          "publisher_md5": "fd181365eb7397d55773987d145f0420",
+          "size": 126707
+        },
+        {
+          "path": "textures/barrel_03_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/barrel_03/barrel_03_arm_1k.jpg",
+          "sha256": "2cec2338b36d7322bef55e6a1d0884b223c5ed383cf986a58bfa461478c64c7e",
+          "publisher_md5": "3520338e30b4d257745db34848098688",
+          "size": 249922
+        }
+      ],
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+    },
+    {
+      "name": "wooden_military_crate",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/wooden_military_crate",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "wooden_military_crate_1k.gltf",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_military_crate/wooden_military_crate_1k.gltf",
+          "sha256": "e8d8d21d112fef04c8e9fd05a62dc7c94260bc230a43d86d0e1f4b5a888a9499",
+          "publisher_md5": "a6dc6b8e8519a115e8481d9a1c9525cf",
+          "size": 6002
+        },
+        {
+          "path": "textures/wooden_military_crate_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_military_crate/wooden_military_crate_nor_gl_1k.jpg",
+          "sha256": "89cc5ad94dd7ce425f2b9b04f37f2266778923369c77d8945101456f47579cf3",
+          "publisher_md5": "768fcbb54910fbad95abfb6bd90901d3",
+          "size": 745490
+        },
+        {
+          "path": "textures/wooden_military_crate_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_military_crate/wooden_military_crate_diff_1k.jpg",
+          "sha256": "aa6ace45bef9947586c07283cd11a2d737fe0783a18df69a76f77f59d4fb776d",
+          "publisher_md5": "042ee9d280238702cde679ea00bb37ec",
+          "size": 824093
+        },
+        {
+          "path": "textures/wooden_military_crate_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_military_crate/wooden_military_crate_arm_1k.jpg",
+          "sha256": "fe27fa628a9134f81958413c1a11deea8074fe40424c1a8a48ec459f2dde7955",
+          "publisher_md5": "b8f165142d290078ffb08b608cec9d48",
+          "size": 782386
+        },
+        {
+          "path": "wooden_military_crate.bin",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/wooden_military_crate/wooden_military_crate.bin",
+          "sha256": "cf6fd469a476d834f9724f8b8f762630040d8e785e8697c5d7994ae3e840e727",
+          "publisher_md5": "fb5dbf4aed842eb45f2e18e62683d34a",
+          "size": 687548
+        }
+      ],
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+    },
+    {
+      "name": "worn_plaster_wall",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "assets\\visual_slice\\surfaces\\worn_plaster_wall_diff.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "sha256": "f769bee35504ff713e89e89d2b64c1eb3c373dd184973ac8706310f19fd63efe",
+          "publisher_md5": "31aab3a5bf3859361cd423e15b9735bc"
+        },
+        {
+          "path": "assets\\visual_slice\\surfaces\\worn_plaster_wall_nor_gl.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "sha256": "5d1dc80a354fc7de3f0ada286176b56d50067c85c9f95140aadf7d5db15adee1",
+          "publisher_md5": "2e1cb2651163105acda653e9c9b9b7b8"
+        },
+        {
+          "path": "assets\\visual_slice\\surfaces\\worn_plaster_wall_rough.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/worn_plaster_wall/worn_plaster_wall_rough_1k.jpg",
+          "sha256": "383584ed24edd4dd6e6a675fd822ec04152684ba15f4b0eda1f0dbe31979a7c6",
+          "publisher_md5": "7584ca081047d7e025fd80adbdcec4df"
+        }
+      ],
+      "modifications": "Textures unchanged on disk; shader tint, normal strength and world-space weathering at runtime."
+    },
+    {
+      "name": "roof_tiles_14",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/roof_tiles_14",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "assets\\visual_slice\\surfaces\\roof_tiles_14_diff.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_tiles_14/roof_tiles_14_diff_1k.jpg",
+          "sha256": "756217e3dfa9ddfd9d880a9f4938abca7fb7dfcf9b7184949894eed33868ae6f",
+          "publisher_md5": "89bae450f83f966c4d82a4b2eddeb5dc"
+        },
+        {
+          "path": "assets\\visual_slice\\surfaces\\roof_tiles_14_nor_gl.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_tiles_14/roof_tiles_14_nor_gl_1k.jpg",
+          "sha256": "b0478c93821c9cf83b9c0f1ed8c2d46e335b336a2236f7c220364bf0a8bbf30d",
+          "publisher_md5": "35e5d9dfc91f8b4571a449be4979d239"
+        },
+        {
+          "path": "assets\\visual_slice\\surfaces\\roof_tiles_14_rough.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_tiles_14/roof_tiles_14_rough_1k.jpg",
+          "sha256": "8691284168fa16544c3c1bd481708d41f448ae7554d58684e705e25402bb8bd1",
+          "publisher_md5": "a41af491d11055a2d13b114cbf0b11dc"
+        }
+      ],
+      "modifications": "Textures unchanged on disk; shader tint, normal strength and world-space weathering at runtime."
+    },
+    {
+      "name": "kloofendal_48d_partly_cloudy_puresky",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "sky.hdr",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+          "sha256": "fd94c84997b8a3c353b62c2125a9b44e19509956986a126e472684432a02d798",
+          "publisher_md5": "c69498687e876bf68d2a8b8a62234eb9"
+        }
+      ],
+      "modifications": "Unchanged HDR pixels; Godot sky rotation and intensity are scene lighting parameters."
+    },
+    {
+      "name": "leafy_grass",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/leafy_grass",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "provenance": "Existing e909d17 repository asset, documented in docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md",
+      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged."
+    },
+    {
+      "name": "aerial_mud_1",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/aerial_mud_1",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "provenance": "Existing e909d17 repository asset, documented in docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md",
+      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged."
+    },
+    {
+      "name": "gravel_ground_01",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/gravel_ground_01",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "provenance": "Existing e909d17 repository asset, documented in docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md",
+      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged."
+    },
+    {
+      "name": "asphalt_02",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/asphalt_02",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "provenance": "Existing e909d17 repository asset, documented in docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md",
+      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged."
+    },
+    {
+      "name": "brick_wall_005",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/brick_wall_005",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "provenance": "Existing e909d17 repository asset, documented in docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md",
+      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged."
+    },
+    {
+      "name": "dirt_aerial_03",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/dirt_aerial_03",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "provenance": "Existing e909d17 repository asset, documented in docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md",
+      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged."
+    },
+    {
+      "name": "t_concrete_wall_002",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/t_concrete_wall_002",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "provenance": "Existing e909d17 repository asset, documented in docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md",
+      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged."
+    }
+  ],
+  "abrams": {
+    "source": "https://sketchfab.com/3d-models/abrams-m1a2-sepv3-eb6f5560198740269507e9948376414c",
+    "author": "dannzjs",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "evidence": [
+      "abrams_license.txt",
+      "abrams_author_api_20260908.json",
+      "abrams_source_manifest.json"
+    ],
+    "modifications": "Authored geometry retained, textures resized to maximum 1536 pixels and packed as GLB. Runtime material adaptation adds dust, mud, paint roughness and grime. No author endorsement implied."
+  }
+}
