@@ -17,7 +17,9 @@ The objective remains the user-approved Golden Frame, rendered by real Godot 4.7
 
 A separate visual-only scene now combines a licensed Abrams model, authored dimensional houses, real source foliage/rocks/props, terrain, water, sky and native Godot effects. Its launch command is `scripts/production/run_river_town_slice.ps1`. The gameplay scene, Core logic and project startup configuration are unchanged. The source is an isolated snapshot of `dev/godot-golden-scene-v1` at `e909d17ac2d521b0fcef4720499a3578024ba129`.
 
-This checkpoint first publishes the status and raw evidence; the runnable source/assets are being synchronized on the same development branch. The accepted product state is not advanced, and no visual PASS is claimed.
+The status and raw evidence are published in commit `2fc6dc3287e21b12cde0a4d5e14bf303f04f80da`. The runnable scene, scripts, self-contained GLBs, textures, attribution and evidence are published in commit `85a5181adc47f690787eae41a8b061626be622eb` on `dev/visual-production-reset`. The accepted product state is not advanced, and no visual PASS is claimed.
+
+`scripts/production/verify_visual_checkpoint.py` checks evidence dimensions, real engine identity, runtime errors and frozen-file isolation. Its result separates **integrity PASS** from **visual FAIL_NOT_READY**. It does not award a visual score.
 
 ## Why the image still fails
 
