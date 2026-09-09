@@ -1,6 +1,10 @@
 class_name Battle3DPresentation
 extends Node3D
 
+const HQ_ABRAMS_PATH := "res://assets/visual_slice/abrams.glb"
+const IFV_MODEL_PATH := "res://assets/golden_scene/vehicles/ifv.glb"
+const SOLDIER_MODEL_PATH := "res://assets/golden_scene/infantry/soldier.glb"
+
 var _battle: Node
 var _intel: BattleIntelTracker
 var _visibility: BattleVisibilityField
@@ -81,22 +85,45 @@ func _register_formation(formation: BattleFormation) -> void:
 	formation.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	var proxy := Node3D.new()
 	proxy.name = "Proxy_%s" % formation.display_name.replace(" ", "_").replace("-", "_")
+
+	# Keep the legacy primitive hidden as a compatibility anchor; the player sees
+	# real imported unit art, while all selection/combat logic remains unchanged.
 	var body := MeshInstance3D.new()
 	body.name = "Body"
 	body.mesh = _mesh_for_role(formation.get_role())
+	body.visible = false
 	proxy.add_child(body)
+
+	var visual := Node3D.new()
+	visual.name = "VisualModel"
+	proxy.add_child(visual)
+	_build_role_visual(visual, formation.get_role(), formation.faction)
+
+	var faction_ring := MeshInstance3D.new()
+	faction_ring.name = "FactionRing"
+	var faction_mesh := TorusMesh.new()
+	faction_mesh.inner_radius = 0.56
+	faction_mesh.outer_radius = 0.63
+	faction_mesh.rings = 24
+	faction_mesh.ring_segments = 8
+	faction_ring.mesh = faction_mesh
+	faction_ring.position.y = -0.12
+	faction_ring.material_override = _blue_material if formation.faction == "BLUE" else _red_material
+	proxy.add_child(faction_ring)
+
 	var ring := MeshInstance3D.new()
 	ring.name = "Selection"
 	var ring_mesh := TorusMesh.new()
-	ring_mesh.inner_radius = 0.38
-	ring_mesh.outer_radius = 0.48
-	ring_mesh.rings = 18
+	ring_mesh.inner_radius = 0.69
+	ring_mesh.outer_radius = 0.79
+	ring_mesh.rings = 24
 	ring_mesh.ring_segments = 8
 	ring.mesh = ring_mesh
-	ring.position.y = -0.16
+	ring.position.y = -0.105
 	ring.material_override = _selection_material
 	ring.visible = false
 	proxy.add_child(ring)
+
 	add_child(proxy)
 	_proxies[formation] = proxy
 
@@ -136,6 +163,9 @@ func _update_formation_proxies() -> void:
 			continue
 		if not formation.is_alive:
 			body.material_override = _destroyed_material
+			if not proxy.has_meta("destroyed_visual"):
+				_apply_material_recursive(proxy.get_node("VisualModel") as Node3D, _destroyed_material)
+				proxy.set_meta("destroyed_visual", true)
 		elif formation.faction == "BLUE":
 			body.material_override = _blue_material
 		elif formation.intel_state == BattleIntelTracker.CONTACT:
@@ -143,6 +173,106 @@ func _update_formation_proxies() -> void:
 		else:
 			body.material_override = _red_material
 		ring.visible = formation.is_selected and formation.is_alive
+
+func _build_role_visual(parent: Node3D, role: String, faction: String) -> void:
+	match role:
+		"TANK", "ARMOR":
+			var tank := _instantiate_model(HQ_ABRAMS_PATH, 3.65)
+			if tank != null:
+				tank.rotation_degrees.y = 90.0 if faction == "BLUE" else -90.0
+				_apply_abrams_materials(tank)
+				parent.add_child(tank)
+		"IFV", "RECON":
+			var ifv := _instantiate_model(IFV_MODEL_PATH, 3.15 if role == "IFV" else 2.72)
+			if ifv != null:
+				ifv.rotation_degrees.y = 90.0 if faction == "BLUE" else -90.0
+				parent.add_child(ifv)
+		"INFANTRY":
+			var offsets := [
+				Vector3(-0.34, 0.0, -0.24), Vector3(0.34, 0.0, -0.18),
+				Vector3(-0.28, 0.0, 0.34), Vector3(0.31, 0.0, 0.36)
+			]
+			for i in range(offsets.size()):
+				var soldier := _instantiate_model(SOLDIER_MODEL_PATH, 1.38)
+				if soldier == null:
+					continue
+				soldier.position = offsets[i]
+				soldier.rotation_degrees.y = (78.0 + float(i) * 8.0) if faction == "BLUE" else (-92.0 - float(i) * 7.0)
+				parent.add_child(soldier)
+		_:
+			var fallback := _instantiate_model(IFV_MODEL_PATH, 2.65)
+			if fallback != null:
+				parent.add_child(fallback)
+
+
+func _instantiate_model(path: String, target_extent: float) -> Node3D:
+	if not ResourceLoader.exists(path):
+		push_warning("Battle01 visual model missing: %s" % path)
+		return null
+	var packed := load(path) as PackedScene
+	if packed == null:
+		return null
+	var root := packed.instantiate() as Node3D
+	if root == null:
+		return null
+	_fit_visual_extent(root, target_extent)
+	return root
+
+
+func _fit_visual_extent(root: Node3D, target_extent: float) -> void:
+	var extent := 0.0
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null:
+			continue
+		var size := mesh_instance.get_aabb().size
+		extent = maxf(extent, maxf(size.x, maxf(size.y, size.z)))
+	if extent > 0.0001:
+		root.scale = Vector3.ONE * (target_extent / extent)
+
+
+func _apply_abrams_materials(root: Node3D) -> void:
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null:
+			continue
+		for surface_index in range(mesh_instance.mesh.get_surface_count()):
+			var original := mesh_instance.get_active_material(surface_index) as StandardMaterial3D
+			if original == null:
+				continue
+			var material := ShaderMaterial.new()
+			material.shader = load("res://scripts/production/visual_slice_armor.gdshader")
+			material.set_shader_parameter("paint_texture", original.albedo_texture)
+			material.set_shader_parameter("paint_color", original.albedo_color)
+			material.set_shader_parameter("normal_texture", original.normal_texture)
+			material.set_shader_parameter("has_normal", original.normal_enabled)
+			material.set_shader_parameter("rough_texture", original.roughness_texture)
+			material.set_shader_parameter("roughness_factor", original.roughness)
+			material.set_shader_parameter("ground_y", 0.0)
+			material.set_shader_parameter("authored_metallic", original.metallic)
+			material.set_shader_parameter("authored_specular", original.metallic_specular)
+			var luma := original.albedo_color.r * .2126 + original.albedo_color.g * .7152 + original.albedo_color.b * .0722
+			var role_value := 0.0
+			if original.metallic > .42:
+				role_value = 2.0
+			elif luma < .16:
+				role_value = 1.0
+			material.set_shader_parameter("surface_role", role_value)
+			var channels: Array[Vector4] = [
+				Vector4(1,0,0,0), Vector4(0,1,0,0), Vector4(0,0,1,0),
+				Vector4(0,0,0,1), Vector4(.333,.333,.333,0)
+			]
+			material.set_shader_parameter("rough_channel", channels[original.roughness_texture_channel])
+			mesh_instance.set_surface_override_material(surface_index, material)
+
+
+func _apply_material_recursive(root: Node3D, material: Material) -> void:
+	if root is MeshInstance3D:
+		(root as MeshInstance3D).material_override = material
+	for child: Node in root.get_children():
+		if child is Node3D:
+			_apply_material_recursive(child as Node3D, material)
+
 
 func _create_command_area_visual() -> void:
 	_objective_visual = MeshInstance3D.new()
