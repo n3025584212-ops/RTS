@@ -1,0 +1,29 @@
+{
+	"average_frame_ms_short_capture": 149.013,
+	"camera_position": "(9.0, 6.4, 20.5)",
+	"camera_rotation": "(-14.17811, 15.42216, 0.0)",
+	"captured_at_utc": "2026-09-09T07:23:10",
+	"engine": {
+		"build": "official",
+		"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+		"hex": 263937,
+		"major": 4,
+		"minor": 7,
+		"patch": 1,
+		"status": "stable",
+		"string": "4.7.1-stable (official)",
+		"timestamp": 0
+	},
+	"fov": 54.0,
+	"gameplay_changes": false,
+	"gpu": "llvmpipe (LLVM 20.1.2, 256 bits)",
+	"height": 1080,
+	"internal_3d_render_scale": 1.5,
+	"post_capture_image_editing": false,
+	"renderer": "forward_plus",
+	"sample_count": 1,
+	"save_error": 0,
+	"screenshot_source": "Viewport.get_texture().get_image() after frame_post_draw",
+	"visual_acceptance": "NOT_CLAIMED",
+	"width": 1920
+}

@@ -2,6 +2,7 @@ shader_type spatial;
 render_mode diffuse_burley,specular_schlick_ggx;
 
 varying vec3 wp;
+uniform float ripple_strength = .035;
 
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float noise(vec2 p){
@@ -24,7 +25,7 @@ void fragment(){
  vec2 wave=vec2(
   sin(wp.x*.82+wp.z*.31)+sin(wp.z*1.73),
   cos(wp.z*.77-wp.x*.28)+sin(wp.x*1.41)
- )*.035;
+ )*ripple_strength;
  NORMAL_MAP=vec3(.5+wave.x,.5+wave.y,1.0);
  NORMAL_MAP_DEPTH=.58;
 }

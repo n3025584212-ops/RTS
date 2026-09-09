@@ -1,13 +1,13 @@
 """Authored dimensional architecture: open window reveals, roof structure and damage.
 Blender produces reusable meshes; no gameplay or screenshot data is generated.
 """
-import bpy,math,random
+import bpy,math,random,json,argparse,sys
 from mathutils import Vector,Matrix
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'assets/visual_slice';OUT.mkdir(parents=True,exist_ok=True)
 
-def build(name,damaged=False,seed=13,detailed=False):
+def build(name,damaged=False,seed=13,detailed=False,physical=None):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     rng=random.Random(seed); batches={}
     colors={'plaster':(.57,.55,.47,1),'brick':(.28,.17,.11,1),'roof':(.25,.13,.085,1),'wood':(.10,.075,.05,1),'trim':(.30,.29,.25,1),'glass':(.045,.065,.067,1),'metal':(.11,.13,.13,1),'interior':(.16,.15,.12,1)}
@@ -22,6 +22,27 @@ def build(name,damaged=False,seed=13,detailed=False):
         box(mat,(a+b)/2,(width,depth or width,d.length),d.to_track_quat('Z','Y').to_matrix())
     # Dimensions are metres: 11.6 x 8.4, two 3.15 m storeys.
     w,dep,eave,ridge=11.6,8.4,6.5,9.5
+    physical = physical or {}
+    continuous = bool(physical.get('continuous_fracture', False))
+    shell = float(physical.get('plaster_thickness_m', .036))
+
+    def clip_field(poly, field):
+        """Clip a wall cell along an interpolated fracture, rather than drop it.
+
+        Every neighbouring cell evaluates the same scalar field at shared vertices.
+        This preserves continuous, non-grid-aligned silhouettes and reveal edges.
+        """
+        if not poly:return []
+        result=[]
+        a=poly[-1];da=field(*a)
+        for b in poly:
+            db=field(*b)
+            if (da>=0)!=(db>=0):
+                t=da/(da-db)
+                result.append((a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t))
+            if db>=0:result.append(b)
+            a,da=b,db
+        return result
     def value_noise(x,z):
         ix,iz=math.floor(x),math.floor(z);fx,fz=x-ix,z-iz
         fx=fx*fx*(3-2*fx);fz=fz*fz*(3-2*fz)
@@ -59,6 +80,41 @@ def build(name,damaged=False,seed=13,detailed=False):
                 cx,cz=(a+b)/2,(lo+hi)/2
                 if any(o[0]<cx<o[1] and o[2]<cz<o[3] for o in opens):continue
                 if detailed:
+                    if continuous:
+                        cell=[(a,lo),(b,lo),(b,hi),(a,hi)]
+                        wall=clip_field(cell,lambda xx,zz:breach(xx,zz,side))
+                        if len(wall)<3:continue
+                        def layer(poly,depth_offset,mat,reverse=False):
+                            coords=[pos(xx,depth_offset+(value_noise(xx*4,zz*4)-.5)*.010,zz) for xx,zz in poly]
+                            order=tuple(range(len(coords)))
+                            face(mat,coords,[order[::-1] if reverse else order])
+                        layer(wall,-.142,'brick')
+                        layer(wall,.16,'interior',True)
+                        # Close the full 30 cm masonry section along the fractured
+                        # outline. Internal cell edges remain buried in the wall.
+                        for j in range(len(wall)):
+                            ax,az=wall[j];bx,bz=wall[(j+1)%len(wall)]
+                            midx,midz=(ax+bx)/2,(az+bz)/2
+                            on_cell=(abs(ax-bx)<1e-6 and (abs(ax-a)<1e-6 or abs(ax-b)<1e-6)) or (abs(az-bz)<1e-6 and (abs(az-lo)<1e-6 or abs(az-hi)<1e-6))
+                            if not on_cell:
+                                face('brick',[pos(ax,-.142,az),pos(bx,-.142,bz),pos(bx,.16,bz),pos(ax,.16,az)],[(0,1,2,3)])
+                        def plaster_field(xx,zz):
+                            loss=value_noise(xx*1.8,zz*1.8)-.24
+                            if zz<.85:loss=min(loss,value_noise(xx*3,zz*3)-.50)
+                            return min(loss,breach(xx,zz,side)-.29)
+                        render=clip_field(wall,plaster_field)
+                        if len(render)>2:
+                            layer(render,-.142-shell,'plaster')
+                            for j in range(len(render)):
+                                ax,az=render[j];bx,bz=render[(j+1)%len(render)]
+                                # These are actual plaster lips with a sidewall;
+                                # their silhouette and contact shadow survive flat lighting.
+                                face('plaster',[pos(ax,-.142-shell,az),pos(bx,-.142-shell,bz),pos(bx,-.142,bz),pos(ax,-.142,az)],[(0,1,2,3)])
+                        def open_cell(xx,zz):return xx<-length/2 or xx>length/2 or zz<.36 or zz>eave or any(o[0]<xx<o[1] and o[2]<zz<o[3] for o in opens)
+                        for aa,bb,probe in [((a,lo),(a,hi),(a-.015,cz)),((b,hi),(b,lo),(b+.015,cz)),((b,lo),(a,lo),(cx,lo-.015)),((a,hi),(b,hi),(cx,hi+.015))]:
+                            if open_cell(*probe):
+                                face('brick',[pos(aa[0],-.142,aa[1]),pos(bb[0],-.142,bb[1]),pos(bb[0],.16,bb[1]),pos(aa[0],.16,aa[1])],[(0,1,2,3)])
+                        continue
                     if breach(cx,cz,side)<0:continue
                     peeled=breach(cx,cz,side)<.38 or value_noise(cx*1.8,cz*1.8)<.19 or (cz<.85 and value_noise(cx*3,cz*3)<.52)
                     outer=-.142 if peeled else -.178
@@ -104,6 +160,18 @@ def build(name,damaged=False,seed=13,detailed=False):
             vs=[pos(xx,-.169,zz)]+[pos(xx+math.cos(a)*radius*rng.uniform(.65,1.3),-.171,zz+math.sin(a)*radius*.7*rng.uniform(.6,1.4)) for a in [i*math.tau/7 for i in range(7)]]
             face('brick',vs,[(0,i+1,(i+1)%7+1) for i in range(7)])
         part('trim',0,-.03,3.43,length+.05,.40,.095)
+        if continuous and side in (0,1):
+            saved_rng_state=rng.getstate()
+            # Individual bonded courses protrude into the breach, breaking the
+            # silhouette with actual chipped brick ends and open mortar joints.
+            for course in range(26,53):
+                zz=course*.12
+                for column in range(math.ceil(length/.27)+1):
+                    xx=-length/2+column*.27+(course%2)*.135
+                    d=breach(xx,zz,side)
+                    if -.09<d<.23 and not any(o[0]<xx<o[1] and o[2]<zz<o[3] for o in opens):
+                        part('brick',xx,-.018-rng.uniform(0,.035),zz,.245*rng.uniform(.72,1.0),.32+rng.uniform(0,.04),.103)
+            rng.setstate(saved_rng_state)
     # Solid gable ends, ridge along X; pitched roof has separate rafters and battens.
     for x in [-w/2,w/2]:
         face('plaster',[(x,-dep/2,eave),(x,dep/2,eave),(x,0,ridge)],[(0,1,2),(2,1,0)])
@@ -127,10 +195,17 @@ def build(name,damaged=False,seed=13,detailed=False):
                 verts=[]
                 for v in [0,1]:
                     for u in range(5):
-                        x=xx+(u/4-.5)*.36;y=sign*(yy+(v-.5)*.33)
+                        x=xx+(u/4-.5)*(.314 if continuous else .36);y=sign*(yy+(v-.5)*.33)
                         z=ridge-abs(y)*pitch+.055+.024*math.sin(u/4*math.pi)+rng.uniform(-.004,.004)
+                        if continuous:z+=v*.035
                         verts.append((x,y,z))
                 face('roof',verts,[(i,i+1,i+6,i+5) if sign==1 else (i+5,i+6,i+1,i) for i in range(4)])
+                if continuous:
+                    lower=[(x,y,z-.018) for x,y,z in verts]
+                    face('roof',lower,[(i+5,i+6,i+1,i) if sign==1 else (i,i+1,i+6,i+5) for i in range(4)])
+                    perimeter=[0,1,2,3,4,9,8,7,6,5]
+                    for ai,bi in zip(perimeter,perimeter[1:]+perimeter[:1]):
+                        face('roof',[verts[ai],verts[bi],lower[bi],lower[ai]],[(0,1,2,3)])
         beam('metal',(-w/2-.4,sign*(dep/2+.4),eave-.14),(w/2+.4,sign*(dep/2+.4),eave-.14),.14,.15)
     for x in [-w/2+.08,w/2-.08]:beam('metal',(x,-dep/2-.4,eave-.15),(x,-dep/2-.4,.4),.095)
     # Chimney crown and inset black flue.
@@ -171,14 +246,38 @@ def build(name,damaged=False,seed=13,detailed=False):
         m=bpy.data.materials.new(mat);m.diffuse_color=colors[mat];m.use_nodes=True
         bs=m.node_tree.nodes.get('Principled BSDF');bs.inputs['Base Color'].default_value=colors[mat];bs.inputs['Roughness'].default_value=.84 if mat!='glass' else .24
         ob.data.materials.append(m)
+        if continuous and mat in ('brick','trim','wood'):
+            # Real chamfers catch light at the fracture, sill and broken timber.
+            # Applied to the exported mesh, not a shader edge highlight.
+            bevel=ob.modifiers.new('Physical edge breaks','BEVEL')
+            bevel.width=float(physical.get('edge_break_m',.007))
+            bevel.segments=2
+            bevel.limit_method='ANGLE'
+            bevel.angle_limit=.5
+            bpy.context.view_layer.objects.active=ob
+            bpy.ops.object.modifier_apply(modifier=bevel.name)
+            me=ob.data
         uv=me.uv_layers.new(name='UVMap')
         for poly in me.polygons:
             axis=max(range(3),key=lambda i:abs(poly.normal[i]));a,b=[i for i in range(3) if i!=axis]
             for li in poly.loop_indices:
                 co=me.vertices[me.loops[li].vertex_index].co;uv.data[li].uv=(co[a]/3,co[b]/3)
+    if continuous:
+        for ob in bpy.context.scene.objects:
+            if ob.type!='MESH':continue
+            triangulate=ob.modifiers.new('Export triangles','TRIANGULATE')
+            bpy.context.view_layer.objects.active=ob
+            bpy.ops.object.modifier_apply(modifier=triangulate.name)
     bpy.ops.export_scene.gltf(filepath=str(OUT/(name+'.glb')),export_format='GLB',export_animations=False,export_tangents=True)
     print('HOUSE_KIT_READY',name,flush=True)
 if __name__=='__main__':
-    build('house_damaged',True)
-    build('house_intact',False)
-    build('hero_house_ruined',True,detailed=True)
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--local-fidelity-profile')
+    args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
+    if args.local_fidelity_profile:
+        profile=json.loads(Path(args.local_fidelity_profile).read_text(encoding='utf-8'))
+        build(profile['output_asset'],True,seed=profile.get('seed',13),detailed=True,physical=profile)
+    else:
+        build('house_damaged',True)
+        build('house_intact',False)
+        build('hero_house_ruined',True,detailed=True)

@@ -7,6 +7,7 @@ uniform sampler2D soil_normal : hint_normal, filter_linear_mipmap_anisotropic, r
 uniform sampler2D soil_roughness : filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D gravel_color : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D asphalt_color : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2D soil_height : filter_linear_mipmap_anisotropic, repeat_enable;
 
 varying vec3 world;
 varying vec3 world_normal;
@@ -36,7 +37,7 @@ void fragment(){
  float asphalt_core=1.-smoothstep(2.45,3.02,crossroad+n1*.46);
 
  vec3 grass=texture(grass_color,p*.34).rgb*mix(vec3(.14,.18,.065),vec3(.36,.35,.17),macro);
- vec3 soil=texture(soil_color,p.yx*.105).rgb*vec3(.50,.405,.285);
+ vec3 soil=texture(soil_color,p.yx*.105).rgb*vec3(.62,.49,.33);
  vec3 gravel=texture(gravel_color,p*.46).rgb*vec3(.43,.395,.305);
  vec3 asphalt=texture(asphalt_color,p*.22).rgb*vec3(.47,.455,.43);
 
@@ -50,18 +51,22 @@ void fragment(){
  float rut_center=min(abs(route-1.30),abs(route+1.30));
  float rut=1.-smoothstep(.24,.67,rut_center);
  float wet_noise=smoothstep(.42,.75,noise(p*.38+vec2(12.1,3.2)));
- float wet=rut*mud*(.38+.62*wet_noise);
+ float relief=texture(soil_height,p.yx*.10).r;
+ float low_pockets=1.-smoothstep(.34,.60,relief);
+ float wet=rut*mud*(.14+.86*wet_noise)*mix(.32,1.,low_pockets);
  float damp_margin=mud*(1.-rut)*smoothstep(.61,.82,n2)*.28;
 
- col*=mix(1.,.55,rut*mud);
- col=mix(col,vec3(.075,.058,.036),wet*.56+damp_margin*.20);
+ col*=mix(1.,.68,rut*mud);
+ col=mix(col,vec3(.035,.026,.016),wet*.58+damp_margin*.20);
+ float dry_ridge=smoothstep(.52,.69,relief)*(1.-wet)*mud;
+ col*=1.+dry_ridge*.22;
  col*=mix(.80,1.05,noise(p*.057));
 
  ALBEDO=col;
 
  float soil_r=texture(soil_roughness,p.yx*.105).r;
- float rough=mix(.94,clamp(soil_r*.72,.22,.76),mud);
- rough=mix(rough,.18,wet);
+ float rough=mix(.94,clamp(soil_r*.40+.48,.58,.94),mud);
+ rough=mix(rough,.14,wet);
  rough=mix(rough,.46,asphalt_core);
  ROUGHNESS=clamp(rough,.16,.97);
  SPECULAR=mix(.28,.72,wet);

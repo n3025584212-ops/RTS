@@ -48,3 +48,20 @@ Any pass that looks worse than Run #5 is rejected even if:
 - FPS improves,
 - the scene contains more nodes/assets.
 
+## Latest local construction batch — 2026-09-09
+
+Reusable physical house detail, route-local rut geometry, depth-bounded puddles,
+and authored Abrams material separation are implemented. See
+`docs/current/RIVER_TOWN_LOCAL_HIGH_FIDELITY_BATCH_01.md` for the exact deliverables,
+reproduction commands, unchanged baseline controls, same-machine cost comparison,
+and image evidence. The task remains ACTIVE; full-map performance and final manual
+visual acceptance are not claimed.
+
+USER_REVIEW_2026_09_09=NO_SUBSTANTIAL_VISUAL_IMPROVEMENT
+BATCH_01_ACCEPTANCE=REJECTED_AS_QUALITY_UPGRADE
+
+Do not promote batch 01 as the new visual floor. It is an implementation checkpoint
+only. Prioritize the foreground building's source geometry, destruction structure
+and coherent material quality before further small shader/noise changes. Require
+an obvious improvement in the unchanged Run #5 camera before rolling out the kit.
+

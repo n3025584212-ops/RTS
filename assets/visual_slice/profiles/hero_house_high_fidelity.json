@@ -1,0 +1,7 @@
+{
+  "output_asset": "hero_house_ruined_hf",
+  "seed": 13,
+  "continuous_fracture": true,
+  "plaster_thickness_m": 0.036,
+  "edge_break_m": 0.007
+}

@@ -1,0 +1,65 @@
+{
+  "baseline_commit": "d42e6fc2bbe1bad928a16a19caace47dc6e57701",
+  "source_run": 5,
+  "source_workflow_run_id": 34323101101,
+  "source_artifact_id": 10092880084,
+  "screenshots": {
+    "run05_original": {
+      "path": "artifacts/visual_reset/run05_original/river_town_actual_1920x1080.png",
+      "sha256": "bdd7695f235ec47167b27e8396e246b1da0e7dc6c580942bd6432a004e17b156"
+    },
+    "baseline_local": {
+      "path": "artifacts/visual_reset/baseline_local/river_town_actual_1920x1080.png",
+      "sha256": "3311dd5d03afa7054dd18881342ad9c0ecb5825be7888633880ce04935b41183"
+    },
+    "hf_final_reference": {
+      "path": "artifacts/visual_reset/hf_final_reference/river_town_actual_1920x1080.png",
+      "sha256": "536c0793a85e8cc5342b5b53aba8649502473a921869567d6a4602513e0e8c11"
+    },
+    "hf_final_hero": {
+      "path": "artifacts/visual_reset/hf_final_hero/river_town_actual_1920x1080.png",
+      "sha256": "3c223e6f8fd1613a9ee19b49a6485fad000f6efd15d20119355df0e152ecc6f5"
+    },
+    "hf_final_ground": {
+      "path": "artifacts/visual_reset/hf_final_ground/river_town_actual_1920x1080.png",
+      "sha256": "229c75a62068f0a7ff0ce9e7541337c060982dac856a72e82466cf36170a369a"
+    },
+    "hf_final_geometry": {
+      "path": "artifacts/visual_reset/hf_final_geometry/river_town_actual_1920x1080.png",
+      "sha256": "9cd18110545dbbd9b26b46dbb88af2021f1c1dd8ebc8db0780154c5b8a8448a1"
+    }
+  },
+  "validation": {
+    "lighting_function_unchanged": true,
+    "grass_sky_smoke_background_plaster_shaders_unchanged": true,
+    "primary_preview_is_shaded_reference": true,
+    "replication": {
+      "failures": [],
+      "gpu": "Intel(R) UHD Graphics",
+      "instances": 3,
+      "mesh_resources_shared": true,
+      "passed": true,
+      "placements": "translated, rotated, uniformly scaled, then moved after ready",
+      "renderer": "forward_plus",
+      "surfaces_per_house": 8
+    }
+  },
+  "house_geometry": [
+    {
+      "asset": "hero_house_ruined.glb",
+      "bytes": 7209908,
+      "surfaces": 8,
+      "vertices": 141186,
+      "triangles": 70592,
+      "sha256": "db5cf731cdeccdbddee01a74212812b34fef30aebec70898303a2a02a3f0b6b7"
+    },
+    {
+      "asset": "hero_house_ruined_hf.glb",
+      "bytes": 40333768,
+      "surfaces": 8,
+      "vertices": 765456,
+      "triangles": 300930,
+      "sha256": "c2c5bc07ecf12b3e717af945339e2e125a229a14281dc9c9981ff03d8a81e05e"
+    }
+  ]
+}

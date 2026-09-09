@@ -4,6 +4,7 @@ extends Node3D
 const OUT := "res://artifacts/visual_reset"
 const ASSET := "res://assets/visual_slice/"
 const PBR := "res://assets/visual_slice/surfaces/"
+const ROAD_PROFILE = preload("res://assets/visual_slice/profiles/road_high_fidelity.tres")
 var rng := RandomNumberGenerator.new()
 var noise := FastNoiseLite.new()
 var camera: Camera3D
@@ -13,8 +14,24 @@ var times: Array[float] = []
 var capture_pending := false
 var frames := 0
 var mud_height: Image
+var capture_frame := 16
+var capture_label := "local_high_fidelity"
+var puddle_sites: Array[Dictionary] = []
+var capture_view := "reference"
+var geometry_proof := false
+var last_frame_usec := 0
+var wall_frame_times: Array[float] = []
+var grass_instance_count := 0
 
 func _ready() -> void:
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--capture-frame="):
+			capture_frame = maxi(1, int(argument.get_slice("=", 1)))
+		if argument.begins_with("--capture-label="):
+			capture_label = argument.get_slice("=", 1).validate_filename()
+		if argument.begins_with("--view="):
+			capture_view = argument.get_slice("=", 1)
+	geometry_proof = "--geometry-proof" in OS.get_cmdline_user_args()
 	rng.seed = 730128
 	noise.seed = 1203
 	noise.frequency = 0.12
@@ -29,8 +46,10 @@ func _ready() -> void:
 	get_viewport().scaling_3d_scale = 1.5
 	create_lighting()
 	create_materials()
+	prepare_puddle_sites()
 	create_terrain(-360.0,360.0,-680.0,100.0,3.0,false)
 	create_terrain(-46.0,46.0,-48.0,52.0,0.16,true)
+	create_road_detail()
 	create_architecture()
 	create_armor()
 	create_vegetation()
@@ -46,6 +65,14 @@ func _ready() -> void:
 	reflection.intensity=.9
 	add_child(reflection)
 	create_smoke()
+	if capture_view == "hero":
+		camera.position = Vector3(1.5,7.8,15.5)
+		camera.look_at(Vector3(-9.0,4.8,4.7))
+		camera.fov = 54.0
+	elif capture_view == "ground":
+		camera.position = Vector3(8.5,2.4,24.)
+		camera.look_at(Vector3(3.6,-.1,15.0))
+		camera.fov = 58.0
 	print("FRONTLINE_RIVER_TOWN_READY renderer=",RenderingServer.get_current_rendering_method()," adapter=",RenderingServer.get_video_adapter_name())
 	set_process(true)
 	capture_pending = "--capture" in OS.get_cmdline_user_args()
@@ -167,20 +194,39 @@ func lane_x(z: float) -> float:
 	return 1.3+0.12*z+1.2*sin(z*0.045)
 
 func height_at(x: float,z: float) -> float:
+	var h := base_height_at(x,z)
+	for site in puddle_sites:
+		if absf(z-site.z)>site.length*1.22:continue
+		var point := Vector2((x-site.x)/site.width,(z-site.z)/site.length)
+		var angle := point.angle()
+		var radius := point.length()/(1.+sin(angle*3.+site.z)*.12+sin(angle*5.-site.z*.3)*.08)
+		if radius>=1.22:continue
+		var floor_y: float = site.level-.10+pow(minf(radius,1.22),4.)*.13
+		h = lerpf(h,floor_y,1.-smoothstep(.86,1.22,radius))
+	return h
+
+func prepare_puddle_sites() -> void:
+	# Small physical basins, in route coordinates; the water planes are level and
+	# intersect their sculpted banks instead of hovering above uneven terrain.
+	for spec in [Vector4(-1.3,16.,.56,1.55),Vector4(1.3,12.4,.50,1.15),Vector4(-1.3,1.5,.54,1.25),Vector4(1.3,-4.,.49,1.40),Vector4(-1.3,22.,.64,1.65),Vector4(1.3,20.,.48,1.20),Vector4(-1.3,-8.,.50,1.15),Vector4(1.3,-11.,.46,1.1)]:
+		var x: float = lane_x(spec.y)+spec.x
+		puddle_sites.append({"x":x,"z":spec.y,"width":spec.z,"length":spec.w,"level":base_height_at(x,spec.y)+.025})
+
+func base_height_at(x: float,z: float) -> float:
 	var h := noise.get_noise_2d(x,z)*0.17 + noise.get_noise_2d(x*0.19,z*0.19)*0.5
 	h += noise.get_noise_2d(x*9,z*9)*.035*smoothstep(-110,-60,z)
 	if z>-48 and z<52 and absf(x)<46:
 		var mud_weight:=1.0-smoothstep(2.8,6.2,absf(x-lane_x(z)))
+		var compressed := 1.-smoothstep(.3,.8,absf(absf(x-lane_x(z))-1.3))
 		var hx:int=posmod(int(floor(z*.10*256)),256);var hz:int=posmod(int(floor(x*.10*256)),256)
-		h+=(mud_height.get_pixel(hx,hz).r-.5)*.55*mud_weight
-		h+=noise.get_noise_2d(x*22,z*22)*.12*mud_weight
+		h+=(mud_height.get_pixel(hx,hz).r-.5)*lerpf(.34,.14,compressed)*mud_weight
+		h+=noise.get_noise_2d(x*22,z*22)*lerpf(.065,.025,compressed)*mud_weight
 	var bank := smoothstep(-77.0,-111.0,z)
 	h += bank*3.0
 	h -= (1.0-smoothstep(16.0,26.0,absf(z+100.0)))*4.0
 	if z < -120:
 		h += pow((-z-120)/75.0,1.05)*8.5 + sin(x*.020+z*.015)*4.0*smoothstep(-120,-200,z)
-	var rut := minf(absf(x-lane_x(z)-1.3),absf(x-lane_x(z)+1.3))
-	h -= (1.0-smoothstep(0.25,0.72,rut))*0.24*(1.0-smoothstep(24,30,z))
+	h += ROAD_PROFILE.displacement(x-lane_x(z),z)
 	return h
 
 func create_terrain(x0: float,x1: float,z0: float,z1: float,step: float,near_patch: bool) -> void:
@@ -202,6 +248,14 @@ func create_terrain(x0: float,x1: float,z0: float,z1: float,step: float,near_pat
 			tangents.append_array(PackedFloat32Array([1,0,0,1]))
 	for z in range(nz-1):
 		for x in range(nx-1):
+			# Replace the road corridor with the denser continuous strip below.
+			# The grass and valley retain their Run #5 mesh resolution.
+			var quad_z := z0+(z+.5)*step
+			var quad_x := x0+(x+.5)*step
+			if not near_patch and quad_z > -46.5 and quad_z < 50.5 and absf(quad_x) < 44.5:
+				continue
+			if quad_z > -12.0 and quad_z < 32.0 and absf(quad_x-lane_x(quad_z)) < 3.04-step*.75:
+				continue
 			var a := z*nx+x
 			indices.append_array(PackedInt32Array([a,a+1,a+nx,a+1,a+nx+1,a+nx]))
 	var arrays := []
@@ -214,19 +268,52 @@ func create_terrain(x0: float,x1: float,z0: float,z1: float,step: float,near_pat
 	for pair in [["grass_color","leafy_grass_diff"],["soil_color","aerial_mud_1_diff"],["soil_normal","aerial_mud_1_nor_gl"],["gravel_color","gravel_ground_01_diff"],["asphalt_color","asphalt_02_diff"]]:
 		mat.set_shader_parameter(pair[0],load(PBR+pair[1]+".jpg"))
 	mat.set_shader_parameter("soil_roughness",load(PBR+"aerial_mud_1_rough.png"))
+	mat.set_shader_parameter("soil_height",load(PBR+"aerial_mud_1_disp.png"))
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh;mi.material_override = mat
 	mi.gi_mode=GeometryInstance3D.GI_MODE_STATIC
 	mi.name = "SculptedNearTerrain" if near_patch else "ValleyTerrain"
 	add_child(mi)
 
+func create_road_detail() -> void:
+	# Real high-resolution rut and tread geometry. Only the 6 m vehicle corridor
+	# gets 8 cm sampling, making the construction usable on long map routes.
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var vertices := PackedVector3Array()
+	var nx := 81
+	var nz := 551
+	for iz in range(nz):
+		var z := -12.+iz*.08
+		for ix in range(nx):
+			var x := lane_x(z)-3.2+ix*.08
+			vertices.append(Vector3(x,height_at(x,z)+.02,z))
+	for iz in range(nz):
+		for ix in range(nx):
+			var p := vertices[iz*nx+ix]
+			var normal := Vector3(height_at(p.x-.04,p.z)-height_at(p.x+.04,p.z),.08,height_at(p.x,p.z-.04)-height_at(p.x,p.z+.04)).normalized()
+			st.set_normal(normal)
+			st.set_uv(Vector2(p.x,p.z))
+			st.add_vertex(p)
+	for iz in range(nz-1):
+		for ix in range(nx-1):
+			var a := iz*nx+ix
+			for index in [a,a+1,a+nx,a+1,a+nx+1,a+nx]:st.add_index(index)
+	st.generate_tangents()
+	var road := MeshInstance3D.new()
+	road.name = "PhysicalRutsAndTreads_8cm"
+	road.mesh = st.commit()
+	road.material_override = get_node("SculptedNearTerrain").material_override
+	road.gi_mode = GeometryInstance3D.GI_MODE_STATIC
+	add_child(road)
+
 func spawn(file: String,position3: Vector3,scale3: float=1.0,yaw: float=0.0,architecture: bool=false) -> Node3D:
 	if not models.has(file): models[file] = load(file)
 	var model: Node3D = models[file].instantiate()
-	add_child(model)
 	model.position = position3
 	model.rotation_degrees.y = yaw
 	model.scale = Vector3.ONE*scale3
+	add_child(model)
 	if architecture:
 		for child: Node in model.find_children("*","MeshInstance3D",true,false):
 			var mi := child as MeshInstance3D
@@ -237,7 +324,7 @@ func spawn(file: String,position3: Vector3,scale3: float=1.0,yaw: float=0.0,arch
 	return model
 
 func create_architecture() -> void:
-	var hero := spawn(ASSET+"hero_house_ruined.glb",Vector3(-11,height_at(-11,4)-.05,4),1.05,25,true)
+	var hero := spawn("res://scenes/production/RiverTownHeroHouseHF.tscn",Vector3(-11,height_at(-11,4)-.05,4),1.05,25)
 	hero.name = "ForegroundHeroHouseRuined"
 	create_hero_house_finish(hero)
 	spawn(ASSET+"house_damaged.glb",Vector3(-6,height_at(-6,-40),-40),.91,18,true)
@@ -275,6 +362,62 @@ func create_hero_house_finish(hero: Node3D) -> void:
 		var y := height_at(x,z)+rng.randf_range(.035,.11)
 		var chip := block(Vector3(x,y,z),Vector3(rng.randf_range(.08,.22),rng.randf_range(.05,.13),rng.randf_range(.10,.28)),"brick")
 		chip.rotation=Vector3(rng.randf()*TAU,rng.randf()*TAU,rng.randf()*TAU)
+	create_breach_debris(hero)
+
+func create_breach_debris(hero: Node3D) -> void:
+	# Separate seed: adding finish detail must not reshuffle the approved vegetation.
+	var detail_rng := RandomNumberGenerator.new()
+	detail_rng.seed = 280419
+	var brick_material := simple(Color(.40, .28, .19))
+	brick_material.albedo_texture = load(PBR+"brick_wall_005_diff.jpg")
+	brick_material.normal_enabled = true
+	brick_material.normal_texture = load(PBR+"brick_wall_005_nor_gl.jpg")
+	var fragments: Array[Mesh] = []
+	for shape_index in range(4):
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var corners: Array[Vector3] = []
+		for z in [-1.0, 1.0]:
+			for y in [-1.0, 1.0]:
+				for x in [-1.0, 1.0]:
+					corners.append(Vector3(x, y, z)*Vector3(.5,.5,.5)+Vector3(detail_rng.randf_range(-.13,.13),detail_rng.randf_range(-.09,.09),detail_rng.randf_range(-.13,.13)))
+		for face in [[0,1,3,2],[4,6,7,5],[0,4,5,1],[2,3,7,6],[0,2,6,4],[1,5,7,3]]:
+			for index in [0,1,2,0,2,3]:
+				var v: Vector3 = corners[face[index]]
+				st.set_uv(Vector2(v.x+v.z, v.y)*.65+Vector2(.25,.25))
+				st.add_vertex(v)
+		st.generate_normals()
+		st.generate_tangents()
+		fragments.append(st.commit())
+	for group in range(4):
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.use_colors = true
+		mm.mesh = fragments[group]
+		mm.instance_count = 72
+		for i in range(mm.instance_count):
+			# Loose fan below the front breach, dense at the wall and tapering outward.
+			var spread := detail_rng.randf()
+			var local := Vector3(detail_rng.randfn(1.6, 1.5+spread), 0, 4.4+spread*spread*2.7)
+			var p := hero.to_global(local)
+			var dimensions := Vector3(detail_rng.randf_range(.16,.40),detail_rng.randf_range(.08,.21),detail_rng.randf_range(.12,.29))
+			if group == 0:
+				dimensions *= Vector3(1.7,.55,1.4)
+			p.y = height_at(p.x,p.z)+dimensions.y*.35+(1.-spread)*.12
+			var basis := Basis.from_euler(Vector3(detail_rng.randf_range(-.45,.45),detail_rng.randf()*TAU,detail_rng.randf_range(-.4,.4))).scaled(dimensions)
+			mm.set_instance_transform(i,Transform3D(basis,p))
+			var tint := detail_rng.randf_range(.65,1.16)
+			mm.set_instance_color(i,Color(tint,tint,tint))
+		var batch := MultiMeshInstance3D.new()
+		batch.name = "BreachDebris_%d" % group
+		batch.multimesh = mm
+		var material := brick_material.duplicate() as StandardMaterial3D
+		material.vertex_color_use_as_albedo = true
+		if group == 0:
+			material.albedo_texture = load(PBR+"worn_plaster_wall_diff.jpg")
+			material.albedo_color = Color(.55,.50,.40)
+		batch.material_override = material
+		add_child(batch)
 
 func add_mesh(mesh: Mesh, mat: Material, pos: Vector3, scale3: Vector3=Vector3.ONE, yaw: float=0.0) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
@@ -325,15 +468,24 @@ func create_armor() -> void:
 				material.set_shader_parameter("ground_y",tank.position.y)
 				material.set_shader_parameter("authored_metallic",original.metallic)
 				material.set_shader_parameter("authored_specular",original.metallic_specular)
-				var luma := original.albedo_color.r*.2126+original.albedo_color.g*.7152+original.albedo_color.b*.0722
+				material.set_shader_parameter("metal_texture",original.metallic_texture)
+				material.set_shader_parameter("has_metal_texture",original.metallic_texture != null)
+				material.set_shader_parameter("ao_texture",original.ao_texture)
+				material.set_shader_parameter("has_ao",original.ao_enabled)
+				material.set_shader_parameter("vehicle_inverse",tank.global_transform.affine_inverse())
+				var material_name := original.resource_name.to_lower()
 				var role := 0.0
-				if original.metallic > .42:
-					role = 2.0
-				elif luma < .16:
+				if "rubber" in material_name:
 					role = 1.0
+				elif "gear" in material_name or "radiator" in material_name or "screw" in material_name:
+					role = 2.0
+				elif material_name == "light":
+					role = 3.0
 				material.set_shader_parameter("surface_role",role)
 				var channels: Array[Vector4]=[Vector4(1,0,0,0),Vector4(0,1,0,0),Vector4(0,0,1,0),Vector4(0,0,0,1),Vector4(.333,.333,.333,0)]
 				material.set_shader_parameter("rough_channel",channels[original.roughness_texture_channel])
+				material.set_shader_parameter("metal_channel",channels[original.metallic_texture_channel])
+				material.set_shader_parameter("ao_channel",channels[original.ao_texture_channel])
 				mi.set_surface_override_material(i,material)
 
 func create_groundcover() -> void:
@@ -369,6 +521,7 @@ func create_groundcover() -> void:
 		inst.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 		add_child(inst)
 		print("SOURCE_GRASS_INSTANCES ",variants[variant]," ",transforms.size())
+		grass_instance_count += transforms.size()
 
 func create_vegetation() -> void:
 	create_groundcover()
@@ -397,6 +550,8 @@ func create_clutter() -> void:
 		if lane<1.1 and rng.randf()<.8:continue
 		var s := rng.randf_range(.09,.35)
 		if rng.randf()<.07:s*=2.2
+		if absf(absf(x-lane_x(z))-1.3)<.70:
+			x = lane_x(z)+signf(x-lane_x(z))*(2.25+sin(z*.8)*.18)
 		var mi := add_mesh(rubble_mesh,mats["stone"] if i%3 else mats["brick"],Vector3(x,height_at(x,z)+s*.25,z),Vector3(s*1.2,s*.7,s),rng.randf()*TAU)
 		mi.rotation.x=rng.randf()*.7
 	# Telegraph poles define the road corridor and connect foreground to town.
@@ -422,6 +577,8 @@ func create_clutter() -> void:
 	for i in range(110):
 		var x:=rng.randf_range(-19,18);var z:=rng.randf_range(-22,21)
 		if absf(x-lane_x(z))<1.0:continue
+		if absf(absf(x-lane_x(z))-1.3)<.70:
+			x = lane_x(z)+signf(x-lane_x(z))*(2.5+sin(z*.8)*.22)
 		spawn(ASSET+"rock_moss_set_01_"+str(i%6)+".glb",Vector3(x,height_at(x,z)-.03,z),rng.randf_range(.10,.30),rng.randf()*360)
 	var barrel:=spawn(ASSET+"barrel_03_0.glb",Vector3(10.5,height_at(10.5,10)+.3,10),1.0,20)
 	barrel.rotation.z=1.2
@@ -490,20 +647,25 @@ func create_water() -> void:
 		rod(Vector3(x,4.5,-128),Vector3(x,4.5,-72),.08,"metal")
 		rod(Vector3(x,3.9,-128),Vector3(x,3.9,-72),.065,"metal")
 		for z in range(-128,-71,2):rod(Vector3(x,3.55,z),Vector3(x,4.5,z),.055,"metal")
-	# Small still puddles sit inside ruts and inherit environment reflection.
-	for i in range(23):
-		var z := rng.randf_range(-8,25);var x := lane_x(z)+(1.3 if i%2 else -1.3)+rng.randf_range(-.22,.22)
+	var puddle_water := ShaderMaterial.new()
+	puddle_water.shader = load("res://scripts/production/visual_slice_puddle.gdshader")
+	# The basin is geometry; the water only supplies the horizontal liquid surface.
+	for site in puddle_sites:
 		var st := SurfaceTool.new();st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		var points: Array[Vector3] = []
-		var width := rng.randf_range(.35,.80);var length := rng.randf_range(.4,1.65)
-		for j in range(18):
-			var angle := TAU*j/18.0;var radius := rng.randf_range(.75,1.15)
-			points.append(Vector3(cos(angle)*width*radius,0,sin(angle)*length*radius))
-		for j in range(18):
-			for v in [Vector3.ZERO,points[j],points[(j+1)%18]]:
-				st.set_normal(Vector3.UP);st.add_vertex(v)
-		var puddle:=add_mesh(st.commit(),water,Vector3(x,height_at(x,z)+.028,z))
+		for j in range(40):
+			var angle := TAU*j/40.0
+			points.append(Vector3(cos(angle)*site.width*1.4,0,sin(angle)*site.length*1.4))
+		for j in range(40):
+			for v in [Vector3.ZERO,points[j],points[(j+1)%40]]:
+				st.set_normal(Vector3.UP)
+				st.set_uv(Vector2(v.x,v.z))
+				st.add_vertex(v)
+		st.generate_tangents()
+		var puddle:=add_mesh(st.commit(),puddle_water,Vector3(site.x,site.level,site.z))
+		puddle.name = "WaterInSculptedRut"
 		puddle.layers=2
+		puddle.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 func create_smoke() -> void:
 	var volume := NoiseTexture3D.new()
@@ -522,11 +684,14 @@ func create_smoke() -> void:
 
 func _process(delta: float) -> void:
 	frames += 1
-	if frames>=1:times.append(delta*1000.0)
-	# The scene is static and fully constructed before READY. The first fully presented
-	# frame is sufficient for the fixed proof capture while software Vulkan
-	# runners can take tens of seconds per frame at the unchanged 1.5x quality.
-	if capture_pending and frames==1:
+	var now := Time.get_ticks_usec()
+	if last_frame_usec > 0 and frames > 8:
+		wall_frame_times.append(float(now-last_frame_usec)/1000.)
+	last_frame_usec = now
+	if frames > 8:times.append(delta*1000.0)
+	# Let the probe's six faces, SSIL and volumetric history settle on real hardware.
+	# --capture-frame=1 remains available for an exact Run #5 protocol comparison.
+	if capture_pending and frames==capture_frame:
 		capture_pending=false
 		capture()
 
@@ -534,11 +699,32 @@ func capture() -> void:
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute(OUT)
 	var image := get_viewport().get_texture().get_image()
-	var path := OUT+"/river_town_actual_1920x1080.png"
+	var evidence_dir := OUT+"/"+capture_label
+	DirAccess.make_dir_recursive_absolute(evidence_dir)
+	var path := evidence_dir+"/river_town_actual_1920x1080.png"
 	var err := image.save_png(path)
 	var avg := 0.0
 	for value in times:avg+=value/maxi(times.size(),1)
 	var report := {"captured_at_utc":Time.get_datetime_string_from_system(true),"engine":Engine.get_version_info(),"renderer":RenderingServer.get_current_rendering_method(),"gpu":RenderingServer.get_video_adapter_name(),"width":image.get_width(),"height":image.get_height(),"save_error":err,"camera_position":str(camera.position),"camera_rotation":str(camera.rotation_degrees),"fov":camera.fov,"internal_3d_render_scale":get_viewport().scaling_3d_scale,"average_frame_ms_short_capture":avg,"sample_count":times.size(),"screenshot_source":"Viewport.get_texture().get_image() after frame_post_draw","post_capture_image_editing":false,"gameplay_changes":false,"visual_acceptance":"NOT_CLAIMED"}
-	FileAccess.open(OUT+"/runtime_metrics.json",FileAccess.WRITE).store_string(JSON.stringify(report,"\t"))
+	var wall_average := 0.0
+	for elapsed in wall_frame_times:wall_average+=elapsed/maxi(1,wall_frame_times.size())
+	wall_frame_times.sort()
+	report["wall_clock_frame_ms_mean"] = wall_average
+	report["wall_clock_frame_ms_p95"] = wall_frame_times[min(wall_frame_times.size()-1,int(wall_frame_times.size()*.95))] if not wall_frame_times.is_empty() else 0.0
+	report["frame_time_note"] = "Wall-clock samples use monotonic ticks; _process delta can be clamped and is not a reliable FPS measure on this scene."
+	report["draw_calls"] = Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+	report["rendered_primitives"] = Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME)
+	report["capture_frame"] = capture_frame
+	report["capture_label"] = capture_label
+	report["capture_view"] = capture_view
+	report["geometry_proof"] = geometry_proof
+	report["near_terrain_spacing_m"] = .16
+	report["road_detail_spacing_m"] = .08
+	report["grass_instances"] = grass_instance_count
+	FileAccess.open(evidence_dir+"/runtime_metrics.json",FileAccess.WRITE).store_string(JSON.stringify(report,"\t"))
+	# Diagnostic views must never replace the main, fully shaded comparison image.
+	if capture_view == "reference" and not geometry_proof:
+		image.save_png(OUT+"/river_town_actual_1920x1080.png")
+		FileAccess.open(OUT+"/runtime_metrics.json",FileAccess.WRITE).store_string(JSON.stringify(report,"\t"))
 	print("FRONTLINE_RIVER_TOWN_CAPTURED ",path," ",image.get_size()," average_ms=",avg)
 	get_tree().quit(err)
