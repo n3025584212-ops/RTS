@@ -1,0 +1,98 @@
+name: FRONTLINE River Town Visual Slice
+
+on:
+  push:
+    branches:
+      - dev/visual-production-reset
+    paths:
+      - "scenes/production/RiverTownVisualSlice.tscn"
+      - "scripts/production/river_town_visual_slice.gd"
+      - "scripts/production/visual_slice_*.gdshader"
+      - ".github/workflows/river-town-visual-slice-verify.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: river-town-visual-slice-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    name: Godot 4.7.1 Forward+ local visual slice
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 libvulkan1 mesa-vulkan-drivers vulkan-tools
+          vulkaninfo --summary || true
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" --version
+
+      - name: Import visual slice
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 150s "$GODOT" --headless --editor --path . --rendering-method forward_plus --quit 2>&1 | tee visual-slice-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' visual-slice-import.log
+
+      - name: Render actual 1920x1080 slice
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/visual_reset
+          timeout 240s xvfb-run -a -s "-screen 0 1920x1080x24"             "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy             --resolution 1920x1080 res://scenes/production/RiverTownVisualSlice.tscn -- --capture             2>&1 | tee visual-slice-runtime.log
+          grep -q 'FRONTLINE_RIVER_TOWN_READY' visual-slice-runtime.log
+          grep -q 'FRONTLINE_RIVER_TOWN_CAPTURED' visual-slice-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' visual-slice-runtime.log
+
+      - name: Verify native screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, struct
+          p="artifacts/visual_reset/river_town_actual_1920x1080.png"
+          data=open(p,"rb").read()
+          assert data[:8] == b"\x89PNG\r\n\x1a\n"
+          assert struct.unpack(">II",data[16:24]) == (1920,1080)
+          metrics=json.load(open("artifacts/visual_reset/runtime_metrics.json","r",encoding="utf-8"))
+          assert metrics["engine"]["major"] == 4 and metrics["engine"]["minor"] == 7 and metrics["engine"]["patch"] == 1
+          assert metrics["renderer"] == "forward_plus"
+          assert metrics["post_capture_image_editing"] is False
+          print("FRONTLINE_RIVER_TOWN_PNG_PASS", len(data), metrics["average_frame_ms_short_capture"])
+          PY
+
+      - name: Upload actual visual proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-river-town-visual-slice
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            artifacts/visual_reset/river_town_actual_1920x1080.png
+            artifacts/visual_reset/runtime_metrics.json
+            visual-slice-runtime.log
+            visual-slice-import.log
