@@ -1,0 +1,74 @@
+[
+  {
+    "asset": "wood_planks",
+    "map": "Diffuse",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_planks/wood_planks_diff_2k.jpg",
+    "md5": "29f2d08d585433fb54034a0e8fa79adc",
+    "filename": "wood_planks_diff.jpg",
+    "source": "https://polyhaven.com/a/wood_planks",
+    "license": "CC0",
+    "authors": {
+      "Amal Kumar": "All"
+    }
+  },
+  {
+    "asset": "wood_planks",
+    "map": "nor_gl",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_planks/wood_planks_nor_gl_2k.jpg",
+    "md5": "61c0a752deaa8fda789a31e4fc1427d8",
+    "filename": "wood_planks_nor_gl.jpg",
+    "source": "https://polyhaven.com/a/wood_planks",
+    "license": "CC0",
+    "authors": {
+      "Amal Kumar": "All"
+    }
+  },
+  {
+    "asset": "wood_planks",
+    "map": "Rough",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_planks/wood_planks_rough_2k.jpg",
+    "md5": "461754cb0181e562be384e2acc2fc8d2",
+    "filename": "wood_planks_rough.jpg",
+    "source": "https://polyhaven.com/a/wood_planks",
+    "license": "CC0",
+    "authors": {
+      "Amal Kumar": "All"
+    }
+  },
+  {
+    "asset": "plastered_wall_02",
+    "map": "Diffuse",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/plastered_wall_02/plastered_wall_02_diff_2k.jpg",
+    "md5": "927533b695ab50bbbdfeaf6f0519fa3f",
+    "filename": "plastered_wall_02_diff.jpg",
+    "source": "https://polyhaven.com/a/plastered_wall_02",
+    "license": "CC0",
+    "authors": {
+      "Charlotte Baglioni": "All"
+    }
+  },
+  {
+    "asset": "plastered_wall_02",
+    "map": "nor_gl",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/plastered_wall_02/plastered_wall_02_nor_gl_2k.jpg",
+    "md5": "86090c056cc823f6e0125be0e05add82",
+    "filename": "plastered_wall_02_nor_gl.jpg",
+    "source": "https://polyhaven.com/a/plastered_wall_02",
+    "license": "CC0",
+    "authors": {
+      "Charlotte Baglioni": "All"
+    }
+  },
+  {
+    "asset": "plastered_wall_02",
+    "map": "Rough",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/plastered_wall_02/plastered_wall_02_rough_2k.jpg",
+    "md5": "346ae12db0d37287eb7df2be1848ab0e",
+    "filename": "plastered_wall_02_rough.jpg",
+    "source": "https://polyhaven.com/a/plastered_wall_02",
+    "license": "CC0",
+    "authors": {
+      "Charlotte Baglioni": "All"
+    }
+  }
+]

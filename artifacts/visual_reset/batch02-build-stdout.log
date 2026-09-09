@@ -1,0 +1,26 @@
+INFO Draco mesh compression is available, use library at D:\Agent\frontline-visual-reset\tools\blender-4.5.9-windows-x64\4.5\scripts\addons_core\io_scene_gltf2\extern_draco.dll
+22:51:18 | INFO: Starting glTF 2.0 export
+22:51:18 | INFO: Extracting primitive: brick
+22:51:18 | INFO: Primitives created: 1
+22:51:18 | INFO: Extracting primitive: interior
+22:51:18 | INFO: Primitives created: 1
+22:51:19 | INFO: Extracting primitive: plaster
+22:51:19 | INFO: Primitives created: 1
+22:51:19 | INFO: Extracting primitive: wood
+22:51:19 | INFO: Primitives created: 1
+22:51:19 | INFO: Extracting primitive: trim
+22:51:19 | INFO: Primitives created: 1
+22:51:19 | INFO: Extracting primitive: glass
+22:51:19 | INFO: Primitives created: 1
+22:51:19 | INFO: Extracting primitive: brick_edge
+22:51:19 | INFO: Primitives created: 1
+22:51:19 | INFO: Extracting primitive: roof
+22:51:19 | INFO: Primitives created: 1
+22:51:19 | INFO: Extracting primitive: metal
+22:51:19 | INFO: Primitives created: 1
+22:51:19 | INFO: Finished glTF 2.0 export in 1.1972041130065918 s
+
+HOUSE_KIT_READY hero_house_ruined_hf
+Blender 4.5.9 LTS (hash 8bf95cbd38d1 built 2026-04-21 01:33:45)
+
+Blender quit

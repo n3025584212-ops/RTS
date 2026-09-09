@@ -65,3 +65,17 @@ only. Prioritize the foreground building's source geometry, destruction structur
 and coherent material quality before further small shader/noise changes. Require
 an obvious improvement in the unchanged Run #5 camera before rolling out the kit.
 
+
+## Batch 02 review — 2026-09-09
+
+BATCH_02_ACCEPTANCE=REJECTED_AS_QUALITY_UPGRADE
+BATCH_02_DELIVERY=ISOLATED_STUDY_ONLY
+
+The user again reported no substantial visual improvement. Stop the current
+same-angle detail iteration. Preserve the implementation in the opt-in
+`res://scenes/production/RiverTownStructureStudy.tscn`; the production scene,
+hero asset/materials and main preview remain at the pre-batch 1472a44 checkpoint.
+Neither batch 01 nor batch 02 is an accepted replacement for the Run #5 floor.
+See `docs/current/RIVER_TOWN_LOCAL_HIGH_FIDELITY_BATCH_02.md` for the rejected
+study, actual evidence and measurement limitations. Overall task remains ACTIVE;
+no claim of maximum quality or full-game scalability is made.

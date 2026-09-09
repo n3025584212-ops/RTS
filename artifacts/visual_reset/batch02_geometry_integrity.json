@@ -1,0 +1,170 @@
+{
+  "sha256": "db5d25b88aceb0c226e5a7adb1240b81fd2cbd07faf731568beaca56f7d9781a",
+  "parts": [
+    {
+      "name": "brick",
+      "vertices": 75010,
+      "triangles": 26482,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        -5.960000038146973,
+        0.0,
+        -4.346917152404785
+      ],
+      "bounds_max": [
+        5.960000038146973,
+        10.100000381469727,
+        4.3468451499938965
+      ],
+      "tangents_present": true
+    },
+    {
+      "name": "interior",
+      "vertices": 68937,
+      "triangles": 23549,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        -5.800000190734863,
+        0.3199999928474426,
+        -4.199999809265137
+      ],
+      "bounds_max": [
+        5.8000006675720215,
+        10.24000072479248,
+        4.200000286102295
+      ],
+      "tangents_present": true
+    },
+    {
+      "name": "plaster",
+      "vertices": 214068,
+      "triangles": 97470,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        -5.982818603515625,
+        -0.14803415536880493,
+        -4.382917404174805
+      ],
+      "bounds_max": [
+        7.589857578277588,
+        9.5,
+        7.126461505889893
+      ],
+      "tangents_present": true
+    },
+    {
+      "name": "wood",
+      "vertices": 180731,
+      "triangles": 66464,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        -6.19999885559082,
+        0.2073718011379242,
+        -4.635000228881836
+      ],
+      "bounds_max": [
+        6.219999313354492,
+        9.45406723022461,
+        6.662532806396484
+      ],
+      "tangents_present": true
+    },
+    {
+      "name": "trim",
+      "vertices": 12394,
+      "triangles": 4644,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        -6.150000095367432,
+        0.030000001192092896,
+        -4.5500006675720215
+      ],
+      "bounds_max": [
+        6.150000095367432,
+        10.210000038146973,
+        6.349999904632568
+      ],
+      "tangents_present": true
+    },
+    {
+      "name": "glass",
+      "vertices": 216,
+      "triangles": 108,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        -5.622499942779541,
+        1.1399998664855957,
+        -4.022500991821289
+      ],
+      "bounds_max": [
+        5.622499942779541,
+        5.880000114440918,
+        4.022500038146973
+      ],
+      "tangents_present": true
+    },
+    {
+      "name": "brick_edge",
+      "vertices": 186948,
+      "triangles": 66096,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        1.6488360166549683,
+        -0.11557410657405853,
+        0.3042345345020294
+      ],
+      "bounds_max": [
+        7.983563423156738,
+        6.6514997482299805,
+        7.288887023925781
+      ],
+      "tangents_present": true
+    },
+    {
+      "name": "roof",
+      "vertices": 112714,
+      "triangles": 55080,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        -6.179999828338623,
+        6.4461565017700195,
+        -4.692500114440918
+      ],
+      "bounds_max": [
+        6.181000232696533,
+        9.600000381469727,
+        4.692500114440918
+      ],
+      "tangents_present": true
+    },
+    {
+      "name": "metal",
+      "vertices": 48,
+      "triangles": 24,
+      "nonfinite_values": 0,
+      "degenerate_triangles_below_1e-10_m2": 0,
+      "bounds_min": [
+        -6.19999885559082,
+        6.234999656677246,
+        -4.744999885559082
+      ],
+      "bounds_max": [
+        6.219999313354492,
+        6.3650007247924805,
+        4.744999885559082
+      ],
+      "tangents_present": true
+    }
+  ],
+  "triangles": 339917,
+  "bytes": 44912216,
+  "purpose": "Export integrity only; does not establish visual acceptance"
+}

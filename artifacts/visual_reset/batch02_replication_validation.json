@@ -1,0 +1,10 @@
+{
+	"failures": [],
+	"gpu": "Intel(R) UHD Graphics",
+	"instances": 3,
+	"mesh_resources_shared": true,
+	"passed": true,
+	"placements": "translated, rotated, uniformly scaled, then moved after ready",
+	"renderer": "forward_plus",
+	"surfaces_per_house": 9
+}

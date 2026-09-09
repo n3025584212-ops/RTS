@@ -1,0 +1,444 @@
+{
+  "status": "REJECTED_AS_QUALITY_UPGRADE",
+  "production_integration": false,
+  "production_checkpoint": "1472a4430fc5d9c699b6c817b04e0ff1bb5a39f9",
+  "visual_floor": "d42e6fc2bbe1bad928a16a19caace47dc6e57701 / Run #5",
+  "study_scene": "res://scenes/production/RiverTownStructureStudy.tscn",
+  "capture_provenance": "Captured before isolation, while production temporarily loaded the trial house. The archived scene inherits restored production surroundings and substitutes the same house mesh/materials. Archived model bytes match capture-time export integrity SHA256. No screenshots were edited.",
+  "performance_note": "The fresh baseline contains 4159 samples versus the intended 24; excluded from timing comparison. No performance improvement percentage is claimed.",
+  "production_restored_checks": {
+    "scripts/production/river_town_visual_slice.gd": true,
+    "scenes/production/RiverTownVisualSlice.tscn": true,
+    "scenes/production/RiverTownHeroHouseHF.tscn": true,
+    "scripts/production/local_fidelity_house.gd": true,
+    "scripts/production/visual_slice_masonry.gdshader": true,
+    "scripts/production/build_river_town_kit.py": true,
+    "assets/visual_slice/hero_house_ruined_hf.glb": true,
+    "artifacts/visual_reset/river_town_actual_1920x1080.png": true
+  },
+  "restoration_check_method": "Binary assets compare byte for byte; text files compare after newline normalization",
+  "files": {
+    "assets/visual_slice/hero_house_structure_study.glb": "db5d25b88aceb0c226e5a7adb1240b81fd2cbd07faf731568beaca56f7d9781a",
+    "assets/visual_slice/profiles/hero_house_structure_study.json": "d13df86cf6f02dbe43f813767ad82c40c7301cd9e54183d0e9d59e17f28ee86d",
+    "assets/visual_slice/profiles/house_material_sources.json": "17e8b71fbf824d7d8030bc30a4d857112c4d30b923203b3690e63157cb13de8c",
+    "scenes/production/RiverTownHeroHouseStructureStudy.tscn": "3ec82fd7a6297c7d376d1abd0892a26faaf16dce9aa8c137b484eb1deed280b1",
+    "scenes/production/RiverTownStructureStudy.tscn": "c17e979450c7bc9581ab48307b70366f6a26d5ee9e001c31c7eb5a50dbde717a",
+    "scripts/production/build_river_town_structure_study.py": "5747f92c4e922503e8707553fb7e7b44b5f358ad3207072b3a7781ce195013a2",
+    "scripts/production/river_town_house_structure.py": "91afb81cfb7b96a320c31997d7412ab1407edbc855654f37c87d9841988871ec",
+    "scripts/production/local_fidelity_house_structure_study.gd": "c64333f46f62f703d918908437e2e2923728b6b5362c22480652cb67791bcc94",
+    "scripts/production/visual_slice_masonry_structure_study.gdshader": "2868218a73f4ae1f6b1afc0d957e1c59e243c3cd81879e284c0491892766ded3",
+    "scripts/production/river_town_structure_study.gd": "660d942a9e2e1be7a49c91563f34775093defca635798efbf301fba9d17e87d7",
+    "assets/visual_slice/surfaces/wood_planks_diff.jpg": "caa1e71809521050fe0753ee7c17aa2faf32055fe53aff013415bc459dd23ea7",
+    "assets/visual_slice/surfaces/wood_planks_nor_gl.jpg": "908d0fe05d5abd963f2e518776bbff0db9617d3ccbb09e5e8503290572caaf27",
+    "assets/visual_slice/surfaces/wood_planks_rough.jpg": "56e3bafda8dfbeb8730b10d59c7541e983cff43b5b74f58d6d2c437f2b9455a1",
+    "assets/visual_slice/surfaces/plastered_wall_02_diff.jpg": "caa72056d9157f08912a4c86c844296f93f323f8b30f418895625b052c837d0c",
+    "assets/visual_slice/surfaces/plastered_wall_02_nor_gl.jpg": "7667573e538a6116892a3139fbecf5acb85728bf10e715111b87080af756cd78",
+    "assets/visual_slice/surfaces/plastered_wall_02_rough.jpg": "01b41c22151f7b3d7d6e78720205a6df9b36ed11ae36bbe6ea35994fba0c1d82"
+  },
+  "runs": {
+    "batch02_hero": {
+      "sha256": "7cde923f8d59fc6d200069a48f592d40511a7dbc6787857ef84b1a0913153743",
+      "metrics": {
+        "average_frame_ms_short_capture": 133.034763888889,
+        "camera_position": "(1.5, 7.8, 15.5)",
+        "camera_rotation": "(-11.26394, 44.19307, 0.0)",
+        "capture_frame": 32,
+        "capture_label": "batch02_hero",
+        "capture_view": "hero",
+        "captured_at_utc": "2026-09-09T14:52:02",
+        "draw_calls": 1897.0,
+        "engine": {
+          "build": "official",
+          "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+          "hex": 263937,
+          "major": 4,
+          "minor": 7,
+          "patch": 1,
+          "status": "stable",
+          "string": "4.7.1-stable (official)",
+          "timestamp": 0
+        },
+        "fov": 54.0,
+        "frame_time_note": "Wall-clock samples use monotonic ticks; _process delta can be clamped and is not a reliable FPS measure on this scene.",
+        "gameplay_changes": false,
+        "geometry_proof": false,
+        "gpu": "Intel(R) UHD Graphics",
+        "grass_instances": 99020,
+        "height": 1080,
+        "internal_3d_render_scale": 1.5,
+        "near_terrain_spacing_m": 0.16,
+        "post_capture_image_editing": false,
+        "rendered_primitives": 33778247.0,
+        "renderer": "forward_plus",
+        "road_detail_spacing_m": 0.08,
+        "sample_count": 24,
+        "save_error": 0,
+        "screenshot_source": "Viewport.get_texture().get_image() after frame_post_draw",
+        "visual_acceptance": "NOT_CLAIMED",
+        "wall_clock_frame_ms_mean": 391.780041666667,
+        "wall_clock_frame_ms_p95": 422.919,
+        "width": 1920
+      },
+      "errors": [],
+      "performance_comparison_valid": true
+    },
+    "batch02_reference": {
+      "sha256": "2953edd429634fd1a0e1a219885893c9f6d5f4cd56f537d7e2561d02d8b24974",
+      "metrics": {
+        "average_frame_ms_short_capture": 133.624972222222,
+        "camera_position": "(9.0, 6.4, 20.5)",
+        "camera_rotation": "(-14.17811, 15.42216, 0.0)",
+        "capture_frame": 32,
+        "capture_label": "batch02_reference",
+        "capture_view": "reference",
+        "captured_at_utc": "2026-09-09T14:52:40",
+        "draw_calls": 2134.0,
+        "engine": {
+          "build": "official",
+          "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+          "hex": 263937,
+          "major": 4,
+          "minor": 7,
+          "patch": 1,
+          "status": "stable",
+          "string": "4.7.1-stable (official)",
+          "timestamp": 0
+        },
+        "fov": 54.0,
+        "frame_time_note": "Wall-clock samples use monotonic ticks; _process delta can be clamped and is not a reliable FPS measure on this scene.",
+        "gameplay_changes": false,
+        "geometry_proof": false,
+        "gpu": "Intel(R) UHD Graphics",
+        "grass_instances": 99020,
+        "height": 1080,
+        "internal_3d_render_scale": 1.5,
+        "near_terrain_spacing_m": 0.16,
+        "post_capture_image_editing": false,
+        "rendered_primitives": 38094036.0,
+        "renderer": "forward_plus",
+        "road_detail_spacing_m": 0.08,
+        "sample_count": 24,
+        "save_error": 0,
+        "screenshot_source": "Viewport.get_texture().get_image() after frame_post_draw",
+        "visual_acceptance": "NOT_CLAIMED",
+        "wall_clock_frame_ms_mean": 541.071541666667,
+        "wall_clock_frame_ms_p95": 573.512,
+        "width": 1920
+      },
+      "errors": [],
+      "performance_comparison_valid": true
+    },
+    "batch02_side": {
+      "sha256": "f729ed8b4fd9a5f7d753a8429fa2be0baacd4668521bbd8fc661529424eb3c07",
+      "metrics": {
+        "average_frame_ms_short_capture": 133.563736111111,
+        "camera_position": "(7.0, 8.0, 1.0)",
+        "camera_rotation": "(-12.41442, 100.008, 0.0)",
+        "capture_frame": 32,
+        "capture_label": "batch02_side",
+        "capture_view": "side",
+        "captured_at_utc": "2026-09-09T14:53:14",
+        "draw_calls": 1132.0,
+        "engine": {
+          "build": "official",
+          "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+          "hex": 263937,
+          "major": 4,
+          "minor": 7,
+          "patch": 1,
+          "status": "stable",
+          "string": "4.7.1-stable (official)",
+          "timestamp": 0
+        },
+        "fov": 54.0,
+        "frame_time_note": "Wall-clock samples use monotonic ticks; _process delta can be clamped and is not a reliable FPS measure on this scene.",
+        "gameplay_changes": false,
+        "geometry_proof": false,
+        "gpu": "Intel(R) UHD Graphics",
+        "grass_instances": 99020,
+        "height": 1080,
+        "internal_3d_render_scale": 1.5,
+        "near_terrain_spacing_m": 0.16,
+        "post_capture_image_editing": false,
+        "rendered_primitives": 15868008.0,
+        "renderer": "forward_plus",
+        "road_detail_spacing_m": 0.08,
+        "sample_count": 24,
+        "save_error": 0,
+        "screenshot_source": "Viewport.get_texture().get_image() after frame_post_draw",
+        "visual_acceptance": "NOT_CLAIMED",
+        "wall_clock_frame_ms_mean": 388.079041666667,
+        "wall_clock_frame_ms_p95": 449.098,
+        "width": 1920
+      },
+      "errors": [],
+      "performance_comparison_valid": true
+    },
+    "batch02_baseline": {
+      "sha256": "792655edac5fa3bc6084680ae1394081a30d352d8925f4c840cf9b18bbc46a1e",
+      "metrics": {
+        "average_frame_ms_short_capture": 7.80636370922457,
+        "camera_position": "(9.0, 6.4, 20.5)",
+        "camera_rotation": "(-14.17811, 15.42216, 0.0)",
+        "capture_frame": 32,
+        "captured_at_utc": "2026-09-09T14:54:03",
+        "draw_calls": 2195.0,
+        "engine": {
+          "build": "official",
+          "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+          "hex": 263937,
+          "major": 4,
+          "minor": 7,
+          "patch": 1,
+          "status": "stable",
+          "string": "4.7.1-stable (official)",
+          "timestamp": 0
+        },
+        "fov": 54.0,
+        "gameplay_changes": false,
+        "gpu": "Intel(R) UHD Graphics",
+        "height": 1080,
+        "internal_3d_render_scale": 1.5,
+        "post_capture_image_editing": false,
+        "rendered_primitives": 36402241.0,
+        "renderer": "forward_plus",
+        "sample_count": 4159,
+        "save_error": 0,
+        "screenshot_source": "Viewport.get_texture().get_image() after frame_post_draw",
+        "visual_acceptance": "NOT_CLAIMED",
+        "wall_clock_frame_ms_mean": 7.74593591905563,
+        "wall_clock_frame_ms_p95": 15.913,
+        "wall_clock_samples": 4151,
+        "width": 1920
+      },
+      "errors": [],
+      "performance_comparison_valid": false
+    },
+    "batch02_geometry": {
+      "sha256": "fdef3f8991cdd2340f63380b6746e9793266882dc918eafc809942d142a4c63a",
+      "metrics": {
+        "average_frame_ms_short_capture": 133.335763888889,
+        "camera_position": "(1.5, 7.8, 15.5)",
+        "camera_rotation": "(-11.26394, 44.19307, 0.0)",
+        "capture_frame": 32,
+        "capture_label": "batch02_geometry",
+        "capture_view": "hero",
+        "captured_at_utc": "2026-09-09T14:54:39",
+        "draw_calls": 1897.0,
+        "engine": {
+          "build": "official",
+          "hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+          "hex": 263937,
+          "major": 4,
+          "minor": 7,
+          "patch": 1,
+          "status": "stable",
+          "string": "4.7.1-stable (official)",
+          "timestamp": 0
+        },
+        "fov": 54.0,
+        "frame_time_note": "Wall-clock samples use monotonic ticks; _process delta can be clamped and is not a reliable FPS measure on this scene.",
+        "gameplay_changes": false,
+        "geometry_proof": true,
+        "gpu": "Intel(R) UHD Graphics",
+        "grass_instances": 99020,
+        "height": 1080,
+        "internal_3d_render_scale": 1.5,
+        "near_terrain_spacing_m": 0.16,
+        "post_capture_image_editing": false,
+        "rendered_primitives": 33778247.0,
+        "renderer": "forward_plus",
+        "road_detail_spacing_m": 0.08,
+        "sample_count": 24,
+        "save_error": 0,
+        "screenshot_source": "Viewport.get_texture().get_image() after frame_post_draw",
+        "visual_acceptance": "NOT_CLAIMED",
+        "wall_clock_frame_ms_mean": 353.823291666667,
+        "wall_clock_frame_ms_p95": 374.932,
+        "width": 1920
+      },
+      "errors": [],
+      "performance_comparison_valid": true
+    }
+  },
+  "replication": {
+    "failures": [],
+    "gpu": "Intel(R) UHD Graphics",
+    "instances": 3,
+    "mesh_resources_shared": true,
+    "passed": true,
+    "placements": "translated, rotated, uniformly scaled, then moved after ready",
+    "renderer": "forward_plus",
+    "surfaces_per_house": 9
+  },
+  "geometry_integrity": {
+    "sha256": "db5d25b88aceb0c226e5a7adb1240b81fd2cbd07faf731568beaca56f7d9781a",
+    "parts": [
+      {
+        "name": "brick",
+        "vertices": 75010,
+        "triangles": 26482,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          -5.960000038146973,
+          0.0,
+          -4.346917152404785
+        ],
+        "bounds_max": [
+          5.960000038146973,
+          10.100000381469727,
+          4.3468451499938965
+        ],
+        "tangents_present": true
+      },
+      {
+        "name": "interior",
+        "vertices": 68937,
+        "triangles": 23549,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          -5.800000190734863,
+          0.3199999928474426,
+          -4.199999809265137
+        ],
+        "bounds_max": [
+          5.8000006675720215,
+          10.24000072479248,
+          4.200000286102295
+        ],
+        "tangents_present": true
+      },
+      {
+        "name": "plaster",
+        "vertices": 214068,
+        "triangles": 97470,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          -5.982818603515625,
+          -0.14803415536880493,
+          -4.382917404174805
+        ],
+        "bounds_max": [
+          7.589857578277588,
+          9.5,
+          7.126461505889893
+        ],
+        "tangents_present": true
+      },
+      {
+        "name": "wood",
+        "vertices": 180731,
+        "triangles": 66464,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          -6.19999885559082,
+          0.2073718011379242,
+          -4.635000228881836
+        ],
+        "bounds_max": [
+          6.219999313354492,
+          9.45406723022461,
+          6.662532806396484
+        ],
+        "tangents_present": true
+      },
+      {
+        "name": "trim",
+        "vertices": 12394,
+        "triangles": 4644,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          -6.150000095367432,
+          0.030000001192092896,
+          -4.5500006675720215
+        ],
+        "bounds_max": [
+          6.150000095367432,
+          10.210000038146973,
+          6.349999904632568
+        ],
+        "tangents_present": true
+      },
+      {
+        "name": "glass",
+        "vertices": 216,
+        "triangles": 108,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          -5.622499942779541,
+          1.1399998664855957,
+          -4.022500991821289
+        ],
+        "bounds_max": [
+          5.622499942779541,
+          5.880000114440918,
+          4.022500038146973
+        ],
+        "tangents_present": true
+      },
+      {
+        "name": "brick_edge",
+        "vertices": 186948,
+        "triangles": 66096,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          1.6488360166549683,
+          -0.11557410657405853,
+          0.3042345345020294
+        ],
+        "bounds_max": [
+          7.983563423156738,
+          6.6514997482299805,
+          7.288887023925781
+        ],
+        "tangents_present": true
+      },
+      {
+        "name": "roof",
+        "vertices": 112714,
+        "triangles": 55080,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          -6.179999828338623,
+          6.4461565017700195,
+          -4.692500114440918
+        ],
+        "bounds_max": [
+          6.181000232696533,
+          9.600000381469727,
+          4.692500114440918
+        ],
+        "tangents_present": true
+      },
+      {
+        "name": "metal",
+        "vertices": 48,
+        "triangles": 24,
+        "nonfinite_values": 0,
+        "degenerate_triangles_below_1e-10_m2": 0,
+        "bounds_min": [
+          -6.19999885559082,
+          6.234999656677246,
+          -4.744999885559082
+        ],
+        "bounds_max": [
+          6.219999313354492,
+          6.3650007247924805,
+          4.744999885559082
+        ],
+        "tangents_present": true
+      }
+    ],
+    "triangles": 339917,
+    "bytes": 44912216,
+    "purpose": "Export integrity only; does not establish visual acceptance"
+  }
+}
