@@ -31,7 +31,7 @@ func _ready() -> void:
 	result_panel.visible = false
 	debug_container.visible = true
 	_install_tactical_skin()
-	task_label.text = "MISSION: Probe the defense, commit combat power, secure the RED Command Area."
+	task_label.text = "MISSION: Secure the RED Command Area • Preserve combat power."
 	controls_label.text = "WASD PAN  •  WHEEL ZOOM  •  LMB SELECT  •  RMB MOVE  •  SHIFT+RMB ADVANCE"
 	notice_label.text = "TACTICAL NET  •  COMMAND LINK ACTIVE"
 	set_selection_summary([])
@@ -44,7 +44,7 @@ func _install_tactical_skin() -> void:
 	var backing := Panel.new()
 	backing.name = "TacticalStatusBacking"
 	backing.position = Vector2(14.0, 14.0)
-	backing.size = Vector2(780.0, 292.0)
+	backing.size = Vector2(665.0, 278.0)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.018, 0.035, 0.043, 0.88)
 	style.border_color = Color(0.16, 0.38, 0.48, 0.82)
@@ -94,16 +94,26 @@ func set_force_status(formations: Array[BattleFormation]) -> void:
 	if formations.is_empty():
 		blue_health_label.text = "BLUE FORCE: initializing"
 		return
-	var values := PackedStringArray()
+	var alive := 0
+	var valid_count := 0
+	var hp := 0
+	var hp_max := 0
+	var ammo := 0
+	var ammo_max := 0
 	for formation: BattleFormation in formations:
 		if formation == null or not is_instance_valid(formation):
 			continue
-		var life: String = "DESTROYED" if not formation.is_alive else "HP %d/%d" % [formation.current_hp, formation.max_hp]
-		var ammo: String = ""
-		if formation.ammo_capacity > 0:
-			ammo = " AMMO %d/%d" % [formation.current_ammo, formation.ammo_capacity]
-		values.append("%s %s%s" % [formation.display_name, life, ammo])
-	blue_health_label.text = "BLUE FORCE: %s" % " | ".join(values)
+		valid_count += 1
+		if formation.is_alive:
+			alive += 1
+		hp += maxi(formation.current_hp, 0)
+		hp_max += maxi(formation.max_hp, 0)
+		ammo += maxi(formation.current_ammo, 0)
+		ammo_max += maxi(formation.ammo_capacity, 0)
+	var combat_power := 0.0 if hp_max <= 0 else float(hp) / float(hp_max) * 100.0
+	blue_health_label.text = "BLUE FORCE  %d/%d  •  COMBAT POWER %.0f%%  •  AMMO %d/%d" % [
+		alive, valid_count, combat_power, ammo, ammo_max
+	]
 
 func set_friendly_health(_ifv_hp: int, _ifv_max_hp: int, _recon_hp: int, _recon_max_hp: int) -> void:
 	# Legacy compatibility. The active M2 HUD uses set_force_status for all five BLUE formations.
