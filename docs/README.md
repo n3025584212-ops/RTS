@@ -1,34 +1,41 @@
 # FRONTLINE documentation map
 
-This directory contains only **active project authority and current-state support**.
+> 当前文档入口只认 **current system versions**。旧版本已归档，不应继续从 main 作为当前规则读取。
 
-## Active authority
+## 当前权威层
 
-Use these files for current work:
+```text
+USER EXPLICIT DECISION
+        ↓
+docs/current/CURRENT_STATE.md
+        ↓
+docs/FRONTLINE_PROJECT_CHARTER_V3.md
+        ↓
+docs/FRONTLINE_PROJECT_SYSTEM_V2.md
+        ↓
+approved design / active Issue / current runtime evidence
+```
 
-- `current/CURRENT_STATE.md` — single source of current project truth.
-- `FRONTLINE_PROJECT_CHARTER_V3.md` — project authority and phase model.
-- `FRONTLINE_PROJECT_SYSTEM_V1.md` — day-to-day task/decision/evidence workflow.
-- `current/DECISION_LOG.md` — append-only material decision history.
+### 当前协作系统
 
-The active GitHub Issue named by `CURRENT_STATE.md` is the working contract/evidence thread for the current primary task.
+- `GPT_MULTI_WINDOW_SYSTEM_V3.md`
+- `GPT_WINDOW_RUNTIME_PLAN_V2.md`
+- `gpt_windows/`
 
-## GPT four-window collaboration
+### 当前设计入口
 
-- `GPT_MULTI_WINDOW_SYSTEM_V2.md` — shared rules for the four GPT routing contexts.
-- `GPT_WINDOW_RUNTIME_PLAN_V1.md` — ACTIVE / STANDBY / phase and decision-gate runtime rules.
-- `gpt_windows/` — ready-to-copy initialization prompts for WINDOW_00–WINDOW_03.
+- `design/FRONTLINE_GOLDEN_FRAME_V1_SPEC.md` — 当前 approved Golden Frame 实现权威。
+- `design/FRONTLINE_PRODUCTION_DESIGN_PACKAGE_V1.md` — Golden Frame 的支持性父包；以 Golden Frame spec 和 CURRENT_STATE 为准。
+- `design/FRONTLINE_PRODUCTION_TECHNICAL_LAYOUT_V1.svg` — 空间/技术布局支持材料。
+- `current/VISUAL_PRODUCTION_RESET_V1.md` — 旧视觉目标废止记录。
 
-Window IDs are routing labels only. All windows share the same CURRENT_STATE and authority order.
+## 仓库运维入口
 
-## Historical / unused material
+- `ops/REPOSITORY_MAP.md` — 人类可读的目录/分支/工作流地图。
+- `ops/BRANCH_CLEANUP_REGISTER_20260909.md` — KEEP / ARCHIVE / REMOVE / HOLD 分支清单。
 
-Clearly superseded Battle01 contracts, retired governance documents, old visual targets and superseded GPT window systems are stored on:
+## 历史资料
 
-`archive/legacy-unused`
+明确 superseded 的治理和旧窗口系统保存在 `archive/legacy-unused` 分支。该分支没有当前产品权威。
 
-That branch is non-authoritative. Material there may only regain current authority if explicitly reaccepted through `docs/current/CURRENT_STATE.md` on `main`.
-
-## Rule of thumb
-
-When two sources disagree, follow the authority order in `FRONTLINE_PROJECT_CHARTER_V3.md`; do not restore an old rule merely because it once had a PASS/FROZEN label.
+当两个文件冲突时：优先 `CURRENT_STATE.md`，不要因为旧文件名里有 PASS / FROZEN / V1 就恢复旧规则。
