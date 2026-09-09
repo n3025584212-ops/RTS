@@ -298,8 +298,88 @@ func _rebind_house_materials(root: Node3D) -> void:
 
 
 func _add_blocker_box(name_value: String, rect: Rect2, height: float, color: Color) -> void:
-	_add_box(name_value, rect.get_center(), rect.size, height, height, color, 0.0, 0.90)
+	if name_value.begins_with("CentralHard") or name_value.begins_with("SouthEarthwork"):
+		_add_earthwork_visual(name_value, rect)
+	elif name_value.begins_with("IndustrialHard"):
+		_add_industrial_visual(name_value, rect, height)
+	else:
+		_add_box(name_value, rect.get_center(), rect.size, height, height, color, 0.0, 0.90)
 	_hard_blocker_mesh_count += 1
+
+
+func _add_earthwork_visual(name_value: String, rect: Rect2) -> void:
+	var center := rect.get_center()
+	var world_center := Battle3DAdapter.sim_to_world(center, .08)
+	var size_world := Vector3(
+		Battle3DAdapter.sim_length_to_world(rect.size.x),
+		.16,
+		Battle3DAdapter.sim_length_to_world(rect.size.y)
+	)
+	var base_mesh := BoxMesh.new()
+	base_mesh.size = size_world
+	var base := MeshInstance3D.new()
+	base.name = name_value
+	base.mesh = base_mesh
+	base.position = world_center
+	base.material_override = _surface_material("aerial_mud_1", Color(.42,.32,.21), .88)
+	add_child(base)
+
+	var stone := _surface_material("gravel_ground_01", Color(.42,.39,.31), .92)
+	for i in range(8):
+		var rock_mesh := SphereMesh.new()
+		rock_mesh.radius = .18
+		rock_mesh.height = .34
+		rock_mesh.radial_segments = 7
+		rock_mesh.rings = 4
+		var rock := MeshInstance3D.new()
+		rock.mesh = rock_mesh
+		rock.scale = Vector3(1.0 + float(i % 3) * .18, .55 + float(i % 2) * .12, .78)
+		rock.position = world_center + Vector3(
+			-size_world.x*.40 + float(i % 4) * size_world.x*.26,
+			.10,
+			-size_world.z*.30 + float(i / 4) * size_world.z*.55
+		)
+		rock.rotation_degrees.y = float(i * 41)
+		rock.material_override = stone
+		add_child(rock)
+
+
+func _add_industrial_visual(name_value: String, rect: Rect2, height: float) -> void:
+	var center := rect.get_center()
+	var footprint := Vector3(
+		Battle3DAdapter.sim_length_to_world(rect.size.x),
+		maxf(height, .72),
+		Battle3DAdapter.sim_length_to_world(rect.size.y)
+	)
+	var body_mesh := BoxMesh.new()
+	body_mesh.size = footprint
+	var body := MeshInstance3D.new()
+	body.name = name_value
+	body.mesh = body_mesh
+	body.position = Battle3DAdapter.sim_to_world(center, footprint.y*.5)
+	body.material_override = _surface_material("worn_plaster_wall", Color(.37,.37,.32), .80)
+	add_child(body)
+
+	var roof_mesh := BoxMesh.new()
+	roof_mesh.size = Vector3(footprint.x*1.05,.09,footprint.z*1.05)
+	var roof := MeshInstance3D.new()
+	roof.name = name_value + "_Roof"
+	roof.mesh = roof_mesh
+	roof.position = body.position + Vector3(0,footprint.y*.52,0)
+	roof.material_override = _make_material(Color(.12,.13,.12),.58,.48)
+	add_child(roof)
+
+	for side in [-1.0,1.0]:
+		var vent_mesh := CylinderMesh.new()
+		vent_mesh.top_radius=.10
+		vent_mesh.bottom_radius=.12
+		vent_mesh.height=.32
+		vent_mesh.radial_segments=12
+		var vent := MeshInstance3D.new()
+		vent.mesh=vent_mesh
+		vent.position=roof.position+Vector3(side*footprint.x*.22,.19,0)
+		vent.material_override=_make_material(Color(.18,.17,.15),.72,.42)
+		add_child(vent)
 
 func _add_route_polyline(prefix: String, points: PackedVector2Array, width_sim: float, color: Color) -> void:
 	for index: int in range(1, points.size()):
@@ -317,7 +397,9 @@ func _add_road_segment(name_value: String, a_sim: Vector2, b_sim: Vector2, width
 	instance.mesh = mesh
 	instance.position = (a_world + b_world) * 0.5
 	instance.rotation.y = -atan2(delta.z, delta.x)
-	if color == ROAD_COLOR:
+	if name_value.begins_with("BridgeRail"):
+		instance.material_override = _make_material(Color(.20,.21,.20), .68, .43)
+	elif color == ROAD_COLOR:
 		instance.material_override = _surface_material("asphalt_02", Color(0.52, 0.50, 0.47), 0.38)
 	else:
 		instance.material_override = _surface_material("gravel_ground_01", Color(0.52, 0.45, 0.33), 0.76)
@@ -330,7 +412,10 @@ func _add_box(name_value: String, center_sim: Vector2, size_sim: Vector2, height
 	instance.name = name_value
 	instance.mesh = mesh
 	instance.position = Battle3DAdapter.sim_to_world(center_sim, top_y - height * 0.5)
-	instance.material_override = _make_material(color, metallic, roughness)
+	if name_value == "CentralBridge":
+		instance.material_override = _surface_material("asphalt_02", Color(.44,.42,.39), .46)
+	else:
+		instance.material_override = _make_material(color, metallic, roughness)
 	add_child(instance)
 	return instance
 
