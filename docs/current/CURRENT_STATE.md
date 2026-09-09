@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V23
+STATE_VERSION=V24
 INTEGRATION_AUTHORITY=PROJECT_DIRECTOR
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V2.md
@@ -225,18 +225,31 @@ ACTIVE_ISSUE=#33
 ACTIVE_ISSUE_URL=https://github.com/n3025584212-ops/RTS/issues/33
 
 GOLDEN_SCENE_RESULT=FAIL_CONTINUE_FIXING
+PREVIOUS_PARTIAL_PASS=REVOKED_BY_USER
 REAL_ASSET_INTEGRATION=PASS
 GODOT_4_7_1_IMPORT=PASS
 FINAL_1920x1080_VISUAL=NOT_ACCEPTED
 GOLDEN_FRAME_VISUAL_COMPLIANCE=NOT_PASSED
-GOLDEN_SCENE_PR=NOT_CREATED
+GOLDEN_SCENE_PR=#34_CLOSED_PREMATURE_REVIEW
+GOLDEN_SCENE_PR34_STATE=CLOSED
 GOLDEN_SCENE_MERGE=NO
 
 PARALLEL_EXISTING_REVIEW=PR30_UNDER_ISSUE31
 PARALLEL_REVIEW_AUTHORITY=WINDOW_03
 
 Immediate goal:
-Continue real-asset Godot Golden Scene visual iterations until the actual 1920x1080 frame reaches at least PARTIAL_PASS against Approved Golden Frame V1. Technical import/runtime success does not override visual failure.
+Continue the existing real-asset Godot Golden Scene from its latest branch state and raise visual fidelity substantially toward Approved Golden Frame V1. The previous PARTIAL_PASS was explicitly revoked by the user because the frame remained visibly low-poly, procedural and prototype-like. Technical import/runtime success does not override visual failure.
+
+USER_VISUAL_REVIEW_OVERRIDE:
+- low-poly toy-like vehicle/building/vegetation fidelity = BLOCKING;
+- flat/single-material terrain = BLOCKING;
+- simplified river banks/roads/bridge = BLOCKING;
+- insufficient realistic lighting/shadow/atmospheric depth = BLOCKING;
+- weak procedural VFX = BLOCKING;
+- insufficient battle damage/decal/detail density = BLOCKING;
+- battlefield finishing below HUD finishing = BLOCKING.
+
+NEXT_VISUAL_PASS=HIGHER_FIDELITY_ASSET_AND_PBR_PASS
 
 ---
 
@@ -259,7 +272,7 @@ Formation-vs-formation local engagement — contact, suppression, damage, diseng
 
 ## NEXT_DECISION
 
-NEXT=WINDOW_02_CONTINUE_GOLDEN_SCENE_VISUAL_FIX_ITERATIONS
+NEXT=WINDOW_02_CONTINUE_GOLDEN_SCENE_HIGH_FIDELITY_ASSET_AND_PBR_PASS
 
 Required sequence:
 1. WINDOW_03 reviews PR #30 / head `9769196db09cc57e38db4d2c2fdea2445484a21d` under Issue #31.
