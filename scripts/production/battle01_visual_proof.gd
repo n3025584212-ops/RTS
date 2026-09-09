@@ -21,7 +21,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	frames += 1
-	if capture_requested and frames == 2:
+	if capture_requested and frames == 1:
 		capture_requested = false
 		_capture()
 
