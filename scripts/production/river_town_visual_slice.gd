@@ -237,13 +237,44 @@ func spawn(file: String,position3: Vector3,scale3: float=1.0,yaw: float=0.0,arch
 	return model
 
 func create_architecture() -> void:
-	spawn(ASSET+"hero_house_ruined.glb",Vector3(-11,height_at(-11,4)-.05,4),1.05,25,true)
+	var hero := spawn(ASSET+"hero_house_ruined.glb",Vector3(-11,height_at(-11,4)-.05,4),1.05,25,true)
+	hero.name = "ForegroundHeroHouseRuined"
+	create_hero_house_finish(hero)
 	spawn(ASSET+"house_damaged.glb",Vector3(-6,height_at(-6,-40),-40),.91,18,true)
 	spawn(ASSET+"house_intact.glb",Vector3(5,height_at(5,-55),-55),.82,-12,true)
 	spawn(ASSET+"house_damaged.glb",Vector3(55,height_at(55,-68),-68),.82,-14,true)
 	spawn(ASSET+"house_intact.glb",Vector3(-36,height_at(-36,-37),-37),.95,80,true)
 	for pos in [Vector3(-28,0,-1),Vector3(-1,0,-5),Vector3(-25,0,12),Vector3(10,0,7),Vector3(18,0,2)]:
 		create_wall(pos,6.0)
+
+
+func create_hero_house_finish(hero: Node3D) -> void:
+	# Concentrate debris and broken timber around the foreground building so the
+	# authored breach belongs to the ground instead of reading like a clean model cut.
+	var center := Vector3(hero.position.x,0.0,hero.position.z)
+	for i in range(34):
+		var angle := rng.randf()*TAU
+		var radius := rng.randf_range(4.2,8.2)
+		var x := center.x+cos(angle)*radius
+		var z := center.z+sin(angle)*radius*.64
+		if z>10.5 or x>-2.8:
+			continue
+		var p := Vector3(x,height_at(x,z)-.015,z)
+		spawn(ASSET+"rock_moss_set_01_"+str(i%6)+".glb",p,rng.randf_range(.10,.24),rng.randf()*360)
+
+	for i in range(10):
+		var x := center.x+rng.randf_range(-5.0,4.0)
+		var z := center.z+rng.randf_range(-4.8,3.6)
+		var y := height_at(x,z)+rng.randf_range(.06,.20)
+		var plank := block(Vector3(x,y,z),Vector3(rng.randf_range(.10,.18),rng.randf_range(.07,.12),rng.randf_range(1.2,2.8)),"wood")
+		plank.rotation=Vector3(rng.randf_range(-.24,.32),rng.randf()*TAU,rng.randf_range(-.35,.35))
+
+	for i in range(24):
+		var x := center.x+rng.randf_range(-5.6,5.2)
+		var z := center.z+rng.randf_range(-4.5,4.4)
+		var y := height_at(x,z)+rng.randf_range(.035,.11)
+		var chip := block(Vector3(x,y,z),Vector3(rng.randf_range(.08,.22),rng.randf_range(.05,.13),rng.randf_range(.10,.28)),"brick")
+		chip.rotation=Vector3(rng.randf()*TAU,rng.randf()*TAU,rng.randf()*TAU)
 
 func add_mesh(mesh: Mesh, mat: Material, pos: Vector3, scale3: Vector3=Vector3.ONE, yaw: float=0.0) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
@@ -278,6 +309,8 @@ func create_armor() -> void:
 	tank.name = "M1A2_SEPv3_dannzjs_CC_BY_4"
 	for child: Node in tank.find_children("*","MeshInstance3D",true,false):
 		var mi := child as MeshInstance3D
+		if mi.mesh == null:
+			continue
 		for i in range(mi.mesh.get_surface_count()):
 			var original := mi.get_active_material(i) as StandardMaterial3D
 			if original != null:
@@ -290,6 +323,15 @@ func create_armor() -> void:
 				material.set_shader_parameter("rough_texture",original.roughness_texture)
 				material.set_shader_parameter("roughness_factor",original.roughness)
 				material.set_shader_parameter("ground_y",tank.position.y)
+				material.set_shader_parameter("authored_metallic",original.metallic)
+				material.set_shader_parameter("authored_specular",original.metallic_specular)
+				var luma := original.albedo_color.r*.2126+original.albedo_color.g*.7152+original.albedo_color.b*.0722
+				var role := 0.0
+				if original.metallic > .42:
+					role = 2.0
+				elif luma < .16:
+					role = 1.0
+				material.set_shader_parameter("surface_role",role)
 				var channels: Array[Vector4]=[Vector4(1,0,0,0),Vector4(0,1,0,0),Vector4(0,0,1,0),Vector4(0,0,0,1),Vector4(.333,.333,.333,0)]
 				material.set_shader_parameter("rough_channel",channels[original.roughness_texture_channel])
 				mi.set_surface_override_material(i,material)
@@ -436,7 +478,8 @@ func create_distant_forest() -> void:
 		add_child(inst)
 
 func create_water() -> void:
-	var water := simple(Color(.065,.056,.039),.09);water.metallic=.0;water.metallic_specular=.85
+	var water := ShaderMaterial.new()
+	water.shader=load("res://scripts/production/visual_slice_water.gdshader")
 	var plane := PlaneMesh.new();plane.size=Vector2(350,40)
 	add_mesh(plane,water,Vector3(0,1.15,-100))
 	# Bridge deck, girders, pier heads, abutments and open metal balustrades.
@@ -449,7 +492,7 @@ func create_water() -> void:
 		for z in range(-128,-71,2):rod(Vector3(x,3.55,z),Vector3(x,4.5,z),.055,"metal")
 	# Small still puddles sit inside ruts and inherit environment reflection.
 	for i in range(23):
-		var z := rng.randf_range(-8,25);var x := lane_x(z)+(1.3 if i%2 else -1.3)
+		var z := rng.randf_range(-8,25);var x := lane_x(z)+(1.3 if i%2 else -1.3)+rng.randf_range(-.22,.22)
 		var st := SurfaceTool.new();st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		var points: Array[Vector3] = []
 		var width := rng.randf_range(.35,.80);var length := rng.randf_range(.4,1.65)
@@ -459,7 +502,7 @@ func create_water() -> void:
 		for j in range(18):
 			for v in [Vector3.ZERO,points[j],points[(j+1)%18]]:
 				st.set_normal(Vector3.UP);st.add_vertex(v)
-		var puddle:=add_mesh(st.commit(),water,Vector3(x,height_at(x,z)+.20,z))
+		var puddle:=add_mesh(st.commit(),water,Vector3(x,height_at(x,z)+.028,z))
 		puddle.layers=2
 
 func create_smoke() -> void:
