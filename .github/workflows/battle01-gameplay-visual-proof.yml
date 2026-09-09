@@ -1,0 +1,100 @@
+name: FRONTLINE Battle01 Gameplay Visual Proof
+
+on:
+  push:
+    branches:
+      - dev/visual-production-reset
+    paths:
+      - "scenes/battle01/**"
+      - "scripts/battle01/**"
+      - "assets/visual_slice/**"
+      - "assets/golden_scene/**"
+      - "scripts/production/battle01_visual_proof.gd"
+      - "scenes/production/Battle01VisualProof.tscn"
+      - ".github/workflows/battle01-gameplay-visual-proof.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: battle01-gameplay-visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gameplay-visual:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 libvulkan1 mesa-vulkan-drivers
+          
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 4 "https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Import project and compile Battle01 scripts
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 180s "$GODOT" --headless --editor --path . --rendering-method forward_plus --quit 2>&1 | tee battle01-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' battle01-import.log
+
+      - name: Render real playable Battle01
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          BATTLE01_SEED: "0"
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/battle01_visual
+          timeout 720s xvfb-run -a -s "-screen 0 1920x1080x24"             "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy             --resolution 1920x1080 res://scenes/production/Battle01VisualProof.tscn -- --capture             2>&1 | tee battle01-runtime.log
+          grep -q 'FRONTLINE_BATTLE01_VISUAL_PROOF_READY' battle01-runtime.log
+          grep -q 'FRONTLINE_3D_WORLD_READY' battle01-runtime.log
+          grep -q 'FRONTLINE_3D_PRESENTATION_READY' battle01-runtime.log
+          grep -q 'FRONTLINE_CAMERA3D_READY' battle01-runtime.log
+          grep -q 'FRONTLINE_BATTLE01_GAMEPLAY_CAPTURED' battle01-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' battle01-runtime.log
+
+      - name: Verify gameplay proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,struct
+          p="artifacts/battle01_visual/battle01_actual_gameplay_1920x1080.png"
+          data=open(p,"rb").read()
+          assert data[:8]==b"\x89PNG\r\n\x1a\n"
+          assert struct.unpack(">II",data[16:24])==(1920,1080)
+          m=json.load(open("artifacts/battle01_visual/runtime_metrics.json"))
+          assert m["source_scene"]=="res://scenes/battle01/Battle01.tscn"
+          assert m["gameplay_scene_instantiated"] is True
+          assert m["post_capture_image_editing"] is False
+          print("FRONTLINE_BATTLE01_VISUAL_PROOF_PASS")
+          PY
+
+      - name: Upload real gameplay proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-battle01-gameplay-visual-proof
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            artifacts/battle01_visual/battle01_actual_gameplay_1920x1080.png
+            artifacts/battle01_visual/runtime_metrics.json
+            battle01-runtime.log
+            battle01-import.log
