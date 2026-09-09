@@ -1,17 +1,17 @@
 class_name BattleCamera3D
 extends Camera3D
 
-@export var focus_sim: Vector2 = Vector2(1050.0, 900.0)
+@export var focus_sim: Vector2 = Vector2(1180.0, 900.0)
 @export var pan_speed_sim: float = 820.0
-@export var height_world: float = 16.0
-@export var min_height_world: float = 8.5
-@export var max_height_world: float = 27.0
+@export var height_world: float = 12.5
+@export var min_height_world: float = 7.2
+@export var max_height_world: float = 24.0
 @export var zoom_step_world: float = 1.6
-@export var oblique_depth_ratio: float = 0.72
+@export var oblique_depth_ratio: float = 0.86
 
 func _ready() -> void:
 	current = true
-	fov = 49.0
+	fov = 46.0
 	near = 0.1
 	far = 120.0
 	_apply_camera_transform()
