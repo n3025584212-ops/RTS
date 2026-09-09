@@ -139,7 +139,7 @@ func _build_routes_and_river() -> void:
 func _build_authoritative_terrain() -> void:
 	var village_index: int = 0
 	for blocker: Rect2 in BattleRouteTerrain.VILLAGE_BLOCKERS:
-		_add_blocker_box("VillageHard_%d" % village_index, blocker, 0.62, VILLAGE_COLOR)
+		_add_village_blocker("VillageHard_%d" % village_index, blocker, village_index)
 		village_index += 1
 
 	var central_index: int = 0
@@ -160,6 +160,7 @@ func _build_authoritative_terrain() -> void:
 	_add_road_segment("NorthFootLink", BattleRouteTerrain.NORTH_FOOT_LINK_ENTRY, BattleRouteTerrain.NORTH_FOOT_LINK_EXIT, 28.0, FOOT_LINK_COLOR, 0.060)
 	_add_road_segment("NorthFootLinkEdgeNorth", Vector2(1080.0, 432.0), Vector2(1440.0, 432.0), 8.0, Color(0.26, 0.25, 0.21), 0.10)
 	_add_road_segment("NorthFootLinkEdgeSouth", Vector2(1080.0, 488.0), Vector2(1440.0, 488.0), 8.0, Color(0.26, 0.25, 0.21), 0.10)
+	_build_village_vegetation()
 	_north_foot_link_visual_ready = true
 
 func _build_industrial_detail() -> void:
@@ -178,6 +179,123 @@ func get_hard_blocker_mesh_count() -> int:
 
 func has_north_foot_link_visual() -> bool:
 	return _north_foot_link_visual_ready
+
+func _add_village_blocker(name_value: String, rect: Rect2, index: int) -> void:
+	# Gameplay blocking remains authoritative in BattleRouteTerrain. This low
+	# foundation preserves the map read while the visible mass is a real house.
+	_add_box(name_value + "_Foundation", rect.get_center(), rect.size, 0.07, 0.035, Color(0.19, 0.17, 0.14), 0.0, 0.92)
+	_hard_blocker_mesh_count += 1
+
+	var variants := [
+		VISUAL_ASSET + "hero_house_ruined.glb",
+		VISUAL_ASSET + "house_damaged.glb",
+		VISUAL_ASSET + "house_intact.glb"
+	]
+	var path: String = variants[index % variants.size()]
+	if not ResourceLoader.exists(path):
+		return
+	var packed := load(path) as PackedScene
+	if packed == null:
+		return
+	var house := packed.instantiate() as Node3D
+	if house == null:
+		return
+	house.name = name_value + "_VisualHouse"
+	add_child(house)
+	var center := Battle3DAdapter.sim_to_world(rect.get_center(), 0.02)
+	house.position = center
+	house.rotation_degrees.y = [12.0, -18.0, 7.0, 22.0, -11.0][index % 5]
+	_fit_scene_extent(house, maxf(rect.size.x, rect.size.y) * Battle3DAdapter.SIM_TO_WORLD_SCALE * 0.94)
+	_rebind_house_materials(house)
+
+
+func _build_village_vegetation() -> void:
+	var tree_path := VISUAL_ASSET + "island_tree_01_0.glb"
+	var fir_path := VISUAL_ASSET + "fir_sapling_medium_0.glb"
+	var shrub_paths := [
+		VISUAL_ASSET + "shrub_02_0.glb", VISUAL_ASSET + "shrub_02_1.glb",
+		VISUAL_ASSET + "shrub_02_2.glb", VISUAL_ASSET + "shrub_02_3.glb"
+	]
+	var tree_points := [
+		Vector2(9.8, 2.2), Vector2(10.2, 4.8), Vector2(10.0, 7.2),
+		Vector2(12.8, 2.0), Vector2(14.8, 1.8), Vector2(18.9, 2.0),
+		Vector2(20.0, 4.8), Vector2(20.6, 7.1), Vector2(7.4, 5.0),
+		Vector2(23.0, 5.1), Vector2(7.8, 13.9), Vector2(23.8, 14.2)
+	]
+	for i in range(tree_points.size()):
+		var path := tree_path if i % 3 == 0 else fir_path
+		_spawn_environment_model(path, Vector3(tree_points[i].x, 0.0, tree_points[i].y), 2.2 + float(i % 3) * .45, float(i * 37))
+
+	for i in range(28):
+		var x := 8.2 + float((i * 47) % 145) / 10.0
+		var z := 1.8 + float((i * 29) % 132) / 10.0
+		if absf(x - 16.0) < 1.7 or absf(z - 9.0) < .85:
+			continue
+		_spawn_environment_model(shrub_paths[i % shrub_paths.size()], Vector3(x, 0.0, z), .55 + float(i % 4) * .09, float(i * 53))
+
+
+func _spawn_environment_model(path: String, position_value: Vector3, target_extent: float, yaw: float) -> void:
+	if not ResourceLoader.exists(path):
+		return
+	var packed := load(path) as PackedScene
+	if packed == null:
+		return
+	var root := packed.instantiate() as Node3D
+	if root == null:
+		return
+	add_child(root)
+	root.position = position_value
+	root.rotation_degrees.y = yaw
+	_fit_scene_extent(root, target_extent)
+
+
+func _fit_scene_extent(root: Node3D, target_extent: float) -> void:
+	var extent := 0.0
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null:
+			continue
+		var size := mesh_instance.get_aabb().size
+		extent = maxf(extent, maxf(size.x, maxf(size.y, size.z)))
+	if extent > .0001:
+		root.scale = Vector3.ONE * (target_extent / extent)
+
+
+func _rebind_house_materials(root: Node3D) -> void:
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null:
+			continue
+		for surface_index in range(mesh_instance.mesh.get_surface_count()):
+			var original := mesh_instance.get_active_material(surface_index)
+			if original == null:
+				continue
+			var key := original.resource_name.to_lower()
+			var replacement: Material = null
+			if key == "plaster":
+				var plaster := ShaderMaterial.new()
+				plaster.shader = load("res://scripts/production/visual_slice_plaster.gdshader")
+				plaster.set_shader_parameter("color_texture", load(VISUAL_PBR + "worn_plaster_wall_diff.jpg"))
+				plaster.set_shader_parameter("normal_texture", load(VISUAL_PBR + "worn_plaster_wall_nor_gl.jpg"))
+				replacement = plaster
+			elif key == "roof":
+				replacement = _surface_material("roof_tiles_14", Color(.43,.32,.24), .78)
+			elif key == "brick":
+				replacement = _surface_material("brick_wall_005", Color(.46,.35,.27), .86)
+			elif key == "wood":
+				replacement = _surface_material("dirt_aerial_03", Color(.18,.12,.075), .88)
+			elif key == "trim":
+				replacement = _surface_material("worn_plaster_wall", Color(.58,.56,.50), .82)
+			elif key == "glass":
+				var glass := _make_material(Color(.045,.07,.075), .34, .18)
+				replacement = glass
+			elif key == "metal":
+				replacement = _make_material(Color(.13,.14,.13), .62, .48)
+			elif key == "interior":
+				replacement = _make_material(Color(.07,.065,.05), 0.0, .94)
+			if replacement != null:
+				mesh_instance.set_surface_override_material(surface_index, replacement)
+
 
 func _add_blocker_box(name_value: String, rect: Rect2, height: float, color: Color) -> void:
 	_add_box(name_value, rect.get_center(), rect.size, height, height, color, 0.0, 0.90)
