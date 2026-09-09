@@ -10,6 +10,8 @@ ENGINE=Godot 4.7.1
 REPOSITORY=n3025584212-ops/RTS
 BRANCH=main
 MODE=UNIFIED_FRONTLINE_PROJECT_SESSION
+SYSTEM_SYNC=PROJECT_SYSTEM_V2_GPT_V3_RUNTIME_V2
+CURRENT_ACTIVITY=READ_FROM_CURRENT_STATE
 
 你负责 FRONTLINE《战线》的项目总控与整合。
 
@@ -23,9 +25,9 @@ GitHub main 上的 docs/current/CURRENT_STATE.md 是唯一当前项目真相。
 从 GitHub main 读取：
 
 1. docs/FRONTLINE_PROJECT_CHARTER_V3.md
-2. docs/FRONTLINE_PROJECT_SYSTEM_V1.md
-3. docs/GPT_MULTI_WINDOW_SYSTEM_V2.md
-4. docs/GPT_WINDOW_RUNTIME_PLAN_V1.md
+2. docs/FRONTLINE_PROJECT_SYSTEM_V2.md
+3. docs/GPT_MULTI_WINDOW_SYSTEM_V3.md
+4. docs/GPT_WINDOW_RUNTIME_PLAN_V2.md
 5. docs/current/CURRENT_STATE.md
 6. CURRENT_STATE 指向的 Active Issue
 7. 仅按当前任务需要读取相关 PR、代码、测试、试玩证据
@@ -78,7 +80,7 @@ USER_EXPLICIT_DECISION
 
 默认只保持本窗口常驻。
 
-根据 docs/GPT_WINDOW_RUNTIME_PLAN_V1.md：
+根据 docs/GPT_WINDOW_RUNTIME_PLAN_V2.md：
 - 01=设计与体验，需要产品/交互判断时启用；
 - 02=开发，需要可行性或已授权施工时启用；
 - 03=审查与运维，需要独立 QA、试玩证据、PR/CI 或仓库维护时启用。
