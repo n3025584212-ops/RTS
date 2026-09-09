@@ -30,14 +30,41 @@ func _ready() -> void:
 	restart_button.pressed.connect(_on_restart_pressed)
 	result_panel.visible = false
 	debug_container.visible = true
+	_install_tactical_skin()
 	task_label.text = "MISSION: Probe the defense, commit combat power, secure the RED Command Area."
-	controls_label.text = "LMB/Shift/Drag Select | RMB Move | Shift+RMB Advance | X Withdraw | H Hold Fire / Weapons Free | Wheel Zoom | WASD Pan"
-	notice_label.text = "M2 CONNECTED PLAYABLE · GREYBOX RUNTIME SHELL"
+	controls_label.text = "WASD PAN  •  WHEEL ZOOM  •  LMB SELECT  •  RMB MOVE  •  SHIFT+RMB ADVANCE"
+	notice_label.text = "TACTICAL NET  •  COMMAND LINK ACTIVE"
 	set_selection_summary([])
 	set_order_summary([])
 	set_force_status([])
 	set_intel_state(BattleIntelTracker.UNSEEN, Vector2.ZERO)
 	set_command_area(BattleObjective.OWNER_AI, false, 0.0, false)
+
+func _install_tactical_skin() -> void:
+	var backing := Panel.new()
+	backing.name = "TacticalStatusBacking"
+	backing.position = Vector2(14.0, 14.0)
+	backing.size = Vector2(780.0, 292.0)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.018, 0.035, 0.043, 0.88)
+	style.border_color = Color(0.16, 0.38, 0.48, 0.82)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(5)
+	backing.add_theme_stylebox_override("panel", style)
+	$Root.add_child(backing)
+	$Root.move_child(backing, 0)
+
+	for child: Node in debug_container.get_children():
+		if child is Label:
+			var label := child as Label
+			label.add_theme_color_override("font_color", Color(0.89, 0.94, 0.95))
+			label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.78))
+			label.add_theme_constant_override("shadow_offset_x", 1)
+			label.add_theme_constant_override("shadow_offset_y", 1)
+	controls_label.add_theme_font_size_override("font_size", 12)
+	notice_label.add_theme_color_override("font_color", Color(0.45, 0.76, 0.88))
+	objective_label.add_theme_color_override("font_color", Color(1.0, 0.70, 0.30))
+
 
 func set_selection_summary(formations: Array[BattleFormation]) -> void:
 	_selected_formations = formations.duplicate()
@@ -125,7 +152,7 @@ func show_command_feedback(message: String, _level: String = "INFO") -> void:
 func push_alert(level: String, message: String, _key: String = "") -> void:
 	if message.is_empty():
 		return
-	notice_label.text = "M2 GREYBOX · %s · %s" % [level, message]
+	notice_label.text = "TACTICAL NET · %s · %s" % [level, message]
 
 func show_victory() -> void:
 	result_panel.visible = true
