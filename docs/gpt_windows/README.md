@@ -1,44 +1,33 @@
 # FRONTLINE GPT windows
 
-These files are ready-to-copy initialization prompts for separate ChatGPT conversations.
+这些文件是四个 ChatGPT 路由窗口的可复制初始化入口。它们**不是四个独立项目**，也不拥有独立 CURRENT_STATE。
 
-They are routing contexts, not separate project states.
+## 四窗口
 
-## Active window map
+| Window | 作用 |
+|---|---|
+| 00 | Project Control / Integration：总控、状态整合、冲突裁决 |
+| 01 | Design / Experience / Visual Production Definition：设计、体验、实现级视觉定义 |
+| 02 | Development / Asset Integration / Gameplay Production：Godot、资产、Gameplay、AI、生产实现 |
+| 03 | Independent Review / Operations / Design Compliance：QA、PR/CI、仓库运维、设计符合性 |
 
-- `WINDOW_00_PROJECT_CONTROL.md` — project control, integration, state changes, conflict resolution and window activation.
-- `WINDOW_01_DESIGN_EXPERIENCE.md` — game design, product discovery, UX/UI, readability, player feedback and first-use flow.
-- `WINDOW_02_DEVELOPMENT.md` — Godot architecture, gameplay, combat, units, AI, implementation and technical verification.
-- `WINDOW_03_REVIEW_OPERATIONS.md` — independent QA, playtest evidence, PR/CI review, repository hygiene and archival operations.
-
-## Shared initialization
-
-Every window first reads:
+## 每个窗口先读
 
 1. `docs/FRONTLINE_PROJECT_CHARTER_V3.md`
-2. `docs/FRONTLINE_PROJECT_SYSTEM_V1.md`
-3. `docs/GPT_MULTI_WINDOW_SYSTEM_V2.md`
-4. `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md`
+2. `docs/FRONTLINE_PROJECT_SYSTEM_V2.md`
+3. `docs/GPT_MULTI_WINDOW_SYSTEM_V3.md`
+4. `docs/GPT_WINDOW_RUNTIME_PLAN_V2.md`
 5. `docs/current/CURRENT_STATE.md`
-6. the Active Issue referenced by CURRENT_STATE
+6. CURRENT_STATE 指向的 Active Issue / PR
+7. 仅按任务需要读取相关代码、运行证据和历史材料
 
-Then read only task-relevant code/evidence.
+## 运行状态规则
 
-## Runtime rule
+**不要在这里硬编码“哪个窗口当前 ACTIVE”。** 当前运行状态随项目变化，只读取 `docs/current/CURRENT_STATE.md` 的 `GPT_WINDOW_RUNTIME`。
 
-Do not keep all windows busy.
+## 共享状态规则
 
-At the current `P0_DISCOVER` stage:
-- WINDOW_00 = ACTIVE
-- WINDOW_01 = ACTIVE
-- WINDOW_02 = STANDBY_FEASIBILITY_ONLY
-- WINDOW_03 = STANDBY_ON_DEMAND
-
-Use `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md` for activation triggers and phase defaults.
-
-## Shared-state rule
-
-- only WINDOW_00 edits `CURRENT_STATE.md` by default;
-- other windows do so only when explicitly delegated by the user/current task;
-- no mandatory chat receipt chain;
-- durable results should live in the Active Issue, branch/PR, code, tests or CI evidence.
+- WINDOW_00 默认负责材料性 CURRENT_STATE 更新。
+- 01/02/03 只有在用户或当前任务明确授权时修改 CURRENT_STATE。
+- 不做强制聊天回执链。
+- 结果优先落在 Issue、branch/PR、代码、测试、CI 和 runtime evidence。
