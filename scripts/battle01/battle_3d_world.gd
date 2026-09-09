@@ -40,13 +40,13 @@ func _build_lighting() -> void:
 	environment.sky = sky
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.ambient_light_color = Color(0.54, 0.62, 0.72)
-	environment.ambient_light_energy = 0.42
+	environment.ambient_light_energy = 0.48
 	environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	environment.tonemap_mode = Environment.TONE_MAPPER_ACES
 	environment.tonemap_exposure = 0.98
 	environment.ssao_enabled = true
 	environment.ssao_radius = 1.25
-	environment.ssao_intensity = 1.45
+	environment.ssao_intensity = 1.28
 	environment.ssao_power = 1.15
 	environment.ssil_enabled = true
 	environment.ssil_radius = 2.0
@@ -72,7 +72,7 @@ func _build_lighting() -> void:
 	sun.name = "Sun"
 	sun.rotation_degrees = Vector3(-34.0, 48.0, 0.0)
 	sun.light_color = Color(1.0, 0.86, 0.69)
-	sun.light_energy = 1.65
+	sun.light_energy = 1.52
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
 	sun.directional_shadow_max_distance = 70.0
@@ -96,9 +96,9 @@ func _build_ground() -> void:
 	_add_box("GroundBase", Vector2(1600.0, 900.0), Vector2(3200.0, 1800.0), 0.12, -0.06, GROUND_COLOR, 0.0, 0.98)
 
 	var ground_mesh := PlaneMesh.new()
-	ground_mesh.size = Vector2(32.0, 18.0)
-	ground_mesh.subdivide_width = 96
-	ground_mesh.subdivide_depth = 54
+	ground_mesh.size = Vector2(72.0, 48.0)
+	ground_mesh.subdivide_width = 144
+	ground_mesh.subdivide_depth = 96
 	var ground := MeshInstance3D.new()
 	ground.name = "Battle01PBRGround"
 	ground.mesh = ground_mesh
@@ -360,7 +360,7 @@ func _battle_terrain_material() -> ShaderMaterial:
 
 func _water_material() -> ShaderMaterial:
 	var material := ShaderMaterial.new()
-	material.shader = load("res://scripts/production/visual_slice_water.gdshader")
+	material.shader = load("res://scripts/battle01/battle01_water.gdshader")
 	return material
 
 func _surface_material(base: String, tint: Color, roughness: float) -> StandardMaterial3D:
