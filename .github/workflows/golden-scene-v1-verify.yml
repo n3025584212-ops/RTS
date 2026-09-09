@@ -50,7 +50,7 @@ jobs:
           glxinfo -B || true
 
       - name: Install external asset conversion toolchain when assets are absent
-        if: ${{ hashFiles('assets/golden_scene/.visual_assets_v15_complete') == '' || hashFiles('assets/golden_scene/.visual_assets_v20_color_complete') == '' }}
+        if: ${{ hashFiles('assets/golden_scene/.visual_assets_v15_complete') == '' || hashFiles('assets/golden_scene/.visual_assets_v20_color_complete') == '' || hashFiles('assets/golden_scene/.visual_assets_v21_complete') == '' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -188,6 +188,20 @@ jobs:
             echo "FRONTLINE_GOLDEN_VISUAL_ASSETS_V20_ALREADY_PRESENT"
           fi
           test "$(find assets/golden_scene/city_v20 -maxdepth 1 -type f -iname '*.glb' | wc -l)" -ge 3
+
+      - name: Upgrade Golden visual assets V21
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tools/golden_scene/upgrade_visual_assets_v21.sh
+          if [[ ! -f assets/golden_scene/.visual_assets_v21_complete ]]; then
+            tools/golden_scene/upgrade_visual_assets_v21.sh 2>&1 | tee golden-visual-v21-assets.log
+          else
+            echo "FRONTLINE_GOLDEN_VISUAL_ASSETS_V21_ALREADY_PRESENT"
+          fi
+          test -s assets/golden_scene/quality_material_v3/mbt_abrams_static.glb
+          test -s assets/golden_scene/vfx_v21/smoke1.png
+          test -s assets/golden_scene/vfx_v21/explosion_atlas_512x512.png
 
       - name: Install Godot 4.7.1
         shell: bash
