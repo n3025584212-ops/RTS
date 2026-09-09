@@ -186,6 +186,7 @@ func _build_role_visual(parent: Node3D, role: String, faction: String) -> void:
 			var ifv := _instantiate_model(IFV_MODEL_PATH, 3.15 if role == "IFV" else 2.72)
 			if ifv != null:
 				ifv.rotation_degrees.y = 90.0 if faction == "BLUE" else -90.0
+				_tint_authored_vehicle(ifv, faction, role)
 				parent.add_child(ifv)
 		"INFANTRY":
 			var offsets := [
@@ -229,6 +230,32 @@ func _fit_visual_extent(root: Node3D, target_extent: float) -> void:
 		extent = maxf(extent, maxf(size.x, maxf(size.y, size.z)))
 	if extent > 0.0001:
 		root.scale = Vector3.ONE * (target_extent / extent)
+
+
+func _tint_authored_vehicle(root: Node3D, faction: String, role: String) -> void:
+	var tint := Color(.53,.57,.34,1.0) if faction == "BLUE" else Color(.55,.48,.30,1.0)
+	if role == "RECON":
+		tint = tint.lightened(.08)
+	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null:
+			continue
+		for surface_index in range(mesh_instance.mesh.get_surface_count()):
+			var original := mesh_instance.get_active_material(surface_index) as StandardMaterial3D
+			if original == null:
+				continue
+			var material := original.duplicate() as StandardMaterial3D
+			if material == null:
+				continue
+			material.albedo_color = Color(
+				clampf(original.albedo_color.r * tint.r, .08, .82),
+				clampf(original.albedo_color.g * tint.g, .08, .82),
+				clampf(original.albedo_color.b * tint.b, .055, .70),
+				original.albedo_color.a
+			)
+			material.roughness = maxf(original.roughness, .56)
+			material.metallic = minf(original.metallic, .34)
+			mesh_instance.set_surface_override_material(surface_index, material)
 
 
 func _apply_abrams_materials(root: Node3D) -> void:
