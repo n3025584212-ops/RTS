@@ -11,13 +11,13 @@
   "frozen_tracked_files_changed": [],
   "frozen_comparison": "isolated snapshot baseline 8fbd12f of source e909d17",
   "performance_acceptance": "NOT_TESTED",
-  "native_capture_sha256": "d0364822e6937f45af05ba32f55ed6604d877b37767bc38897114ef65392dad4",
+  "native_capture_sha256": "00d8aa2a402f21e99780dbd7baefc982f5c0a453632d865dac272fa451ac17ad",
   "reference_sha256": "7f2f462d34387d32109d4feb83f197f88adbc3ff0f54b26d0142172789f16e3d",
+  "scope": "Highest achievable main-frame quality; no further distant-detail work",
   "remaining_visual_failures": [
-    "hero building asset quality",
+    "foreground building material quality",
     "mud and water realism",
-    "asset integration and density",
-    "river and bridge spatial composition",
+    "foreground asset integration",
     "lighting and atmosphere"
   ]
 }

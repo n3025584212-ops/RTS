@@ -15,6 +15,8 @@ float n(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(mix(h(
 void vertex(){wp=(MODEL_MATRIX*vec4(VERTEX,1.)).xyz;wn=normalize(MODEL_NORMAL_MATRIX*NORMAL);}
 void fragment(){
  vec3 base=texture(paint_texture,UV).rgb*paint_color.rgb;
+ float painted_value=dot(base,vec3(.2126,.7152,.0722));
+ base=mix(base,vec3(.18,.161,.111)*clamp(painted_value*4.5,.12,1.8),.68);
  float height=wp.y-ground_y;
  float dirt=n(wp*4.1)*.65+n(wp*19.2)*.35;
  float mud=(1.-smoothstep(.18,1.25+dirt*.32,height))*.86;
@@ -25,7 +27,7 @@ void fragment(){
  base=mix(base,mix(vec3(.043,.031,.017),vec3(.13,.097,.054),dirt),mud);
  ALBEDO=base;
  float authored=dot(texture(rough_texture,UV),rough_channel)*roughness_factor;
- ROUGHNESS=clamp(max(authored,.58)+mud*.22+dust*.15,.0,.98);
- METALLIC=0.;SPECULAR=.35;
+ ROUGHNESS=clamp(max(authored*.7,.38)+mud*.13+dust*.14,.0,.92);
+ METALLIC=.12*(1.-mud);SPECULAR=.5;
  if(has_normal){NORMAL_MAP=texture(normal_texture,UV).rgb;NORMAL_MAP_DEPTH=.9;}
 }

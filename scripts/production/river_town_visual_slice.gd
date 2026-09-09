@@ -12,26 +12,39 @@ var models: Dictionary = {}
 var times: Array[float] = []
 var capture_pending := false
 var frames := 0
+var mud_height: Image
 
 func _ready() -> void:
 	rng.seed = 730128
 	noise.seed = 1203
 	noise.frequency = 0.12
 	noise.fractal_octaves = 4
+	mud_height=(load(ASSET+"surfaces/aerial_mud_1_disp.png") as Texture2D).get_image()
+	if mud_height.is_compressed():mud_height.decompress()
+	mud_height.resize(256,256,Image.INTERPOLATE_BILINEAR)
 	get_window().size = Vector2i(1920,1080)
 	get_window().content_scale_size = Vector2i(1920,1080)
 	get_viewport().msaa_3d = Viewport.MSAA_4X
 	get_viewport().screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
+	get_viewport().scaling_3d_scale = 1.5
 	create_lighting()
 	create_materials()
 	create_terrain(-360.0,360.0,-680.0,100.0,3.0,false)
-	create_terrain(-46.0,46.0,-48.0,52.0,0.23,true)
+	create_terrain(-46.0,46.0,-48.0,52.0,0.16,true)
 	create_architecture()
 	create_armor()
 	create_vegetation()
 	create_clutter()
 	create_background()
 	create_water()
+	var reflection:=ReflectionProbe.new()
+	reflection.position=Vector3(2,3,6)
+	reflection.size=Vector3(55,18,70)
+	reflection.max_distance=85
+	reflection.box_projection=true
+	reflection.cull_mask=1
+	reflection.intensity=.9
+	add_child(reflection)
 	create_smoke()
 	print("FRONTLINE_RIVER_TOWN_READY renderer=",RenderingServer.get_current_rendering_method()," adapter=",RenderingServer.get_video_adapter_name())
 	set_process(true)
@@ -41,24 +54,30 @@ func create_lighting() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
-	var sky_material := PanoramaSkyMaterial.new()
-	sky_material.panorama=load(ASSET+"sky.hdr")
-	sky_material.energy_multiplier=.8
+	var sky_material := ShaderMaterial.new()
+	sky_material.shader=load("res://scripts/production/visual_slice_sky.gdshader")
+	sky_material.set_shader_parameter("panorama",load(ASSET+"sky.hdr"))
 	sky.sky_material=sky_material
 	env.sky = sky
 	env.sky_rotation = Vector3.ZERO
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(.60,.68,.82)
-	env.ambient_light_energy = 0.6
+	env.ambient_light_energy = 0.50
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
+	env.sdfgi_enabled = false
+	env.sdfgi_cascades = 3
+	env.sdfgi_min_cell_size = .3
+	env.sdfgi_use_occlusion = true
+	env.sdfgi_energy = .75
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 	env.tonemap_exposure = 0.95
 	env.ssao_enabled = true
 	env.ssao_radius = 1.5
-	env.ssao_intensity = 1.35
+	env.ssao_intensity = 1.8
 	env.ssao_power = 1.3
 	env.ssil_enabled = true
 	env.ssil_radius = 3.0
-	env.ssil_intensity = 0.65
+	env.ssil_intensity = 0.45
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.58,0.63,0.66)
 	env.fog_light_energy = 0.75
@@ -77,13 +96,13 @@ func create_lighting() -> void:
 	world.environment = env
 	add_child(world)
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-28,118,0)
+	sun.rotation_degrees = Vector3(-28,55,0)
 	sun.light_color = Color(1.0,0.85,0.65)
-	sun.light_energy = 1.75
+	sun.light_energy = 1.8
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 180
 	sun.shadow_bias = 0.025
-	sun.shadow_normal_bias = 0.8
+	sun.shadow_normal_bias = 0.35
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
 	sun.light_angular_distance = 0.6
 	add_child(sun)
@@ -145,18 +164,23 @@ func create_materials() -> void:
 	mats["sandbag"].albedo_texture = load(PBR+"dirt_aerial_03_diff.jpg")
 
 func lane_x(z: float) -> float:
-	return -1.0+0.12*z+1.2*sin(z*0.045)
+	return 1.3+0.12*z+1.2*sin(z*0.045)
 
 func height_at(x: float,z: float) -> float:
 	var h := noise.get_noise_2d(x,z)*0.17 + noise.get_noise_2d(x*0.19,z*0.19)*0.5
-	h += noise.get_noise_2d(x*9,z*9)*.11*smoothstep(-110,-60,z)
+	h += noise.get_noise_2d(x*9,z*9)*.035*smoothstep(-110,-60,z)
+	if z>-48 and z<52 and absf(x)<46:
+		var mud_weight:=1.0-smoothstep(2.8,6.2,absf(x-lane_x(z)))
+		var hx:int=posmod(int(floor(z*.10*256)),256);var hz:int=posmod(int(floor(x*.10*256)),256)
+		h+=(mud_height.get_pixel(hx,hz).r-.5)*.55*mud_weight
+		h+=noise.get_noise_2d(x*22,z*22)*.12*mud_weight
 	var bank := smoothstep(-77.0,-111.0,z)
 	h += bank*3.0
 	h -= (1.0-smoothstep(16.0,26.0,absf(z+100.0)))*4.0
 	if z < -120:
-		h += pow((-z-120)/75.0,1.15)*16.0 + sin(x*.035+z*.024)*7.0*smoothstep(-120,-200,z)
+		h += pow((-z-120)/75.0,1.05)*8.5 + sin(x*.020+z*.015)*4.0*smoothstep(-120,-200,z)
 	var rut := minf(absf(x-lane_x(z)-1.3),absf(x-lane_x(z)+1.3))
-	h -= (1.0-smoothstep(0.3,0.7,rut))*0.22*(1.0-smoothstep(24,30,z))
+	h -= (1.0-smoothstep(0.25,0.72,rut))*0.24*(1.0-smoothstep(24,30,z))
 	return h
 
 func create_terrain(x0: float,x1: float,z0: float,z1: float,step: float,near_patch: bool) -> void:
@@ -189,8 +213,10 @@ func create_terrain(x0: float,x1: float,z0: float,z1: float,step: float,near_pat
 	mat.shader = load("res://scripts/production/visual_slice_terrain.gdshader")
 	for pair in [["grass_color","leafy_grass_diff"],["soil_color","aerial_mud_1_diff"],["soil_normal","aerial_mud_1_nor_gl"],["gravel_color","gravel_ground_01_diff"],["asphalt_color","asphalt_02_diff"]]:
 		mat.set_shader_parameter(pair[0],load(PBR+pair[1]+".jpg"))
+	mat.set_shader_parameter("soil_roughness",load(PBR+"aerial_mud_1_rough.png"))
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh;mi.material_override = mat
+	mi.gi_mode=GeometryInstance3D.GI_MODE_STATIC
 	mi.name = "SculptedNearTerrain" if near_patch else "ValleyTerrain"
 	add_child(mi)
 
@@ -204,13 +230,14 @@ func spawn(file: String,position3: Vector3,scale3: float=1.0,yaw: float=0.0,arch
 	if architecture:
 		for child: Node in model.find_children("*","MeshInstance3D",true,false):
 			var mi := child as MeshInstance3D
+			mi.gi_mode=GeometryInstance3D.GI_MODE_STATIC
 			for i in range(mi.mesh.get_surface_count()):
 				var material := mi.get_active_material(i)
 				if material != null and mats.has(material.resource_name): mi.set_surface_override_material(i,mats[material.resource_name])
 	return model
 
 func create_architecture() -> void:
-	spawn(ASSET+"house_damaged.glb",Vector3(-11,height_at(-11,4)-.05,4),1.05,25,true)
+	spawn(ASSET+"hero_house_ruined.glb",Vector3(-11,height_at(-11,4)-.05,4),1.05,25,true)
 	spawn(ASSET+"house_damaged.glb",Vector3(-6,height_at(-6,-40),-40),.91,18,true)
 	spawn(ASSET+"house_intact.glb",Vector3(5,height_at(5,-55),-55),.82,-12,true)
 	spawn(ASSET+"house_damaged.glb",Vector3(55,height_at(55,-68),-68),.82,-14,true)
@@ -267,48 +294,42 @@ func create_armor() -> void:
 				material.set_shader_parameter("rough_channel",channels[original.roughness_texture_channel])
 				mi.set_surface_override_material(i,material)
 
-func grass_mesh() -> ArrayMesh:
-	var st := SurfaceTool.new();st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for b in range(9):
-		var angle := rng.randf()*TAU
-		var p := Vector3(rng.randf_range(-.12,.12),0,rng.randf_range(-.12,.12))
-		var across := Vector3(cos(angle),0,sin(angle))
-		var bend := Vector3(-sin(angle),0,cos(angle))*rng.randf_range(.09,.30)
-		var h := rng.randf_range(.11,.30)
-		var width := rng.randf_range(.012,.032)
-		for seg in range(3):
-			var lo := float(seg)/3.0;var hi := float(seg+1)/3.0
-			var a := p+Vector3.UP*h*lo+bend*lo*lo
-			var c := p+Vector3.UP*h*hi+bend*hi*hi
-			var pts := [a-across*width*(1-lo),a+across*width*(1-lo),c-across*width*(1-hi),a+across*width*(1-lo),c+across*width*(1-hi),c-across*width*(1-hi)]
-			var uv := [Vector2(0,lo),Vector2(1,lo),Vector2(0,hi),Vector2(1,lo),Vector2(1,hi),Vector2(0,hi)]
-			for j in range(6):
-				st.set_normal(Vector3.UP*.55+Vector3(-sin(angle),0,cos(angle))*.45)
-				st.set_color(Color(1,1,1))
-				st.set_uv(uv[j]);st.add_vertex(pts[j])
-	return st.commit()
+func create_groundcover() -> void:
+	var variants: Array[String]=["grass_bermuda_01_3","grass_bermuda_01_5","grass_bermuda_01_7","grass_medium_01_0","grass_medium_01_3","grass_medium_01_5"]
+	for variant in range(variants.size()):
+		var plant:Node3D=load(ASSET+variants[variant]+".glb").instantiate();add_child(plant)
+		var source:MeshInstance3D=plant.find_children("*","MeshInstance3D",true,false)[0]
+		var mesh:Mesh=source.mesh.duplicate();var local_transform:=source.global_transform
+		for surface_index in range(mesh.get_surface_count()):
+			var original:=mesh.surface_get_material(surface_index) as StandardMaterial3D
+			var material:=ShaderMaterial.new()
+			material.shader=load("res://scripts/production/visual_slice_grass.gdshader")
+			material.set_shader_parameter("color_texture",original.albedo_texture)
+			material.set_shader_parameter("normal_texture",original.normal_texture)
+			var family:="grass_bermuda_01" if variant<3 else "grass_medium_01"
+			material.set_shader_parameter("alpha_texture",load(PBR+family+"_alpha_1k.png"))
+			mesh.surface_set_material(surface_index,material)
+		plant.free()
+		var transforms:Array[Transform3D]=[]
+		for i in range(65000 if variant<3 else 15000):
+			var x:=rng.randf_range(-29,26);var z:=rng.randf_range(-37,22)
+			if absf(z+19-sin(x*.04)*2)<3.9:continue
+			if x>-19 and x<-4 and z>-3 and z<12:continue
+			var lane:=absf(x-lane_x(z))
+			var probability:=smoothstep(2.4,4.7,lane)*(.6+.5*noise.get_noise_2d(x*.8,z*.8))
+			if rng.randf()>probability:continue
+			var s:=rng.randf_range(3.0,5.2) if variant<3 else rng.randf_range(1.1,2.0)
+			var basis:=Basis(Vector3.UP,rng.randf()*TAU).scaled(Vector3.ONE*s)
+			transforms.append(Transform3D(basis,Vector3(x,height_at(x,z)+.02,z))*local_transform)
+		var mm:=MultiMesh.new();mm.transform_format=MultiMesh.TRANSFORM_3D;mm.mesh=mesh;mm.instance_count=transforms.size()
+		for i in range(transforms.size()):mm.set_instance_transform(i,transforms[i])
+		var inst:=MultiMeshInstance3D.new();inst.multimesh=mm;inst.name=variants[variant]
+		inst.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		add_child(inst)
+		print("SOURCE_GRASS_INSTANCES ",variants[variant]," ",transforms.size())
 
 func create_vegetation() -> void:
-	var grass := grass_mesh()
-	var mat := ShaderMaterial.new();mat.shader=load("res://scripts/production/visual_slice_grass.gdshader")
-	grass.surface_set_material(0,mat)
-	var trs: Array[Transform3D] = []
-	for i in range(72000):
-		var x := rng.randf_range(-42,44);var z := rng.randf_range(-44,42)
-		var road_dist := absf(z+19-sin(x*.04)*2)
-		if road_dist<3.8:continue
-		if x>-20 and x<-6 and z>-7 and z<6:continue
-		var lane := absf(x-lane_x(z))
-		var density := smoothstep(2.7,5.8,lane)*.91
-		density *= .63+.37*noise.get_noise_2d(x*1.5,z*1.5)
-		if rng.randf()>density:continue
-		var s := rng.randf_range(.45,1.1)
-		trs.append(Transform3D(Basis(Vector3.UP,rng.randf()*TAU).scaled(Vector3(s,s,s)),Vector3(x,height_at(x,z)+.02,z)))
-	var mm := MultiMesh.new();mm.transform_format=MultiMesh.TRANSFORM_3D;mm.mesh=grass;mm.instance_count=trs.size()
-	for i in range(trs.size()):mm.set_instance_transform(i,trs[i])
-	var inst := MultiMeshInstance3D.new();inst.multimesh=mm;inst.name="MixedHeightMeadow";inst.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(inst)
-	print("MEADOW_TUFTS=",trs.size())
+	create_groundcover()
 	var tree := ASSET+"island_tree_01_0.glb"
 	if FileAccess.file_exists(tree):
 		for p in [Vector3(-23,0,9),Vector3(-21,0,-12),Vector3(-15,0,-23),Vector3(12,0,-37),Vector3(28,0,-24),Vector3(30,0,-62)]:
@@ -402,11 +423,11 @@ func create_distant_forest() -> void:
 		var quad:=QuadMesh.new();quad.size=Vector2.ONE*float(record["size"]);quad.material=mat
 		var mm:=MultiMesh.new();mm.transform_format=MultiMesh.TRANSFORM_3D;mm.mesh=quad
 		var transforms:Array[Transform3D]=[]
-		for i in range(1700):
+		for i in range(520 if variant<6 else 2100):
 			var x:=rng.randf_range(-345,345);var z:=rng.randf_range(-650,-80)
 			if z>-115 and z<-82:continue
-			var s:=rng.randf_range(1.3,2.5)
-			if variant>=6:s*=1.4
+			var s:=rng.randf_range(1.1,2.0)
+			if variant>=6:s*=1.7
 			if noise.get_noise_2d(x*.8,z*.8)<-.2:continue
 			transforms.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*s),Vector3(x,height_at(x,z)+float(record["center_y"])*s,z)))
 		mm.instance_count=transforms.size()
@@ -438,7 +459,8 @@ func create_water() -> void:
 		for j in range(18):
 			for v in [Vector3.ZERO,points[j],points[(j+1)%18]]:
 				st.set_normal(Vector3.UP);st.add_vertex(v)
-		add_mesh(st.commit(),water,Vector3(x,height_at(x,z)+.14,z))
+		var puddle:=add_mesh(st.commit(),water,Vector3(x,height_at(x,z)+.20,z))
+		puddle.layers=2
 
 func create_smoke() -> void:
 	var volume := NoiseTexture3D.new()
@@ -470,7 +492,7 @@ func capture() -> void:
 	var err := image.save_png(path)
 	var avg := 0.0
 	for value in times:avg+=value/maxi(times.size(),1)
-	var report := {"captured_at_utc":Time.get_datetime_string_from_system(true),"engine":Engine.get_version_info(),"renderer":RenderingServer.get_current_rendering_method(),"gpu":RenderingServer.get_video_adapter_name(),"width":image.get_width(),"height":image.get_height(),"save_error":err,"camera_position":str(camera.position),"camera_rotation":str(camera.rotation_degrees),"fov":camera.fov,"average_frame_ms_short_capture":avg,"sample_count":times.size(),"screenshot_source":"Viewport.get_texture().get_image() after frame_post_draw","post_capture_image_editing":false,"gameplay_changes":false,"visual_acceptance":"NOT_CLAIMED"}
+	var report := {"captured_at_utc":Time.get_datetime_string_from_system(true),"engine":Engine.get_version_info(),"renderer":RenderingServer.get_current_rendering_method(),"gpu":RenderingServer.get_video_adapter_name(),"width":image.get_width(),"height":image.get_height(),"save_error":err,"camera_position":str(camera.position),"camera_rotation":str(camera.rotation_degrees),"fov":camera.fov,"internal_3d_render_scale":get_viewport().scaling_3d_scale,"average_frame_ms_short_capture":avg,"sample_count":times.size(),"screenshot_source":"Viewport.get_texture().get_image() after frame_post_draw","post_capture_image_editing":false,"gameplay_changes":false,"visual_acceptance":"NOT_CLAIMED"}
 	FileAccess.open(OUT+"/runtime_metrics.json",FileAccess.WRITE).store_string(JSON.stringify(report,"\t"))
 	print("FRONTLINE_RIVER_TOWN_CAPTURED ",path," ",image.get_size()," average_ms=",avg)
 	get_tree().quit(err)

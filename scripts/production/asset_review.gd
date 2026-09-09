@@ -44,9 +44,18 @@ func run() -> void:
 	floor_node.material_override = mat
 	stage.add_child(floor_node)
 	var assets := ["city_v20/family_house_01.glb","city_hq/03_shop_front8.glb","vehicles/mbt_abrams.glb","nature_real/pine_sapling_small_lod.glb"]
+	var args:=OS.get_cmdline_user_args()
+	if args.size()>0:assets=[args[0]]
 	DirAccess.make_dir_recursive_absolute("res://artifacts/visual_reset")
 	for asset: String in assets:
-		var model: Node3D = load("res://assets/golden_scene/"+asset).instantiate()
+		var model:Node3D
+		if asset.is_absolute_path():
+			var document:=GLTFDocument.new();var state:=GLTFState.new()
+			var err:=document.append_from_file(asset,state)
+			if err!=OK:quit(err);return
+			model=document.generate_scene(state)
+		else:
+			model=load("res://assets/golden_scene/"+asset).instantiate()
 		stage.add_child(model)
 		var bounds := get_bounds(model)
 		var factor := 10.0 / maxf(bounds.size.x,bounds.size.z)

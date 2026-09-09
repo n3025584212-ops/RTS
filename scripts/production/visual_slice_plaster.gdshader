@@ -7,10 +7,10 @@ float n(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(mix(h(
 void vertex(){wp=(MODEL_MATRIX*vec4(VERTEX,1.)).xyz;}
 void fragment(){
  vec3 scan=texture(color_texture,UV*.8).rgb;
- vec3 color=mix(vec3(.43,.405,.346),scan,.30);
+ vec3 color=mix(vec3(.28,.267,.229),scan*.8,.72);
  float stains=smoothstep(.50,.72,n(wp*vec3(1.7,.09,1.7)))*.23;
  float damp=(1.-smoothstep(.15,1.9,wp.y))*.32;
  ALBEDO=color*(1.-stains-damp);
- ROUGHNESS=.94;
- NORMAL_MAP=texture(normal_texture,UV*.8).rgb;NORMAL_MAP_DEPTH=.42;
+ ROUGHNESS=.87;
+ NORMAL_MAP=texture(normal_texture,UV*.8).rgb;NORMAL_MAP_DEPTH=.85;
 }

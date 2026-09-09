@@ -1,8 +1,8 @@
 {
   "capture": {
     "path": "artifacts\\visual_reset\\river_town_actual_1920x1080.png",
-    "sha256": "d0364822e6937f45af05ba32f55ed6604d877b37767bc38897114ef65392dad4",
-    "captured_at_utc": "2026-09-08T12:45:50",
+    "sha256": "00d8aa2a402f21e99780dbd7baefc982f5c0a453632d865dac272fa451ac17ad",
+    "captured_at_utc": "2026-09-09T03:56:18",
     "source": "Godot Viewport.get_texture().get_image(); pixels not edited"
   },
   "reference": {
@@ -12,7 +12,7 @@
   "runtime_sources": [
     {
       "path": "scripts\\production\\river_town_visual_slice.gd",
-      "sha256": "988014f03c2d982d50849985049893a07315dcc61d6a67c024a0318cc16d7c57"
+      "sha256": "fbccc9abc7ca6828070c8ea480e55625bd37499add49ed367b1acf809033a4f8"
     },
     {
       "path": "scenes\\production\\RiverTownVisualSlice.tscn",
@@ -20,15 +20,19 @@
     },
     {
       "path": "scripts\\production\\visual_slice_armor.gdshader",
-      "sha256": "68390da518d128837006ac11d81885321fcba535e132740b0874abdd670c8f65"
+      "sha256": "6af90f768b172a3e6b47b08b8fdfcd89d87edfb38317ee40e5584a58a19b09e1"
     },
     {
       "path": "scripts\\production\\visual_slice_grass.gdshader",
-      "sha256": "619309a0edd8b7d72d56b3fffd7104c752b52ba082a4ee7d836b29603f6abf29"
+      "sha256": "637eae85aa7ae442176fcb86720e592cb8766479d0579307bf0990be25605c6e"
     },
     {
       "path": "scripts\\production\\visual_slice_plaster.gdshader",
-      "sha256": "0cb399e32a1d3fdcc5a76b71f74358e51b9fd644bbd8b090f8ce5eee10c05d23"
+      "sha256": "85d047bcf60a621b117c10258f46840344dffd110eb1da632a5a6011080f3614"
+    },
+    {
+      "path": "scripts\\production\\visual_slice_sky.gdshader",
+      "sha256": "1c68b2cad9fcf4694b702aebe956a9f9b80d3c002877c6a2c0f7e440f071efd2"
     },
     {
       "path": "scripts\\production\\visual_slice_smoke.gdshader",
@@ -36,7 +40,7 @@
     },
     {
       "path": "scripts\\production\\visual_slice_terrain.gdshader",
-      "sha256": "b6157e7765ca66e94591df19411b6eb4c99af73c40aea242c23977b85b0fe164"
+      "sha256": "20f4c020a7a550b96dda8c50d3f42d1188daddc525a6da8568114208ea05cc9c"
     }
   ]
 }

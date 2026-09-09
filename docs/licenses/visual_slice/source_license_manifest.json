@@ -65,7 +65,7 @@
           "size": 74159400
         }
       ],
-      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Grass uses the separate publisher Alpha map in a masked runtime shader because the source glTF color JPEG has no transparency. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
     },
     {
       "name": "island_tree_01",
@@ -152,7 +152,7 @@
           "size": 60709812
         }
       ],
-      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Grass uses the separate publisher Alpha map in a masked runtime shader because the source glTF color JPEG has no transparency. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
     },
     {
       "name": "shrub_02",
@@ -197,7 +197,111 @@
           "size": 395120
         }
       ],
-      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Grass uses the separate publisher Alpha map in a masked runtime shader because the source glTF color JPEG has no transparency. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+    },
+    {
+      "name": "grass_bermuda_01",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/grass_bermuda_01",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "grass_bermuda_01_1k.gltf",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/grass_bermuda_01/grass_bermuda_01_1k.gltf",
+          "sha256": "a1e5bb7fcf33721dc4844d7acacab80759fccec659f1ea643f8701afc542e207",
+          "publisher_md5": "a1bdd74118d2387a42dba4f605226f87",
+          "size": 32912
+        },
+        {
+          "path": "textures/grass_bermuda_01_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_bermuda_01/grass_bermuda_01_nor_gl_1k.jpg",
+          "sha256": "4475b37d6e4d217ce03547216f62d1ef6e65cafda2355fd0cb2aeb6d919b9338",
+          "publisher_md5": "73a585e0963ff6bf3cefa845cbee0645",
+          "size": 709845
+        },
+        {
+          "path": "textures/grass_bermuda_01_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_bermuda_01/grass_bermuda_01_diff_1k.jpg",
+          "sha256": "ef202eeb8f8fb3312446009acecc87e5679a7d612e4dee859d8a849e00af5fcb",
+          "publisher_md5": "234be9f52cfcd3380c7f782baaa841c3",
+          "size": 175425
+        },
+        {
+          "path": "textures/grass_bermuda_01_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_bermuda_01/grass_bermuda_01_arm_1k.jpg",
+          "sha256": "38190d342fe951c33ff8c37dd2e3de37aca4cc7633e91be8b0d1c1f71057a641",
+          "publisher_md5": "87c58d5d3345d579eab570f7eb446313",
+          "size": 500088
+        },
+        {
+          "path": "grass_bermuda_01.bin",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/grass_bermuda_01/grass_bermuda_01.bin",
+          "sha256": "b98be48b43afb9d57f6c722d918a49996635064b829b16dc14ef4a48c0f04dae",
+          "publisher_md5": "2940aa3405004b62983fd70bede8e47f",
+          "size": 32260
+        },
+        {
+          "path": "assets\\visual_slice\\surfaces\\grass_bermuda_01_alpha_1k.png",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/grass_bermuda_01/grass_bermuda_01_alpha_1k.png",
+          "sha256": "e58b3052aad2f107cdd763e437f80ed8fb5a31bcc43b44023f7f767cb3d9888e",
+          "publisher_md5": "274285abb11b3b7a0fd277b9923d1074",
+          "size": 59564
+        }
+      ],
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Grass uses the separate publisher Alpha map in a masked runtime shader because the source glTF color JPEG has no transparency. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+    },
+    {
+      "name": "grass_medium_01",
+      "publisher": "Poly Haven",
+      "source_page": "https://polyhaven.com/a/grass_medium_01",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "files": [
+        {
+          "path": "grass_medium_01_1k.gltf",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/grass_medium_01/grass_medium_01_1k.gltf",
+          "sha256": "3e5e2a314c94e16de54fd7c28e41709731fbd2b1613ab539f1544f622ddb6a85",
+          "publisher_md5": "28dd8247f3faa749bf87a0b84be01e7e",
+          "size": 27110
+        },
+        {
+          "path": "textures/grass_medium_01_nor_gl_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_medium_01/grass_medium_01_nor_gl_1k.jpg",
+          "sha256": "cae298d3d1d7ff7c7e210ad8ac772b96706e356f9315a6b04fde373ce01ccf1e",
+          "publisher_md5": "fcf43dd1253f56e4c361079f34155c37",
+          "size": 956166
+        },
+        {
+          "path": "textures/grass_medium_01_diff_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_medium_01/grass_medium_01_diff_1k.jpg",
+          "sha256": "71495bd6a11fddcab0aaff38246fea1a7b802a705483f1c7cbca53955daa8050",
+          "publisher_md5": "6b18ed50d776fd20c1304d9994bd764e",
+          "size": 395673
+        },
+        {
+          "path": "textures/grass_medium_01_arm_1k.jpg",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_medium_01/grass_medium_01_arm_1k.jpg",
+          "sha256": "9a3a30f72bc02f4398967c5b08f2d20cce30bd423a2613b42a727034296fa3ae",
+          "publisher_md5": "37ed2730a507b681af2e9f9f7ef3ae5e",
+          "size": 679518
+        },
+        {
+          "path": "grass_medium_01.bin",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/grass_medium_01/grass_medium_01.bin",
+          "sha256": "f4587cabdb96a2e96d8be644923dc954a248edfaaa717a0ff224cacb898bee1f",
+          "publisher_md5": "e0527a0561c2dae5b7b5c1b478d8c6bf",
+          "size": 1006632
+        },
+        {
+          "path": "assets\\visual_slice\\surfaces\\grass_medium_01_alpha_1k.png",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/grass_medium_01/grass_medium_01_alpha_1k.png",
+          "sha256": "711a8e49af758d6a6ce1f610db858899a27be19da6d1866bd35c13bc7b8ffeff",
+          "publisher_md5": "6b5b251ef1ca9a69ab9f49def66d758a",
+          "size": 648718
+        }
+      ],
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Grass uses the separate publisher Alpha map in a masked runtime shader because the source glTF color JPEG has no transparency. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
     },
     {
       "name": "rock_moss_set_01",
@@ -242,7 +346,7 @@
           "size": 168099
         }
       ],
-      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Grass uses the separate publisher Alpha map in a masked runtime shader because the source glTF color JPEG has no transparency. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
     },
     {
       "name": "barrel_03",
@@ -287,7 +391,7 @@
           "size": 249922
         }
       ],
-      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Grass uses the separate publisher Alpha map in a masked runtime shader because the source glTF color JPEG has no transparency. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
     },
     {
       "name": "wooden_military_crate",
@@ -332,7 +436,7 @@
           "size": 687548
         }
       ],
-      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
+      "modifications": "Blender GLB conversion, bounded decimation, original PBR textures retained. Grass uses the separate publisher Alpha map in a masked runtime shader because the source glTF color JPEG has no transparency. Complete plant and rock variants re-centered separately. Original multi-part crate stays assembled. Far foliage cards rendered from these meshes in Godot 4.7.1; these are runtime assets, not final-frame replacements."
     },
     {
       "name": "worn_plaster_wall",
@@ -404,7 +508,7 @@
           "publisher_md5": "c69498687e876bf68d2a8b8a62234eb9"
         }
       ],
-      "modifications": "Unchanged HDR pixels; Godot sky rotation and intensity are scene lighting parameters."
+      "modifications": "HDR file unchanged on disk. Runtime sky shader bounds the solar disk radiance for background and reflection passes; a separate DirectionalLight3D supplies direct sunlight."
     },
     {
       "name": "leafy_grass",
@@ -422,7 +526,21 @@
       "license": "CC0-1.0",
       "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
       "provenance": "Existing e909d17 repository asset, documented in docs/production/GOLDEN_SCENE_V1_ASSET_MANIFEST.md",
-      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged."
+      "modifications": "New JPG copies limited to 1024 pixels via prepare_slice_textures.py; historical source files unchanged.",
+      "additional_verified_files": [
+        {
+          "path": "assets\\visual_slice\\surfaces\\aerial_mud_1_disp.png",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/aerial_mud_1/aerial_mud_1_disp_1k.png",
+          "sha256": "2c880ab8d66756e8a5eaa3657a17794e10dcd4036cf53bca891f569d1963586d",
+          "publisher_md5": "36e9f32615ba95d4638e9cebc026e75a"
+        },
+        {
+          "path": "assets\\visual_slice\\surfaces\\aerial_mud_1_rough.png",
+          "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/aerial_mud_1/aerial_mud_1_rough_1k.png",
+          "sha256": "dcaaceef7415022f90ab66f59cdac159b635f94a21bb6b9a556401c58f463a86",
+          "publisher_md5": "d80319e18a4221cc7ac1fb87dc6de6d0"
+        }
+      ]
     },
     {
       "name": "gravel_ground_01",
