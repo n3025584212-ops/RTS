@@ -79,3 +79,19 @@ Neither batch 01 nor batch 02 is an accepted replacement for the Run #5 floor.
 See `docs/current/RIVER_TOWN_LOCAL_HIGH_FIDELITY_BATCH_02.md` for the rejected
 study, actual evidence and measurement limitations. Overall task remains ACTIVE;
 no claim of maximum quality or full-game scalability is made.
+
+
+## Batch 03 ground construction — 2026-09-09
+
+BATCH_03_ACCEPTANCE=REJECTED_AS_QUALITY_UPGRADE
+TASK_STATUS=ACTIVE
+
+A bounded terrain and groundcover batch addresses continuous deep-rut silhouettes
+and uniform plant distribution. It uses shared deterministic cover data for geometry
+placement and soil transitions. This is a limited improvement candidate, not a
+claim that the foreground asset-quality problem is solved. See
+`docs/current/RIVER_TOWN_LOCAL_HIGH_FIDELITY_BATCH_03.md` for implementation,
+real runtime evidence and explicit replication/performance limits.
+
+USER_REVIEW_BATCH_03=NO_MEANINGFUL_OVERALL_IMPROVEMENT
+BATCH_03_COMMIT=USER_REQUESTED_IMPLEMENTATION_CHECKPOINT_ONLY

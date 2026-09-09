@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/production/local_fidelity_cover_field.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+seed_value = 34817
+patch_scale_m = 7.5
+origin = Vector2(-32,-40)
+extent = Vector2(62,68)
+resolution = 512

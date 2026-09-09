@@ -4,7 +4,8 @@ extends Node3D
 const OUT := "res://artifacts/visual_reset"
 const ASSET := "res://assets/visual_slice/"
 const PBR := "res://assets/visual_slice/surfaces/"
-const ROAD_PROFILE = preload("res://assets/visual_slice/profiles/road_high_fidelity.tres")
+const ROAD_PROFILE = preload("res://assets/visual_slice/profiles/road_surface_v2.tres")
+const COVER_FIELD = preload("res://assets/visual_slice/profiles/groundcover_field.tres")
 var rng := RandomNumberGenerator.new()
 var noise := FastNoiseLite.new()
 var camera: Camera3D
@@ -38,7 +39,8 @@ func _ready() -> void:
 	noise.fractal_octaves = 4
 	mud_height=(load(ASSET+"surfaces/aerial_mud_1_disp.png") as Texture2D).get_image()
 	if mud_height.is_compressed():mud_height.decompress()
-	mud_height.resize(256,256,Image.INTERPOLATE_BILINEAR)
+	mud_height.resize(512,512,Image.INTERPOLATE_BILINEAR)
+	COVER_FIELD.build()
 	get_window().size = Vector2i(1920,1080)
 	get_window().content_scale_size = Vector2i(1920,1080)
 	get_viewport().msaa_3d = Viewport.MSAA_4X
@@ -218,9 +220,12 @@ func base_height_at(x: float,z: float) -> float:
 	if z>-48 and z<52 and absf(x)<46:
 		var mud_weight:=1.0-smoothstep(2.8,6.2,absf(x-lane_x(z)))
 		var compressed := 1.-smoothstep(.3,.8,absf(absf(x-lane_x(z))-1.3))
-		var hx:int=posmod(int(floor(z*.10*256)),256);var hz:int=posmod(int(floor(x*.10*256)),256)
-		h+=(mud_height.get_pixel(hx,hz).r-.5)*lerpf(.34,.14,compressed)*mud_weight
-		h+=noise.get_noise_2d(x*22,z*22)*lerpf(.065,.025,compressed)*mud_weight
+		var pixel:=Vector2(z,x)*51.2
+		var hx:=floori(pixel.x);var hz:=floori(pixel.y)
+		var fx:=pixel.x-hx;var fz:=pixel.y-hz
+		var relief:=lerpf(lerpf(mud_height.get_pixel(posmod(hx,512),posmod(hz,512)).r,mud_height.get_pixel(posmod(hx+1,512),posmod(hz,512)).r,fx),lerpf(mud_height.get_pixel(posmod(hx,512),posmod(hz+1,512)).r,mud_height.get_pixel(posmod(hx+1,512),posmod(hz+1,512)).r,fx),fz)
+		h+=(relief-.5)*lerpf(.20,.055,compressed)*mud_weight
+		h+=noise.get_noise_2d(x*22,z*22)*lerpf(.035,.012,compressed)*mud_weight
 	var bank := smoothstep(-77.0,-111.0,z)
 	h += bank*3.0
 	h -= (1.0-smoothstep(16.0,26.0,absf(z+100.0)))*4.0
@@ -269,6 +274,10 @@ func create_terrain(x0: float,x1: float,z0: float,z1: float,step: float,near_pat
 		mat.set_shader_parameter(pair[0],load(PBR+pair[1]+".jpg"))
 	mat.set_shader_parameter("soil_roughness",load(PBR+"aerial_mud_1_rough.png"))
 	mat.set_shader_parameter("soil_height",load(PBR+"aerial_mud_1_disp.png"))
+	mat.set_shader_parameter("bare_color",load(PBR+"dirt_aerial_03_diff.jpg"))
+	mat.set_shader_parameter("cover_field",COVER_FIELD.texture)
+	mat.set_shader_parameter("cover_origin",COVER_FIELD.origin)
+	mat.set_shader_parameter("cover_extent",COVER_FIELD.extent)
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh;mi.material_override = mat
 	mi.gi_mode=GeometryInstance3D.GI_MODE_STATIC
@@ -489,6 +498,9 @@ func create_armor() -> void:
 				mi.set_surface_override_material(i,material)
 
 func create_groundcover() -> void:
+	# Preserve the original random stream for all trees, buildings and clutter.
+	var placement_rng:=RandomNumberGenerator.new()
+	placement_rng.seed=953471
 	var variants: Array[String]=["grass_bermuda_01_3","grass_bermuda_01_5","grass_bermuda_01_7","grass_medium_01_0","grass_medium_01_3","grass_medium_01_5"]
 	for variant in range(variants.size()):
 		var plant:Node3D=load(ASSET+variants[variant]+".glb").instantiate();add_child(plant)
@@ -514,6 +526,16 @@ func create_groundcover() -> void:
 			if rng.randf()>probability:continue
 			var s:=rng.randf_range(3.0,5.2) if variant<3 else rng.randf_range(1.1,2.0)
 			var basis:=Basis(Vector3.UP,rng.randf()*TAU).scaled(Vector3.ONE*s)
+			# Move existing instances into coherent plant colonies, keeping mesh/count fidelity.
+			if placement_rng.randf()>(.065+.935*pow(COVER_FIELD.sample(Vector2(x,z)),1.4)):
+				for attempt in range(96):
+					var candidate:=Vector2(placement_rng.randf_range(-29,26),placement_rng.randf_range(-37,22))
+					if absf(candidate.y+19-sin(candidate.x*.04)*2)<3.9:continue
+					if candidate.x>-19 and candidate.x<-4 and candidate.y>-3 and candidate.y<12:continue
+					if absf(candidate.x-lane_x(candidate.y))<4.0:continue
+					if placement_rng.randf()>(.065+.935*pow(COVER_FIELD.sample(candidate),1.4)):continue
+					x=candidate.x;z=candidate.y
+					break
 			transforms.append(Transform3D(basis,Vector3(x,height_at(x,z)+.02,z))*local_transform)
 		var mm:=MultiMesh.new();mm.transform_format=MultiMesh.TRANSFORM_3D;mm.mesh=mesh;mm.instance_count=transforms.size()
 		for i in range(transforms.size()):mm.set_instance_transform(i,transforms[i])

@@ -9,6 +9,11 @@ uniform sampler2D gravel_color : source_color, filter_linear_mipmap_anisotropic,
 uniform sampler2D asphalt_color : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D soil_height : filter_linear_mipmap_anisotropic, repeat_enable;
 
+uniform sampler2D bare_color : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2D cover_field : filter_linear, repeat_disable;
+uniform vec2 cover_origin;
+uniform vec2 cover_extent;
+
 varying vec3 world;
 varying vec3 world_normal;
 
@@ -44,12 +49,17 @@ void fragment(){
  // Patchy shoulders and churned margins prevent a clean mathematical strip.
  float shoulder=noise(p*.11+vec2(5.7,2.3));
  float churn=mud*mix(.68,1.0,smoothstep(.28,.76,shoulder+n2*.25));
- vec3 col=mix(grass,soil,churn);
+ vec2 field_uv=(p-cover_origin)/cover_extent;
+ float in_field=step(0.,field_uv.x)*step(field_uv.x,1.)*step(0.,field_uv.y)*step(field_uv.y,1.);
+ float cover=mix(1.,texture(cover_field,field_uv).r,in_field);
+ vec3 bare=texture(bare_color,p*.26).rgb*vec3(.43,.37,.27);
+ vec3 worn_ground=mix(bare,grass,smoothstep(.10,.75,cover));
+ vec3 col=mix(worn_ground,soil,churn);
  col=mix(col,gravel,road);
  col=mix(col,asphalt,asphalt_core);
 
- float rut_center=min(abs(route-1.30),abs(route+1.30));
- float rut=1.-smoothstep(.24,.67,rut_center);
+ float rut_center=abs(abs(route-.08*sin(p.y*.23))-1.30);
+ float rut=1.-smoothstep(.24,.80,rut_center);
  float wet_noise=smoothstep(.42,.75,noise(p*.38+vec2(12.1,3.2)));
  float relief=texture(soil_height,p.yx*.10).r;
  float low_pockets=1.-smoothstep(.34,.60,relief);
@@ -72,6 +82,6 @@ void fragment(){
  SPECULAR=mix(.28,.72,wet);
 
  NORMAL_MAP=texture(soil_normal,p.yx*.105).rgb;
- NORMAL_MAP_DEPTH=mix(.44,.72,mud);
+ NORMAL_MAP_DEPTH=mix(.35,.50,mud);
  AO=clamp(.92-rut*mud*.18,0.,1.);
 }
