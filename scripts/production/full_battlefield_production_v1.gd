@@ -36,12 +36,13 @@ func _ready() -> void:
 	get_viewport().scaling_3d_scale = 1.25
 
 	create_lighting()
+	tune_full_battlefield_lighting()
 	create_materials()
 	create_battlefield_materials()
 	prepare_puddle_sites()
 
 	# Global terrain first; a denser near patch preserves the local-fidelity foreground method.
-	create_terrain(-430.0,430.0,-720.0,180.0,3.0,false)
+	create_terrain(-650.0,650.0,-900.0,520.0,4.0,false)
 	create_terrain(-46.0,46.0,-48.0,52.0,0.35,true)
 
 	create_field_system()
@@ -52,7 +53,7 @@ func _ready() -> void:
 	create_tree_belts()
 	create_industrial_horizon()
 	create_war_atmosphere()
-	create_distant_forest()
+	create_full_distant_forest()
 
 	var reflection := ReflectionProbe.new()
 	reflection.name = "BattlefieldReflection"
@@ -65,9 +66,9 @@ func _ready() -> void:
 	add_child(reflection)
 
 	# High oblique RTS war-photography framing: foreground force, river/bridge, city and horizon in one view.
-	camera.position = Vector3(245.0,138.0,315.0)
-	camera.look_at(Vector3(15.0,3.0,-175.0))
-	camera.fov = 47.0
+	camera.position = Vector3(285.0,104.0,255.0)
+	camera.look_at(Vector3(28.0,5.0,-145.0))
+	camera.fov = 44.0
 	camera.near = 0.5
 	camera.far = 1900.0
 	camera.current = true
@@ -87,6 +88,28 @@ func create_battlefield_materials() -> void:
 	mats["field_mud"] = surface("aerial_mud_1",Color(0.68,0.60,0.49),0.46)
 	mats["asphalt"] = surface("asphalt_02",Color(0.52,0.50,0.46),0.60)
 	mats["industrial"] = surface("t_concrete_wall_002",Color(0.58,0.57,0.53),0.70)
+
+func tune_full_battlefield_lighting() -> void:
+	# The local slice uses stronger near-field fog. At battle scale it washes the city away,
+	# so retain atmosphere while restoring readable mid/far-ground contrast.
+	var world := get_node_or_null("WorldEnvironment") as WorldEnvironment
+	if world != null and world.environment != null:
+		var env := world.environment
+		env.ambient_light_energy = .40
+		env.tonemap_exposure = 1.02
+		env.fog_density = .00048
+		env.fog_light_energy = .58
+		env.fog_sky_affect = .045
+		env.fog_height_density = .0018
+		env.volumetric_fog_density = .00009
+		env.volumetric_fog_length = 900.0
+		env.volumetric_fog_ambient_inject = .10
+		env.ssao_intensity = 1.55
+		env.ssil_intensity = .38
+	for child: Node in find_children("*","DirectionalLight3D",true,false):
+		var sun := child as DirectionalLight3D
+		sun.light_energy = 2.15
+		sun.directional_shadow_max_distance = 720.0
 
 func create_surface_patch(rect: Rect2, material: Material, step: float, patch_name: String) -> void:
 	var st := SurfaceTool.new()
@@ -158,7 +181,7 @@ func create_global_river_and_bridge() -> void:
 	var water := ShaderMaterial.new()
 	water.shader = load("res://scripts/production/visual_slice_water.gdshader")
 	var river := PlaneMesh.new()
-	river.size = Vector2(720,78)
+	river.size = Vector2(820,105)
 	var river_node := add_mesh(river,water,Vector3(0,1.10,-101))
 	river_node.name = "StrategicRiver"
 
@@ -262,12 +285,12 @@ func create_infantry_columns() -> void:
 		for i in range(5):
 			var x := cx + (i%3)*3.2 + rng.randf_range(-1.2,1.2)
 			var z := cz + floori(i/3.0)*4.0 + rng.randf_range(-1.0,1.0)
-			spawn(INFANTRY+"soldier.glb",Vector3(x,height_at(x,z),z),1.0,rng.randf_range(150,205))
+			spawn(INFANTRY+"soldier.glb",Vector3(x,height_at(x,z),z),.085,rng.randf_range(150,205))
 			battlefield_unit_count += 1
 	for i in range(14):
 		var x := rng.randf_range(52,150)
 		var z := rng.randf_range(-155,-126)
-		spawn(INFANTRY+"soldier.glb",Vector3(x,height_at(x,z),z),1.0,rng.randf()*360)
+		spawn(INFANTRY+"soldier.glb",Vector3(x,height_at(x,z),z),.085,rng.randf()*360)
 		battlefield_unit_count += 1
 
 func create_urban_battle_zone() -> void:
@@ -294,12 +317,12 @@ func create_urban_battle_zone() -> void:
 			var model_path := core_models[(row*5+col*3)%core_models.size()]
 			if rng.randf() < .30:
 				model_path = ASSET+"house_damaged.glb"
-			var sc := rng.randf_range(.74,.98)
+			var sc := rng.randf_range(.95,1.30)
 			var architecture := model_path.begins_with(ASSET)
 			spawn(model_path,Vector3(x,height_at(x,z),z),sc,rng.randf_range(-8,8),architecture)
 			battlefield_building_count += 1
 
-	var church := spawn(CITY_REAL+"church_landmark.glb",Vector3(150,height_at(150,-235),-235),1.35,-4)
+	var church := spawn(CITY_REAL+"church_landmark.glb",Vector3(150,height_at(150,-235),-235),1.75,-4)
 	battlefield_building_count += 1
 	for child: Node in church.find_children("*","MeshInstance3D",true,false):
 		var mi := child as MeshInstance3D
@@ -345,6 +368,52 @@ func create_tree_belts() -> void:
 			continue
 		if rng.randf() < .55:
 			spawn(ASSET+"shrub_02_"+str(i%4)+".glb",Vector3(x,height_at(x,z),z),rng.randf_range(.45,.92),rng.randf()*360)
+
+func create_full_distant_forest() -> void:
+	# Battle-scale backdrop only. Keep the urban core and river readable instead of
+	# filling the entire middle distance with the local-slice forest.
+	var file := ASSET+"impostors/manifest.json"
+	if not FileAccess.file_exists(file):
+		return
+	var records: Array = JSON.parse_string(FileAccess.get_file_as_string(file))
+	for variant in range(records.size()):
+		var record: Dictionary = records[variant]
+		var mat := StandardMaterial3D.new()
+		mat.albedo_texture = load(record["file"])
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		mat.alpha_scissor_threshold = .10
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+		var quad := QuadMesh.new()
+		quad.size = Vector2.ONE*float(record["size"])
+		quad.material = mat
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = quad
+		var transforms: Array[Transform3D] = []
+		var requested := 300 if variant < 6 else 1150
+		for i in range(requested):
+			var x := rng.randf_range(-620,620)
+			var z := rng.randf_range(-880,-355)
+			# Open a long visual basin behind the city so roofs, church and smoke remain legible.
+			if x > -125 and x < 315 and z > -520:
+				continue
+			var sc := rng.randf_range(1.15,2.15)
+			if variant >= 6:
+				sc *= 1.55
+			if noise.get_noise_2d(x*.8,z*.8) < -.24:
+				continue
+			transforms.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE*sc),
+				Vector3(x,height_at(x,z)+float(record["center_y"])*sc,z)))
+		mm.instance_count = transforms.size()
+		for i in range(transforms.size()):
+			mm.set_instance_transform(i,transforms[i])
+		var inst := MultiMeshInstance3D.new()
+		inst.multimesh = mm
+		inst.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(inst)
 
 func create_industrial_horizon() -> void:
 	var base_z := -445.0
