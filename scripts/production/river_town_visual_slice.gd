@@ -522,11 +522,11 @@ func create_smoke() -> void:
 
 func _process(delta: float) -> void:
 	frames += 1
-	if frames>1:times.append(delta*1000.0)
-	# The scene is static and fully constructed before READY. Four presented
-	# frames are sufficient for the fixed proof capture while software Vulkan
+	if frames>=1:times.append(delta*1000.0)
+	# The scene is static and fully constructed before READY. The first fully presented
+	# frame is sufficient for the fixed proof capture while software Vulkan
 	# runners can take tens of seconds per frame at the unchanged 1.5x quality.
-	if capture_pending and frames==4:
+	if capture_pending and frames==1:
 		capture_pending=false
 		capture()
 
