@@ -12,11 +12,13 @@ func _ready() -> void:
 	create_wide_strategic_river_and_bridge()
 	create_hf_townfront_anchors()
 
-	# Keep the Run #5-quality foreground readable while making the bridge a true
-	# diagonal strategic structure instead of a thin horizontal map feature.
-	camera.position = Vector3(66.0, 18.5, 42.0)
-	camera.look_at(Vector3(2.0, 1.8, -96.0))
-	camera.fov = 50.0
+	# Acceptance camera follows the same local road/armor axis as the Run #5 quality
+	# anchor, but is raised enough to retain river, bridge, town and campaign depth.
+	# This keeps the high-fidelity foreground and the strategic crossing in one
+	# natural depth stack instead of forcing them to opposite edges of a wide shot.
+	camera.position = Vector3(9.0, 11.5, 35.0)
+	camera.look_at(Vector3(28.0, 1.8, -108.0))
+	camera.fov = 54.0
 	camera.near = 0.25
 	camera.far = 1250.0
 	camera.current = true
