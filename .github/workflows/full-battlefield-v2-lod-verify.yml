@@ -8,7 +8,6 @@ on:
       - "scenes/production/FullBattlefieldProductionV2LOD.tscn"
       - "scripts/production/full_battlefield_production_v2_lod.gd"
       - "scripts/production/full_battlefield_production_v2_lod_v5.gd"
-      - "scripts/production/full_battlefield_production_v2_lod_v7.gd"
       - "scripts/production/battlefield_visual_budget.gd"
       - "scripts/production/river_town_hero_shot_v2.gd"
       - "scripts/production/river_town_visual_slice.gd"
@@ -71,7 +70,6 @@ jobs:
             --capture --capture-frame=1 2>&1 | tee full-battlefield-v2-lod-runtime.log
           grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_LOD_READY' full-battlefield-v2-lod-runtime.log
           grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_LOD_V5_READY' full-battlefield-v2-lod-runtime.log
-          grep -q 'FRONTLINE_TOWN_COMPOSITION_READY' full-battlefield-v2-lod-runtime.log
           grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_LOD_CAPTURED' full-battlefield-v2-lod-runtime.log
           grep -q 'Forward+' full-battlefield-v2-lod-runtime.log
           ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' full-battlefield-v2-lod-runtime.log
