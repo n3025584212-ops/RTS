@@ -193,7 +193,12 @@ func create_far_campaign_horizon() -> void:
 		far_buildings += 1
 	for x in [-190.0, -65.0, 78.0, 205.0]:
 		var z := -440.0
-		var stack := rod(Vector3(x, height_at(x, z), z), Vector3(x, height_at(x, z) + 44.0, z), 1.8, "stone")
+		var stack_mesh := CylinderMesh.new()
+		stack_mesh.top_radius = 1.8
+		stack_mesh.bottom_radius = 1.8
+		stack_mesh.height = 44.0
+		stack_mesh.radial_segments = 8
+		var stack := add_mesh(stack_mesh, mats["stone"], Vector3(x, height_at(x, z) + 22.0, z))
 		VISUAL_BUDGET.apply_far_always_visible(stack)
 
 func capture() -> void:
