@@ -15,9 +15,10 @@ func _ready() -> void:
 	create_wide_strategic_river_and_bridge()
 	create_hf_townfront_anchors()
 
-	# Keep the Run #5 foreground dominant, but bias the view toward the crossing so
-	# armor -> rutted approach -> bridge -> town reads as one operational depth axis.
-	camera.position = Vector3(9.0, 11.5, 35.0)
+	# Keep the Run #5 foreground dominant while using parallax to clear the exact
+	# inherited tree at (30,-62) that lies on the old camera-to-bridge sightline.
+	# Moving the camera, not the tree, preserves the frozen Near composition.
+	camera.position = Vector3(-5.0, 11.5, 35.0)
 	camera.look_at(Vector3(28.0, 2.15, -108.0))
 	camera.fov = 53.0
 	camera.near = 0.25
