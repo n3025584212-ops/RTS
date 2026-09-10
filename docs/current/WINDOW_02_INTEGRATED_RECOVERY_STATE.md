@@ -1,7 +1,7 @@
 # FRONTLINE Window 02 Integrated Recovery State
 
 STATUS=ACTIVE_INTEGRATED_RECOVERY
-DATE=2026-09-10
+DATE=2026-09-11
 PROJECT=FRONTLINE
 ENGINE=Godot 4.7.1
 LANGUAGE=Typed GDScript
@@ -38,60 +38,49 @@ VISUAL_ACCEPTANCE=NOT_CLAIMED
 
 Run #13 re-proved the last successful Run #8 lineage in the current repository. Phase A is complete. The recovered screenshot is an engineering floor only: Near fidelity remains present, but the repeated mid-town mass, wall-like forest band and low battlefield activity are not accepted as final visual quality.
 
-The stable lineage contains:
-- inherited River Town high-fidelity Near layer;
-- battlefield-scale terrain and tiered LOD structure;
-- wide strategic river;
-- readable strategic bridge;
-- three exact high-fidelity town-front anchors;
-- preserved Near terrain/detail budgets;
-- real runtime capture evidence.
-
 ## Preserved post-Run-8 work
 
 No Window 02 work is discarded.
 
-### Run #9 lineage
-COMMIT=6d6831059722de0f179c16f5e22651337f8b0c0a
-INTENT=add MID/FAR battle pressure
-RESULT=RUNTIME_RENDER_FAILURE
-STATUS=PRESERVED_IN_GIT_HISTORY_FOR_BOUNDED_REINTRODUCTION
+- Run #9 / `6d6831059722de0f179c16f5e22651337f8b0c0a`: MID/FAR battle pressure; runtime render failure; preserved for bounded reintroduction.
+- Run #10 / `f2dc52a46569dcbcd36a8c8b05268f4dd57562b5`: bounded mesh smoke replacement; runtime render failure; preserved for component recovery.
+- Run #11 / `b1fe2f25927fc4d1127adba030f51c9485855ae2`: authored asymmetric town; runtime render failure; preserved as `FullBattlefieldProductionV2LOD_TownCandidate.tscn`, not production authority.
 
-### Run #10 lineage
-COMMIT=f2dc52a46569dcbcd36a8c8b05268f4dd57562b5
-INTENT=replace MID/FAR volumetric smoke with bounded mesh plumes
-RESULT=RUNTIME_RENDER_FAILURE
-STATUS=PRESERVED_IN_GIT_HISTORY_FOR_COMPONENT_RECOVERY
+## Cost-isolation evidence
 
-### Run #11 lineage
-COMMIT=b1fe2f25927fc4d1127adba030f51c9485855ae2
-INTENT=rebase on Run #8 and replace procedural grid town with authored asymmetric town
-RESULT=RUNTIME_RENDER_FAILURE
-SCRIPT=res://scripts/production/full_battlefield_production_v2_lod_v7.gd
-ISOLATED_SCENE=res://scenes/production/FullBattlefieldProductionV2LOD_TownCandidate.tscn
-STATUS=PRESERVED_AS_ACTIVE_CANDIDATE_NOT_PRODUCTION_AUTHORITY
-
-## Active cost-isolation probes
-
-### Probe A
+### Probe A — PASS
 SCRIPT=res://scripts/production/full_battlefield_town_probe_a.gd
 SCENE=res://scenes/production/FullBattlefieldTownProbeA.tscn
-PURPOSE=keep V7 asymmetric parcel layout, use only Run-8-proven house assets, remove V7 walls and rubble
-DECISION_VALUE=tests whether asymmetric spatial composition itself is safe
+RUN_ID=34498846055
+RESULT=REAL_GODOT_4_7_1_FORWARD_PLUS_1920X1080_PASS
+PURPOSE=V7 asymmetric parcel layout + Run-8-proven houses + no V7 walls/rubble
+CONCLUSION=ASYMMETRIC_LAYOUT_IS_NOT_THE_RUNTIME_REGRESSION
+VISUAL_NOTE=layout is more natural than the stable grid but still too repetitive for final acceptance
 
-### Probe B
+### Probe B — PASS
 SCRIPT=res://scripts/production/full_battlefield_town_probe_b.gd
 SCENE=res://scenes/production/FullBattlefieldTownProbeB.tscn
-PURPOSE=keep V7 asymmetric parcel layout and original V7 house mix, remove V7 walls and rubble
-DECISION_VALUE=isolates imported-house/material cost from destruction-detail cost
+RUN_ID=34499035044
+RESULT=REAL_GODOT_4_7_1_FORWARD_PLUS_1920X1080_PASS
+PURPOSE=V7 asymmetric parcel layout + original V7 house mix + no V7 walls/rubble
+DRAW_CALLS=1807
+RENDERED_PRIMITIVES=33834361
+CONCLUSION=ORIGINAL_V7_HOUSE_ASSETS_AND_MATERIAL_MIX_ARE_NOT_THE_RUNTIME_REGRESSION
+QUALITY_DECISION=DO_NOT_DOWNGRADE_THE_V7_HOUSE_MATERIALS
+
+### Probe C — ACTIVE
+SCRIPT=res://scripts/production/full_battlefield_town_probe_c.gd
+SCENE=res://scenes/production/FullBattlefieldTownProbeC.tscn
+PURPOSE=Probe B content + four original V7 parcel walls + no rubble
+DECISION_VALUE=isolates wall layer from the 145-fragment destruction MultiMesh
 
 ## Recovery decisions
 
-1. Production authority remains on the re-proven Run #13 / V5 lineage until a candidate completes real 1920x1080 Godot 4.7.1 Forward+ capture.
-2. The authored asymmetric town remains intact and must not be replaced by a lower-quality grid merely to obtain a green build.
-3. Run #9/#10 combat-pressure concepts remain recoverable and will be reintroduced after town/full-map runtime margin is understood.
-4. Near quality is not a performance-reduction target.
-5. Reduce only MID/FAR cost that is actually proven unnecessary or excessive.
+1. Production authority remains on the re-proven Run #13 / V5 lineage until a promoted candidate completes real 1920x1080 Godot 4.7.1 Forward+ capture.
+2. The authored asymmetric layout and original V7 high-quality house mix are now proven-safe components and must be retained.
+3. Near quality is not a performance-reduction target.
+4. Do not reduce V7 house materials merely to obtain a faster CI result; Probe B proves they are within the current runtime envelope.
+5. Run #9/#10 combat-pressure concepts remain recoverable after the town cost gate is closed.
 6. Visual acceptance remains manual. CI PASS is necessary runtime evidence, not proof that the image is good enough.
 
 ## Execution phases
@@ -101,10 +90,11 @@ RESULT=PASS
 
 PHASE_B=ISOLATE_AUTHORED_TOWN_COST
 STATUS=ACTIVE
-- finish Probe A and Probe B;
-- if A passes and B fails, isolate ordinary_house_textured vs hero_house_ruined;
-- if A and B pass, isolate walls and rubble separately;
-- if A fails, investigate authored visibility/culling/layout interaction before changing assets.
+- Probe A: PASS; asymmetric layout safe.
+- Probe B: PASS; original V7 house/material mix safe.
+- Probe C: active; isolate four wall blocks.
+- If Probe C passes, create Probe D restoring the 145-fragment rubble MultiMesh.
+- If Probe C fails, the wall layer is the isolated regression point and must be repaired without touching Near or the V7 house mix.
 
 PHASE_C=REINTRODUCE_TOWN_IN_BOUNDED_CHUNKS
 STATUS=PENDING
@@ -116,7 +106,7 @@ PHASE_D=REINTRODUCE_BATTLE_PRESSURE
 STATUS=PENDING
 - recover Run #9/#10 concepts in bounded groups;
 - avoid uncontrolled volumetric or full-scene duplicate cost;
-- preserve visual battlefield activity without sacrificing the local-fidelity floor.
+- preserve battlefield activity without sacrificing the local-fidelity floor.
 
 PHASE_E=VISUAL_ACCEPTANCE
 STATUS=PENDING
@@ -125,8 +115,9 @@ STATUS=PENDING
 
 ## Current gate
 
-CURRENT_GATE=PHASE_B_ISOLATE_AUTHORED_TOWN_COST
+CURRENT_GATE=PHASE_B_PROBE_C_WALL_ISOLATION
 DO_NOT_REDUCE_NEAR_QUALITY=YES
+DO_NOT_DOWNGRADE_PROVEN_V7_HOUSE_MATERIALS=YES
 PRODUCTION_RUNTIME_BASELINE_RECOVERED=YES
 WINDOW_02_STATE=INTEGRATED
 SEPARATE_WINDOW_02_REQUIRED=NO
