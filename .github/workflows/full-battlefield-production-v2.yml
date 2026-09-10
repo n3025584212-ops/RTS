@@ -1,0 +1,102 @@
+name: FRONTLINE Full Battlefield Production V2
+
+on:
+  push:
+    branches:
+      - dev/river-town-local-high-fidelity-v1
+    paths:
+      - "scenes/production/FullBattlefieldProductionV2.tscn"
+      - "scripts/production/full_battlefield_production_v2.gd"
+      - "scripts/production/river_town_visual_slice.gd"
+      - "scripts/production/local_fidelity_*.gd"
+      - "scripts/production/visual_slice_*.gdshader"
+      - "scenes/production/RiverTownHeroHouseHF.tscn"
+      - ".github/workflows/full-battlefield-production-v2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: full-battlefield-production-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    name: Godot 4.7.1 Forward+ HF-module battlefield
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 libvulkan1 mesa-vulkan-drivers vulkan-tools
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" --version
+
+      - name: Import and compile V2
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 210s "$GODOT" --headless --editor --path . --rendering-method forward_plus --quit 2>&1 | tee full-battlefield-v2-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' full-battlefield-v2-import.log
+
+      - name: Render actual 1920x1080 V2
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/full_battlefield_v2
+          timeout 1200s xvfb-run -a -s "-screen 0 1920x1080x24"             "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy             --resolution 1920x1080 res://scenes/production/FullBattlefieldProductionV2.tscn --             --capture --capture-frame=4 2>&1 | tee full-battlefield-v2-runtime.log
+          grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_READY' full-battlefield-v2-runtime.log
+          grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_CAPTURED' full-battlefield-v2-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' full-battlefield-v2-runtime.log
+
+      - name: Verify native V2 screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,struct
+          p="artifacts/full_battlefield_v2/full_battlefield_v2_actual_1920x1080.png"
+          data=open(p,"rb").read()
+          assert data[:8] == b"\x89PNG\r\n\x1a\n"
+          assert struct.unpack(">II",data[16:24]) == (1920,1080)
+          m=json.load(open("artifacts/full_battlefield_v2/runtime_metrics.json","r",encoding="utf-8"))
+          assert m["engine"]["major"] == 4 and m["engine"]["minor"] == 7 and m["engine"]["patch"] == 1
+          assert m["renderer"] == "forward_plus"
+          assert m["post_capture_image_editing"] is False
+          assert m["foreground_local_fidelity_reused"] is True
+          assert m["grass_instances"] > 50000
+          print("FRONTLINE_FULL_BATTLEFIELD_V2_PNG_PASS",len(data),m["grass_instances"],m["battlefield_buildings"])
+          PY
+
+      - name: Upload actual V2 proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-full-battlefield-production-v2
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            artifacts/full_battlefield_v2/full_battlefield_v2_actual_1920x1080.png
+            artifacts/full_battlefield_v2/runtime_metrics.json
+            full-battlefield-v2-runtime.log
+            full-battlefield-v2-import.log
