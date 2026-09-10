@@ -25,10 +25,11 @@ func _ready() -> void:
 	create_mid_flank_landscape()
 	create_far_campaign_horizon()
 
-	# Elevated RTS framing without shrinking the high-quality foreground into dots.
-	camera.position = Vector3(76.0, 38.0, 96.0)
-	camera.look_at(Vector3(18.0, 2.2, -170.0))
-	camera.fov = 49.0
+	# Oblique acceptance framing: local-fidelity foreground remains large and readable,
+	# while the bridge, continuous town and campaign horizon stay in the same viewport.
+	camera.position = Vector3(75.0, 20.0, 45.0)
+	camera.look_at(Vector3(0.0, 2.0, -115.0))
+	camera.fov = 52.0
 	camera.near = 0.25
 	camera.far = 1250.0
 	camera.current = true
