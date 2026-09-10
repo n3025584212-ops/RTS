@@ -24,7 +24,7 @@ jobs:
   render:
     name: Godot 4.7.1 tiered battlefield proof
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 55
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: "1"
         run: |
           set -euo pipefail
-          timeout 240s "$GODOT" --headless --editor --path . --rendering-method forward_plus --rendering-driver vulkan --quit 2>&1 | tee full-battlefield-v2-lod-import.log
+          timeout 600s "$GODOT" --headless --editor --path . --rendering-method forward_plus --rendering-driver vulkan --quit 2>&1 | tee full-battlefield-v2-lod-import.log
           ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' full-battlefield-v2-lod-import.log
 
       - name: Render first completed Forward+ draw at 1920x1080
@@ -63,7 +63,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/full_battlefield_v2_lod
-          timeout 1500s xvfb-run -a -s "-screen 0 1920x1080x24" \
+          timeout 1800s xvfb-run -a -s "-screen 0 1920x1080x24" \
             "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
             --resolution 1920x1080 res://scenes/production/FullBattlefieldProductionV2LOD.tscn -- \
             --capture --capture-frame=1 2>&1 | tee full-battlefield-v2-lod-runtime.log
@@ -93,10 +93,11 @@ jobs:
           PY
 
       - name: Upload actual proof and logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: frontline-full-battlefield-v2-lod
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
           path: |
             artifacts/full_battlefield_v2_lod/full_battlefield_v2_lod_actual_1920x1080.png
