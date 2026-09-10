@@ -61,40 +61,46 @@ func create_bridgehead_infantry_and_vehicles() -> void:
 		mid_units += 1
 
 func create_pressure_smoke() -> void:
-	# Reuse the proven volumetric smoke shader with one shared, modest-resolution
-	# noise volume. Plumes are offset from the bridge center so they add combat
-	# depth without swallowing the crossing or the continuous town silhouette.
-	var volume := NoiseTexture3D.new()
-	volume.width = 48
-	volume.height = 48
-	volume.depth = 48
-	volume.seamless = true
-	var source := FastNoiseLite.new()
-	source.seed = 1937
-	source.frequency = .083
-	source.fractal_octaves = 4
-	volume.noise = source
+	# CI uses llvmpipe software Vulkan, so combat smoke must not add more FogVolume
+	# ray-marching cost on top of the inherited atmosphere. Use a tiny bounded set
+	# of low-poly translucent ellipsoids instead. This keeps the battle-pressure
+	# silhouette readable while preserving the frozen Near composition and bridge.
+	var smoke_material := StandardMaterial3D.new()
+	smoke_material.albedo_color = Color(.105, .105, .095, .64)
+	smoke_material.roughness = 1.0
+	smoke_material.metallic = 0.0
+	smoke_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 
-	var smoke_sites: Array[Vector4] = [
-		Vector4(58.0, -148.0, 32.0, 13.0),
-		Vector4(122.0, -214.0, 46.0, 19.0),
-		Vector4(-170.0, -390.0, 62.0, 25.0)
+	var smoke_mesh := SphereMesh.new()
+	smoke_mesh.radius = 1.0
+	smoke_mesh.height = 2.0
+	smoke_mesh.radial_segments = 8
+	smoke_mesh.rings = 4
+
+	var plume_sites: Array[Vector4] = [
+		Vector4(58.0, -148.0, 7.0, 1.0),
+		Vector4(122.0, -214.0, 10.0, 1.22),
+		Vector4(-170.0, -390.0, 14.0, 1.55)
 	]
-	var opacities: Array[float] = [.15, .13, .09]
-	for i in range(smoke_sites.size()):
-		var site := smoke_sites[i]
-		var size3 := Vector3(site.w, site.z, site.w)
-		var fog := FogVolume.new()
-		fog.name = "MIDFAR_CombatSmoke_%02d" % (i + 1)
-		fog.size = size3
-		var material := ShaderMaterial.new()
-		material.shader = load("res://scripts/production/visual_slice_smoke.gdshader")
-		material.set_shader_parameter("volume_noise", volume)
-		material.set_shader_parameter("opacity", opacities[i])
-		fog.material = material
-		fog.position = Vector3(site.x, height_at(site.x, site.y) + size3.y * .44, site.y)
-		add_child(fog)
+	for plume_index in range(plume_sites.size()):
+		var site: Vector4 = plume_sites[plume_index]
+		var ground_y := height_at(site.x, site.y)
+		for level in range(5):
+			var t := float(level) / 4.0
+			var spread := site.w * (1.0 + t * 1.15)
+			var lift := site.z * (.22 + t * .78)
+			var drift := float(level) * site.w * .55
+			var smoke := add_mesh(
+				smoke_mesh,
+				smoke_material,
+				Vector3(site.x + drift, ground_y + lift, site.y - drift * .20),
+				Vector3(spread * 1.18, spread * 1.35, spread)
+			)
+			smoke.name = "MIDFAR_CombatSmoke_%02d_%02d" % [plume_index + 1, level + 1]
+			smoke.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			PRESSURE_BUDGET.apply_mid(smoke, false)
 		pressure_smoke += 1
+	print("FRONTLINE_BATTLE_PRESSURE_SMOKE_MESH plumes=", pressure_smoke, " blobs=", pressure_smoke * 5)
 
 func create_pressure_fire_points() -> void:
 	# Small emissive debris fires provide readable contact points without adding
