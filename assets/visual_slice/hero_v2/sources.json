@@ -1,0 +1,56 @@
+[
+  {
+    "source": "https://polyhaven.com/a/stone_wall_05",
+    "license": "CC0",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/stone_wall_05/stone_wall_05_diff_4k.jpg",
+    "file": "stone_diff.jpg",
+    "sha256": "248a61de2bf7e12252bb23ee4efb9bc72a8c58decad6fdb2dcfac46a5a58e13d",
+    "author": "Charlotte Baglioni",
+    "license_source": "https://polyhaven.com/license"
+  },
+  {
+    "source": "https://polyhaven.com/a/stone_wall_05",
+    "license": "CC0",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/stone_wall_05/stone_wall_05_nor_gl_4k.jpg",
+    "file": "stone_normal.jpg",
+    "sha256": "1321949e3bc6790d08addb17089bb4fc3bd9a038e1832be832960f90c7c973da",
+    "author": "Charlotte Baglioni",
+    "license_source": "https://polyhaven.com/license"
+  },
+  {
+    "asset": "Rubble",
+    "author": "Amal Kumar",
+    "source": "https://polyhaven.com/a/rubble",
+    "license": "CC0",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/rubble/rubble_diff_4k.jpg",
+    "file": "rubble_diff.jpg",
+    "sha256": "3fa11bb499163b27bb865cc99acdf11dfe7e04a5bbb03f781f4ce713a1523290"
+  },
+  {
+    "asset": "Rubble",
+    "author": "Amal Kumar",
+    "source": "https://polyhaven.com/a/rubble",
+    "license": "CC0",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/rubble/rubble_nor_gl_4k.jpg",
+    "file": "rubble_normal.jpg",
+    "sha256": "e661090581e048f4c163bfe3b3d149f838eb5bd903ce1d209d1eaaea1d9f07b7"
+  },
+  {
+    "asset": "Rubble",
+    "author": "Amal Kumar",
+    "source": "https://polyhaven.com/a/rubble",
+    "license": "CC0",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/rubble/rubble_rough_4k.jpg",
+    "file": "rubble_rough.jpg",
+    "sha256": "f7a3886ae2b873f2a1cbbc788a01685e95eb8a44b35af8fdfc367a2596cbb9d8"
+  },
+  {
+    "asset": "Rubble",
+    "author": "Amal Kumar",
+    "source": "https://polyhaven.com/a/rubble",
+    "license": "CC0",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/rubble/rubble_disp_4k.jpg",
+    "file": "rubble_height.jpg",
+    "sha256": "62c92a014381a8b1f8cdb035a23b9dc7566c0df40e542018ddb7374c77f9cb75"
+  }
+]
