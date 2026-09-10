@@ -1,23 +1,24 @@
 # River Town Local High-Fidelity Visual Task
 
 STATUS=ACTIVE
-OWNER=CODEX_VISUAL_PRODUCTION
+OWNER=INTEGRATED_VISUAL_PRODUCTION
 BASELINE_COMMIT=d42e6fc2bbe1bad928a16a19caace47dc6e57701
 BASELINE_WORKFLOW=FRONTLINE River Town Visual Slice / Run #5
 SCENE=res://scenes/production/RiverTownVisualSlice.tscn
 
 ## Scope
 
-Continue improving the existing local high-fidelity Godot visual slice only.
+Continue improving the existing local high-fidelity Godot visual slice and propagate its accepted visual language into a real full battlefield.
 
-Do not migrate this work into Battle01.
+Do not migrate this work into the old Battle01 production path.
 Do not rebuild the old greybox world.
 Do not reduce asset fidelity, terrain detail, vegetation density, material quality, or lighting quality in order to make integration easier.
 Do not treat CI success as visual acceptance.
+Do not collapse the full battlefield into the rejected North/Central/South three-lane one-screen composition.
 
 ## Visual floor
 
-The Run #5 capture from BASELINE_COMMIT is the minimum acceptable visual floor.
+The Run #5 local capture from BASELINE_COMMIT remains the minimum local visual floor.
 Every new pass must preserve or improve:
 - Abrams close-range material readability
 - hero-house damage/material fidelity
@@ -27,11 +28,11 @@ Every new pass must preserve or improve:
 
 ## Current priority
 
-1. Hero house: richer surface history, edge damage, rubble integration.
-2. Abrams: stronger material separation, optics/metal/rubber/mud readability.
-3. Ground: deeper wet/dry mud hierarchy, rut geometry/readability, irregular puddles.
-4. Vegetation: reduce repetition, improve natural clumping and verge transitions.
-5. Lighting: only after material/asset improvements; do not chase exposure-only gains.
+1. Recover a stable real full-battlefield render on the last proven Run #8 lineage.
+2. Preserve and isolate the authored asymmetric town candidate rather than deleting it.
+3. Reintroduce the town in bounded groups after identifying its runtime cost.
+4. Reintroduce MID/FAR combat pressure only after the full-map budget margin is known.
+5. Continue local asset/material improvements only where they materially improve the actual Godot frame.
 
 ## Validation
 
@@ -42,56 +43,38 @@ Visual acceptance remains manual and comparison-based.
 
 ## Forbidden regression
 
-Any pass that looks worse than Run #5 is rejected even if:
+Any pass that looks worse than the accepted visual floor is rejected even if:
 - scripts compile,
 - CI is green,
 - FPS improves,
 - the scene contains more nodes/assets.
 
-## Latest local construction batch — 2026-09-09
+## Historical local batches — 2026-09-09
 
-Reusable physical house detail, route-local rut geometry, depth-bounded puddles,
-and authored Abrams material separation are implemented. See
-`docs/current/RIVER_TOWN_LOCAL_HIGH_FIDELITY_BATCH_01.md` for the exact deliverables,
-reproduction commands, unchanged baseline controls, same-machine cost comparison,
-and image evidence. The task remains ACTIVE; full-map performance and final manual
-visual acceptance are not claimed.
+Batch 01, Batch 02 and Batch 03 remain implementation checkpoints only. User review found no meaningful overall quality upgrade. They must not be promoted as accepted replacements for the Run #5 local visual floor.
 
-USER_REVIEW_2026_09_09=NO_SUBSTANTIAL_VISUAL_IMPROVEMENT
-BATCH_01_ACCEPTANCE=REJECTED_AS_QUALITY_UPGRADE
+The foreground building source geometry, destruction structure, coherent material quality, ground hierarchy and vegetation naturalness remain valid improvement areas, but small shader/noise iterations alone are not sufficient evidence of progress.
 
-Do not promote batch 01 as the new visual floor. It is an implementation checkpoint
-only. Prioritize the foreground building's source geometry, destruction structure
-and coherent material quality before further small shader/noise changes. Require
-an obvious improvement in the unchanged Run #5 camera before rolling out the kit.
+## Full battlefield propagation state — integrated 2026-09-10
 
+WINDOW_02_STATE=INTEGRATED
+INTEGRATION_STATE_DOC=docs/current/WINDOW_02_INTEGRATED_RECOVERY_STATE.md
+SEPARATE_WINDOW_02_CONTINUATION_REQUIRED=NO
 
-## Batch 02 review — 2026-09-09
+LAST_PROVEN_FULL_BATTLEFIELD_RUN=FRONTLINE Full Battlefield V2 LOD Run #8
+LAST_PROVEN_FULL_BATTLEFIELD_COMMIT=a17254612f9b5876bd97b5d4dcea04bffb65cc33
+LAST_PROVEN_FULL_BATTLEFIELD_RESULT=SUCCESS
+STABLE_SCRIPT=res://scripts/production/full_battlefield_production_v2_lod_v5.gd
+STABLE_SCENE=res://scenes/production/FullBattlefieldProductionV2LOD.tscn
 
-BATCH_02_ACCEPTANCE=REJECTED_AS_QUALITY_UPGRADE
-BATCH_02_DELIVERY=ISOLATED_STUDY_ONLY
+POST_RUN8_WORK_PRESERVED=YES
+RUN9_BATTLE_PRESSURE_COMMIT=6d6831059722de0f179c16f5e22651337f8b0c0a
+RUN10_BOUNDED_SMOKE_COMMIT=f2dc52a46569dcbcd36a8c8b05268f4dd57562b5
+RUN11_AUTHORED_TOWN_COMMIT=b1fe2f25927fc4d1127adba030f51c9485855ae2
+AUTHORED_TOWN_SCRIPT=res://scripts/production/full_battlefield_production_v2_lod_v7.gd
+AUTHORED_TOWN_ISOLATED_SCENE=res://scenes/production/FullBattlefieldProductionV2LOD_TownCandidate.tscn
 
-The user again reported no substantial visual improvement. Stop the current
-same-angle detail iteration. Preserve the implementation in the opt-in
-`res://scenes/production/RiverTownStructureStudy.tscn`; the production scene,
-hero asset/materials and main preview remain at the pre-batch 1472a44 checkpoint.
-Neither batch 01 nor batch 02 is an accepted replacement for the Run #5 floor.
-See `docs/current/RIVER_TOWN_LOCAL_HIGH_FIDELITY_BATCH_02.md` for the rejected
-study, actual evidence and measurement limitations. Overall task remains ACTIVE;
-no claim of maximum quality or full-game scalability is made.
+CURRENT_GATE=RECOVER_STABLE_REAL_RENDER
+DO_NOT_ADD_NEW_FULL_BATTLEFIELD_CONTENT_UNTIL_GATE_PASS=YES
 
-
-## Batch 03 ground construction — 2026-09-09
-
-BATCH_03_ACCEPTANCE=REJECTED_AS_QUALITY_UPGRADE
-TASK_STATUS=ACTIVE
-
-A bounded terrain and groundcover batch addresses continuous deep-rut silhouettes
-and uniform plant distribution. It uses shared deterministic cover data for geometry
-placement and soil transitions. This is a limited improvement candidate, not a
-claim that the foreground asset-quality problem is solved. See
-`docs/current/RIVER_TOWN_LOCAL_HIGH_FIDELITY_BATCH_03.md` for implementation,
-real runtime evidence and explicit replication/performance limits.
-
-USER_REVIEW_BATCH_03=NO_MEANINGFUL_OVERALL_IMPROVEMENT
-BATCH_03_COMMIT=USER_REQUESTED_IMPLEMENTATION_CHECKPOINT_ONLY
+The integration strategy is additive and reversible: the production scene uses the last proven runtime lineage while the newer authored-town and combat-pressure work remains preserved as candidates/history for bounded reintroduction. No accepted local fidelity is intentionally discarded.
