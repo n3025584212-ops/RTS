@@ -9,27 +9,42 @@ BRANCH=dev/river-town-local-high-fidelity-v1
 
 ## Authority
 
-Window 02 visual-quality/full-battlefield engineering is now integrated into the current controlling conversation. There is no separate Window 02 continuation dependency for this branch.
+Window 02 visual-quality/full-battlefield engineering is integrated into the current controlling conversation. There is no separate Window 02 continuation dependency for this branch.
 
 The objective remains: propagate the accepted River Town local high-fidelity visual language into a real full battlefield without collapsing back into the old three-lane/one-screen composition and without silently reducing Near quality.
 
-## Stable production baseline
+## Recovered production baseline
 
-LAST_PROVEN_WORKFLOW_RUN=FRONTLINE Full Battlefield V2 LOD Run #8
-LAST_PROVEN_COMMIT=a17254612f9b5876bd97b5d4dcea04bffb65cc33
-LAST_PROVEN_RESULT=SUCCESS
+RECOVERY_WORKFLOW_RUN=FRONTLINE Full Battlefield V2 LOD Run #13
+RECOVERY_RUN_ID=34497789033
+RECOVERY_COMMIT=42016d3d0ef3c86ba3fdd4706845862c2b70b4de
+RECOVERY_RESULT=SUCCESS
 PRODUCTION_SCRIPT=res://scripts/production/full_battlefield_production_v2_lod_v5.gd
 PRODUCTION_SCENE=res://scenes/production/FullBattlefieldProductionV2LOD.tscn
+REAL_CAPTURE=1920x1080_FORWARD_PLUS_PASS
+ENGINE_PROOF=4.7.1-stable
+GPU_PROOF=llvmpipe_LLVM_20.1.2
+GRASS_INSTANCES=99041
+MID_BUILDINGS=22
+MID_UNITS=10
+MID_TREES=12
+FAR_BUILDINGS=12
+DRAW_CALLS=1799
+RENDERED_PRIMITIVES=33907825
+INTERNAL_3D_RENDER_SCALE=1.5
+MSAA_3D=2
+POST_CAPTURE_IMAGE_EDITING=false
+VISUAL_ACCEPTANCE=NOT_CLAIMED
 
-Run #8 is the current runtime floor because it completed the real Godot 4.7.1 Forward+ 1920x1080 capture and artifact verification.
+Run #13 re-proved the last successful Run #8 lineage in the current repository. Phase A is complete. The recovered screenshot is an engineering floor only: Near fidelity remains present, but the repeated mid-town mass, wall-like forest band and low battlefield activity are not accepted as final visual quality.
 
-The stable lineage already contains:
+The stable lineage contains:
 - inherited River Town high-fidelity Near layer;
-- battlefield-scale terrain and LOD structure;
+- battlefield-scale terrain and tiered LOD structure;
 - wide strategic river;
-- visually dominant strategic bridge;
+- readable strategic bridge;
 - three exact high-fidelity town-front anchors;
-- preserved Near camera/terrain/detail budgets;
+- preserved Near terrain/detail budgets;
 - real runtime capture evidence.
 
 ## Preserved post-Run-8 work
@@ -56,44 +71,62 @@ SCRIPT=res://scripts/production/full_battlefield_production_v2_lod_v7.gd
 ISOLATED_SCENE=res://scenes/production/FullBattlefieldProductionV2LOD_TownCandidate.tscn
 STATUS=PRESERVED_AS_ACTIVE_CANDIDATE_NOT_PRODUCTION_AUTHORITY
 
+## Active cost-isolation probes
+
+### Probe A
+SCRIPT=res://scripts/production/full_battlefield_town_probe_a.gd
+SCENE=res://scenes/production/FullBattlefieldTownProbeA.tscn
+PURPOSE=keep V7 asymmetric parcel layout, use only Run-8-proven house assets, remove V7 walls and rubble
+DECISION_VALUE=tests whether asymmetric spatial composition itself is safe
+
+### Probe B
+SCRIPT=res://scripts/production/full_battlefield_town_probe_b.gd
+SCENE=res://scenes/production/FullBattlefieldTownProbeB.tscn
+PURPOSE=keep V7 asymmetric parcel layout and original V7 house mix, remove V7 walls and rubble
+DECISION_VALUE=isolates imported-house/material cost from destruction-detail cost
+
 ## Recovery decisions
 
-1. Production authority is restored to the last proven Run #8 lineage before any further visual expansion.
-2. The authored asymmetric town remains intact as an isolated candidate scene and is not deleted or rewritten into a lower-fidelity substitute.
-3. Run #9/#10 combat-pressure work remains recoverable from Git history and will be reintroduced only after component-level budget proof.
-4. A failed candidate may not replace the stable production scene merely because it imports or compiles.
-5. Each material/full-battlefield expansion must again reach a real 1920x1080 Godot 4.7.1 Forward+ completed capture before becoming the new production baseline.
-6. Visual acceptance remains manual. CI PASS is necessary runtime evidence, not proof that the image quality is good enough.
+1. Production authority remains on the re-proven Run #13 / V5 lineage until a candidate completes real 1920x1080 Godot 4.7.1 Forward+ capture.
+2. The authored asymmetric town remains intact and must not be replaced by a lower-quality grid merely to obtain a green build.
+3. Run #9/#10 combat-pressure concepts remain recoverable and will be reintroduced after town/full-map runtime margin is understood.
+4. Near quality is not a performance-reduction target.
+5. Reduce only MID/FAR cost that is actually proven unnecessary or excessive.
+6. Visual acceptance remains manual. CI PASS is necessary runtime evidence, not proof that the image is good enough.
 
-## Immediate execution order
+## Execution phases
 
 PHASE_A=RECOVER_STABLE_REAL_RENDER
-- verify the production scene on the Run #8 lineage with the current repository;
-- require real Forward+ 1920x1080 capture and runtime metrics;
-- do not add new world content during this recovery gate.
+RESULT=PASS
 
 PHASE_B=ISOLATE_AUTHORED_TOWN_COST
-- run the V7 authored-town candidate independently;
-- identify whether the regression is caused by imported house cost, shadows, rubble MultiMesh, material load, or aggregate MID complexity;
-- preserve the authored asymmetric spatial composition while reducing only proven waste.
+STATUS=ACTIVE
+- finish Probe A and Probe B;
+- if A passes and B fails, isolate ordinary_house_textured vs hero_house_ruined;
+- if A and B pass, isolate walls and rubble separately;
+- if A fails, investigate authored visibility/culling/layout interaction before changing assets.
 
 PHASE_C=REINTRODUCE_TOWN_IN_BOUNDED_CHUNKS
-- restore authored parcels in bounded groups on top of the proven production lineage;
-- verify after each meaningful group;
-- retain the strategic bridge corridor and Near visual floor.
+STATUS=PENDING
+- promote only proven authored-town components onto production;
+- preserve bridge corridor and Near floor;
+- verify every meaningful promotion with real viewport capture.
 
 PHASE_D=REINTRODUCE_BATTLE_PRESSURE
-- recover Run #9/#10 concepts from Git history;
-- use bounded mesh/instance effects rather than uncontrolled volumetric cost;
-- add combat activity only after the town/full-map runtime margin is known.
+STATUS=PENDING
+- recover Run #9/#10 concepts in bounded groups;
+- avoid uncontrolled volumetric or full-scene duplicate cost;
+- preserve visual battlefield activity without sacrificing the local-fidelity floor.
 
 PHASE_E=VISUAL_ACCEPTANCE
-- compare real Godot captures against the accepted local high-fidelity floor;
-- reject technically green passes that visually dilute material quality, terrain readability, vegetation density, atmospheric depth, or battlefield composition.
+STATUS=PENDING
+- compare real Godot captures against the local high-fidelity target;
+- reject technically green screenshots that remain repetitive, empty, flat, overly fogged, wall-like, or compositionally unrelated to the accepted local scene.
 
 ## Current gate
 
-CURRENT_GATE=PHASE_A_RECOVER_STABLE_REAL_RENDER
-DO_NOT_EXPAND_CONTENT_UNTIL_GATE_PASS=YES
+CURRENT_GATE=PHASE_B_ISOLATE_AUTHORED_TOWN_COST
+DO_NOT_REDUCE_NEAR_QUALITY=YES
+PRODUCTION_RUNTIME_BASELINE_RECOVERED=YES
 WINDOW_02_STATE=INTEGRATED
 SEPARATE_WINDOW_02_REQUIRED=NO
