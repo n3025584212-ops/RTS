@@ -1,0 +1,147 @@
+name: FRONTLINE Asset Pipeline V1 Proof
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/asset-pipeline-v1
+    paths:
+      - 'tools/asset_pipeline/**'
+      - 'scripts/production/asset_pipeline_v1_proof.gd'
+      - 'scenes/production/AssetPipelineV1Proof.tscn'
+      - '.github/workflows/asset-pipeline-v1-proof.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontline-asset-pipeline-v1-proof-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-proof:
+    name: Godot 4.7.1 Hero V2 side-by-side proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install official Blender 4.2 LTS
+        shell: bash
+        run: |
+          set -euo pipefail
+          BLENDER_VERSION="4.2.23"
+          URL="https://download.blender.org/release/Blender4.2/blender-${BLENDER_VERSION}-linux-x64.tar.xz"
+          curl -fL --retry 4 --retry-delay 2 "$URL" -o "$RUNNER_TEMP/blender.tar.xz"
+          tar -xJf "$RUNNER_TEMP/blender.tar.xz" -C "$RUNNER_TEMP"
+          BLENDER="$RUNNER_TEMP/blender-${BLENDER_VERSION}-linux-x64/blender"
+          chmod +x "$BLENDER"
+          echo "BLENDER=$BLENDER" >> "$GITHUB_ENV"
+          "$BLENDER" --version
+
+      - name: Build generated rural-house family
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/generated/asset_pipeline_v1/rural_house
+          "$BLENDER" --background \
+            --python tools/asset_pipeline/build_rural_house_family.py -- \
+            --output-dir assets/generated/asset_pipeline_v1/rural_house 2>&1 | tee asset-pipeline-blender.log
+          python3 tools/asset_pipeline/validate_generated_glbs.py assets/generated/asset_pipeline_v1/rural_house
+          grep -q 'FRONTLINE_ASSET_PIPELINE_V1_RURAL_HOUSE_PASS' asset-pipeline-blender.log
+
+      - name: Protect accepted high-fidelity anchors
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/visual_slice/hero_v2/abrams_v2.glb
+          test -s assets/visual_slice/hero_v2/urban_ruin/urban_ruin.gltf
+          test -s assets/visual_slice/hero_house_ruined_hf.glb
+          test -s assets/golden_scene/vehicles/ifv.glb
+          test -s assets/visual_slice/surfaces/worn_plaster_wall_diff.jpg
+          test -s assets/visual_slice/surfaces/brick_wall_005_diff.jpg
+          test -s assets/visual_slice/surfaces/roof_tiles_14_diff.jpg
+          echo FRONTLINE_PROTECTED_HIGH_FIDELITY_ASSETS_PRESENT=YES
+
+      - name: Install render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 libvulkan1 mesa-vulkan-drivers vulkan-tools
+          vulkaninfo --summary || true
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          GODOT="$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          chmod +x "$GODOT"
+          echo "GODOT=$GODOT" >> "$GITHUB_ENV"
+          "$GODOT" --version
+
+      - name: Import and compile proof scene
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 900s "$GODOT" --headless --editor --path . --rendering-method forward_plus --rendering-driver vulkan --quit 2>&1 | tee asset-pipeline-proof-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' asset-pipeline-proof-import.log
+
+      - name: Render Hero V2 side-by-side proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/asset_pipeline_v1
+          timeout 1200s xvfb-run -a -s "-screen 0 1920x1080x24" \
+            "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
+            --resolution 1920x1080 res://scenes/production/AssetPipelineV1Proof.tscn -- \
+            --capture --capture-frame=16 2>&1 | tee asset-pipeline-proof-runtime.log
+          grep -q 'HERO_V2_READY' asset-pipeline-proof-runtime.log
+          grep -q 'FRONTLINE_ASSET_PIPELINE_V1_PROOF_READY generated=3' asset-pipeline-proof-runtime.log
+          grep -q 'FRONTLINE_ASSET_PIPELINE_V1_CAPTURED' asset-pipeline-proof-runtime.log
+          grep -q 'Forward+' asset-pipeline-proof-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' asset-pipeline-proof-runtime.log
+
+      - name: Verify actual viewport evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, struct
+          p='artifacts/asset_pipeline_v1/asset_pipeline_v1_actual_1920x1080.png'
+          data=open(p,'rb').read()
+          assert data[:8] == b'\x89PNG\r\n\x1a\n'
+          assert struct.unpack('>II', data[16:24]) == (1920,1080)
+          m=json.load(open('artifacts/asset_pipeline_v1/runtime_metrics.json','r',encoding='utf-8'))
+          e=m['engine']
+          assert e['major']==4 and e['minor']==7 and e['patch']==1
+          assert m['generated_buildings']==3
+          assert m['pbr_rebound_surfaces'] > 0
+          assert m['protected_hero_v2_retained'] is True
+          assert m['protected_ifv_retained'] is True
+          assert m['post_capture_image_editing'] is False
+          assert m['visual_acceptance']=='NOT_CLAIMED'
+          print('FRONTLINE_ASSET_PIPELINE_V1_PROOF_PNG_PASS', len(data), m['renderer'], m['generated_buildings'], m['pbr_rebound_surfaces'], m.get('draw_calls'), m.get('rendered_primitives'))
+          PY
+
+      - name: Upload proof screenshot and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-asset-pipeline-v1-proof
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            artifacts/asset_pipeline_v1/asset_pipeline_v1_actual_1920x1080.png
+            artifacts/asset_pipeline_v1/runtime_metrics.json
+            assets/generated/asset_pipeline_v1/rural_house/GENERATED_MANIFEST.tsv
+            asset-pipeline-blender.log
+            asset-pipeline-proof-import.log
+            asset-pipeline-proof-runtime.log
