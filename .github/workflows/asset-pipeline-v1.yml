@@ -9,6 +9,7 @@ on:
       - 'tools/asset_pipeline/**'
       - '.github/workflows/asset-pipeline-v1.yml'
       - 'docs/current/FRONTLINE_ASSET_PIPELINE_V1.md'
+      - 'assets/generated/asset_pipeline_v1/**'
 
 jobs:
   build-and-validate:
@@ -31,11 +32,7 @@ jobs:
             --python tools/asset_pipeline/build_rural_house_family.py -- \
             --output-dir assets/generated/asset_pipeline_v1/rural_house
           cat assets/generated/asset_pipeline_v1/rural_house/GENERATED_MANIFEST.tsv
-          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_a_intact_lod0.glb
-          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_a_damaged_lod0.glb
-          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_a_intact_lod1.glb
-          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_a_intact_lod2.glb
-          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_b_intact_lod0.glb
+          python3 tools/asset_pipeline/validate_generated_glbs.py assets/generated/asset_pipeline_v1/rural_house
 
       - name: Protect existing high-fidelity anchors
         run: |
@@ -57,7 +54,7 @@ jobs:
 
       - name: Godot import validation
         run: |
-          godot --headless --editor --path . --quit-after 120 --import || true
+          godot --headless --editor --path . --quit-after 120 --import
           for f in assets/generated/asset_pipeline_v1/rural_house/*.glb; do
             test -f "$f.import" || { echo "Missing Godot import metadata for $f"; exit 31; }
           done
