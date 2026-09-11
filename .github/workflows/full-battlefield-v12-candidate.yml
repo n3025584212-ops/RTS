@@ -1,0 +1,108 @@
+name: FRONTLINE Full Battlefield V12 Candidate
+
+on:
+  push:
+    branches:
+      - dev/river-town-local-high-fidelity-v1
+    paths:
+      - "scenes/production/FullBattlefieldProductionV12Candidate.tscn"
+      - "scripts/production/full_battlefield_production_v2_lod_v12.gd"
+      - ".github/workflows/full-battlefield-v12-candidate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: full-battlefield-v12-candidate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    name: Godot 4.7.1 V12 irregular-front candidate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 libvulkan1 mesa-vulkan-drivers vulkan-tools
+          vulkaninfo --summary || true
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" --version
+
+      - name: Import and compile V12 candidate
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 600s "$GODOT" --headless --editor --path . --rendering-method forward_plus --rendering-driver vulkan --quit 2>&1 | tee v12-candidate-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' v12-candidate-import.log
+
+      - name: Render V12 candidate at 1920x1080 Forward+
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/full_battlefield_v2_lod
+          timeout 1800s xvfb-run -a -s "-screen 0 1920x1080x24" \
+            "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
+            --resolution 1920x1080 res://scenes/production/FullBattlefieldProductionV12Candidate.tscn -- \
+            --capture --capture-frame=1 2>&1 | tee v12-candidate-runtime.log
+          grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_LOD_READY' v12-candidate-runtime.log
+          grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_LOD_V11_READY' v12-candidate-runtime.log
+          grep -q 'FRONTLINE_V12_CONTACT_BELT_READY units=14 fixed_lanes=0 bridge_axis=open' v12-candidate-runtime.log
+          grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_LOD_V12_READY' v12-candidate-runtime.log
+          grep -q 'FRONTLINE_FULL_BATTLEFIELD_V2_LOD_CAPTURED' v12-candidate-runtime.log
+          grep -q 'Forward+' v12-candidate-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' v12-candidate-runtime.log
+
+      - name: Verify actual V12 viewport proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, struct
+          p="artifacts/full_battlefield_v2_lod/full_battlefield_v2_lod_actual_1920x1080.png"
+          data=open(p,"rb").read()
+          assert data[:8] == b"\x89PNG\r\n\x1a\n"
+          assert struct.unpack(">II",data[16:24]) == (1920,1080)
+          m=json.load(open("artifacts/full_battlefield_v2_lod/runtime_metrics.json","r",encoding="utf-8"))
+          assert m["engine"]["major"] == 4 and m["engine"]["minor"] == 7 and m["engine"]["patch"] == 1
+          assert m["post_capture_image_editing"] is False
+          assert m["near_quality_source"].startswith("RiverTownHeroShotV2")
+          assert m["near_terrain_spacing_m"] == 0.16
+          assert m["road_detail_spacing_m"] == 0.08
+          assert m["grass_instances"] >= 99000
+          assert m["mid_buildings"] >= 22
+          assert m["mid_units"] == 14
+          print("FRONTLINE_FULL_BATTLEFIELD_V12_CANDIDATE_PNG_PASS", len(data), m["renderer"], m["grass_instances"], m["mid_buildings"], m["mid_units"], m.get("draw_calls"), m.get("rendered_primitives"))
+          PY
+
+      - name: Upload V12 candidate proof and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-full-battlefield-v12-candidate
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            artifacts/full_battlefield_v2_lod/full_battlefield_v2_lod_actual_1920x1080.png
+            artifacts/full_battlefield_v2_lod/runtime_metrics.json
+            v12-candidate-runtime.log
+            v12-candidate-import.log
