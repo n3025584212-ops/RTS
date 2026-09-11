@@ -102,7 +102,7 @@ jobs:
           timeout 1200s xvfb-run -a -s "-screen 0 1920x1080x24" \
             "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
             --resolution 1920x1080 res://scenes/production/AssetPipelineV1Proof.tscn -- \
-            --capture --capture-frame=16 2>&1 | tee asset-pipeline-proof-runtime.log
+            --capture --capture-frame=3 2>&1 | tee asset-pipeline-proof-runtime.log
           grep -q 'HERO_V2_READY' asset-pipeline-proof-runtime.log
           grep -q 'FRONTLINE_ASSET_PIPELINE_V1_PROOF_READY generated=3' asset-pipeline-proof-runtime.log
           grep -q 'FRONTLINE_ASSET_PIPELINE_V1_CAPTURED' asset-pipeline-proof-runtime.log
