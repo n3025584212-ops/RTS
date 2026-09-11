@@ -22,8 +22,12 @@ jobs:
       - name: Install Blender
         run: |
           sudo apt-get update
-          sudo apt-get install -y blender
+          sudo apt-get install -y blender python3-numpy
           blender --version
+          python3 - <<'PY'
+          import numpy
+          print('SYSTEM_NUMPY_OK', numpy.__version__)
+          PY
 
       - name: Build rural house family
         run: |
