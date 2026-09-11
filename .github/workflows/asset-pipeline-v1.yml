@@ -1,0 +1,75 @@
+name: FRONTLINE Asset Pipeline V1
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/asset-pipeline-v1
+    paths:
+      - 'tools/asset_pipeline/**'
+      - '.github/workflows/asset-pipeline-v1.yml'
+      - 'docs/current/FRONTLINE_ASSET_PIPELINE_V1.md'
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender
+          blender --version
+
+      - name: Build rural house family
+        run: |
+          mkdir -p assets/generated/asset_pipeline_v1/rural_house
+          blender --background \
+            --python tools/asset_pipeline/build_rural_house_family.py -- \
+            --output-dir assets/generated/asset_pipeline_v1/rural_house
+          cat assets/generated/asset_pipeline_v1/rural_house/GENERATED_MANIFEST.tsv
+          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_a_intact_lod0.glb
+          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_a_damaged_lod0.glb
+          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_a_intact_lod1.glb
+          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_a_intact_lod2.glb
+          test -s assets/generated/asset_pipeline_v1/rural_house/rural_house_b_intact_lod0.glb
+
+      - name: Protect existing high-fidelity anchors
+        run: |
+          test -s assets/visual_slice/abrams.glb
+          test -s assets/visual_slice/hero_house_ruined.glb
+          test -s assets/visual_slice/hero_house_ruined_hf.glb
+          test -s assets/visual_slice/hero_v2/abrams_v2.glb
+          test -s assets/visual_slice/hero_v2/urban_ruin/urban_ruin.gltf
+          test -s assets/golden_scene/vehicles/ifv.glb
+          echo FRONTLINE_PROTECTED_ASSET_ANCHORS_PRESENT=YES
+
+      - name: Install Godot 4.7.1
+        run: |
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 "$GODOT_URL" -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 /tmp/godot/Godot_v4.7.1-stable_linux.x86_64 /usr/local/bin/godot
+          godot --version
+
+      - name: Godot import validation
+        run: |
+          godot --headless --editor --path . --quit-after 120 --import || true
+          for f in assets/generated/asset_pipeline_v1/rural_house/*.glb; do
+            test -f "$f.import" || { echo "Missing Godot import metadata for $f"; exit 31; }
+          done
+          echo FRONTLINE_ASSET_PIPELINE_GODOT_IMPORT_PASS
+
+      - name: Upload generated proof assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-asset-pipeline-v1-rural-house
+          path: |
+            assets/generated/asset_pipeline_v1/rural_house/*.glb
+            assets/generated/asset_pipeline_v1/rural_house/*.import
+            assets/generated/asset_pipeline_v1/rural_house/GENERATED_MANIFEST.tsv
+          if-no-files-found: error
+          retention-days: 14
