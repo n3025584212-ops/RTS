@@ -11,35 +11,47 @@ on:
       - 'docs/current/FRONTLINE_ASSET_PIPELINE_V1.md'
       - 'assets/generated/asset_pipeline_v1/**'
 
+concurrency:
+  group: frontline-asset-pipeline-v1-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Blender
+      - name: Install official Blender 4.2 LTS
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y blender python3-numpy
-          blender --version
-          python3 - <<'PY'
-          import numpy
-          print('SYSTEM_NUMPY_OK', numpy.__version__)
-          PY
+          set -euo pipefail
+          BLENDER_VERSION="4.2.23"
+          URL="https://download.blender.org/release/Blender4.2/blender-${BLENDER_VERSION}-linux-x64.tar.xz"
+          curl -fL --retry 4 --retry-delay 2 "$URL" -o "$RUNNER_TEMP/blender.tar.xz"
+          tar -xJf "$RUNNER_TEMP/blender.tar.xz" -C "$RUNNER_TEMP"
+          BLENDER="$RUNNER_TEMP/blender-${BLENDER_VERSION}-linux-x64/blender"
+          chmod +x "$BLENDER"
+          echo "BLENDER=$BLENDER" >> "$GITHUB_ENV"
+          "$BLENDER" --version
+          "$BLENDER" --background --python-expr "import numpy; print('BLENDER_NUMPY_OK', numpy.__version__)"
 
       - name: Build rural house family
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p assets/generated/asset_pipeline_v1/rural_house
-          blender --background \
+          "$BLENDER" --background \
             --python tools/asset_pipeline/build_rural_house_family.py -- \
             --output-dir assets/generated/asset_pipeline_v1/rural_house
           cat assets/generated/asset_pipeline_v1/rural_house/GENERATED_MANIFEST.tsv
           python3 tools/asset_pipeline/validate_generated_glbs.py assets/generated/asset_pipeline_v1/rural_house
 
       - name: Protect existing high-fidelity anchors
+        shell: bash
         run: |
+          set -euo pipefail
           test -s assets/visual_slice/abrams.glb
           test -s assets/visual_slice/hero_house_ruined.glb
           test -s assets/visual_slice/hero_house_ruined_hf.glb
@@ -49,22 +61,31 @@ jobs:
           echo FRONTLINE_PROTECTED_ASSET_ANCHORS_PRESENT=YES
 
       - name: Install Godot 4.7.1
+        shell: bash
         run: |
+          set -euo pipefail
           GODOT_URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
-          curl -fL --retry 4 "$GODOT_URL" -o /tmp/godot.zip
-          unzip -q /tmp/godot.zip -d /tmp/godot
-          sudo install -m 0755 /tmp/godot/Godot_v4.7.1-stable_linux.x86_64 /usr/local/bin/godot
-          godot --version
+          curl -fL --retry 4 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          GODOT="$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          chmod +x "$GODOT"
+          echo "GODOT=$GODOT" >> "$GITHUB_ENV"
+          "$GODOT" --version
 
       - name: Godot import validation
+        shell: bash
         run: |
-          godot --headless --editor --path . --quit-after 120 --import
+          set -euo pipefail
+          "$GODOT" --headless --editor --path . --rendering-method forward_plus --quit-after 120 --import 2>&1 | tee asset-pipeline-import.log
           for f in assets/generated/asset_pipeline_v1/rural_house/*.glb; do
             test -f "$f.import" || { echo "Missing Godot import metadata for $f"; exit 31; }
           done
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|Cannot open file|Invalid call|Invalid access' asset-pipeline-import.log
           echo FRONTLINE_ASSET_PIPELINE_GODOT_IMPORT_PASS
 
       - name: Upload generated proof assets
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: frontline-asset-pipeline-v1-rural-house
@@ -72,5 +93,6 @@ jobs:
             assets/generated/asset_pipeline_v1/rural_house/*.glb
             assets/generated/asset_pipeline_v1/rural_house/*.import
             assets/generated/asset_pipeline_v1/rural_house/GENERATED_MANIFEST.tsv
-          if-no-files-found: error
+            asset-pipeline-import.log
+          if-no-files-found: warn
           retention-days: 14
