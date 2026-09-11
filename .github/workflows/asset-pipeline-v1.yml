@@ -73,15 +73,28 @@ jobs:
           echo "GODOT=$GODOT" >> "$GITHUB_ENV"
           "$GODOT" --version
 
-      - name: Godot import validation
+      - name: Godot isolated GLB import validation
         shell: bash
         run: |
           set -euo pipefail
-          "$GODOT" --headless --editor --path . --rendering-method forward_plus --quit-after 120 --import 2>&1 | tee asset-pipeline-import.log
-          for f in assets/generated/asset_pipeline_v1/rural_house/*.glb; do
+          SCRATCH="$RUNNER_TEMP/frontline-asset-import"
+          mkdir -p "$SCRATCH/assets"
+          cp assets/generated/asset_pipeline_v1/rural_house/*.glb "$SCRATCH/assets/"
+          cat > "$SCRATCH/project.godot" <<'EOF'
+          ; Minimal isolated project used only to prove Godot 4.7.1 GLB import.
+          config_version=5
+          [application]
+          config/name="FRONTLINE Asset Import Validation"
+          [rendering]
+          renderer/rendering_method="gl_compatibility"
+          renderer/rendering_method.mobile="gl_compatibility"
+          EOF
+          "$GODOT" --headless --editor --path "$SCRATCH" --quit-after 60 2>&1 | tee asset-pipeline-import.log
+          for f in "$SCRATCH"/assets/*.glb; do
             test -f "$f.import" || { echo "Missing Godot import metadata for $f"; exit 31; }
           done
           ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load|Cannot open file|Invalid call|Invalid access' asset-pipeline-import.log
+          cp "$SCRATCH"/assets/*.import assets/generated/asset_pipeline_v1/rural_house/
           echo FRONTLINE_ASSET_PIPELINE_GODOT_IMPORT_PASS
 
       - name: Upload generated proof assets
