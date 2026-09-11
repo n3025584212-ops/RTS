@@ -1,0 +1,1 @@
+Generated assets for FRONTLINE Asset Pipeline V1 live here. Source/protected production assets are never overwritten in place.
