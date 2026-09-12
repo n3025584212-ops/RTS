@@ -2,6 +2,7 @@
 
 STATUS=ACTIVE
 WORK_ID=LEARNING_SPRINT_01_BATTLEFIELD_CONSTRUCTION
+ACTIVE_ISSUE=#39
 MODE=EVIDENCE_REPRODUCTION_BEFORE_PRODUCT_TRANSFER
 
 ## 为什么现在不继续直接修 Golden Scene
@@ -22,6 +23,10 @@ Golden Scene / River Town 已经证明：
 ## 当前唯一任务
 
 ### LEARNING_SPRINT_01 — 可信战场区域如何被真正构建
+
+正式执行入口：GitHub Issue #39
+
+合同：`docs/learning/LEARNING_SPRINT_01_CONTRACT.md`
 
 研究问题：
 
