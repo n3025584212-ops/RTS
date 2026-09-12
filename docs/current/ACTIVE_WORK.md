@@ -5,6 +5,7 @@ WORK_ID=LEARNING_SPRINT_01_FRONTLINE_END_TO_END_EVIDENCE_GRAPH
 ACTIVE_ISSUE=#39
 MODE=EVIDENCE_REPRODUCTION_BEFORE_PRODUCT_TRANSFER
 CORE_CHAIN=docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md
+WINDOW_03_AUDIT_CONTRACT=docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md
 
 ## 当前任务本质
 
@@ -24,83 +25,21 @@ Window 01 的核心学习主线是把这些东西串成一条完整因果链：
 
 ## 01窗口必须逐层建立证据的13层
 
-### 1. 地图怎么加载
-`Battle/Main -> Map Scene -> Terrain / Navigation / Buildings / Capture / Spawn`
+1. 地图怎么加载；
+2. 单位数据从哪里来；
+3. 模型 / 材质如何绑定；
+4. 玩家怎么选单位；
+5. 点击命令走到哪里；
+6. 寻路怎么执行；
+7. 如何发现 / 选择目标；
+8. 伤害怎么产生；
+9. AI怎样下命令；
+10. UI怎样拿到状态；
+11. 动画 / VFX / 声音怎样反馈；
+12. 镜头怎样呈现；
+13. 最后玩家看到什么。
 
-必须追出：
-`地图资源 -> 场景节点 -> 导航数据 -> 战斗空间`
-
-### 2. 单位数据从哪里来
-追到单位事实源：HP / Speed / Ammo / Damage / Range / Faction / Model / Animation 等到底来自 `.tres/.res`、脚本常量、JSON/CSV、Scene 属性还是混合来源。
-
-### 3. 模型 / 材质如何绑定
-追：
-`单位类型 -> 单位Scene -> Mesh -> Imported Asset -> Material -> Texture -> Shader -> LOD/Shadow/Normal/Roughness -> 最终渲染`
-
-重点检查高质量资产怎样成为可批量复用资产，而不是只能局部做漂亮。
-
-### 4. 玩家怎么选单位
-追：
-`Input -> Screen Position -> Camera Ray/Selection Area -> Query -> Unit -> SelectionManager -> selected_units[] -> Selection/HUD Feedback`
-
-### 5. 点击命令走到哪里
-追：
-`Input -> World Hit -> Context Classification -> MOVE / ATTACK / CAPTURE / FOLLOW / REJECT -> Command System`
-
-### 6. 寻路怎么执行
-追：
-`Move Command -> Destination -> Formation Position -> Navigation -> Path -> Steering/Velocity -> Body -> Transform`
-
-检查河流、建筑、拥挤、编队、单位类型差异和路径失败。
-
-### 7. 如何发现 / 选择目标
-区分：
-- 玩家主动指定；
-- 单位/AI自动发现。
-
-追：
-`Detection -> Candidates -> Faction -> LOS -> Target Class -> Priority -> Valid Target -> current_target`
-
-### 8. 伤害怎么产生
-追：
-`Target -> Weapon Ready -> Ammo -> Cooldown -> Range -> LOS -> Fire -> Ammo-1 -> Hit -> Damage -> HP -> Death`
-
-明确谁负责开火、弹药、命中、伤害、HP和死亡。
-
-### 9. AI怎样下命令
-追：
-`AI Perception/State -> Tactical Decision -> Command -> same execution chain -> Unit Behavior`
-
-若 AI 绕过正常命令链直接改 position/HP，必须单独标记。
-
-### 10. UI怎样拿到状态
-追：
-`Authoritative Game State -> Signal/Event/Query -> HUD/World UI -> Display`
-
-检查 UI 是表达状态还是重新计算战争。
-
-### 11. 动画 / VFX / 声音怎样反馈
-把逻辑事实和玩家感知分开：
-
-`FIRE confirmed -> Animation + Muzzle + Projectile/Tracer + Impact + Sound + Camera + HUD feedback`
-
-### 12. 镜头怎样呈现
-正式检查：高度、FOV、倾角、单位屏幕尺寸、密度、光照方向、雾、LOD、阴影距离和后处理。
-
-Camera 属于最终渲染系统，而不是简单移动视角。
-
-### 13. 最后玩家看到什么
-前12层最终汇聚：
-
-`地图 + 单位资产 + 材质 + 光照 + 战斗状态 + 动画 + VFX + UI + Camera + Audio -> PLAYER EXPERIENCE`
-
-玩家最终只判断：
-- 点下命令以后是否像军队一样行动；
-- 坦克/步兵是否有重量和可读性；
-- 战斗是否有力量；
-- 战场是否活着且空间合理；
-- 是否一眼看懂局势；
-- 是否像想玩的战争游戏。
+禁止把十三层写成十三篇互不连接的知识笔记。
 
 ---
 
@@ -111,6 +50,7 @@ Camera 属于最终渲染系统，而不是简单移动视角。
 - `CLAIM`
 - `CHAIN_LAYER / EDGE`
 - `SOURCE`
+- `SOURCE_VERSION`
 - `STATUS=OBSERVED|REPRODUCED|INFERRED|HYPOTHESIS|UNKNOWN|REJECTED`
 - `WHAT_THE_SOURCE_ACTUALLY_PROVES`
 - `WHAT_IT_DOES_NOT_PROVE`
@@ -118,8 +58,6 @@ Camera 属于最终渲染系统，而不是简单移动视角。
 - `EXTERNAL_REFERENCE_IMPLEMENTATION`
 - `GAP`
 - `REPRODUCTION_REQUIRED=YES|NO`
-
-禁止把十三层写成十三篇互不连接的知识笔记。
 
 ---
 
@@ -132,9 +70,9 @@ COMMERCIAL_RESULT_REFERENCES=WARNO_BROKEN_ARROW_REGIMENTS
 
 0 A.D. 是第一条真实链的主要可检查教材，不是 FRONTLINE 模板，也不是“RTS标准答案”。
 
-BAR/Recoil、Warzone 用于验证哪些结论可能更一般，哪些只是 0 A.D. 特有实现。
+重要版本警报：`0ad/0ad` GitHub 仓库已归档并注明源码在 2024-08-20 迁往 Wildfire Games Gitea。因此 GitHub `master` 默认只能作为历史证据；任何声称证明 Release 28 / 2026 当前实现的源码结论，都必须证明版本匹配。
 
-商业闭源游戏主要证明玩家最终能看到什么，除非有公开制作资料，否则不能用截图臆测内部实现。
+BAR/Recoil、Warzone 用于主动寻找反例，不只是做确认样本。
 
 ---
 
@@ -160,9 +98,24 @@ STAGED。
 ### 03 — 独立审核 / 反证
 ACTIVE。
 
-现在就审核01：版本、源码、结论跨度、二手资料、反例、未知连接。
+严格执行：`docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md`
 
-之后审核02：实际复现是否真的连接到最终 PLAYER 层，而不是只完成代码/CI。
+03不是复述01，而是审核“证据 -> 事实 -> 推论”是否越界。每条重要结论必须经过六项检查：
+
+1. `PRIMARY_SOURCE_INTEGRITY`：是否拿二手文章冒充源码证据；
+2. `VERSION_IDENTITY`：项目/仓库/tag/commit/日期是否匹配；
+3. `RUNTIME_SEMANTICS`：代码存在是否真的等于运行时走这条链；
+4. `GENERALIZATION_BOUNDARY`：是否从项目事实越界成 RTS 通则；
+5. `ALTERNATIVE_EXPLANATIONS`：是否主动寻找竞争解释；
+6. `COUNTEREXAMPLE_SEARCH`：BAR/Recoil、Warzone 或其他成熟项目是否构成反例。
+
+03对结论使用：
+`SOURCE_FACT -> PROJECT_SPECIFIC_INFERENCE -> CROSS_PROJECT_PATTERN -> DESIGN_RECOMMENDATION -> UNSUPPORTED_GENERALIZATION`
+
+03判定使用：
+`PASS | DOWNGRADE | FIX | REJECT | UNKNOWN`
+
+之后审核02时，同样区分：代码存在、代码执行、状态变化、表现反馈、PLAYER实际看到结果。
 
 ---
 
@@ -171,6 +124,8 @@ ACTIVE。
 - 不继续旧 Golden Scene 盲调；
 - 不继续扩 Formation / AI 作为独立系统工程；
 - 不把某一个参考工程的实现提升成 RTS 普遍规律；
+- 不用 archived/错误版本源码证明当前实现；
+- 不从类/组件存在直接推出完整运行调用链；
 - 不生成新的幻想目标图来替代生产知识；
 - 不用节点数、文件数、CI PASS 或代码存在证明最终体验；
 - 不允许用流畅文字填补 UNKNOWN 链路。
@@ -182,12 +137,13 @@ ACTIVE。
 只有同时满足以下条件才 PASS：
 
 1. 至少一条真实 playable chain 被从内容/数据追到 PLAYER 层；
-2. 十三层之间的重要连接有来源和证据等级；
+2. 十三层之间的重要连接有来源、版本和证据等级；
 3. UNKNOWN 被明确保留，没有脑补桥梁；
-4. 02在不同内容上独立复现一条小而完整的运行链；
-5. 实物有真实运行、截图/录像和操作证据；
-6. 03完成反证和实物审核；
-7. 00能根据证据图谱明确判断 FRONTLINE 当前差距属于哪一层或哪些跨层连接；
-8. 只有经过支持/复现的方法才进入 FRONTLINE transfer decision。
+4. 03完成六项硬审计并把越界结论降级/打回；
+5. 02在不同内容上独立复现一条小而完整的运行链；
+6. 实物有真实运行、截图/录像和操作证据；
+7. 03完成实物反证和复现审核；
+8. 00能根据证据图谱明确判断 FRONTLINE 当前差距属于哪一层或哪些跨层连接；
+9. 只有经过支持/复现的方法才进入 FRONTLINE transfer decision。
 
 完成前：`PRODUCT_PRODUCTION_RESUME=NO`。
