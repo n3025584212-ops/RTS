@@ -1,6 +1,6 @@
-extends "res://scripts/production/reference_region_01.gd"
+extends "res://scripts/production/reference_region_01_aligned.gd"
 ## Integrates the source-backed RepairWorkshop into FRONTLINE_REFERENCE_REGION_01.
-## Keeps the base world generator unchanged and adds a connected industrial spur + Hero workshop.
+## Keeps the aligned river/bridge world intact and adds a connected industrial spur + Hero workshop.
 
 const WORKSHOP_SCENE := "res://scenes/production/RepairWorkshop.tscn"
 
