@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V27
+STATE_VERSION=V28
 SOURCE_OF_TRUTH=THIS_FILE
 
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
@@ -95,22 +95,36 @@ These are acceptance observations. Their technical causes are not assumed.
 
 ACTIVE_PRIMARY_TASK=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
 ACTIVE_ISSUE=#39
-ACTIVE_BRANCH=learning/sprint01-battlefield-construction
+ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 ACTIVE_TASK_TYPE=EVIDENCE_AND_REPRODUCTION
 PRODUCT_PRODUCTION_RESUME=NO
+
+PRIMARY_REFERENCE=0_AD_RELEASE_28
+PRIMARY_REFERENCE_STATUS=SELECTED_FOR_INITIAL_END_TO_END_TRACE
+SECONDARY_VALIDATOR_A=BEYOND_ALL_REASON_RECOIL
+SECONDARY_VALIDATOR_B=WARZONE_2100
+COMMERCIAL_RESULT_REFERENCES=WARNO_BROKEN_ARROW_REGIMENTS
+
+REFERENCE_SELECTION=docs/learning/sprint01/REFERENCE_SELECTION.md
+EVIDENCE_REGISTER=docs/learning/sprint01/EVIDENCE_REGISTER.md
+CONTRACT=docs/learning/LEARNING_SPRINT_01_CONTRACT.md
 
 QUESTION=
 How does a mature inspectable RTS go from authored world/content and player input through units, navigation, combat, AI, UI, camera and presentation into a running readable battle—and can we independently reproduce a small complete chain before transferring any method to FRONTLINE?
 
-CONTRACT=docs/learning/LEARNING_SPRINT_01_CONTRACT.md
+Reference selection rationale:
+- 0 A.D. Release 28 exposes current official build source plus game data;
+- its inspectable project/data structure spans maps, art, GUI, shaders, simulation, AI, helpers and templates;
+- it is selected as an end-to-end production-chain teacher, NOT as FRONTLINE's visual/gameplay template;
+- BAR/Recoil and Warzone 2100 are cross-checks so one project's architecture is not mistaken for universal truth.
 
 Required sequence:
-1. select at least one mature inspectable 3D RTS / real-time tactics production reference;
-2. inspect real shipped results without inferring hidden implementation;
-3. inspect real source/data/maps/content pipeline and official production evidence;
-4. classify every major claim as OBSERVED / REPRODUCED / INFERRED / HYPOTHESIS / UNKNOWN / REJECTED;
-5. trace one playable chain end-to-end: world -> unit/data -> input -> movement -> combat -> AI -> UI -> camera -> presentation -> runtime;
-6. separately causally decompose world construction;
+1. inspect current 0 A.D. Release 28 source/data rather than relying only on stale mirrors or summaries;
+2. choose one real playable slice that can be traced end-to-end;
+3. classify every major claim as OBSERVED / REPRODUCED / INFERRED / HYPOTHESIS / UNKNOWN / REJECTED;
+4. trace the playable chain: world -> unit/data -> input -> movement -> combat -> AI -> UI -> camera -> presentation -> runtime;
+5. separately causally decompose world construction;
+6. cross-check important conclusions against BAR/Recoil and/or Warzone where useful;
 7. independently reproduce a small complete running slice on different content;
 8. capture and compare actual evidence;
 9. record success/failure/approximation/unknowns;
@@ -170,6 +184,7 @@ UNKNOWN_ALLOWED=YES
 ESSAY_WITHOUT_REPRODUCTION_IS_NOT_LEARNING_PASS=YES
 OLD_OPEN_TASKS_DO_NOT_CONTROL_CURRENT_WORK=YES
 RECENT_COMPLAINT_MUST_NOT_NARROW_THE_ENTIRE_LEARNING_PROBLEM=YES
+PRIMARY_REFERENCE_IS_NOT_UNIVERSAL_TRUTH=YES
 
 ---
 
@@ -185,8 +200,7 @@ Any chat or agent receives one evidence-scoped task only:
 
 Authority comes from evidence and artifacts, not a window number.
 
-NEXT=ISSUE_39_REFERENCE_SELECTION_AND_EVIDENCE_REGISTER
-NEXT_AFTER_REFERENCE=TRACE_REAL_END_TO_END_CHAIN
+NEXT=TRACE_0AD_RELEASE28_REAL_END_TO_END_PLAYABLE_CHAIN
 NEXT_AFTER_CHAIN=INDEPENDENT_SMALL_COMPLETE_REPRODUCTION
 NEXT_AFTER_REPRODUCTION=FRONTLINE_TRANSFER_DECISION
 NEXT_AFTER_TRANSFER=RESUME_ONE_SMALL_REAL_PRODUCT_SLICE_USING_ONLY_PROVEN_METHODS
