@@ -1,0 +1,17 @@
+[
+  {
+    "file": "repair_workshop_lod0.glb",
+    "zero_area_faces_removed": 16,
+    "undefined_tangents_rebuilt": 0
+  },
+  {
+    "file": "repair_workshop_lod1.glb",
+    "zero_area_faces_removed": 8,
+    "undefined_tangents_rebuilt": 0
+  },
+  {
+    "file": "repair_workshop_lod2.glb",
+    "zero_area_faces_removed": 0,
+    "undefined_tangents_rebuilt": 1
+  }
+]

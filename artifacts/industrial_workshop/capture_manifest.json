@@ -1,0 +1,66 @@
+[
+  {
+    "label": "industrial_baseline",
+    "file": "artifacts/visual_reset/industrial_baseline/river_town_actual_1920x1080.png",
+    "sha256": "bd2e7da2b3ed34b22b78b99730332e3670615c26947b29940ca5d95d9fef8031",
+    "captured_at_utc": "2026-09-12T04:32:36",
+    "forced_lod": null,
+    "wall_clock_frame_ms_mean": 1040.89345833333
+  },
+  {
+    "label": "workshop_front",
+    "file": "artifacts/visual_reset/workshop_front/river_town_actual_1920x1080.png",
+    "sha256": "ff6f28362aecae4cdf384189768787aa9574c2292020cf8228f35a02cb9cc4ff",
+    "captured_at_utc": "2026-09-12T08:46:38",
+    "forced_lod": 0,
+    "wall_clock_frame_ms_mean": 502.816083333333
+  },
+  {
+    "label": "workshop_rear",
+    "file": "artifacts/visual_reset/workshop_rear/river_town_actual_1920x1080.png",
+    "sha256": "64ed27c3e32e7d41a3ec4f8aac308300f76259be820bc8b2b66903cf114ed739",
+    "captured_at_utc": "2026-09-12T08:46:49",
+    "forced_lod": 0,
+    "wall_clock_frame_ms_mean": 352.4184375
+  },
+  {
+    "label": "workshop_overview",
+    "file": "artifacts/visual_reset/workshop_overview/river_town_actual_1920x1080.png",
+    "sha256": "1a80df1dd10786a42ffe003c7cd2557f69ddcaa5ff78b53cf70553c7a576fec0",
+    "captured_at_utc": "2026-09-12T08:47:06",
+    "forced_lod": -1,
+    "wall_clock_frame_ms_mean": 525.22778125
+  },
+  {
+    "label": "workshop_detail",
+    "file": "artifacts/visual_reset/workshop_detail/river_town_actual_1920x1080.png",
+    "sha256": "1fb58d97c2817a7277b171c1c902f48a779d533e0696358170ad91d657fe9675",
+    "captured_at_utc": "2026-09-12T08:47:20",
+    "forced_lod": 0,
+    "wall_clock_frame_ms_mean": 456.60584375
+  },
+  {
+    "label": "workshop_lod1",
+    "file": "artifacts/visual_reset/workshop_lod1/river_town_actual_1920x1080.png",
+    "sha256": "4dedcabb6ec290f7b0b0f3553d002fb1e327fa69dcde0a705fe945677f75976e",
+    "captured_at_utc": "2026-09-12T08:47:37",
+    "forced_lod": 1,
+    "wall_clock_frame_ms_mean": 513.618875
+  },
+  {
+    "label": "workshop_lod2",
+    "file": "artifacts/visual_reset/workshop_lod2/river_town_actual_1920x1080.png",
+    "sha256": "4106cee8e3af0e1b83bedb87c26a3b2b6fd219430b95e94a909e7fe624c46964",
+    "captured_at_utc": "2026-09-12T08:55:10",
+    "forced_lod": 2,
+    "wall_clock_frame_ms_mean": 8.28662360995689
+  },
+  {
+    "label": "workshop_reference",
+    "file": "artifacts/visual_reset/workshop_reference/river_town_actual_1920x1080.png",
+    "sha256": "a2425ea579f2e4c1c917c8db43ffc51983f2b8050b8e89021ea436c7f865aea7",
+    "captured_at_utc": "2026-09-12T08:48:14",
+    "forced_lod": -1,
+    "wall_clock_frame_ms_mean": 623.84940625
+  }
+]

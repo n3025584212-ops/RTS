@@ -1,0 +1,18 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+Vulkan 1.4.323 - Forward+ - Using Device #0: Intel - Intel(R) UHD Graphics
+
+SOURCE_GRASS_INSTANCES grass_bermuda_01_3 26918
+SOURCE_GRASS_INSTANCES grass_bermuda_01_5 26697
+SOURCE_GRASS_INSTANCES grass_bermuda_01_7 26846
+SOURCE_GRASS_INSTANCES grass_medium_01_0 6238
+SOURCE_GRASS_INSTANCES grass_medium_01_3 6137
+SOURCE_GRASS_INSTANCES grass_medium_01_5 6205
+FRONTLINE_RIVER_TOWN_READY renderer=forward_plus adapter=Intel(R) UHD Graphics
+HERO_V2_READY scene=res://scenes/production/RiverTownHeroShotV2.tscn
+WORKSHOP_VALIDATION_READY asset_view=workshop forced_lod=-1
+WORKSHOP_BATCH_BEGIN workshop_lod2
+WORKSHOP_BATCH_SETTLE workshop_lod2 8
+WORKSHOP_BATCH_SETTLE workshop_lod2 16
+WORKSHOP_BATCH_SETTLE workshop_lod2 24
+WORKSHOP_BATCH_SETTLE workshop_lod2 32
+WORKSHOP_BATCH_CAPTURE workshop_lod2 error=0

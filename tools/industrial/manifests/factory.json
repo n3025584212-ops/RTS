@@ -1,0 +1,161 @@
+{
+  "source": "https://polyhaven.com/a/modular_factory_facade",
+  "author": "James Ray Cock",
+  "license": "CC0-1.0",
+  "license_url": "https://polyhaven.com/license",
+  "files": [
+    {
+      "file": "textures/modular_factory_facade_windows_nor_gl_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_windows_nor_gl_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "c91219b6159338b826c9e90f4d48e155",
+      "sha256": "4cbcdfb23fc6f3fca43cd1adb5a61a9a79ee7bb98765cb52afa5ca7f6b8d635e",
+      "bytes": 11881088
+    },
+    {
+      "file": "textures/modular_factory_facade_brick_diff_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_brick_diff_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "b37f82a8ca107d2a66d04de9efa42f92",
+      "sha256": "8649ad9d985844eb478a712a4d5a96c6d08abd07df08fbdcf8cc616c6e657423",
+      "bytes": 16319198
+    },
+    {
+      "file": "textures/modular_factory_facade_brick_arm_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_brick_arm_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "65b6a0b0ad4df1caf17d9c8539f31cfe",
+      "sha256": "5de39e9f831d405b2aa5e82e3fb72186d5e858a7f76f7444507bbb568b74676e",
+      "bytes": 8904127
+    },
+    {
+      "file": "textures/modular_factory_facade_garage_nor_gl_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_garage_nor_gl_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "86acdf6ad4ee255c1897804d88929a21",
+      "sha256": "c68e54c5f4a6c0e9c36730336fa8e58b991420eafa8adc189904eea1c0341424",
+      "bytes": 13189576
+    },
+    {
+      "file": "textures/modular_factory_facade_trim_01_arm_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_trim_01_arm_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "4c2d3d763c10ff6534af6e7b290253e1",
+      "sha256": "55b9842f760a3fb2002f7a18a28180b1331ec7783fbd6d40d7cad0dcd0aed069",
+      "bytes": 13460532
+    },
+    {
+      "file": "textures/modular_factory_facade_doors_arm_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_doors_arm_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "c4444efb3b4cd4ab84f30e693b5388c7",
+      "sha256": "fd720afca1e7f984f949f756db88eb45abb6af8ad07ad6315f3ad15eaa4a544b",
+      "bytes": 9340387
+    },
+    {
+      "file": "textures/modular_factory_facade_windows_arm_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_windows_arm_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "666c7c207270e4ad2b3351d7fd4a417c",
+      "sha256": "c17a281f7d50de823a15d62778981823ad14ccf3b7d1756c9e9ac7dad391cfed",
+      "bytes": 13257674
+    },
+    {
+      "file": "textures/modular_factory_facade_trim_01_nor_gl_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_trim_01_nor_gl_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "a531d63b061ba947f8999b43cf020375",
+      "sha256": "e908657d41cff2a2e2b7f4dca8cd19c06bb0994b77b49a6d1aea54482d9b3523",
+      "bytes": 16910042
+    },
+    {
+      "file": "textures/modular_factory_facade_brick_nor_gl_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_brick_nor_gl_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "1974578199f57851ccc659314da25f9b",
+      "sha256": "d97c7f75f3bd537744d1686b2a908b1d3aa4cb9113762a50477c809979988971",
+      "bytes": 10182584
+    },
+    {
+      "file": "textures/modular_factory_facade_trim_01_diff_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_trim_01_diff_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "7366fcd35989e658401bbebe22e69d6d",
+      "sha256": "fdb36325457e85e99d53f12b43693ac0d97eb8b7061a1e7b27272c6f4468e510",
+      "bytes": 10316441
+    },
+    {
+      "file": "textures/modular_factory_facade_garage_diff_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_garage_diff_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "b95c003696b90ac82db47603a6c6d648",
+      "sha256": "978214b8ab0ea46be1844492595937138930395b2845b7e32849318cf8e6172f",
+      "bytes": 8042194
+    },
+    {
+      "file": "textures/modular_factory_facade_doors_nor_gl_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_doors_nor_gl_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "8648001ff77f40706ce031f8a76b1831",
+      "sha256": "506d9148769f06178bcd822c09095f093669381609efd130610056bcf62fdc1f",
+      "bytes": 7942407
+    },
+    {
+      "file": "textures/modular_factory_facade_doors_diff_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_doors_diff_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "399de29e3a2e5b6e17998fae48d4c286",
+      "sha256": "88cc202ccdc0b7d4dee39581410417f33bf1830ba5d9e0df8637b255ca123945",
+      "bytes": 7434692
+    },
+    {
+      "file": "textures/modular_factory_facade_garage_arm_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_garage_arm_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "84939050758cfdbd41d8fa4c3368cdb2",
+      "sha256": "be41b5d2febd4b1fb14996c825c2bba00685801b533fbe0b7bc0aedf885663bf",
+      "bytes": 9612038
+    },
+    {
+      "file": "textures/modular_factory_facade_windows_diff_4k.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/4k/modular_factory_facade/modular_factory_facade_windows_diff_4k.jpg",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "91c06a8b54e027e8b04fca725d07db43",
+      "sha256": "fbf7d84c35acd54b9dc5fde79fc025d0dc0d5c57f5abd706dfb9c32005814b8e",
+      "bytes": 8922099
+    },
+    {
+      "file": "modular_factory_facade.bin",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/modular_factory_facade/modular_factory_facade.bin",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "225eee006759007851584344b0b22847",
+      "sha256": "12702fb065a838695e0621e1aac3947af92d32c439fb965c8b0563ad691fed70",
+      "bytes": 6269260
+    },
+    {
+      "file": "modular_factory_facade.gltf",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/modular_factory_facade/modular_factory_facade_4k.gltf",
+      "author": "James Ray Cock",
+      "license": "CC0-1.0",
+      "md5": "070ebef3234e847f56ad37a97309ef2e",
+      "sha256": "2a6fe32cd911a371171da1986c4c5747590577ae116f7d351fa9d7a10a05d2b4",
+      "bytes": 372666
+    }
+  ]
+}

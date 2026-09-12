@@ -1,0 +1,49 @@
+{
+  "blender": "4.5.9 LTS",
+  "dimensions_godot_xyz_m": [
+    14.020202159881592,
+    7.128333479166031,
+    14.642049312591553
+  ],
+  "hall_footprint_m": [
+    12,
+    12
+  ],
+  "door_clearance_m": [
+    3.32,
+    2.74
+  ],
+  "wall_thickness_m": 0.24,
+  "source_parts": 302,
+  "lods": [
+    {
+      "lod": 0,
+      "triangles": 228000,
+      "vertices": 127064,
+      "materials": 9,
+      "uv_layers": 1,
+      "file": "repair_workshop_lod0.glb",
+      "triangles_before_sanitation": 228016
+    },
+    {
+      "lod": 1,
+      "triangles": 101985,
+      "vertices": 60832,
+      "materials": 9,
+      "uv_layers": 1,
+      "file": "repair_workshop_lod1.glb",
+      "triangles_before_sanitation": 101993
+    },
+    {
+      "lod": 2,
+      "triangles": 45230,
+      "vertices": 33438,
+      "materials": 9,
+      "uv_layers": 1,
+      "file": "repair_workshop_lod2.glb",
+      "triangles_before_sanitation": 45230
+    }
+  ],
+  "material_policy": "sRGB albedo; non-color OpenGL tangent normal; ARM R=AO G=roughness B=metallic; source UV retained",
+  "seed": "deterministic; no random geometry"
+}

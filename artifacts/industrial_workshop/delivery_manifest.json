@@ -1,0 +1,612 @@
+{
+  "baseline": "dfc4b64e9bbc2a1c8f5d1032e92912195c575f07",
+  "files": [
+    {
+      "file": "artifacts/industrial_workshop/asset_audit.json",
+      "bytes": 18636,
+      "sha256": "68cc6cbaeeedf736a2875fa19a6739127415ebe4b9dadb63d00967e11b0be28e",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/industrial_workshop/baseline_preservation.json",
+      "bytes": 187,
+      "sha256": "70634c3bcc4e853d948579331333f00ee1f0b36d838820e0cfc526f7a16ffb4c",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/industrial_workshop/capture_manifest.json",
+      "bytes": 2653,
+      "sha256": "7621737c5b070c7d4048e6d78a615b741bf2dd25496ce3d6f2ec45fd9d973bbb",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/industrial_workshop/final_pipeline.log",
+      "bytes": 51023,
+      "sha256": "58d5231c1b33a68aa290886da4019b506f6ff4ea0e4ab8aac1767e09ea61a30f",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/industrial_workshop/geometry_validation.json",
+      "bytes": 809,
+      "sha256": "fbc619bac8d3fda1d568aefc88c27a59a2885d5e5af4c227353ce34989954a01",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/industrial_workshop/godot_import_validation.json",
+      "bytes": 614,
+      "sha256": "95a52a1fdfb69fbc7728a9756183ee1ce8436e1545d03827251ba78280928c97",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/industrial_workshop/runtime.log",
+      "bytes": 891,
+      "sha256": "114a531012b02a81355c953be10f484d3aedeea01eb64519dd57ac8cd91cb1f5",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/industrial_workshop/texel_density_validation.json",
+      "bytes": 506,
+      "sha256": "56a658c125c0a137c99422b1004ef29326813de745524d1947beef3f796f9de8",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/industrial_baseline/river_town_actual_1920x1080.png",
+      "bytes": 3649713,
+      "sha256": "bd2e7da2b3ed34b22b78b99730332e3670615c26947b29940ca5d95d9fef8031",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/industrial_baseline/runtime_metrics.json",
+      "bytes": 1283,
+      "sha256": "1026d30f47bfb0c6c254de995a5dc812f9bd96addcfb11b03ad3eb8226e58e69",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_detail/river_town_actual_1920x1080.png",
+      "bytes": 3749193,
+      "sha256": "1fb58d97c2817a7277b171c1c902f48a779d533e0696358170ad91d657fe9675",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_detail/runtime_metrics.json",
+      "bytes": 1145,
+      "sha256": "a8c45376ce273219039e61080bd2f77c8fe7a4830ff55300cd724e81d53148ff",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_front/river_town_actual_1920x1080.png",
+      "bytes": 3686293,
+      "sha256": "ff6f28362aecae4cdf384189768787aa9574c2292020cf8228f35a02cb9cc4ff",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_front/runtime_metrics.json",
+      "bytes": 1151,
+      "sha256": "df5e9802ba7574fbd6519ffbeae7d4ce2c0e4c1ad072bb1ef486b2adec90a8cc",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_lod1/river_town_actual_1920x1080.png",
+      "bytes": 3681761,
+      "sha256": "4dedcabb6ec290f7b0b0f3553d002fb1e327fa69dcde0a705fe945677f75976e",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_lod1/runtime_metrics.json",
+      "bytes": 1145,
+      "sha256": "b3b856c86a3b5acc2b50be346422dbf7691d3d25a9166a0ad509a460e72b3a41",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_lod2/river_town_actual_1920x1080.png",
+      "bytes": 3683537,
+      "sha256": "4106cee8e3af0e1b83bedb87c26a3b2b6fd219430b95e94a909e7fe624c46964",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_lod2/runtime_metrics.json",
+      "bytes": 1151,
+      "sha256": "71e1ce39e769be92046fdc35f47e7be9337abbeb6dd3d5b2350596501e7be073",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_overview/river_town_actual_1920x1080.png",
+      "bytes": 3414751,
+      "sha256": "1a80df1dd10786a42ffe003c7cd2557f69ddcaa5ff78b53cf70553c7a576fec0",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_overview/runtime_metrics.json",
+      "bytes": 1136,
+      "sha256": "f5025714e8c66df37ec206d1ae536dd094f8e8c276695a40cc540ede9864596d",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_rear/river_town_actual_1920x1080.png",
+      "bytes": 2808748,
+      "sha256": "64ed27c3e32e7d41a3ec4f8aac308300f76259be820bc8b2b66903cf114ed739",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_rear/runtime_metrics.json",
+      "bytes": 1139,
+      "sha256": "4f2c3a61eac76efed2d3dd547dff3bd7932d353864815d62bcb38e8a0fa235b4",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_reference/river_town_actual_1920x1080.png",
+      "bytes": 3649425,
+      "sha256": "a2425ea579f2e4c1c917c8db43ffc51983f2b8050b8e89021ea436c7f865aea7",
+      "in_repository": true
+    },
+    {
+      "file": "artifacts/visual_reset/workshop_reference/runtime_metrics.json",
+      "bytes": 1137,
+      "sha256": "7e365f75215ebafd22f285516e030dd12437c36409481f87b542f2f4257bd4c2",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/ATTRIBUTION.md",
+      "bytes": 2476,
+      "sha256": "0f44eb0454eea1a627082c4d372d8c77ff52f4dd8f510bb76eef9073ea9add6b",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/build_report.json",
+      "bytes": 1141,
+      "sha256": "8c9629124a071920b108d93db3b6628de88c84f3efbd1c4b0d104e9129506d86",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/export_sanitation.json",
+      "bytes": 376,
+      "sha256": "b623a341b2fc829fd7d55f00dcc8e991d8396c5fe49a969494bdd0f54c8a77e3",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod0.glb",
+      "bytes": 24525144,
+      "sha256": "212c863c471e97f762eb7783575e8fc7b58e4c17d1f3bfdcdeee9d4a31207f2b",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod0.glb.import",
+      "bytes": 1215,
+      "sha256": "883026c39dd539b2cd7b060e961f7b5763b9db57fbdb5bdf7481dad21b2606fb",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod1.glb",
+      "bytes": 11964548,
+      "sha256": "9f7236229f7a6c63ca64d360cbb5a5962358f1b8bbb14400b3c09f9e1ee2d5d4",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod1.glb.import",
+      "bytes": 1215,
+      "sha256": "8ebcc9e48f0ec590357b91108ed57e1fa7ee2bc230d6c2d77217d888ffc5fb15",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod2.glb",
+      "bytes": 5046696,
+      "sha256": "f10df2a70a22f8d958f502e36d543f30613fab2c7b77265abc38bb74b03f6257",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod2.glb.import",
+      "bytes": 1214,
+      "sha256": "dbbb0801230ebd4caacf779e9760928e09c4ed93862798e01bd43d474ee4259e",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/source/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/source/.gitignore",
+      "bytes": 17,
+      "sha256": "cd02a3d844235eb38199669606502087486e3da036f03e26de3ad727390994d1",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/source/README.md",
+      "bytes": 812,
+      "sha256": "f4ebbe9a29905bf6ecc178432121bf9c126bec6cd4e6272c4e366f84bbc556a6",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/source/repair_workshop_source.blend",
+      "bytes": 203872240,
+      "sha256": "ed2886828c6868d1b55653a052f21873743730a297d905401bf12f6128871bcc",
+      "in_repository": false
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/texture_processing.json",
+      "bytes": 5781,
+      "sha256": "90692f47e6c26a01ed94368571281db0645d6be45206aceef5fb286d7274398d",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/13dcb88bd27bec6e9b31.jpg",
+      "bytes": 3858795,
+      "sha256": "13dcb88bd27bec6e9b319796c9c2ceaeee617b1f42adc07c168d2146c0932847",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/13dcb88bd27bec6e9b31.jpg.import",
+      "bytes": 1013,
+      "sha256": "a3862feba9f9e9dc96d4c6738d4c29ec446778a3d7f55387554aaeac389731fb",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/2ba73064e0cc26e0e823.jpg",
+      "bytes": 2992003,
+      "sha256": "2ba73064e0cc26e0e8236817f6d2cb31a111fc3dc1f8071f9d2c1ba1b1a0256a",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/2ba73064e0cc26e0e823.jpg.import",
+      "bytes": 1013,
+      "sha256": "4c059df730e93c1cb47627ce0b2c13202812af0416da4a3388fd6bced3d2ee9c",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/34b6b4ec44e6737dd5e4.jpg",
+      "bytes": 2007459,
+      "sha256": "34b6b4ec44e6737dd5e4a121dbd4dbb1da41ea77d152d44dc984a1d9d6509634",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/34b6b4ec44e6737dd5e4.jpg.import",
+      "bytes": 1013,
+      "sha256": "93916f89484a192aa0cb74f693411a112c4639b138c2b6827c18b7f25fded97b",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/431e65548db854b3c435.jpg",
+      "bytes": 4687866,
+      "sha256": "431e65548db854b3c435b8f810a532fe868f0c8c4d65babbb67828c43b5bf095",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/431e65548db854b3c435.jpg.import",
+      "bytes": 1013,
+      "sha256": "e9e4f638d87efbc2351375d55c6aac01a395f06a7b91c0964a18071575d64451",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/4d049714a427fbfba7e0.jpg",
+      "bytes": 4720665,
+      "sha256": "4d049714a427fbfba7e0263217243135f547925b2164b2f5a1645ff102bf53bd",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/4d049714a427fbfba7e0.jpg.import",
+      "bytes": 1013,
+      "sha256": "ff4622bd901b855cadd3d3f39d7639d7afb39a2b0ec2545d78b49539b6dc30ed",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/52a46955f154eb60fdc1.jpg",
+      "bytes": 4187096,
+      "sha256": "52a46955f154eb60fdc1b6d241189b085847fcb7077ea3f6f93f2b5ce5c6f0a8",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/52a46955f154eb60fdc1.jpg.import",
+      "bytes": 1013,
+      "sha256": "c4f33b39c151ada35418b7d1dac6a5f481d2e43d6e36297cb45b674a55a57c38",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/719809c11be3854300a9.jpg",
+      "bytes": 5932818,
+      "sha256": "719809c11be3854300a98a33cc957fc7031f3036287ef9d61a5e937bf5f9725a",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/719809c11be3854300a9.jpg.import",
+      "bytes": 1013,
+      "sha256": "a7899b6e84438e6dd55c1ae6a884522bf19c88ab23029ac9012abd06281745e3",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/72dfd66baabb19203f96.jpg",
+      "bytes": 5233740,
+      "sha256": "72dfd66baabb19203f96c4af60c2ef98960955765f96e9107e52cbed5a52ea29",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/72dfd66baabb19203f96.jpg.import",
+      "bytes": 1013,
+      "sha256": "a742f6461aba68d4d6ac6d3734f843b979bf4349ad186544de35cb254021e104",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/794ce8277e18cee1ba43.jpg",
+      "bytes": 4008815,
+      "sha256": "794ce8277e18cee1ba4322c52fb45ba1479a78dbdf97b2f4a5f75c23c564c3cb",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/794ce8277e18cee1ba43.jpg.import",
+      "bytes": 1013,
+      "sha256": "5e648f61efc70269d798600f626825dfd18a7822945532a602234d308bf6fdf7",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/79f032f60f307ae7e7af.jpg",
+      "bytes": 9179240,
+      "sha256": "79f032f60f307ae7e7af02ffae7cefcb059c1cff7df39dc416961f9251bcdb60",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/79f032f60f307ae7e7af.jpg.import",
+      "bytes": 1013,
+      "sha256": "ae39600673072f71659a7f64ccb4899da39cb604435ff41a3013ac56856f7ad9",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/96838b122b1ba45302c9.jpg",
+      "bytes": 4578566,
+      "sha256": "96838b122b1ba45302c95ce74342056c5388051b092347e7d7f6f072547f05ec",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/96838b122b1ba45302c9.jpg.import",
+      "bytes": 1013,
+      "sha256": "f1e35fea97dfb5e347a188be52398eb778bde1f0db95a870874b56270fd979a1",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/9af6123669a79bd05998.jpg",
+      "bytes": 3232279,
+      "sha256": "9af6123669a79bd059983ee1feac49e939593ec230c1761018f70e97a9064fc1",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/9af6123669a79bd05998.jpg.import",
+      "bytes": 1013,
+      "sha256": "c5586091b557ef02d9a47d127fc93ae316335ebed11a786ab4c0dbaaa2ad8303",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/a666a999bb27ce20055a.jpg",
+      "bytes": 3850616,
+      "sha256": "a666a999bb27ce20055abf4dd45a661e353951e8e4e1374c1ff390b2027ed880",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/a666a999bb27ce20055a.jpg.import",
+      "bytes": 1013,
+      "sha256": "024e8ad87d83be9cd9dadb8e3707f20e42568c1017cf04bf8d62e518df5f2e0e",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/b15fe78997119afd49fb.jpg",
+      "bytes": 7116849,
+      "sha256": "b15fe78997119afd49fb289c5b64ae941cf2cf5b08f0969b38721f5796afbe13",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/b15fe78997119afd49fb.jpg.import",
+      "bytes": 1013,
+      "sha256": "346b9eb38cff7015dfd2b5e64c73ed20d2dcbf62217dec8817456833e4763a88",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/c7b7c6721ea608da7120.jpg",
+      "bytes": 3586298,
+      "sha256": "c7b7c6721ea608da7120622c9975f2ebb2923286f22981fb4ccab5d1f764864f",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/c7b7c6721ea608da7120.jpg.import",
+      "bytes": 1013,
+      "sha256": "6d029137a77ddaef62258e2e8c40f669dbf8bed9c3c1c99a4e720c1b56ec3ec8",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/e2a19ddd615336bb08d7.jpg",
+      "bytes": 8858481,
+      "sha256": "e2a19ddd615336bb08d7b1b82610168977bac6cba2cdfcb239bed2010f6c83bb",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/e2a19ddd615336bb08d7.jpg.import",
+      "bytes": 1013,
+      "sha256": "452a15fad7ceb8b3b2627a5d1a258293259bf4fa5954b9b1f094486bfc8cc849",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/e543d06bb2fd26db045c.jpg",
+      "bytes": 6153154,
+      "sha256": "e543d06bb2fd26db045c6335abb9b7764a5adf82e20c131ccfadfde60a713372",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/e543d06bb2fd26db045c.jpg.import",
+      "bytes": 1013,
+      "sha256": "d5c2ccbb2eb8dd1c56a3946f21d6e06f20a3868d02f37fa1e7830f8475b8528d",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/e7806f2e45efe7173949.jpg",
+      "bytes": 2968525,
+      "sha256": "e7806f2e45efe7173949d25919108001563053d290c74f48c49ee8af2a406ed0",
+      "in_repository": true
+    },
+    {
+      "file": "assets/visual_slice/industrial_workshop/textures/e7806f2e45efe7173949.jpg.import",
+      "bytes": 1013,
+      "sha256": "8041eba3897499e045fca908604f72f9e33ee173342a852e04d2a63a05a04f81",
+      "in_repository": true
+    },
+    {
+      "file": "docs/production/REPAIR_WORKSHOP_ASSET_DELIVERY.md",
+      "bytes": 10649,
+      "sha256": "b9cf9c9d2f0840f25122cb196ea7596f16c19bd10fe747dba551f8394d8bf0f8",
+      "in_repository": true
+    },
+    {
+      "file": "scenes/production/RepairWorkshop.tscn",
+      "bytes": 195,
+      "sha256": "f38ab74957585ed426de50279ab97e0adf9a19aadd31158996ef9d3c5befbd9a",
+      "in_repository": true
+    },
+    {
+      "file": "scenes/production/RiverTownWorkshopValidation.tscn",
+      "bytes": 219,
+      "sha256": "63812d40000e2a9bd985dffd5a0ce863582e208cc890ae9c58c9194567053b64",
+      "in_repository": true
+    },
+    {
+      "file": "scenes/production/WorkshopEvidenceBatch.tscn",
+      "bytes": 206,
+      "sha256": "27187fcdadd76a8e599f13d28754322d0a0ef47d13a06feac79c132bf9c7f5f5",
+      "in_repository": true
+    },
+    {
+      "file": "scripts/production/repair_workshop_lod.gd",
+      "bytes": 1873,
+      "sha256": "e11ac39b4809e3f29aa3e019824e7efed1084489e221edb0afd45e3e44ddca33",
+      "in_repository": true
+    },
+    {
+      "file": "scripts/production/repair_workshop_lod.gd.uid",
+      "bytes": 20,
+      "sha256": "e5233a5dabe35ab9c00f418baf9a7c62c5ea17f53295ad131fdc82606e8630ce",
+      "in_repository": true
+    },
+    {
+      "file": "scripts/production/river_town_workshop_validation.gd",
+      "bytes": 2142,
+      "sha256": "3074220dea49f8bb19c0553461faff8441538620b995e291bf90dbe988a08049",
+      "in_repository": true
+    },
+    {
+      "file": "scripts/production/river_town_workshop_validation.gd.uid",
+      "bytes": 19,
+      "sha256": "460b919f82c206afa07fc467acf4c9e57c0089bf30f4766c0e62d8f3989421de",
+      "in_repository": true
+    },
+    {
+      "file": "scripts/production/workshop_evidence_batch.gd",
+      "bytes": 2660,
+      "sha256": "c06d8630a14edbd606e825540607e7c39e8c7370c49998b83d3450107f45983f",
+      "in_repository": true
+    },
+    {
+      "file": "scripts/production/workshop_evidence_batch.gd.uid",
+      "bytes": 19,
+      "sha256": "3c6f9228d620ff1779e31a1d17b14fc3fb07ef81be562793b41ebd9b2c651c69",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/acquire_factory.py",
+      "bytes": 2002,
+      "sha256": "c7533e6cfef9aa242281599b932262c730f18d1e780322d5e1f1755d60098e7f",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/acquire_roof.py",
+      "bytes": 1309,
+      "sha256": "018ef2f78f9eafddb024248f1f5f714605a35774007372bde81f31c49b2002dd",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/audit_gltf.py",
+      "bytes": 2092,
+      "sha256": "27bcd715ba79e2aa86629250c83308645fe9a03364dfb7f94b9d1d4441b5df00",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/build_workshop.py",
+      "bytes": 16022,
+      "sha256": "44f9cb8b3fb474b9dc502fa54c89a1755dcce96e2fa213a1af9195fad8369e2c",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/manifests/factory.json",
+      "bytes": 7720,
+      "sha256": "098581cbd440c6f4cdeea132d93a124b1524e17d1d289af3583f18cc9d3ee6cf",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/manifests/roof.json",
+      "bytes": 1699,
+      "sha256": "f32780d56593114f866b3192574fe9ca978dde73dd645a4b227246180b0e7044",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/rebuild.ps1",
+      "bytes": 1951,
+      "sha256": "544b5c2275062b200cb0bde7d3e78ef51e1ea08aaf327c8d3531c63f2fc42cde",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/run_validation.ps1",
+      "bytes": 1838,
+      "sha256": "b776488d7b3f3f6748eac6f5539596542899007c4ceae9f691c7b701a40c6dac",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/sanitize_glb.py",
+      "bytes": 2645,
+      "sha256": "b863841dbd4e6366f75bcb3642cd318cecf85c2ba2e630eb4ecbe52bc73e0ee1",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/share_glb_textures.py",
+      "bytes": 2525,
+      "sha256": "09ec433691c1a092474793ff4811facbb08c355a229ea17f45138b70e091c227",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/source_geometry/.gdignore",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/source_geometry/modular_factory_facade.bin",
+      "bytes": 6269260,
+      "sha256": "12702fb065a838695e0621e1aac3947af92d32c439fb965c8b0563ad691fed70",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/source_geometry/modular_factory_facade.gltf",
+      "bytes": 372666,
+      "sha256": "2a6fe32cd911a371171da1986c4c5747590577ae116f7d351fa9d7a10a05d2b4",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/validate_geometry.py",
+      "bytes": 2248,
+      "sha256": "471921a6c35dccacbde3cb7f806e45b8fee1fcf674ddd7608c0c4595679ae91b",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/validate_texel_density.py",
+      "bytes": 1678,
+      "sha256": "432eac946847d06e598184d992e7ec4adcaf60df550ae699d28d433a70b7941a",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/verify_godot.gd",
+      "bytes": 2449,
+      "sha256": "0aea9ecb3a445b113d18a7fb61a9717200b2ef0ac3878dc4a1728420fe649d56",
+      "in_repository": true
+    },
+    {
+      "file": "tools/industrial/verify_godot.gd.uid",
+      "bytes": 20,
+      "sha256": "400aa3d4d4b6dee04b153c9b2789e6586eebdc8ee502c66c2d11b42097f9de39",
+      "in_repository": true
+    }
+  ],
+  "archive_usage": "Additive overlay for the specified repository baseline; existing Hero V2 dependencies are not duplicated in the archive."
+}

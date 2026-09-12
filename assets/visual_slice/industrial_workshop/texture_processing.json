@@ -1,0 +1,182 @@
+{
+  "719809c11be3854300a9.jpg": {
+    "sha256": "719809c11be3854300a98a33cc957fc7031f3036287ef9d61a5e937bf5f9725a",
+    "bytes": 5932818,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_brick_nor_gl_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "e7806f2e45efe7173949.jpg": {
+    "sha256": "e7806f2e45efe7173949d25919108001563053d290c74f48c49ee8af2a406ed0",
+    "bytes": 2968525,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_brick_arm_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "e2a19ddd615336bb08d7.jpg": {
+    "sha256": "e2a19ddd615336bb08d7b1b82610168977bac6cba2cdfcb239bed2010f6c83bb",
+    "bytes": 8858481,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_brick_diff_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "e543d06bb2fd26db045c.jpg": {
+    "sha256": "e543d06bb2fd26db045c6335abb9b7764a5adf82e20c131ccfadfde60a713372",
+    "bytes": 6153154,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_windows_nor_gl_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "72dfd66baabb19203f96.jpg": {
+    "sha256": "72dfd66baabb19203f96c4af60c2ef98960955765f96e9107e52cbed5a52ea29",
+    "bytes": 5233740,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_windows_arm_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "52a46955f154eb60fdc1.jpg": {
+    "sha256": "52a46955f154eb60fdc1b6d241189b085847fcb7077ea3f6f93f2b5ce5c6f0a8",
+    "bytes": 4187096,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_windows_diff_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "b15fe78997119afd49fb.jpg": {
+    "sha256": "b15fe78997119afd49fb289c5b64ae941cf2cf5b08f0969b38721f5796afbe13",
+    "bytes": 7116849,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_garage_nor_gl_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "431e65548db854b3c435.jpg": {
+    "sha256": "431e65548db854b3c435b8f810a532fe868f0c8c4d65babbb67828c43b5bf095",
+    "bytes": 4687866,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_garage_arm_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "c7b7c6721ea608da7120.jpg": {
+    "sha256": "c7b7c6721ea608da7120622c9975f2ebb2923286f22981fb4ccab5d1f764864f",
+    "bytes": 3586298,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_garage_diff_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "13dcb88bd27bec6e9b31.jpg": {
+    "sha256": "13dcb88bd27bec6e9b319796c9c2ceaeee617b1f42adc07c168d2146c0932847",
+    "bytes": 3858795,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_doors_nor_gl_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "96838b122b1ba45302c9.jpg": {
+    "sha256": "96838b122b1ba45302c95ce74342056c5388051b092347e7d7f6f072547f05ec",
+    "bytes": 4578566,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_doors_arm_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "9af6123669a79bd05998.jpg": {
+    "sha256": "9af6123669a79bd059983ee1feac49e939593ec230c1761018f70e97a9064fc1",
+    "bytes": 3232279,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_doors_diff_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "79f032f60f307ae7e7af.jpg": {
+    "sha256": "79f032f60f307ae7e7af02ffae7cefcb059c1cff7df39dc416961f9251bcdb60",
+    "bytes": 9179240,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_trim_01_nor_gl_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "794ce8277e18cee1ba43.jpg": {
+    "sha256": "794ce8277e18cee1ba4322c52fb45ba1479a78dbdf97b2f4a5f75c23c564c3cb",
+    "bytes": 4008815,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_trim_01_arm_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "4d049714a427fbfba7e0.jpg": {
+    "sha256": "4d049714a427fbfba7e0263217243135f547925b2164b2f5a1645ff102bf53bd",
+    "bytes": 4720665,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "modular_factory_facade_trim_01_diff_4k",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "a666a999bb27ce20055a.jpg": {
+    "sha256": "a666a999bb27ce20055abf4dd45a661e353951e8e4e1374c1ff390b2027ed880",
+    "bytes": 3850616,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "corrugated_iron_03_nor_gl",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "34b6b4ec44e6737dd5e4.jpg": {
+    "sha256": "34b6b4ec44e6737dd5e4a121dbd4dbb1da41ea77d152d44dc984a1d9d6509634",
+    "bytes": 2007459,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "corrugated_iron_03_arm",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  },
+  "2ba73064e0cc26e0e823.jpg": {
+    "sha256": "2ba73064e0cc26e0e8236817f6d2cb31a111fc3dc1f8071f9d2c1ba1b1a0256a",
+    "bytes": 2992003,
+    "size": [
+      4096,
+      4096
+    ],
+    "source_image_name": "corrugated_iron_03_diff",
+    "encoding": "JPEG quality 92, 4:4:4; no color conversion"
+  }
+}

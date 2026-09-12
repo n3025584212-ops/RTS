@@ -1,0 +1,23 @@
+[
+  {
+    "region": "lower",
+    "samples": 1458,
+    "median_uv_units_per_metre": 0.33333316445350647,
+    "expected": 0.3333333333333333,
+    "passed": true
+  },
+  {
+    "region": "upper",
+    "samples": 1274,
+    "median_uv_units_per_metre": 0.33333325386047363,
+    "expected": 0.3333333333333333,
+    "passed": true
+  },
+  {
+    "region": "gable",
+    "samples": 1,
+    "median_uv_units_per_metre": 0.3333333134651184,
+    "expected": 0.3333333333333333,
+    "passed": true
+  }
+]

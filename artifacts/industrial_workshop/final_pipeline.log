@@ -1,0 +1,625 @@
+VERIFIED textures/modular_factory_facade_brick_arm_4k.jpg 8904127
+VERIFIED textures/modular_factory_facade_windows_nor_gl_4k.jpg 11881088
+VERIFIED textures/modular_factory_facade_garage_nor_gl_4k.jpg 13189576
+VERIFIED textures/modular_factory_facade_brick_diff_4k.jpg 16319198
+VERIFIED textures/modular_factory_facade_doors_arm_4k.jpg 9340387
+VERIFIED textures/modular_factory_facade_trim_01_arm_4k.jpg 13460532
+VERIFIED textures/modular_factory_facade_windows_arm_4k.jpg 13257674
+VERIFIED textures/modular_factory_facade_brick_nor_gl_4k.jpg 10182584
+VERIFIED textures/modular_factory_facade_trim_01_nor_gl_4k.jpg 16910042
+VERIFIED textures/modular_factory_facade_trim_01_diff_4k.jpg 10316441
+VERIFIED textures/modular_factory_facade_garage_diff_4k.jpg 8042194
+VERIFIED textures/modular_factory_facade_doors_nor_gl_4k.jpg 7942407
+VERIFIED textures/modular_factory_facade_doors_diff_4k.jpg 7434692
+VERIFIED modular_factory_facade.gltf 372666
+VERIFIED textures/modular_factory_facade_garage_arm_4k.jpg 9612038
+VERIFIED textures/modular_factory_facade_windows_diff_4k.jpg 8922099
+VERIFIED modular_factory_facade.bin 6269260
+ROOF_VERIFIED diff
+ROOF_VERIFIED nor_gl
+ROOF_VERIFIED arm
+ROOF_VERIFIED disp
+16:49:18 | INFO: Data are loaded, start creating Blender stuff
+16:49:18 | INFO: Blender create Mesh node Cube.598
+16:49:18 | INFO: Blender create Mesh node Cube.030
+16:49:18 | INFO: Blender create Mesh node Cube.032
+16:49:18 | INFO: Blender create Mesh node Cube.014
+16:49:18 | INFO: Blender create Mesh node Cube.034
+16:49:18 | INFO: Blender create Mesh node Cube.039
+16:49:18 | INFO: Blender create Mesh node Cube.046
+16:49:18 | INFO: Blender create Mesh node Cube.848
+16:49:18 | INFO: Blender create Mesh node Cube.846
+16:49:18 | INFO: Blender create Mesh node Cube.841
+16:49:18 | INFO: Blender create Mesh node Cube.590
+16:49:18 | INFO: Blender create Mesh node Cube.243
+16:49:18 | INFO: Blender create Mesh node Cube.464
+16:49:18 | INFO: Blender create Mesh node Cube.504
+16:49:18 | INFO: Blender create Mesh node Cube.375
+16:49:18 | INFO: Blender create Mesh node Cube.439
+16:49:18 | INFO: Blender create Mesh node Cube.050
+16:49:18 | INFO: Blender create Mesh node Cube.136
+16:49:18 | INFO: Blender create Mesh node Cube.139
+16:49:18 | INFO: Blender create Mesh node Cube.225
+16:49:18 | INFO: Blender create Mesh node Cube.726
+16:49:18 | INFO: Blender create Mesh node Cube.741
+16:49:18 | INFO: Blender create Mesh node Cube.745
+16:49:18 | INFO: Blender create Mesh node Cube.750
+16:49:18 | INFO: Blender create Mesh node Cube.003
+16:49:18 | INFO: Blender create Mesh node Cube.033
+16:49:18 | INFO: Blender create Mesh node Cube.044
+16:49:18 | INFO: Blender create Mesh node Cube.068
+16:49:18 | INFO: Blender create Mesh node Cube.070
+16:49:18 | INFO: Blender create Mesh node Cube.091
+16:49:18 | INFO: Blender create Mesh node Cube.095
+16:49:18 | INFO: Blender create Mesh node Cube.106
+16:49:18 | INFO: Blender create Mesh node Cube.109
+16:49:18 | INFO: Blender create Mesh node Cube.112
+16:49:18 | INFO: Blender create Mesh node Cube.113
+16:49:18 | INFO: Blender create Mesh node Cube.130
+16:49:18 | INFO: Blender create Mesh node Cube.140
+16:49:18 | INFO: Blender create Mesh node Cube.152
+16:49:18 | INFO: Blender create Mesh node Cube.219
+16:49:18 | INFO: Blender create Mesh node Cube.220
+16:49:18 | INFO: Blender create Mesh node Cube.221
+16:49:18 | INFO: Blender create Mesh node Cube.222
+16:49:18 | INFO: Blender create Mesh node Cube.228
+16:49:18 | INFO: Blender create Mesh node Cube.229
+16:49:18 | INFO: Blender create Mesh node Cube.230
+16:49:18 | INFO: Blender create Mesh node Cube.231
+16:49:18 | INFO: Blender create Mesh node Cube.248
+16:49:18 | INFO: Blender create Mesh node Cube.249
+16:49:18 | INFO: Blender create Mesh node Cube.250
+16:49:18 | INFO: Blender create Mesh node Cube.251
+16:49:18 | INFO: Blender create Mesh node Plane.102
+16:49:18 | INFO: Blender create Mesh node Plane.086
+16:49:18 | INFO: Blender create Mesh node Plane.085
+16:49:18 | INFO: Blender create Mesh node Plane.059
+16:49:18 | INFO: Blender create Mesh node Plane.080
+16:49:18 | INFO: Blender create Mesh node Plane.088
+16:49:18 | INFO: Blender create Mesh node Plane.008
+16:49:18 | INFO: Blender create Mesh node Plane.012
+16:49:18 | INFO: Blender create Mesh node Plane.014
+16:49:18 | INFO: Blender create Mesh node Plane.017
+16:49:18 | INFO: Blender create Mesh node Plane.022
+16:49:18 | INFO: Blender create Mesh node Plane.025
+16:49:18 | INFO: Blender create Mesh node Plane.002
+16:49:18 | INFO: Blender create Mesh node Plane.006
+16:49:18 | INFO: Blender create Mesh node Plane.009
+16:49:18 | INFO: Blender create Mesh node Cube.747
+16:49:18 | INFO: Blender create Mesh node Cube.742
+16:49:18 | INFO: Blender create Mesh node Cube.814
+16:49:18 | INFO: Blender create Mesh node Cube.591
+16:49:18 | INFO: Blender create Mesh node Cube.015
+16:49:18 | INFO: Blender create Mesh node Cube.035
+16:49:18 | INFO: Blender create Mesh node Cube.041
+16:49:18 | INFO: Blender create Mesh node Cube.047
+16:49:18 | INFO: Blender create Mesh node Cube.083
+16:49:18 | INFO: Blender create Mesh node Cube.084
+16:49:18 | INFO: Blender create Mesh node Cube.596
+16:49:18 | INFO: Blender create Mesh node Cube.604
+16:49:18 | INFO: Blender create Mesh node Cube.010
+16:49:18 | INFO: Blender create Mesh node Cube.038
+16:49:18 | INFO: Blender create Mesh node Cube.045
+16:49:18 | INFO: Blender create Mesh node Cube.597
+16:49:18 | INFO: Blender create Mesh node Cube.019
+16:49:18 | INFO: Blender create Mesh node Cube.048
+16:49:18 | INFO: Blender create Mesh node Cube.053
+16:49:18 | INFO: Blender create Mesh node Cube.066
+16:49:18 | INFO: Blender create Mesh node Cube.071
+16:49:18 | INFO: Blender create Mesh node Cube.073
+16:49:18 | INFO: Blender create Mesh node Cube.075
+16:49:18 | INFO: Blender create Mesh node Cube.094
+16:49:18 | INFO: Blender create Mesh node Cube.097
+16:49:18 | INFO: Blender create Mesh node Cube.599
+16:49:18 | INFO: Blender create Mesh node Cube.079
+16:49:18 | INFO: Blender create Mesh node Cube.080
+16:49:18 | INFO: Blender create Mesh node Cube.031
+16:49:18 | INFO: Blender create Mesh node Cube.037
+16:49:18 | INFO: Blender create Mesh node Cube.043
+16:49:18 | INFO: Blender create Mesh node Cube.049
+16:49:18 | INFO: Blender create Mesh node Cube.804
+16:49:18 | INFO: Blender create Mesh node Cube.809
+16:49:18 | INFO: Blender create Mesh node Cube.843
+16:49:18 | INFO: Blender create Mesh node Cube.023
+16:49:18 | INFO: Blender create Mesh node Cube.040
+16:49:18 | INFO: Blender create Mesh node Cube.108
+16:49:18 | INFO: Blender create Mesh node Cube.442
+16:49:18 | INFO: Blender create Mesh node Cube.443
+16:49:18 | INFO: Blender create Mesh node Cube.444
+16:49:18 | INFO: Blender create Mesh node Cube.445
+16:49:18 | INFO: Blender create Mesh node Cube.116
+16:49:18 | INFO: Blender create Mesh node Cube.352
+16:49:18 | INFO: Blender create Mesh node Plane.063
+16:49:18 | INFO: Blender create Mesh node Cube.018
+16:49:18 | INFO: Blender create Mesh node Plane.126
+16:49:18 | INFO: Blender create Mesh node Cube.004
+16:49:18 | INFO: Blender create Mesh node Cube.005
+16:49:18 | INFO: Blender create Mesh node Cube.021
+16:49:18 | INFO: Blender create Mesh node Cube.024
+16:49:18 | INFO: Blender create Mesh node Cube.052
+16:49:18 | INFO: Blender create Mesh node Cube.056
+16:49:18 | INFO: Blender create Mesh node Cube.061
+16:49:18 | INFO: Blender create Mesh node Cube.067
+16:49:18 | INFO: Blender create Mesh node Cube.069
+16:49:18 | INFO: Blender create Mesh node Cube.088
+16:49:18 | INFO: Blender create Mesh node Cube.090
+16:49:18 | INFO: Blender create Mesh node Cube.105
+16:49:18 | INFO: Blender create Mesh node Cube.107
+16:49:18 | INFO: Blender create Mesh node Cube.110
+16:49:18 | INFO: Blender create Mesh node Cube.111
+16:49:18 | INFO: Blender create Mesh node Cube.121
+16:49:18 | INFO: Blender create Mesh node Cube.123
+16:49:18 | INFO: Blender create Mesh node Cube.124
+16:49:18 | INFO: Blender create Mesh node Cube.125
+16:49:18 | INFO: Blender create Mesh node Cube.135
+16:49:18 | INFO: Blender create Mesh node Cube.138
+16:49:18 | INFO: Blender create Mesh node Plane.001
+16:49:18 | INFO: Blender create Mesh node Plane.003
+16:49:18 | INFO: Blender create Mesh node Plane.007
+16:49:18 | INFO: Blender create Mesh node Cube.154
+16:49:18 | INFO: Blender create Mesh node Cube.156
+16:49:18 | INFO: Blender create Mesh node Cube.158
+16:49:18 | INFO: Blender create Mesh node Cube.160
+16:49:18 | INFO: Blender create Mesh node Cube.162
+16:49:18 | INFO: Blender create Mesh node Cube.164
+16:49:18 | INFO: Blender create Mesh node Cube.174
+16:49:18 | INFO: Blender create Mesh node Cube.178
+16:49:18 | INFO: Blender create Mesh node Cube.215
+16:49:18 | INFO: Blender create Mesh node Cube.216
+16:49:18 | INFO: Blender create Mesh node Cube.217
+16:49:18 | INFO: Blender create Mesh node Cube.218
+16:49:18 | INFO: Blender create Mesh node Cube.232
+16:49:18 | INFO: Blender create Mesh node Cube.233
+16:49:18 | INFO: Blender create Mesh node Cube.234
+16:49:18 | INFO: Blender create Mesh node Cube.235
+16:49:18 | INFO: Blender create Mesh node Cube.236
+16:49:18 | INFO: Blender create Mesh node Cube.237
+16:49:18 | INFO: Blender create Mesh node Cube.238
+16:49:18 | INFO: Blender create Mesh node Cube.239
+16:49:18 | INFO: Blender create Mesh node Cube.252
+16:49:18 | INFO: Blender create Mesh node Plane.018
+16:49:18 | INFO: Blender create Mesh node Cube.273
+16:49:18 | INFO: Blender create Mesh node Cube.293
+16:49:18 | INFO: Blender create Mesh node Cube.297
+16:49:18 | INFO: Blender create Mesh node Cube.301
+16:49:18 | INFO: Blender create Mesh node Cube.305
+16:49:18 | INFO: Blender create Mesh node Cube.310
+16:49:18 | INFO: Blender create Mesh node Cube.315
+16:49:18 | INFO: Blender create Mesh node Cube.320
+16:49:18 | INFO: Blender create Mesh node Plane.028
+16:49:18 | INFO: Blender create Mesh node Cube.001
+16:49:18 | INFO: Blender create Mesh node Cube.007
+16:49:18 | INFO: Blender create Mesh node Cube.008
+16:49:18 | INFO: Blender create Mesh node Cube.009
+16:49:18 | INFO: Blender create Mesh node Plane.087
+16:49:18 | INFO: Blender create Mesh node Plane.099
+16:49:18 | INFO: Blender create Mesh node Plane.172
+16:49:18 | INFO: Blender create Mesh node Plane.093
+16:49:18 | INFO: Blender create Mesh node Cube.539
+16:49:18 | INFO: Blender create Mesh node Cube.765
+16:49:18 | INFO: Blender create Mesh node Cube.803
+16:49:18 | INFO: Blender create Mesh node Cube.807
+16:49:18 | INFO: Blender create Mesh node Cube.141
+16:49:18 | INFO: Blender create Mesh node Cube.143
+16:49:18 | INFO: Blender create Mesh node Cube.147
+16:49:18 | INFO: Blender create Mesh node Cube.255
+16:49:18 | INFO: Blender create Mesh node Cube.274
+16:49:18 | INFO: Blender create Mesh node Cube.294
+16:49:18 | INFO: Blender create Mesh node Cube.298
+16:49:18 | INFO: Blender create Mesh node Cube.302
+16:49:18 | INFO: Blender create Mesh node Cube.323
+16:49:18 | INFO: Blender create Mesh node Cube.322
+16:49:18 | INFO: Blender create Mesh node Cube.307
+16:49:18 | INFO: Blender create Mesh node Cube.313
+16:49:18 | INFO: Blender create Mesh node Cube.318
+16:49:18 | INFO: glTF import finished in 0.48s
+Info: Packed 4 file(s)
+Info: Saved as "repair_workshop_source.blend"
+INFO Draco mesh compression is available, use library at D:\Agent\frontline-visual-reset\tools\blender-4.5.9-windows-x64\4.5\scripts\addons_core\io_scene_gltf2\extern_draco.dll
+16:49:35 | INFO: Starting glTF 2.0 export
+16:49:35 | INFO: Extracting primitive: Plane.032
+16:49:36 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:37 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:37 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:38 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:39 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:39 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:40 | INFO: Primitives created: 9
+16:49:40 | INFO: Finished glTF 2.0 export in 5.439531087875366 s
+
+16:49:47 | INFO: Starting glTF 2.0 export
+16:49:47 | INFO: Extracting primitive: Plane.049
+16:49:48 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:49 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:49 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:49 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:49 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:49 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:49 | INFO: Primitives created: 9
+16:49:50 | INFO: Finished glTF 2.0 export in 2.085421562194824 s
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 4840 and 4638 use same vertices (3999
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 4005
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 4163
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 4638 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 4468 and 4670 use same vertices (4000
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 4006
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 4164
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 4670 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 6217 and 6419 use same vertices (5583
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 5589
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 5747
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 6419 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 6249 and 6047 use same vertices (5584
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 5590
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 5748
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 6047 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 7871 and 8073 use same vertices (7269
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 7275
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 7433
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 8073 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 7701 and 7903 use same vertices (7270
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 7276
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 7434
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 7903 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 9450 and 9652 use same vertices (8853
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 8859
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 9017
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 9652 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 9280 and 9482 use same vertices (8854
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 8860
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 9018
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 9482 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 11104 and 11306 use same vertices (10539
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 10545
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 10703
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 11306 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 10934 and 11136 use same vertices (10540
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 10546
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 10704
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 11136 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 12885 and 12683 use same vertices (12123
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 12129
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 12287
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 12683 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 12715 and 12513 use same vertices (12124
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 12130
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 12288
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 12513 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 14539 and 14337 use same vertices (13809
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 13815
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 13973
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 14337 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:652 BKE_mesh_validate_arrays: 	Faces 14167 and 14369 use same vertices (13810
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 13816
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:654 BKE_mesh_validate_arrays: , 13974
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:656 BKE_mesh_validate_arrays: ), considering face 14369 as invalid.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 13914 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 13915 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 13916 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 14010 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 14011 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 14012 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 18141 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 18142 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 18143 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 19257 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 19258 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 19259 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 23709 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 23710 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 23711 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 24219 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 24220 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 24221 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 28446 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 28447 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 28448 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 28956 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 28957 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 28958 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 33408 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 33409 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 33410 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 33918 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 33919 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 33920 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 37539 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 37540 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 37541 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 38049 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 38050 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 38051 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 43011 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 43012 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 43013 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 43107 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 43108 is unused.
+ERROR (bke.mesh): C:\Users\blender\git\blender-v450\blender.git\source\blender\blenkernel\intern\mesh_validate.cc:696 BKE_mesh_validate_arrays: 	Corner 43109 is unused.
+
+16:49:54 | INFO: Starting glTF 2.0 export
+16:49:54 | INFO: Extracting primitive: Plane.068
+16:49:55 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:55 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:55 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:55 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:56 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:56 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:49:56 | INFO: Primitives created: 9
+16:49:56 | INFO: Finished glTF 2.0 export in 1.72226881980896 s
+
+WORKSHOP_BUILD_COMPLETE [{"lod": 0, "triangles": 228016, "vertices": 127064, "materials": 9, "uv_layers": 1, "file": "repair_workshop_lod0.glb"}, {"lod": 1, "triangles": 101993, "vertices": 60832, "materials": 9, "uv_layers": 1, "file": "repair_workshop_lod1.glb"}, {"lod": 2, "triangles": 45230, "vertices": 33438, "materials": 9, "uv_layers": 1, "file": "repair_workshop_lod2.glb"}]
+Blender 4.5.9 LTS (hash 8bf95cbd38d1 built 2026-04-21 01:33:45)
+
+Blender quit
+SHARED_GLB repair_workshop_lod0.glb 24524712
+SHARED_GLB repair_workshop_lod1.glb 11964548
+SHARED_GLB repair_workshop_lod2.glb 5046696
+{'file': 'repair_workshop_lod0.glb', 'zero_area_faces_removed': 16, 'undefined_tangents_rebuilt': 0}
+{'file': 'repair_workshop_lod1.glb', 'zero_area_faces_removed': 8, 'undefined_tangents_rebuilt': 0}
+{'file': 'repair_workshop_lod2.glb', 'zero_area_faces_removed': 0, 'undefined_tangents_rebuilt': 1}
+[
+  {
+    "file": "repair_workshop_lod0.glb",
+    "nonfinite": 0,
+    "degenerate_triangles": 0,
+    "normal_length_error_max": 1.1920928955078125e-07,
+    "tangent_length_error_max": 1.1920928955078125e-07,
+    "triangle_count": 228000,
+    "passed": true
+  },
+  {
+    "file": "repair_workshop_lod1.glb",
+    "nonfinite": 0,
+    "degenerate_triangles": 0,
+    "normal_length_error_max": 1.1920928955078125e-07,
+    "tangent_length_error_max": 1.1920928955078125e-07,
+    "triangle_count": 101985,
+    "passed": true
+  },
+  {
+    "file": "repair_workshop_lod2.glb",
+    "nonfinite": 0,
+    "degenerate_triangles": 0,
+    "normal_length_error_max": 1.1920928955078125e-07,
+    "tangent_length_error_max": 1.1920928955078125e-07,
+    "triangle_count": 45230,
+    "passed": true
+  }
+]
+[{"region": "lower", "samples": 1458, "median_uv_units_per_metre": 0.33333316445350647, "expected": 0.3333333333333333, "passed": true}, {"region": "upper", "samples": 1274, "median_uv_units_per_metre": 0.33333325386047363, "expected": 0.3333333333333333, "passed": true}, {"region": "gable", "samples": 1, "median_uv_units_per_metre": 0.3333333134651184, "expected": 0.3333333333333333, "passed": true}]
+assets/visual_slice/abrams.glb 255884 27 ['TANGENT']
+assets/visual_slice/hero_house_ruined.glb 70592 8 []
+assets/visual_slice/hero_house_ruined_hf.glb 300930 8 []
+assets/visual_slice/house_intact.glb 18568 8 []
+assets/visual_slice/house_damaged.glb 21411 8 []
+assets/visual_slice/hero_v2/abrams_v2.glb 291342 28 []
+assets/visual_slice/hero_v2/urban_ruin/urban_ruin.gltf 205400 7 []
+assets/visual_slice/industrial_workshop/repair_workshop_lod0.glb 228000 9 []
+assets/visual_slice/industrial_workshop/repair_workshop_lod1.glb 101985 9 []
+assets/visual_slice/industrial_workshop/repair_workshop_lod2.glb 45230 9 []
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started 项目初始化 (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | 正在扫描文件结构……[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | 正在加载全局类名……[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | 正在校验 GDExtension……[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | 正在创建自动加载脚本……[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | 正在初始化插件……[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | 正在启动文件扫描……[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started 正在扫描动作…… (28 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | river_town_actual_1920x1080.png[39m[0m
+[   3% ] [90m[1m_update_scan_actions[22m | river_town_actual_1920x1080.png[39m[0m
+[   6% ] [90m[1m_update_scan_actions[22m | river_town_actual_1920x1080.png[39m[0m
+[  10% ] [90m[1m_update_scan_actions[22m | river_town_actual_1920x1080.png[39m[0m
+[  13% ] [90m[1m_update_scan_actions[22m | river_town_actual_1920x1080.png[39m[0m
+[  17% ] [90m[1m_update_scan_actions[22m | river_town_actual_1920x1080.png[39m[0m
+[  20% ] [90m[1m_update_scan_actions[22m | river_town_actual_1920x1080.png[39m[0m
+[  24% ] [90m[1m_update_scan_actions[22m | 2ba73064e0cc26e0e823.jpg[39m[0m
+[  27% ] [90m[1m_update_scan_actions[22m | 4d049714a427fbfba7e0.jpg[39m[0m
+[  31% ] [90m[1m_update_scan_actions[22m | 9af6123669a79bd05998.jpg[39m[0m
+[  34% ] [90m[1m_update_scan_actions[22m | 13dcb88bd27bec6e9b31.jpg[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | 34b6b4ec44e6737dd5e4.jpg[39m[0m
+[  41% ] [90m[1m_update_scan_actions[22m | 52a46955f154eb60fdc1.jpg[39m[0m
+[  44% ] [90m[1m_update_scan_actions[22m | 72dfd66baabb19203f96.jpg[39m[0m
+[  48% ] [90m[1m_update_scan_actions[22m | 79f032f60f307ae7e7af.jpg[39m[0m
+[  51% ] [90m[1m_update_scan_actions[22m | 431e65548db854b3c435.jpg[39m[0m
+[  55% ] [90m[1m_update_scan_actions[22m | 794ce8277e18cee1ba43.jpg[39m[0m
+[  58% ] [90m[1m_update_scan_actions[22m | 96838b122b1ba45302c9.jpg[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | 719809c11be3854300a9.jpg[39m[0m
+[  65% ] [90m[1m_update_scan_actions[22m | a666a999bb27ce20055a.jpg[39m[0m
+[  68% ] [90m[1m_update_scan_actions[22m | b15fe78997119afd49fb.jpg[39m[0m
+[  72% ] [90m[1m_update_scan_actions[22m | c7b7c6721ea608da7120.jpg[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | e2a19ddd615336bb08d7.jpg[39m[0m
+[  79% ] [90m[1m_update_scan_actions[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[  82% ] [90m[1m_update_scan_actions[22m | e7806f2e45efe7173949.jpg[39m[0m
+[  86% ] [90m[1m_update_scan_actions[22m | repair_workshop_lod0.glb[39m[0m
+[  89% ] [90m[1m_update_scan_actions[22m | repair_workshop_lod1.glb[39m[0m
+[  93% ] [90m[1m_update_scan_actions[22m | repair_workshop_lod2.glb[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started 正在导入或重新导入资产 (64 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[   1% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[   3% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[   4% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[   6% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[   7% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[   9% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  10% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  12% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  13% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  15% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  16% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  18% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  20% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  21% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  23% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  24% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  26% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  27% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  29% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  30% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  32% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  33% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  35% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  36% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  38% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  40% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  41% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  43% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  44% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  46% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  47% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  49% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  50% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  52% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  53% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  55% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  56% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  58% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  60% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  61% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  63% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  64% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  66% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  67% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  69% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  70% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  72% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  73% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  75% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  76% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  78% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  80% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  81% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  83% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  84% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  86% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  87% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  89% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  90% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  92% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  93% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  95% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[  96% ] [90m[1mreimport[22m | 正在准备重新导入文件……[39m[0m
+[   0% ] [90m[1mreimport[22m | 正在执行重新导入的前置操作……[39m[0m
+[   0% ] [90m[1mpreload_reimporting_scene[22m | Started 正在准备重新加载场景 (1 steps)[39m[0m
+[   0% ] [90m[1mpreload_reimporting_scene[22m | 正在分析场景 [空][39m[0m
+[  50% ] [90m[1mpreload_reimporting_scene[22m | 准备完成。[39m[0m
+[92m[ DONE ][39m [1mpreload_reimporting_scene[22m
+[0m
+[   0% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[   0% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[   0% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[   0% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[   0% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[   1% ] [90m[1mreimport[22m | c7b7c6721ea608da7120.jpg[39m[0m
+[   3% ] [90m[1mreimport[22m | 431e65548db854b3c435.jpg[39m[0m
+[   4% ] [90m[1mreimport[22m | b15fe78997119afd49fb.jpg[39m[0m
+[   6% ] [90m[1mreimport[22m | 9af6123669a79bd05998.jpg[39m[0m
+[   7% ] [90m[1mreimport[22m | 96838b122b1ba45302c9.jpg[39m[0m
+[   9% ] [90m[1mreimport[22m | 13dcb88bd27bec6e9b31.jpg[39m[0m
+[  10% ] [90m[1mreimport[22m | 4d049714a427fbfba7e0.jpg[39m[0m
+[  12% ] [90m[1mreimport[22m | 794ce8277e18cee1ba43.jpg[39m[0m
+[  13% ] [90m[1mreimport[22m | 79f032f60f307ae7e7af.jpg[39m[0m
+[  13% ] [90m[1mreimport[22m | 79f032f60f307ae7e7af.jpg[39m[0m
+[  13% ] [90m[1mreimport[22m | 79f032f60f307ae7e7af.jpg[39m[0m
+[  13% ] [90m[1mreimport[22m | 79f032f60f307ae7e7af.jpg[39m[0m
+[  15% ] [90m[1mreimport[22m | 2ba73064e0cc26e0e823.jpg[39m[0m
+[  16% ] [90m[1mreimport[22m | 34b6b4ec44e6737dd5e4.jpg[39m[0m
+[  18% ] [90m[1mreimport[22m | a666a999bb27ce20055a.jpg[39m[0m
+[  20% ] [90m[1mreimport[22m | e2a19ddd615336bb08d7.jpg[39m[0m
+[  21% ] [90m[1mreimport[22m | e7806f2e45efe7173949.jpg[39m[0m
+[  23% ] [90m[1mreimport[22m | 719809c11be3854300a9.jpg[39m[0m
+[  24% ] [90m[1mreimport[22m | 52a46955f154eb60fdc1.jpg[39m[0m
+[  26% ] [90m[1mreimport[22m | 72dfd66baabb19203f96.jpg[39m[0m
+[  27% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[  27% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[  27% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[  27% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[  29% ] [90m[1mreimport[22m | c7b7c6721ea608da7120.jpg[39m[0m
+[  30% ] [90m[1mreimport[22m | 431e65548db854b3c435.jpg[39m[0m
+[  32% ] [90m[1mreimport[22m | b15fe78997119afd49fb.jpg[39m[0m
+[  33% ] [90m[1mreimport[22m | 9af6123669a79bd05998.jpg[39m[0m
+[  35% ] [90m[1mreimport[22m | 96838b122b1ba45302c9.jpg[39m[0m
+[  36% ] [90m[1mreimport[22m | 13dcb88bd27bec6e9b31.jpg[39m[0m
+[  38% ] [90m[1mreimport[22m | 4d049714a427fbfba7e0.jpg[39m[0m
+[  40% ] [90m[1mreimport[22m | 794ce8277e18cee1ba43.jpg[39m[0m
+[  41% ] [90m[1mreimport[22m | 79f032f60f307ae7e7af.jpg[39m[0m
+[  43% ] [90m[1mreimport[22m | 2ba73064e0cc26e0e823.jpg[39m[0m
+[  44% ] [90m[1mreimport[22m | 34b6b4ec44e6737dd5e4.jpg[39m[0m
+[  46% ] [90m[1mreimport[22m | a666a999bb27ce20055a.jpg[39m[0m
+[  47% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  49% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  50% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  52% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  52% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  52% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  53% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  55% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  56% ] [90m[1mreimport[22m | river_town_actual_1920x1080.png[39m[0m
+[  58% ] [90m[1mreimport[22m | e2a19ddd615336bb08d7.jpg[39m[0m
+[  60% ] [90m[1mreimport[22m | e7806f2e45efe7173949.jpg[39m[0m
+[  61% ] [90m[1mreimport[22m | 719809c11be3854300a9.jpg[39m[0m
+[  63% ] [90m[1mreimport[22m | 52a46955f154eb60fdc1.jpg[39m[0m
+[  64% ] [90m[1mreimport[22m | 72dfd66baabb19203f96.jpg[39m[0m
+[  66% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[  66% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[  66% ] [90m[1mreimport[22m | e543d06bb2fd26db045c.jpg[39m[0m
+[  67% ] [90m[1mreimport[22m | c7b7c6721ea608da7120.jpg[39m[0m
+[  69% ] [90m[1mreimport[22m | 431e65548db854b3c435.jpg[39m[0m
+[  70% ] [90m[1mreimport[22m | b15fe78997119afd49fb.jpg[39m[0m
+[  72% ] [90m[1mreimport[22m | 72dfd66baabb19203f96.jpg[39m[0m
+[  73% ] [90m[1mreimport[22m | 52a46955f154eb60fdc1.jpg[39m[0m
+[  75% ] [90m[1mreimport[22m | 719809c11be3854300a9.jpg[39m[0m
+[  76% ] [90m[1mreimport[22m | e7806f2e45efe7173949.jpg[39m[0m
+[  78% ] [90m[1mreimport[22m | e2a19ddd615336bb08d7.jpg[39m[0m
+[  80% ] [90m[1mreimport[22m | a666a999bb27ce20055a.jpg[39m[0m
+[  80% ] [90m[1mreimport[22m | a666a999bb27ce20055a.jpg[39m[0m
+[  80% ] [90m[1mreimport[22m | a666a999bb27ce20055a.jpg[39m[0m
+[  81% ] [90m[1mreimport[22m | 34b6b4ec44e6737dd5e4.jpg[39m[0m
+[  83% ] [90m[1mreimport[22m | 2ba73064e0cc26e0e823.jpg[39m[0m
+[  84% ] [90m[1mreimport[22m | 79f032f60f307ae7e7af.jpg[39m[0m
+[  86% ] [90m[1mreimport[22m | 794ce8277e18cee1ba43.jpg[39m[0m
+[  87% ] [90m[1mreimport[22m | 4d049714a427fbfba7e0.jpg[39m[0m
+[  89% ] [90m[1mreimport[22m | 13dcb88bd27bec6e9b31.jpg[39m[0m
+[  90% ] [90m[1mreimport[22m | 96838b122b1ba45302c9.jpg[39m[0m
+[  92% ] [90m[1mreimport[22m | 9af6123669a79bd05998.jpg[39m[0m
+[  93% ] [90m[1mreimport[22m | repair_workshop_lod0.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started 导入场景 (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | 导入场景中...[39m[0m
+[   1% ] [90m[1mimport[22m | 执行自定义脚本...[39m[0m
+[  99% ] [90m[1mimport[22m | 保存中...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  95% ] [90m[1mreimport[22m | repair_workshop_lod1.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started 导入场景 (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | 导入场景中...[39m[0m
+[   1% ] [90m[1mimport[22m | 执行自定义脚本...[39m[0m
+[  99% ] [90m[1mimport[22m | 保存中...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  96% ] [90m[1mreimport[22m | repair_workshop_lod2.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started 导入场景 (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | 导入场景中...[39m[0m
+[   1% ] [90m[1mimport[22m | 执行自定义脚本...[39m[0m
+[  99% ] [90m[1mimport[22m | 保存中...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  98% ] [90m[1mreimport[22m | 正在结束资产导入……[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started 正在导入或重新导入资产 (64 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | 正在执行重新导入的后置操作……[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started 正在加载编辑器 (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | 正在加载编辑器布局……[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | 正在加载停靠面板……[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+WORKSHOP_GODOT_VALIDATION {"asset_validation":[{"errors":[],"generated_surface_lods":20,"lod":0,"surfaces":9,"triangles":228000},{"errors":[],"generated_surface_lods":19,"lod":1,"surfaces":9,"triangles":101985},{"errors":[],"generated_surface_lods":17,"lod":2,"surfaces":9,"triangles":45230}],"engine":{"build":"official","hash":"a13da4feb8d8aefc283c3763d33a2f170a18d541","hex":263937,"major":4,"minor":7,"patch":1,"status":"stable","string":"4.7.1-stable (official)","timestamp":0},"passed":true}

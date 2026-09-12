@@ -1,0 +1,29 @@
+[
+  {
+    "file": "repair_workshop_lod0.glb",
+    "nonfinite": 0,
+    "degenerate_triangles": 0,
+    "normal_length_error_max": 1.1920928955078125e-07,
+    "tangent_length_error_max": 1.1920928955078125e-07,
+    "triangle_count": 228000,
+    "passed": true
+  },
+  {
+    "file": "repair_workshop_lod1.glb",
+    "nonfinite": 0,
+    "degenerate_triangles": 0,
+    "normal_length_error_max": 1.1920928955078125e-07,
+    "tangent_length_error_max": 1.1920928955078125e-07,
+    "triangle_count": 101985,
+    "passed": true
+  },
+  {
+    "file": "repair_workshop_lod2.glb",
+    "nonfinite": 0,
+    "degenerate_triangles": 0,
+    "normal_length_error_max": 1.1920928955078125e-07,
+    "tangent_length_error_max": 1.1920928955078125e-07,
+    "triangle_count": 45230,
+    "passed": true
+  }
+]
