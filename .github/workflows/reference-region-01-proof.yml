@@ -7,6 +7,7 @@ on:
       - dev/reference-region-v1
     paths:
       - 'scripts/production/reference_region_01.gd'
+      - 'scripts/production/reference_region_01_aligned.gd'
       - 'scenes/production/ReferenceRegion01.tscn'
       - 'scripts/production/infrastructure/**'
       - 'scenes/production/infrastructure/**'
@@ -37,6 +38,7 @@ jobs:
           test -s assets/golden_scene/city_v20/family_house_04.glb
           test -s scenes/production/RiverTownHeroHouseHF.tscn
           test -s scripts/production/reference_region_01.gd
+          test -s scripts/production/reference_region_01_aligned.gd
           test -s scenes/production/ReferenceRegion01.tscn
           for f in BridgeDeckSmall BridgeAbutmentConcrete BridgePierConcrete BridgeRailSteel RetainingWallConcrete CulvertSmall RoadGuardrailSteel RiverBankRiprap; do
             test -s "scenes/production/infrastructure/${f}.tscn"
@@ -83,7 +85,7 @@ jobs:
             timeout 1500s xvfb-run -a -s "-screen 0 1920x1080x24" \
               "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
               --resolution 1920x1080 res://scenes/production/ReferenceRegion01.tscn -- \
-              --capture --capture-frame=12 --view="$view" 2>&1 | tee "reference-region-${view}.log"
+              --capture --capture-frame=3 --view="$view" 2>&1 | tee "reference-region-${view}.log"
             grep -q 'FRONTLINE_REFERENCE_REGION_READY' "reference-region-${view}.log"
             grep -q "FRONTLINE_REFERENCE_REGION_CAPTURED view=${view}" "reference-region-${view}.log"
             grep -q 'three_lane_authoring=NO' "reference-region-${view}.log"
