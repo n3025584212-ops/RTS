@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V26
+STATE_VERSION=V27
 SOURCE_OF_TRUTH=THIS_FILE
 
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
@@ -29,12 +29,12 @@ DEFAULT_ACTIVE_PRIMARY_TASKS=1
 
 ## CORE CORRECTION
 
-The project no longer treats fluent theory, a generated design image, agent agreement, CI, or a window role as proof that a production method is understood.
+The project no longer treats fluent theory, generated design images, agent agreement, CI, or a window role as proof that a production method is understood.
 
 REQUIRED_LEARNING_CHAIN:
 REAL_PRODUCT_OR_REAL_PROBLEM
 -> EVIDENCE
--> CAUSAL_DECOMPOSITION
+-> END_TO_END_CAUSAL_DECOMPOSITION
 -> REPRODUCTION_OR_DIRECT_VERIFICATION
 -> REAL_ARTIFACT
 -> COMPARISON
@@ -56,14 +56,13 @@ GOLDEN_FRAME_TARGET_RESOLUTION=1920x1080
 GOLDEN_FRAME_SHA256=6c9305b89a5bb1839721f12c2ae8c2507fae4fc7d4fdbbdf130f6f1ecc113362
 USER_APPROVED_GOLDEN_FRAME=YES
 
-The Golden Frame remains a visual target, but it is not proof that the project already knows how to manufacture every part of it.
+The Golden Frame remains a visual target, not proof that the project already knows how to manufacture it.
 
 ---
 
 ## HISTORICAL REAL ARTIFACTS
 
-The following remain valuable evidence/tooling but are not active product tasks:
-
+Historical evidence/tooling, not active product tasks:
 - Golden Scene V1 / former Issue #33;
 - River Town visual reset / former PR #35;
 - Prototype B representative battle / former PR #30;
@@ -71,8 +70,7 @@ The following remain valuable evidence/tooling but are not active product tasks:
 - Reference Region and local high-fidelity branches;
 - existing asset-import, runtime-capture and screenshot tooling.
 
-Golden Scene historical evidence:
-
+Golden Scene evidence:
 REAL_ASSET_INTEGRATION=PASS
 GODOT_4_7_1_IMPORT=PASS
 RUNTIME_CAPTURE_PIPELINE=PASS
@@ -89,39 +87,40 @@ USER_OBSERVED_BLOCKING_GAPS:
 - insufficient damage, decal and world-history detail;
 - battlefield finishing below HUD finishing.
 
-These observations are acceptance evidence. Their technical causes are not assumed.
+These are acceptance observations. Their technical causes are not assumed.
 
 ---
 
 ## CURRENT ACTIVE WORK
 
-ACTIVE_PRIMARY_TASK=LEARNING_SPRINT_01_BATTLEFIELD_CONSTRUCTION
+ACTIVE_PRIMARY_TASK=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
 ACTIVE_ISSUE=#39
+ACTIVE_BRANCH=learning/sprint01-battlefield-construction
 ACTIVE_TASK_TYPE=EVIDENCE_AND_REPRODUCTION
 PRODUCT_PRODUCTION_RESUME=NO
 
 QUESTION=
-How is a believable mature 3D RTS/tactical battlefield region actually produced—from terrain and transport through settlement, vegetation, materials, lighting and command-camera readability—and can we independently reproduce that production logic before transferring it to FRONTLINE?
+How does a mature inspectable RTS go from authored world/content and player input through units, navigation, combat, AI, UI, camera and presentation into a running readable battle—and can we independently reproduce a small complete chain before transferring any method to FRONTLINE?
 
 CONTRACT=docs/learning/LEARNING_SPRINT_01_CONTRACT.md
 
 Required sequence:
-1. inspect real shipped results without inferring hidden implementation;
-2. inspect at least one real open/inspectable production implementation;
-3. inspect official developer/engine/tool production evidence;
+1. select at least one mature inspectable 3D RTS / real-time tactics production reference;
+2. inspect real shipped results without inferring hidden implementation;
+3. inspect real source/data/maps/content pipeline and official production evidence;
 4. classify every major claim as OBSERVED / REPRODUCED / INFERRED / HYPOTHESIS / UNKNOWN / REJECTED;
-5. causally decompose the production chain;
-6. reproduce the method in an isolated learning scene on different spatial content;
-7. run and capture actual evidence;
-8. compare success/failure/unknowns;
-9. only then decide what transfers to FRONTLINE.
+5. trace one playable chain end-to-end: world -> unit/data -> input -> movement -> combat -> AI -> UI -> camera -> presentation -> runtime;
+6. separately causally decompose world construction;
+7. independently reproduce a small complete running slice on different content;
+8. capture and compare actual evidence;
+9. record success/failure/approximation/unknowns;
+10. only then decide what transfers to FRONTLINE.
 
 ---
 
 ## RETIRED OPEN WORK
 
-The following stale work was closed on 2026-09-12 and remains historical only:
-
+Closed on 2026-09-12 and historical only:
 - Issue #20 — Prototype B representative command battle;
 - Issue #29 — representative battle content batch 1;
 - Issue #31 — old window-based independent review;
@@ -133,14 +132,15 @@ The following stale work was closed on 2026-09-12 and remains historical only:
 
 Branch/commit history is retained for evidence and reuse.
 
-Issue #37 remains open only as an operations register for reviewed stale-branch deletion candidates.
+Issue #37 remains open only as the branch-hygiene operations register.
+Issue #39 is the only current product-learning issue.
+OPEN_PRODUCT_PRS=0
 
 ---
 
 ## ACCEPTED TECHNICAL TOOLBOX
 
 Reusable technical assets, not product-definition authority:
-
 - Core V1 merged at 74c40115b6942df07ffca14b81f2fdbb2261e7ab;
 - Prototype B Core migration merged at 09146d7bc351762cd6d9b48719015cd88e200063;
 - FormationState / FormationTask / FormationAgent2D;
@@ -151,7 +151,7 @@ Reusable technical assets, not product-definition authority:
 - screenshot and CI evidence tooling;
 - useful assets on preserved visual/reference branches.
 
-Reuse is permitted only when it serves a newly evidenced production method.
+Reuse is permitted only when it serves a newly evidenced method.
 
 ---
 
@@ -169,6 +169,7 @@ USER_VISUAL_ACCEPTANCE_IS_AUTHORITATIVE=YES
 UNKNOWN_ALLOWED=YES
 ESSAY_WITHOUT_REPRODUCTION_IS_NOT_LEARNING_PASS=YES
 OLD_OPEN_TASKS_DO_NOT_CONTROL_CURRENT_WORK=YES
+RECENT_COMPLAINT_MUST_NOT_NARROW_THE_ENTIRE_LEARNING_PROBLEM=YES
 
 ---
 
@@ -184,7 +185,8 @@ Any chat or agent receives one evidence-scoped task only:
 
 Authority comes from evidence and artifacts, not a window number.
 
-NEXT=EXECUTE_ISSUE_39_EVIDENCE_SELECTION_AND_CAUSAL_DECOMPOSITION
-NEXT_AFTER_EVIDENCE=INDEPENDENT_REPRODUCTION
+NEXT=ISSUE_39_REFERENCE_SELECTION_AND_EVIDENCE_REGISTER
+NEXT_AFTER_REFERENCE=TRACE_REAL_END_TO_END_CHAIN
+NEXT_AFTER_CHAIN=INDEPENDENT_SMALL_COMPLETE_REPRODUCTION
 NEXT_AFTER_REPRODUCTION=FRONTLINE_TRANSFER_DECISION
-NEXT_AFTER_TRANSFER=RESUME_A_SMALL_REAL_PRODUCT_BUILD_USING_ONLY_PROVEN_METHODS
+NEXT_AFTER_TRANSFER=RESUME_ONE_SMALL_REAL_PRODUCT_SLICE_USING_ONLY_PROVEN_METHODS
