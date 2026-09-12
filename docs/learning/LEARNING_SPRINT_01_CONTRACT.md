@@ -1,170 +1,138 @@
-# LEARNING SPRINT 01 — End-to-End RTS Production Reproduction Contract
+# LEARNING SPRINT 01 — End-to-End RTS Production Reconstruction Contract
 
 STATUS=READY
-WORK_ID=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
-ACTIVE_ISSUE=#39
+WORK_ID=LEARNING_SPRINT_01_FRONTLINE_END_TO_END_EVIDENCE_GRAPH
+CORE_CHAIN=docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md
+WINDOW_03_AUDIT_CONTRACT=docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md
 
 ## Goal
 
-不是继续修最近一次视觉失败，也不是再写一套游戏理论。
+不是分别研究地图、AI、材质、战斗、UI或画质，而是建立并验证一条从 CONTENT 到 PLAYER 的完整生产链。
 
-目标是证明我们真的理解并能复现一条成熟 RTS 从内容制作到玩家实际看到/操作的完整生产链。
+宏观链：
 
-学习对象必须是真实可检查的成熟工程或制作资料，而不是模型自己拼出的“最佳实践”。
+`CONTENT -> WORLD -> INPUT -> SIMULATION -> CONTROL -> STATE -> PRESENTATION -> RENDER -> PLAYER`
 
----
+## Stage 1 — Build one version-correct real chain
 
-## Stage 1 — Select the primary reference
+Window 01选择一个最简单但完整的真实RTS事件，从玩家操作追到最终PLAYER层，并向上追溯地图、单位数据、资产绑定。
 
-选取至少一个：
+当前第一参考：0 A.D. Release 28。
 
-- 已成熟发布；
-- 3D RTS / real-time tactics / 相近实时策略类型；
-- 可以检查真实源码、数据、地图/场景或内容管线；
-- 有足够官方/源码证据追踪实际运行链。
+重要限制：归档的 `0ad/0ad` GitHub mirror 默认只能作为历史证据。任何声称证明 Release 28 / 2026 当前实现的源码结论，必须证明版本匹配并使用可追溯的权威源。
 
-商业闭源游戏可以作为结果参照，但不能凭截图猜内部制作方法。
+必须覆盖13层：
+1. map loading / battle space;
+2. unit data source of truth;
+3. model/material/asset binding;
+4. player selection;
+5. command routing;
+6. pathfinding/movement;
+7. detection/targeting;
+8. fire/hit/damage/death;
+9. AI command generation;
+10. UI state acquisition;
+11. animation/VFX/audio;
+12. camera/render;
+13. final player-visible result.
 
-输出：`docs/learning/sprint01/REFERENCE_SELECTION.md`
+## Stage 2 — Window 03 falsification in parallel
 
-必须说明为什么选它、能证明什么、不能证明什么。
+Window 03不等待01写完，立即按六项硬检查审核每个重要结论：
 
----
+1. PRIMARY_SOURCE_INTEGRITY
+2. VERSION_IDENTITY
+3. RUNTIME_SEMANTICS
+4. GENERALIZATION_BOUNDARY
+5. ALTERNATIVE_EXPLANATIONS
+6. COUNTEREXAMPLE_SEARCH
 
-## Stage 2 — Evidence Register
+03必须把结论区分成：
+- SOURCE_FACT
+- PROJECT_SPECIFIC_INFERENCE
+- CROSS_PROJECT_PATTERN
+- DESIGN_RECOMMENDATION
+- UNSUPPORTED_GENERALIZATION
 
-建立：`docs/learning/sprint01/EVIDENCE_REGISTER.md`
+03判定：
+- PASS
+- DOWNGRADE
+- FIX
+- REJECT
+- UNKNOWN
 
-每个重要结论都记录：
+BAR/Recoil、Warzone 2100或其他成熟项目用于主动寻找反例，而不只是确认01的结论。
 
-- CLAIM
-- STATUS=`OBSERVED|REPRODUCED|INFERRED|HYPOTHESIS|UNKNOWN|REJECTED`
-- SOURCE
-- WHAT_THE_SOURCE_ACTUALLY_PROVES
-- WHAT_IT_DOES_NOT_PROVE
+## Stage 3 — Map the same edges onto FRONTLINE
 
-模型总结、论坛共识、用户直觉都不能自动成为 VERIFIED FACT。
+01只在有实际证据时映射 FRONTLINE 当前/历史实现。
 
----
+不存在或无法证明的连接写 GAP / UNKNOWN，不允许替旧工程补解释。
 
-## Stage 3 — Reconstruct one real playable chain
+## Stage 4 — Independent reproduction
 
-从一个真实可玩的切片追踪：
+02在 `learning/sprint01-end-to-end-rts-production` 上做独立小型完整复现。
 
-1. map/world authoring；
-2. terrain / roads / settlement / vegetation；
-3. unit model / material / animation / data definition；
-4. player selection / input / command path；
-5. movement / navigation；
-6. targeting / combat / damage；
-7. AI / opponent behavior；
-8. UI and world-space feedback；
-9. camera / readability；
-10. lighting / materials / VFX / audio；
-11. content loading / build / runtime。
-
-输出：`docs/learning/sprint01/END_TO_END_CHAIN.md`
-
-重点不是“列出模块”，而是说明：
-
-> 一个玩家动作怎样真正穿过这些层，最后变成屏幕上的游戏结果。
-
----
-
-## Stage 4 — Reconstruct world causality
-
-世界空间必须单独拆解：
-
-`terrain -> transport -> parcels/land-use -> settlement -> vegetation -> tactical space -> materials -> lighting -> camera`
-
-输出：`docs/learning/sprint01/WORLD_CAUSAL_DECOMPOSITION.md`
-
-禁止只学习参考图的坐标和物体清单。
-
----
-
-## Stage 5 — Independent reproduction
-
-在隔离 learning 路径做一个内容规模小但链条完整的实物：
+最低链：
 
 `PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT/COMBAT -> VISIBLE FEEDBACK -> OUTCOME`
 
-要求：
+复现不能只证明代码存在。必须有真实环境、真实内容/资产绑定、实际运行证据，并到达PLAYER层。
 
-- 有因果合理的真实环境；
-- 有真实资产/content pipeline；
-- 不以盒子/色块作为交付画面；
-- 不复制参考地图坐标；
-- 不直接套 FRONTLINE 既有玩法假设；
-- 可以复用 Godot 工具链，但要明确哪些是复用、哪些是新学到的。
+## Stage 5 — Artifact review
 
-建议隔离路径：
+03审核02时必须区分：
+- code exists;
+- code executes;
+- authoritative state changes;
+- presentation feedback occurs;
+- player-visible result proves the tested claim.
 
-- `scenes/learning/sprint01/`
-- `scripts/learning/sprint01/`
-- `tools/learning/sprint01/`
-- `artifacts/learning/sprint01/`
+CI green、节点数量、文件数量、隐藏问题的截图都不能替代实物结果。
 
----
+## Stage 6 — FRONTLINE transfer
 
-## Stage 6 — Real comparison
+只有01证据、02复现、03反证三者闭合后，00才允许迁移。
 
-实际运行、实际操作、实际截图/录像。
+`0 A.D. does X` 永远不自动等于 `FRONTLINE should do X`。
 
-输出：`docs/learning/sprint01/REPRODUCTION_RESULT.md`
+迁移必须考虑 FRONTLINE 的 Godot 4.7.1、战斗规模、AI/网络需求、性能、内容生产、维护成本、视觉和可读性目标。
 
-必须明确：
+## Required deliverables
 
-- REPRODUCED
-- PARTIALLY_REPRODUCED
-- FAILED
-- UNKNOWN
-
-不得用：
-
-- CI green；
-- 节点数量；
-- unit count；
-- “所有功能都存在”；
-
-替代实际判断。
-
----
-
-## Stage 7 — FRONTLINE transfer decision
-
-只有 Stage 1–6 完成后，才输出：
-
-`docs/learning/sprint01/FRONTLINE_TRANSFER_DECISION.md`
-
-必须区分：
-
-- 可以直接复用的生产方法；
-- 需要改造的方法；
-- 只适用于参考游戏的方法；
-- 尚未理解的方法；
-- 与 FRONTLINE 目标冲突的方法。
-
-在此之前：`PRODUCT_PRODUCTION_RESUME=NO`。
-
----
+1. `docs/learning/sprint01/EVIDENCE_REGISTER.md`
+2. `docs/learning/sprint01/REFERENCE_SELECTION.md`
+3. `docs/learning/sprint01/END_TO_END_CHAIN.md`
+4. FRONTLINE chain/gap mapping
+5. 03 audit records following `WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md`
+6. isolated reproducible scene/code under learning paths
+7. actual runtime screenshots / capture evidence under `artifacts/learning/sprint01/`
+8. `docs/learning/sprint01/REPRODUCTION_RESULT.md`
+9. `docs/learning/sprint01/FRONTLINE_TRANSFER_DECISION.md`
 
 ## Hard rules
 
-- 一个优秀解释不等于学会；
-- 一个漂亮参考图不等于知道怎么造；
-- 一个源码函数不等于知道完整生产链；
-- 一次语义原型不等于游戏成品；
-- 用户提出的假设和模型提出的假设必须同样接受证据检验；
-- 不允许窗口/Agent凭身份自我审核；
-- 不允许重新生成更漂亮的 FRONTLINE 目标图来逃避复现；
-- 不允许继续旧 Golden Scene 的盲调作为本 Sprint 主要工作。
+- model summaries are not evidence;
+- secondary articles are not source-code proof;
+- source/version identity is mandatory for core implementation claims;
+- symbol/component existence does not prove runtime chain;
+- an essay with no reproduction is FAIL;
+- screenshot similarity cannot prove hidden implementation;
+- one project's implementation cannot become an RTS universal rule without cross-evidence;
+- UNKNOWN must remain UNKNOWN;
+- no old Golden Scene blind tuning during this sprint;
+- no new FRONTLINE gameplay-system expansion during this sprint;
+- no semantic placeholders as final learning/product proof.
 
 ## Exit
 
-PASS 只有一个含义：
+PASS only when:
+1. one real playable chain is traced from content/data to PLAYER with version-correct evidence;
+2. critical edges have explicit evidence status and unknowns;
+3. Window 03 completes the six-check evidence audit and fixes/downgrades unsupported claims;
+4. Window 02 independently reproduces one small complete running chain on different content;
+5. real player-visible runtime evidence exists;
+6. Window 03 completes artifact falsification;
+7. Window 00 can diagnose FRONTLINE gaps by layer/edge and transfer only supported/reproduced methods.
 
-> 至少一条真实成熟 RTS 生产链已经有证据地被拆解，并且我们在不同内容上独立复现了一个小而完整、真实运行的游戏切片。
-
-只有文章、没有实物：FAIL。
-只有实物、说不清为什么成立：PARTIAL / NOT LEARNED.
+PRODUCT_PRODUCTION_RESUME=NO
