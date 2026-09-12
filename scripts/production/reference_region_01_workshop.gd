@@ -1,8 +1,12 @@
-extends "res://scripts/production/reference_region_01_aligned.gd"
+extends "res://scripts/production/reference_region_01.gd"
 ## Integrates the source-backed RepairWorkshop into FRONTLINE_REFERENCE_REGION_01.
-## Keeps the aligned river/bridge world intact and adds a connected industrial spur + Hero workshop.
+## Keeps the corrected river/bridge alignment locally while adding a connected industrial spur + Hero workshop.
 
 const WORKSHOP_SCENE := "res://scenes/production/RepairWorkshop.tscn"
+
+# Keep the bridge crossing aligned without adding another script-inheritance layer.
+func _river_x(z: float) -> float:
+	return -49.27067 + sin(z * 0.0105) * 42.0 + sin(z * 0.027 + 1.1) * 10.0
 
 func _create_road_network() -> void:
 	super._create_road_network()
