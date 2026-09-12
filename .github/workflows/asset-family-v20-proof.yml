@@ -82,7 +82,8 @@ jobs:
             --resolution 1920x1080 res://scenes/production/AssetFamilyV20Proof.tscn -- \
             --capture --capture-frame=3 2>&1 | tee v20-family-runtime.log
           grep -q 'FRONTLINE_V20_FAMILY_PROOF_READY family_house_count=6' v20-family-runtime.log
-          grep -q 'original_run5_abrams=YES extra_vehicle_count=0' v20-family-runtime.log
+          grep -q 'source_scale=3' v20-family-runtime.log
+          grep -q 'original_run5_abrams=YES extra_vehicle_count=0 background_buildings=NO' v20-family-runtime.log
           grep -q 'FRONTLINE_V20_FAMILY_CAPTURED' v20-family-runtime.log
           grep -q 'Forward+' v20-family-runtime.log
           ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' v20-family-runtime.log
@@ -101,14 +102,16 @@ jobs:
           e=m['engine']
           assert e['major']==4 and e['minor']==7 and e['patch']==1
           assert m['family_house_count']==6
+          assert abs(m['source_scale']-3.0) < 1e-6
+          assert m['background_buildings_disabled'] is True
           assert m['original_run5_abrams_retained'] is True
           assert m['extra_vehicle_count']==0
           assert m['source_materials_preserved'] is True
           assert m['fallback_material_masking'] is False
           assert m['post_capture_image_editing'] is False
           assert m['visual_acceptance']=='NOT_CLAIMED'
-          assert len(m['house_bounds'])==6
-          print('FRONTLINE_V20_FAMILY_PNG_PASS', len(data), m['renderer'], m['family_house_count'], m.get('draw_calls'), m.get('rendered_primitives'))
+          assert len(m['house_bounds_world'])==6
+          print('FRONTLINE_V20_FAMILY_PNG_PASS', len(data), m['renderer'], m['family_house_count'], m['source_scale'], m.get('draw_calls'), m.get('rendered_primitives'))
           PY
 
       - name: Upload V20 family proof
