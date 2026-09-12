@@ -1,0 +1,130 @@
+name: FRONTLINE Infrastructure Family Proof
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/asset-pipeline-v2-multi-source
+    paths:
+      - 'scripts/production/infrastructure/**'
+      - 'scripts/production/infrastructure_family_proof.gd'
+      - 'scenes/production/infrastructure/**'
+      - 'scenes/production/InfrastructureFamilyProof.tscn'
+      - '.github/workflows/infrastructure-family-proof.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontline-infrastructure-family-proof-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-proof:
+    name: Godot 4.7.1 reusable bridge-road-river infrastructure proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assert production modules and protected baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/visual_slice/abrams.glb
+          test -s scripts/production/infrastructure/infrastructure_module.gd
+          for f in \
+            BridgeDeckSmall \
+            BridgeAbutmentConcrete \
+            BridgePierConcrete \
+            BridgeRailSteel \
+            RetainingWallConcrete \
+            CulvertSmall; do
+            test -s "scenes/production/infrastructure/${f}.tscn"
+          done
+          echo FRONTLINE_INFRASTRUCTURE_SOURCE_RESOURCES=6
+          echo FRONTLINE_RUN5_ABRAMS_PRESENT=YES
+
+      - name: Install render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 libvulkan1 mesa-vulkan-drivers vulkan-tools
+          vulkaninfo --summary || true
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          GODOT="$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          chmod +x "$GODOT"
+          echo "GODOT=$GODOT" >> "$GITHUB_ENV"
+          "$GODOT" --version
+
+      - name: Import and compile infrastructure proof
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 900s "$GODOT" --headless --editor --path . --rendering-method forward_plus --rendering-driver vulkan --quit 2>&1 | tee infrastructure-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' infrastructure-import.log
+
+      - name: Render infrastructure proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/infrastructure_family
+          timeout 1200s xvfb-run -a -s "-screen 0 1920x1080x24" \
+            "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
+            --resolution 1920x1080 res://scenes/production/InfrastructureFamilyProof.tscn -- \
+            --capture --capture-frame=3 2>&1 | tee infrastructure-runtime.log
+          grep -q 'FRONTLINE_INFRASTRUCTURE_PROOF_READY module_instances=19 resources=6 original_run5_abrams=YES old_primitive_bridge=NO' infrastructure-runtime.log
+          grep -q 'FRONTLINE_INFRASTRUCTURE_CAPTURED' infrastructure-runtime.log
+          grep -q 'Forward+' infrastructure-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' infrastructure-runtime.log
+
+      - name: Verify actual viewport evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, struct
+          p='artifacts/infrastructure_family/infrastructure_family_actual_1920x1080.png'
+          data=open(p,'rb').read()
+          assert data[:8] == b'\x89PNG\r\n\x1a\n'
+          assert struct.unpack('>II', data[16:24]) == (1920,1080)
+          m=json.load(open('artifacts/infrastructure_family/runtime_metrics.json','r',encoding='utf-8'))
+          e=m['engine']
+          assert e['major']==4 and e['minor']==7 and e['patch']==1
+          assert m['resource_count']==6
+          assert m['module_instance_count']==19
+          assert len(m['resources'])==6
+          assert len(m['resource_instance_counts'])==6
+          assert m['old_run5_primitive_bridge_removed'] is True
+          assert m['run5_river_water_retained'] is True
+          assert m['original_run5_abrams_retained'] is True
+          assert m['extra_vehicle_count']==0
+          assert m['post_capture_image_editing'] is False
+          assert m['visual_acceptance']=='NOT_CLAIMED'
+          print('FRONTLINE_INFRASTRUCTURE_PNG_PASS', len(data), m['renderer'], m['module_instance_count'], m.get('draw_calls'), m.get('rendered_primitives'))
+          PY
+
+      - name: Upload infrastructure proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-infrastructure-family-proof
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            artifacts/infrastructure_family/infrastructure_family_actual_1920x1080.png
+            artifacts/infrastructure_family/runtime_metrics.json
+            infrastructure-import.log
+            infrastructure-runtime.log
