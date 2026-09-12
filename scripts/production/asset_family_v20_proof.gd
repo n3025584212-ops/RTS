@@ -5,6 +5,11 @@ extends "res://scripts/production/river_town_visual_slice.gd"
 
 const PROOF_OUT := "res://artifacts/asset_family_v20"
 const FAMILY_DIR := "res://assets/golden_scene/city_v20/"
+# First direct proof showed imported source houses at only ~1.6-2.1 m tall.
+# The source collection is therefore normalized as a family by a single 3x unit
+# conversion, yielding plausible ~4.7-6.4 m residential height without changing
+# the relative proportions between the six authored models.
+const SOURCE_SCALE := 3.0
 const FAMILY_FILES: Array[String] = [
 	"family_house_00.glb",
 	"family_house_01.glb",
@@ -19,36 +24,39 @@ var house_bounds: Dictionary = {}
 
 func _ready() -> void:
 	# The base _ready() builds the Run #5 terrain, PBR, vegetation and the original
-	# Abrams. Dynamic dispatch calls this proof's create_architecture().
+	# Abrams. Dynamic dispatch calls this proof's create_architecture/background.
 	super._ready()
 
-	# Wide RTS review framing: one frame must expose repetition, silhouette diversity,
-	# scale problems and material failures across the whole six-model family.
-	camera.position = Vector3(53.0, 23.0, 43.0)
-	camera.look_at(Vector3(0.0, 2.3, -33.0))
-	camera.fov = 49.0
+	# Review-board framing only, not production settlement topology.
+	# Front row left->right = 00,01,02; rear row left->right = 03,04,05.
+	camera.position = Vector3(0.0, 22.0, 56.0)
+	camera.look_at(Vector3(0.0, 3.0, -22.0))
+	camera.fov = 52.0
 	camera.near = 0.2
 	camera.far = 1200.0
 	camera.current = true
 
 	print("FRONTLINE_V20_FAMILY_PROOF_READY family_house_count=", family_houses.size(),
-		" original_run5_abrams=YES extra_vehicle_count=0 renderer=", RenderingServer.get_current_rendering_method())
+		" source_scale=", SOURCE_SCALE,
+		" original_run5_abrams=YES extra_vehicle_count=0 background_buildings=NO renderer=",
+		RenderingServer.get_current_rendering_method())
 
 func create_architecture() -> void:
 	# Keep one already-proven HF building as an in-frame quality ruler, without
 	# reintroducing the old generic house family from the base scene.
-	var anchor := spawn("res://scenes/production/RiverTownHeroHouseHF.tscn", Vector3(-35.0, height_at(-35.0, 0.0)-.05, 0.0), 0.92, 28.0)
+	var anchor := spawn("res://scenes/production/RiverTownHeroHouseHF.tscn", Vector3(-42.0, height_at(-42.0, 2.0)-.05, 2.0), 0.92, 28.0)
 	anchor.name = "ProtectedHeroHouseHF_QualityAnchor"
 	create_hero_house_finish(anchor)
 
-	# Irregular village cluster. This is intentionally not a row and not a route/lane.
+	# Controlled 2x3 review arrangement. This is deliberately easy to read and is
+	# not a proposed battlefield/village layout.
 	var placements: Array[Dictionary] = [
-		{"p": Vector3(-26.0, 0.0, -21.0), "yaw": 14.0},
-		{"p": Vector3(-5.0, 0.0, -27.0), "yaw": -31.0},
-		{"p": Vector3(18.0, 0.0, -20.0), "yaw": 23.0},
-		{"p": Vector3(-22.0, 0.0, -49.0), "yaw": 67.0},
-		{"p": Vector3(3.0, 0.0, -54.0), "yaw": -12.0},
-		{"p": Vector3(28.0, 0.0, -45.0), "yaw": 38.0},
+		{"p": Vector3(-27.0, 0.0, -14.0), "yaw": 8.0},
+		{"p": Vector3(0.0, 0.0, -15.5), "yaw": -8.0},
+		{"p": Vector3(27.0, 0.0, -14.0), "yaw": 11.0},
+		{"p": Vector3(-27.0, 0.0, -39.0), "yaw": -6.0},
+		{"p": Vector3(0.0, 0.0, -40.5), "yaw": 8.0},
+		{"p": Vector3(27.0, 0.0, -39.0), "yaw": -10.0},
 	]
 
 	for i in range(FAMILY_FILES.size()):
@@ -62,12 +70,19 @@ func create_architecture() -> void:
 		p.y = height_at(p.x, p.z)
 		# architecture=false is deliberate: preserve each GLB's actual imported source
 		# materials first. A white/broken source must remain visible as a failure.
-		var house := spawn(path, p, 1.0, float(spec["yaw"]), false)
+		var house := spawn(path, p, SOURCE_SCALE, float(spec["yaw"]), false)
 		house.name = "V20_Source_%02d_%s" % [i, file_name.get_basename()]
 		family_houses.append(house)
-		house_bounds[house.name] = _combined_local_aabb(house)
+		house_bounds[house.name] = _combined_world_aabb(house)
 
-func _combined_local_aabb(root: Node3D) -> Dictionary:
+func create_background() -> void:
+	# The base Run #5 background includes additional houses. They are intentionally
+	# suppressed only in this review scene so the six V20 sources cannot be confused
+	# with unrelated historical building assets. Terrain, vegetation, sky, road,
+	# water, atmosphere and the accepted Abrams remain the real Run #5 systems.
+	pass
+
+func _combined_world_aabb(root: Node3D) -> Dictionary:
 	var initialized := false
 	var world_box := AABB()
 	for node: Node in root.find_children("*", "MeshInstance3D", true, false):
@@ -75,17 +90,15 @@ func _combined_local_aabb(root: Node3D) -> Dictionary:
 		if mi.mesh == null:
 			continue
 		var local_box := mi.get_aabb()
-		var corners: Array[Vector3] = []
 		for x in [local_box.position.x, local_box.end.x]:
 			for y in [local_box.position.y, local_box.end.y]:
 				for z in [local_box.position.z, local_box.end.z]:
-					corners.append(root.to_local(mi.to_global(Vector3(x, y, z))))
-		for corner in corners:
-			if not initialized:
-				world_box = AABB(corner, Vector3.ZERO)
-				initialized = true
-			else:
-				world_box = world_box.expand(corner)
+					var corner := mi.to_global(Vector3(x, y, z))
+					if not initialized:
+						world_box = AABB(corner, Vector3.ZERO)
+						initialized = true
+					else:
+						world_box = world_box.expand(corner)
 	return {
 		"position": str(world_box.position),
 		"size": str(world_box.size),
@@ -108,7 +121,10 @@ func capture() -> void:
 		"save_error": err,
 		"family_house_count": family_houses.size(),
 		"family_files": FAMILY_FILES,
-		"house_bounds": house_bounds,
+		"source_scale": SOURCE_SCALE,
+		"house_bounds_world": house_bounds,
+		"review_mapping": "front-left/right: 00,01,02; rear-left/right: 03,04,05",
+		"background_buildings_disabled": true,
 		"original_run5_abrams_retained": true,
 		"original_run5_baseline_script": "res://scripts/production/river_town_visual_slice.gd",
 		"extra_vehicle_count": 0,
