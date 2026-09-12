@@ -1,0 +1,125 @@
+name: FRONTLINE V20 Family House Proof
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/asset-pipeline-v2-multi-source
+    paths:
+      - 'scripts/production/asset_family_v20_proof.gd'
+      - 'scenes/production/AssetFamilyV20Proof.tscn'
+      - 'docs/current/FRONTLINE_ASSET_CAPABILITY_MAP_V1.md'
+      - '.github/workflows/asset-family-v20-proof.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontline-v20-family-proof-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-proof:
+    name: Godot 4.7.1 Run5 + six V20 source houses
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assert protected baseline and V20 sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/visual_slice/abrams.glb
+          test -s assets/visual_slice/hero_house_ruined_hf.glb
+          for i in 00 01 02 03 04 05; do
+            test -s "assets/golden_scene/city_v20/family_house_${i}.glb"
+          done
+          test -s assets/golden_scene/.visual_assets_v20_textured_complete
+          grep -q 'FAMILY_HOUSE_GLBS=6' assets/golden_scene/.visual_assets_v20_textured_complete
+          grep -q 'SOURCE_LICENSE=CC0_1_0' assets/golden_scene/.visual_assets_v20_textured_complete
+          echo FRONTLINE_V20_SIX_SOURCE_HOUSES_PRESENT=YES
+          echo FRONTLINE_RUN5_ABRAMS_PRESENT=YES
+
+      - name: Install render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 libvulkan1 mesa-vulkan-drivers vulkan-tools
+          vulkaninfo --summary || true
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          GODOT="$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          chmod +x "$GODOT"
+          echo "GODOT=$GODOT" >> "$GITHUB_ENV"
+          "$GODOT" --version
+
+      - name: Import and compile V20 proof
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 900s "$GODOT" --headless --editor --path . --rendering-method forward_plus --rendering-driver vulkan --quit 2>&1 | tee v20-family-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' v20-family-import.log
+
+      - name: Render direct-source V20 family proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/asset_family_v20
+          timeout 1200s xvfb-run -a -s "-screen 0 1920x1080x24" \
+            "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
+            --resolution 1920x1080 res://scenes/production/AssetFamilyV20Proof.tscn -- \
+            --capture --capture-frame=3 2>&1 | tee v20-family-runtime.log
+          grep -q 'FRONTLINE_V20_FAMILY_PROOF_READY family_house_count=6' v20-family-runtime.log
+          grep -q 'original_run5_abrams=YES extra_vehicle_count=0' v20-family-runtime.log
+          grep -q 'FRONTLINE_V20_FAMILY_CAPTURED' v20-family-runtime.log
+          grep -q 'Forward+' v20-family-runtime.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' v20-family-runtime.log
+
+      - name: Verify actual viewport evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, struct
+          p='artifacts/asset_family_v20/asset_family_v20_actual_1920x1080.png'
+          data=open(p,'rb').read()
+          assert data[:8] == b'\x89PNG\r\n\x1a\n'
+          assert struct.unpack('>II', data[16:24]) == (1920,1080)
+          m=json.load(open('artifacts/asset_family_v20/runtime_metrics.json','r',encoding='utf-8'))
+          e=m['engine']
+          assert e['major']==4 and e['minor']==7 and e['patch']==1
+          assert m['family_house_count']==6
+          assert m['original_run5_abrams_retained'] is True
+          assert m['extra_vehicle_count']==0
+          assert m['source_materials_preserved'] is True
+          assert m['fallback_material_masking'] is False
+          assert m['post_capture_image_editing'] is False
+          assert m['visual_acceptance']=='NOT_CLAIMED'
+          assert len(m['house_bounds'])==6
+          print('FRONTLINE_V20_FAMILY_PNG_PASS', len(data), m['renderer'], m['family_house_count'], m.get('draw_calls'), m.get('rendered_primitives'))
+          PY
+
+      - name: Upload V20 family proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-v20-family-house-proof
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            artifacts/asset_family_v20/asset_family_v20_actual_1920x1080.png
+            artifacts/asset_family_v20/runtime_metrics.json
+            v20-family-import.log
+            v20-family-runtime.log
