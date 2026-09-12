@@ -1,7 +1,7 @@
 # FRONTLINE Asset Capability Map V1
 
-Status: WORKING PRODUCTION MAP — NOT A VISUAL ACCEPTANCE CLAIM
-Branch: dev/asset-pipeline-v2-multi-source
+Status: WORKING PRODUCTION MAP — NOT A GLOBAL VISUAL ACCEPTANCE CLAIM  
+Branch: dev/asset-pipeline-v2-multi-source  
 Engine: Godot 4.7.1
 
 ## Purpose
@@ -24,7 +24,7 @@ This document separates accepted production assets from historical experiments, 
 | IFV | `assets/golden_scene/vehicles/ifv.glb` | **B/P** | Legal usable source; keep, but do not inject into unrelated visual proofs. Needs its own material/LOD proof against Run #5. |
 | Hero ruin | `assets/visual_slice/hero_v2/urban_ruin/urban_ruin.gltf` | **A** | Strong Poly Haven-backed architecture direction; valid source for close/mid ruined urban language. |
 | Hero ruined house | `assets/visual_slice/hero_house_ruined_hf.glb` and production scene | **A** | Existing high-fidelity anchor; preserve. |
-| Family House Collection | `assets/golden_scene/city_v20/family_house_00..05.glb` | **P / P0** | Six different CC0 houses already in the repository. Highest-priority residential-family proof before any new house generation/download. |
+| Family House Collection | `assets/golden_scene/city_v20/family_house_00..05.glb` | **B family** | Normalized direct-source Run #5 proof completed. Useful Mid residential family; no member currently reaches A/Near. Details below. |
 | Procedural rural-house prototype | Asset Pipeline V1 generated house | **X** | Technical pipeline proof only. Repeated grammar, weak silhouette, bad roof proportions; not a production residential family. |
 | Church landmark | `assets/golden_scene/city_real/church_landmark.glb` | **P** | Source may be useful, but generic Blender V2 round-trip lost material appearance. Do not judge the source from the broken round-trip. |
 | Ordinary House | `assets/golden_scene/city_hd/ordinary_house.glb` / `city_real/ordinary_house_textured.glb` | **P** | Historical material/white-model risk. Needs direct source proof, not generic re-export proof. |
@@ -39,37 +39,62 @@ This document separates accepted production assets from historical experiments, 
 | Road / mud / rut / ground system | Run #5 production visual slice | **A local** | Proven local material/geometry language. World-scale road-network logic remains a separate future task. |
 | Infantry | `assets/golden_scene/infantry/soldier.glb` | **B/P** | Suitable candidate for RTS distance; not yet a close-up quality anchor. |
 
+## V20 Family House direct-source result
+
+Proof run: **GitHub Actions 34667643620**  
+Artifact: `frontline-v20-family-house-proof`  
+Runtime: Godot **4.7.1 Forward+**, 1920×1080, no post-capture edit.  
+Protected baseline: original Run #5 Abrams retained; extra vehicle count = 0; old background houses disabled; Hero House HF retained as an in-frame quality ruler.
+
+The first V20 proof exposed an old export-unit problem: the six houses arrived at only roughly 1.6–2.1 m total height. The family was therefore re-proved with one uniform **3.0× source-unit conversion**, preserving authored relative proportions. The corrected world-space heights are roughly **4.74–6.38 m**, with widths roughly **7.12–13.34 m**.
+
+Review mapping in the normalized proof: front row left→right = 00/01/02; rear row left→right = 03/04/05.
+
+| House | Grade | Production use |
+|---|---:|---|
+| `family_house_00.glb` | **B** | Good Mid rural/edge-of-village filler. Broad roof mass and side extension break repetition. Not a Near anchor. |
+| `family_house_01.glb` | **B** | Stronger central roof/dormer silhouette; usable Mid. Facade/material depth still below Hero quality. |
+| `family_house_02.glb` | **B** | Distinct low roof + dormer profile; usable Mid. Needs material/edge-depth pass before Near use. |
+| `family_house_03.glb` | **B** | Small gabled cottage with chimney reads clearly at Mid distance; simple enough that close inspection exposes low detail. |
+| `family_house_04.glb` | **B** | Best irregular/weathered small-house read in this family; useful Mid and a candidate for a damaged derivative. Still below A/Near. |
+| `family_house_05.glb` | **C** | Plain box/facade and weak silhouette. Keep for Far/HLOD/background settlement density rather than normal Mid foreground. |
+
+**Family verdict:** the repository already contains enough residential variety to stop generating replacement houses. The gap is now **Near residential quality and damage/LOD derivatives**, not basic house count.
+
 ## Production gaps, ordered by impact
 
-### P0 — Residential asset family proof
+### P0 — Residential asset family proof — COMPLETE
 
-Before creating or downloading another house, directly render all six existing CC0 V20 Family House models inside the exact Run #5 visual baseline. Grade each house individually A/B/C/X.
+The six existing CC0 V20 Family House models were directly rendered in the Run #5 baseline and individually graded. Result: **5×B + 1×C, 0×A, 0×X** after correcting the common source-unit scale.
 
-Required proof conditions:
-- original `assets/visual_slice/abrams.glb` remains the only armored baseline vehicle;
-- no IFV or alternate tank is injected;
-- no procedural rural-house prototype is present;
-- all six source houses are visible in one irregular village cluster;
-- original source materials are preserved first; no fallback white-masking is allowed;
-- screenshot is an actual Godot 4.7.1 Forward+ viewport, 1920x1080, no post-capture editing.
+Consequences:
+- do not generate another generic rural-house family;
+- use V20 houses for Mid settlement composition;
+- retain Hero House HF / Urban Ruin as Near-quality references;
+- spend new work on missing roles and infrastructure rather than duplicating solved Mid housing.
 
 ### P1 — Residential completion
 
-If V20 yields enough B/A models, derive missing roles rather than restarting from zero:
-- 1–2 damaged/burnt derivatives;
-- 1–2 rural/farm outbuildings;
-- LOD1/LOD2 and HLOD;
-- material normalization only where visually necessary.
+Use the existing family as source material rather than restarting from zero:
+- derive one damaged/burnt version from `family_house_04` or another B-grade source;
+- add one farm/outbuilding role if no existing asset passes direct proof;
+- produce LOD1/LOD2/HLOD variants;
+- normalize materials only where the Run #5 comparison proves it necessary.
 
-If V20 fails, then search legal external sources specifically for the missing residential roles.
+### P2 — Bridge / road / river-edge infrastructure family — ACTIVE NEXT BLOCKER
 
-### P2 — Industrial / utility family
+Run #5 proves local road/mud/water material language, but the bridge is still authored in-scene from primitive blocks/rods and there is no verified reusable family for:
+- bridge deck / abutment / pier / rail or parapet;
+- culvert / drainage;
+- guardrail / roadside barrier;
+- retaining wall / embankment transition;
+- river-bank / road-edge transition modules.
 
-Current high-visibility industrial coverage is weak or historically style-incompatible. Build a legal source-backed family for warehouse, repair hall, utility shed, light industrial facade, and rail/yard support structures.
+This is the next production blocker for a credible 500×500 m–1×1 km world slice. Roads must read as infrastructure embedded in terrain, not as gameplay lanes.
 
-### P3 — Bridge / road infrastructure family
+### P3 — Industrial / utility family
 
-The terrain/road surface language is strong, but reusable bridge, culvert, guardrail, sign, retaining wall, drainage and roadside infrastructure families are incomplete.
+Current high-visibility industrial coverage is weak or historically style-incompatible. Build or prove a legal source-backed family for warehouse, repair hall, utility shed, light industrial facade, and rail/yard support structures.
 
 ### P4 — Vehicle family completion
 
