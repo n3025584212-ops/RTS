@@ -5,6 +5,7 @@ PROJECT=FRONTLINE
 SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md
 LEARNING_SYSTEM=docs/FRONTLINE_LEARNING_SYSTEM_V1.md
 CORE_LEARNING_CHAIN=docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md
+WINDOW_03_AUDIT_CONTRACT=docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md
 SUPERSEDES=docs/GPT_COLLABORATION_SYSTEM_V4.md
 
 ## 1. Four windows are retained
@@ -58,7 +59,6 @@ Window 01 does NOT:
 ### Core learning mainline
 
 Window 01 must follow:
-
 1. map loading / battle-space construction;
 2. unit data source of truth;
 3. model/material/asset binding and scalable reuse;
@@ -74,7 +74,6 @@ Window 01 must follow:
 13. final player-visible result.
 
 Macro chain:
-
 `CONTENT -> WORLD -> INPUT -> SIMULATION -> CONTROL -> STATE -> PRESENTATION -> RENDER -> PLAYER`
 
 Canonical contract:
@@ -106,8 +105,7 @@ Window 02 does NOT:
 
 Current Sprint 01 responsibility:
 - after Window 01 supplies a concrete linked chain, implement the isolated learning slice on `learning/sprint01-end-to-end-rts-production`;
-- required small complete chain:
-  `PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT/COMBAT -> VISIBLE FEEDBACK -> OUTCOME`;
+- required small complete chain: `PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT/COMBAT -> VISIBLE FEEDBACK -> OUTCOME`;
 - environment must be causally authored, not arbitrary object placement;
 - asset/content binding must be real enough to test the same chain, not hidden behind boxes;
 - capture real runtime evidence;
@@ -115,26 +113,59 @@ Current Sprint 01 responsibility:
 
 ## 5. Window 03 — INDEPENDENT REVIEW / FALSIFICATION
 
+Canonical hard contract:
+`docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md`
+
 Purpose:
 - try to disprove claims made by 01 and 02;
 - inspect actual sources and artifacts rather than their summaries;
-- check whether evidence actually supports the claimed conclusion;
-- compare reproduction against pre-stated criteria;
-- identify hidden substitutions, unsupported inference, missing evidence and regressions.
+- audit the exact boundary between evidence, fact, inference, pattern and recommendation;
+- identify source/version mistakes, hidden assumptions, unsupported generalization, alternate explanations and mature counterexamples;
+- later review the actual reproduction against pre-stated criteria.
 
 Window 03 does NOT:
 - become independent merely because it has a different number;
+- repeat Window 01's prose and call that review;
 - invent new acceptance criteria after seeing the result;
 - approve an artifact on CI or prose alone;
 - decide subjective player acceptance in place of the user.
 
+### Six mandatory audit checks
+
+1. `PRIMARY_SOURCE_INTEGRITY`
+   - no secondary article may be disguised as source-code proof.
+2. `VERSION_IDENTITY`
+   - every core claim must identify the project/source/release/tag/commit as applicable.
+3. `RUNTIME_SEMANTICS`
+   - symbol existence is not enough; inspect caller -> callee, state/data flow, conditions, side effects and bypass paths.
+4. `GENERALIZATION_BOUNDARY`
+   - separate project fact from cross-project pattern and FRONTLINE recommendation.
+5. `ALTERNATIVE_EXPLANATIONS`
+   - actively test at least one serious competing explanation for important causal claims.
+6. `COUNTEREXAMPLE_SEARCH`
+   - use BAR/Recoil, Warzone 2100 or another mature implementation to attack claims of necessity/universality.
+
 Current Sprint 01 responsibility:
 - audit every major edge of the 13-layer chain rather than only the final summary;
 - verify versions and primary-source provenance;
+- treat the archived `0ad/0ad` GitHub mirror as historical unless the exact revision is matched to the release being discussed;
 - check whether 0 A.D.-specific behavior has been generalized without support;
-- use BAR/Recoil, Warzone 2100 or other strong evidence as counterexamples where useful;
-- later review whether Window 02's actual reproduction tests the claimed links and visibly reaches the PLAYER layer;
-- return PASS / FIX / REJECT with concrete evidence.
+- use BAR/Recoil and Warzone 2100 as counterexample pools, not merely confirmation samples;
+- later review whether Window 02's actual reproduction tests the claimed links and visibly reaches the PLAYER layer.
+
+Allowed audit verdicts:
+- PASS
+- DOWNGRADE
+- FIX
+- REJECT
+- UNKNOWN
+
+Allowed epistemic/generalization levels:
+- SOURCE_FACT
+- PROJECT_SPECIFIC_INFERENCE
+- CROSS_PROJECT_PATTERN
+- DESIGN_RECOMMENDATION
+- UNSUPPORTED_GENERALIZATION
 
 ## 6. Required chain between windows
 
@@ -146,7 +177,7 @@ The default chain is:
 -> 03 FALSIFY / REVIEW
 -> 00 INTEGRATE OR REJECT
 
-This is not a rigid waterfall. 01 and 02 may iterate when reproduction exposes missing knowledge; 03 may send work back to either. But no window may close the loop using only its own claims.
+This is not a rigid waterfall. Window 03 audits Window 01 in parallel before reproduction; Window 02 may expose missing knowledge and send the chain back to 01; Window 03 may send work back to either. No window may close the loop using only its own claims.
 
 ## 7. Shared evidence language
 
@@ -164,6 +195,7 @@ MODEL_HYPOTHESIS is not automatically a technical fact.
 
 Every important evidence-graph edge should record:
 - source;
+- version identity;
 - status;
 - what the source proves;
 - what it does not prove;
@@ -171,6 +203,14 @@ Every important evidence-graph edge should record:
 - external reference implementation if inspected;
 - gap;
 - whether reproduction is required.
+
+Every important 03 audit record should additionally record:
+- runtime semantics;
+- hidden assumptions;
+- alternative explanation;
+- counterexample search/result;
+- allowed generalization level;
+- allowed final wording.
 
 ## 8. Task packet
 
@@ -195,7 +235,7 @@ EXIT_CONDITION=
 WINDOW_00=ACTIVE_CONTROL_AND_INTEGRATION
 WINDOW_01=ACTIVE_END_TO_END_EVIDENCE_GRAPH
 WINDOW_02=WAITING_FOR_REPRODUCIBLE_CHAIN_THEN_ACTIVE_REPRODUCTION
-WINDOW_03=ACTIVE_EVIDENCE_AUDIT_THEN_REPRODUCTION_REVIEW
+WINDOW_03=ACTIVE_STRICT_EVIDENCE_AUDIT_THEN_REPRODUCTION_REVIEW
 
 One project, one Issue #39, one shared truth. No four independent roadmaps.
 
@@ -205,10 +245,11 @@ If the end-to-end reproduction passes:
 - 00 selects a small FRONTLINE product slice;
 - 01 uses the same 13-layer graph to identify unresolved production choices;
 - 02 builds the real product slice;
-- 03 independently reviews the real artifact and broken/missing links;
+- 03 independently reviews the real artifact and broken/missing links under the same strict evidence contract;
 - user performs subjective product/visual/play judgment where required.
 
 FOUR_WINDOWS_RETAINED=YES
 FIXED_EXPERT_MYTH=NO
 EVIDENCE_BEFORE_AUTHORITY=YES
 LEARN_CONNECTIONS_NOT_ISOLATED_MODULES=YES
+WINDOW_03_FALSIFICATION_CONTRACT=MANDATORY
