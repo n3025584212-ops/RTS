@@ -40,10 +40,12 @@ jobs:
             BridgePierConcrete \
             BridgeRailSteel \
             RetainingWallConcrete \
-            CulvertSmall; do
+            CulvertSmall \
+            RoadGuardrailSteel \
+            RiverBankRiprap; do
             test -s "scenes/production/infrastructure/${f}.tscn"
           done
-          echo FRONTLINE_INFRASTRUCTURE_SOURCE_RESOURCES=6
+          echo FRONTLINE_INFRASTRUCTURE_SOURCE_RESOURCES=8
           echo FRONTLINE_RUN5_ABRAMS_PRESENT=YES
 
       - name: Install render runtime
@@ -85,7 +87,7 @@ jobs:
             "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
             --resolution 1920x1080 res://scenes/production/InfrastructureFamilyProof.tscn -- \
             --capture --capture-frame=3 2>&1 | tee infrastructure-runtime.log
-          grep -q 'FRONTLINE_INFRASTRUCTURE_PROOF_READY module_instances=19 resources=6 original_run5_abrams=YES old_primitive_bridge=NO' infrastructure-runtime.log
+          grep -q 'FRONTLINE_INFRASTRUCTURE_PROOF_READY module_instances=25 resources=8 original_run5_abrams=YES old_primitive_bridge=NO terrain_integrated=YES' infrastructure-runtime.log
           grep -q 'FRONTLINE_INFRASTRUCTURE_CAPTURED' infrastructure-runtime.log
           grep -q 'Forward+' infrastructure-runtime.log
           ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' infrastructure-runtime.log
@@ -103,13 +105,16 @@ jobs:
           m=json.load(open('artifacts/infrastructure_family/runtime_metrics.json','r',encoding='utf-8'))
           e=m['engine']
           assert e['major']==4 and e['minor']==7 and e['patch']==1
-          assert m['resource_count']==6
-          assert m['module_instance_count']==19
-          assert len(m['resources'])==6
-          assert len(m['resource_instance_counts'])==6
+          assert m['resource_count']==8
+          assert m['module_instance_count']==25
+          assert len(m['resources'])==8
+          assert len(m['resource_instance_counts'])==8
           assert m['old_run5_primitive_bridge_removed'] is True
           assert m['run5_river_water_retained'] is True
           assert m['original_run5_abrams_retained'] is True
+          assert m['terrain_integration_v2'] is True
+          assert m['road_guardrails_added'] is True
+          assert m['riverbank_riprap_added'] is True
           assert m['extra_vehicle_count']==0
           assert m['post_capture_image_editing'] is False
           assert m['visual_acceptance']=='NOT_CLAIMED'
