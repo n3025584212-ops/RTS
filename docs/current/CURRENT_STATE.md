@@ -2,13 +2,14 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V29
+STATE_VERSION=V30
 SOURCE_OF_TRUTH=THIS_FILE
 
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V3.md
 LEARNING_SYSTEM=docs/FRONTLINE_LEARNING_SYSTEM_V1.md
 GPT_FOUR_WINDOW_SYSTEM=docs/GPT_FOUR_WINDOW_SYSTEM_V5.md
+CORE_LEARNING_CHAIN=docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md
 START_HERE=START_HERE.md
 ACTIVE_WORK=docs/current/ACTIVE_WORK.md
 RESTART_DECISION=docs/current/RESTART_DECISION.md
@@ -41,6 +42,19 @@ The project retains four GPT windows for parallel collaboration, but no window i
 
 The project no longer treats fluent theory, generated design images, agent agreement, CI, or a window role as proof that a production method is understood.
 
+The active learning target is now explicitly the connected causal chain, not isolated subsystem knowledge.
+
+CORE_CAUSAL_CHAIN:
+CONTENT
+-> WORLD
+-> INPUT
+-> SIMULATION
+-> CONTROL
+-> STATE
+-> PRESENTATION
+-> RENDER
+-> PLAYER
+
 REQUIRED_LEARNING_CHAIN:
 REAL_PRODUCT_OR_REAL_PROBLEM
 -> EVIDENCE
@@ -52,7 +66,7 @@ REAL_PRODUCT_OR_REAL_PROBLEM
 
 DEFAULT_WINDOW_CHAIN:
 WINDOW_00_DEFINE_AND_ROUTE
--> WINDOW_01_EVIDENCE
+-> WINDOW_01_BUILD_LINKED_EVIDENCE_GRAPH
 -> WINDOW_02_REPRODUCE_OR_BUILD
 -> WINDOW_03_FALSIFY_AND_REVIEW
 -> WINDOW_00_INTEGRATE_OR_REJECT
@@ -110,10 +124,10 @@ These are acceptance observations. Their technical causes are not assumed.
 
 ## CURRENT ACTIVE WORK
 
-ACTIVE_PRIMARY_TASK=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
+ACTIVE_PRIMARY_TASK=LEARNING_SPRINT_01_FRONTLINE_END_TO_END_EVIDENCE_GRAPH
 ACTIVE_ISSUE=#39
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
-ACTIVE_TASK_TYPE=EVIDENCE_AND_REPRODUCTION
+ACTIVE_TASK_TYPE=EVIDENCE_GRAPH_AND_REPRODUCTION
 PRODUCT_PRODUCTION_RESUME=NO
 
 PRIMARY_REFERENCE=0_AD_RELEASE_28
@@ -124,28 +138,57 @@ COMMERCIAL_RESULT_REFERENCES=WARNO_BROKEN_ARROW_REGIMENTS
 
 REFERENCE_SELECTION=docs/learning/sprint01/REFERENCE_SELECTION.md
 EVIDENCE_REGISTER=docs/learning/sprint01/EVIDENCE_REGISTER.md
+CORE_CHAIN=docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md
 CONTRACT=docs/learning/LEARNING_SPRINT_01_CONTRACT.md
 
 QUESTION=
-How does a mature inspectable RTS go from authored world/content and player input through units, navigation, combat, AI, UI, camera and presentation into a running readable battle—and can we independently reproduce a small complete chain before transferring any method to FRONTLINE?
+How does authored content/data become a running RTS battle through world construction, input, simulation, player/AI control, authoritative state, presentation and rendering—and where exactly are FRONTLINE's supported, broken, duplicated or unknown links before the final player-visible result?
+
+## REQUIRED 13-LAYER EVIDENCE GRAPH
+
+1. MAP_LOADING_AND_BATTLE_SPACE
+2. UNIT_DATA_SOURCE_OF_TRUTH
+3. MODEL_MATERIAL_ASSET_BINDING
+4. PLAYER_SELECTION
+5. COMMAND_ROUTING
+6. PATHFINDING_AND_MOVEMENT
+7. DETECTION_AND_TARGET_SELECTION
+8. FIRE_HIT_DAMAGE_DEATH
+9. AI_COMMAND_GENERATION
+10. UI_STATE_ACQUISITION
+11. ANIMATION_VFX_AUDIO_FEEDBACK
+12. CAMERA_AND_RENDER_PRESENTATION
+13. FINAL_PLAYER_VISIBLE_RESULT
+
+These are not thirteen independent study topics. Each important edge between them must be evidenced.
+
+Required evidence fields for a major edge:
+- CLAIM
+- CHAIN_LAYER_OR_EDGE
+- SOURCE
+- STATUS=`OBSERVED|REPRODUCED|INFERRED|HYPOTHESIS|UNKNOWN|REJECTED`
+- WHAT_THE_SOURCE_ACTUALLY_PROVES
+- WHAT_IT_DOES_NOT_PROVE
+- FRONTLINE_CURRENT_IMPLEMENTATION
+- EXTERNAL_REFERENCE_IMPLEMENTATION
+- GAP
+- REPRODUCTION_REQUIRED
 
 Reference selection rationale:
-- 0 A.D. Release 28 exposes current official build source plus game data;
-- its inspectable project/data structure spans maps, art, GUI, shaders, simulation, AI, helpers and templates;
-- it is selected as an end-to-end production-chain teacher, NOT as FRONTLINE's visual/gameplay template;
-- BAR/Recoil and Warzone 2100 are cross-checks so one project's architecture is not mistaken for universal truth.
+- 0 A.D. Release 28 is the first primary inspectable teacher because its source/data ecosystem exposes maps, art, GUI, shaders, simulation, AI, helpers and templates;
+- it is not FRONTLINE's visual/gameplay template and not a universal RTS truth;
+- BAR/Recoil and Warzone 2100 are counterexample/cross-check sources;
+- commercial games primarily establish observable player-facing result unless production method is publicly documented.
 
 Required sequence:
-1. inspect current 0 A.D. Release 28 source/data rather than relying only on stale mirrors or summaries;
-2. choose one real playable slice that can be traced end-to-end;
-3. classify every major claim as OBSERVED / REPRODUCED / INFERRED / HYPOTHESIS / UNKNOWN / REJECTED;
-4. trace the playable chain: world -> unit/data -> input -> movement -> combat -> AI -> UI -> camera -> presentation -> runtime;
-5. separately causally decompose world construction;
-6. cross-check important conclusions against BAR/Recoil and/or Warzone where useful;
-7. independently reproduce a small complete running slice on different content;
-8. capture and compare actual evidence;
-9. record success/failure/approximation/unknowns;
-10. only then decide what transfers to FRONTLINE.
+1. Window 01 selects and traces one real playable chain through all thirteen layers;
+2. Window 03 audits versions, source provenance, inference scope and counterexamples in parallel;
+3. Window 01 maps the same critical edges onto FRONTLINE current/historical implementation where evidence exists;
+4. unsupported edges remain UNKNOWN rather than being bridged by prose;
+5. Window 02 independently reproduces a small complete chain on different content;
+6. the reproduction must reach player-visible behavior/feedback, not only code/CI;
+7. Window 03 reviews the real artifact and whether the claimed edge was actually reproduced;
+8. Window 00 only then decides what can transfer to FRONTLINE production.
 
 ---
 
@@ -155,13 +198,13 @@ WINDOW_00_STATUS=ACTIVE
 WINDOW_00_TASK=Maintain one shared state, Issue #39, task boundaries, evidence gates, repository clarity, and final integration/rejection decisions.
 
 WINDOW_01_STATUS=ACTIVE
-WINDOW_01_TASK=Trace 0 A.D. Release 28 end-to-end production evidence; maintain reference selection, evidence register, chain decomposition, and competing explanations.
+WINDOW_01_TASK=Build the linked 13-layer evidence graph; trace one 0 A.D. Release 28 playable chain end-to-end; map comparable FRONTLINE links; preserve UNKNOWN and competing explanations.
 
 WINDOW_02_STATUS=STAGED_WAITING_FOR_REPRODUCIBLE_CHAIN
-WINDOW_02_TASK=Once Window 01 produces a concrete trace, build the isolated runnable reproduction on the learning branch; produce real runtime evidence, not semantic placeholders.
+WINDOW_02_TASK=Once Window 01 produces a concrete linked chain, build the isolated runnable reproduction on the learning branch; produce real runtime/player-visible evidence, not semantic placeholders.
 
 WINDOW_03_STATUS=ACTIVE
-WINDOW_03_TASK=Audit Window 01 evidence immediately; later falsify/review Window 02 reproduction against pre-stated criteria and actual source/artifact evidence.
+WINDOW_03_TASK=Audit Window 01 evidence immediately; verify source/version and claim scope; search for BAR/Warzone counterexamples; later falsify/review Window 02 reproduction against pre-stated criteria and actual source/artifact evidence.
 
 WINDOWS_SHARE_ONE_ISSUE=#39
 FOUR_INDEPENDENT_ROADMAPS=NO
@@ -224,6 +267,8 @@ RECENT_COMPLAINT_MUST_NOT_NARROW_THE_ENTIRE_LEARNING_PROBLEM=YES
 PRIMARY_REFERENCE_IS_NOT_UNIVERSAL_TRUTH=YES
 WINDOW_NUMBER_IS_NOT_PROOF=YES
 FOUR_WINDOWS_RETAINED=YES
+ISOLATED_SUBSYSTEM_NOTES_ARE_NOT_END_TO_END_LEARNING=YES
+PLAYER_LAYER_MUST_BE_REACHED=YES
 
 ---
 
@@ -237,8 +282,8 @@ Four windows are the standard collaboration topology:
 
 Authority comes from evidence and artifacts, not a window number.
 
-NEXT=WINDOW_01_TRACE_0AD_RELEASE28_REAL_END_TO_END_PLAYABLE_CHAIN
-PARALLEL_NEXT=WINDOW_03_AUDIT_REFERENCE_AND_EVIDENCE_QUALITY
+NEXT=WINDOW_01_BUILD_FIRST_13_LAYER_TRACE_FOR_ONE_REAL_PLAYABLE_CHAIN
+PARALLEL_NEXT=WINDOW_03_AUDIT_FIRST_CHAIN_SOURCES_AND_GENERALIZATION
 NEXT_AFTER_CHAIN=WINDOW_02_INDEPENDENT_SMALL_COMPLETE_REPRODUCTION
 NEXT_AFTER_REPRODUCTION=WINDOW_03_REPRODUCTION_REVIEW
 NEXT_AFTER_REVIEW=WINDOW_00_FRONTLINE_TRANSFER_DECISION
