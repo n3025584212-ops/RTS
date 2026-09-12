@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V30
+STATE_VERSION=V31
 SOURCE_OF_TRUTH=THIS_FILE
 
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
@@ -10,16 +10,12 @@ GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V3.md
 LEARNING_SYSTEM=docs/FRONTLINE_LEARNING_SYSTEM_V1.md
 GPT_FOUR_WINDOW_SYSTEM=docs/GPT_FOUR_WINDOW_SYSTEM_V5.md
 CORE_LEARNING_CHAIN=docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md
+WINDOW_03_AUDIT_CONTRACT=docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md
 START_HERE=START_HERE.md
 ACTIVE_WORK=docs/current/ACTIVE_WORK.md
 RESTART_DECISION=docs/current/RESTART_DECISION.md
 REPOSITORY_MAP=docs/ops/REPOSITORY_MAP_V2.md
 DECISION_HISTORY=docs/current/DECISION_LOG.md
-
-SUPERSEDED_PROJECT_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V2.md
-SUPERSEDED_COLLABORATION_SYSTEM_V4=docs/GPT_COLLABORATION_SYSTEM_V4.md
-SUPERSEDED_COLLABORATION_SYSTEM_V3=docs/GPT_MULTI_WINDOW_SYSTEM_V3.md
-SUPERSEDED_RUNTIME_PLAN=docs/GPT_WINDOW_RUNTIME_PLAN_V2.md
 
 FOUR_WINDOW_SYSTEM=ACTIVE
 WINDOW_COUNT=4
@@ -36,15 +32,8 @@ WINDOW_03=INDEPENDENT_REVIEW_AND_FALSIFICATION
 
 ---
 
-## CORE CORRECTION
+## CORE CAUSAL CHAIN
 
-The project retains four GPT windows for parallel collaboration, but no window is considered correct because of its number or title.
-
-The project no longer treats fluent theory, generated design images, agent agreement, CI, or a window role as proof that a production method is understood.
-
-The active learning target is now explicitly the connected causal chain, not isolated subsystem knowledge.
-
-CORE_CAUSAL_CHAIN:
 CONTENT
 -> WORLD
 -> INPUT
@@ -55,7 +44,9 @@ CONTENT
 -> RENDER
 -> PLAYER
 
-REQUIRED_LEARNING_CHAIN:
+The active learning target is the connected causal chain, not isolated subsystem knowledge.
+
+Required learning method:
 REAL_PRODUCT_OR_REAL_PROBLEM
 -> EVIDENCE
 -> END_TO_END_CAUSAL_DECOMPOSITION
@@ -63,13 +54,6 @@ REAL_PRODUCT_OR_REAL_PROBLEM
 -> REAL_ARTIFACT
 -> COMPARISON
 -> TRANSFER_TO_FRONTLINE
-
-DEFAULT_WINDOW_CHAIN:
-WINDOW_00_DEFINE_AND_ROUTE
--> WINDOW_01_BUILD_LINKED_EVIDENCE_GRAPH
--> WINDOW_02_REPRODUCE_OR_BUILD
--> WINDOW_03_FALSIFY_AND_REVIEW
--> WINDOW_00_INTEGRATE_OR_REJECT
 
 UNKNOWN is valid. Plausible prose may not fill missing production knowledge.
 
@@ -91,37 +75,6 @@ The Golden Frame remains a visual target, not proof that the project already kno
 
 ---
 
-## HISTORICAL REAL ARTIFACTS
-
-Historical evidence/tooling, not active product tasks:
-- Golden Scene V1 / former Issue #33;
-- River Town visual reset / former PR #35;
-- Prototype B representative battle / former PR #30;
-- Battle01 and older production attempts;
-- Reference Region and local high-fidelity branches;
-- existing asset-import, runtime-capture and screenshot tooling.
-
-Golden Scene evidence:
-REAL_ASSET_INTEGRATION=PASS
-GODOT_4_7_1_IMPORT=PASS
-RUNTIME_CAPTURE_PIPELINE=PASS
-VISUAL_ACCEPTANCE=FAIL
-PREVIOUS_PARTIAL_PASS=REVOKED_BY_USER
-PR34=CLOSED_PREMATURE_REVIEW
-
-USER_OBSERVED_BLOCKING_GAPS:
-- low-poly / toy-like vehicles, buildings and vegetation;
-- flat or single-material terrain treatment;
-- simplified river banks, roads and bridge construction;
-- insufficient realistic lighting, shadow and atmospheric depth;
-- weak procedural-looking combat VFX;
-- insufficient damage, decal and world-history detail;
-- battlefield finishing below HUD finishing.
-
-These are acceptance observations. Their technical causes are not assumed.
-
----
-
 ## CURRENT ACTIVE WORK
 
 ACTIVE_PRIMARY_TASK=LEARNING_SPRINT_01_FRONTLINE_END_TO_END_EVIDENCE_GRAPH
@@ -131,7 +84,6 @@ ACTIVE_TASK_TYPE=EVIDENCE_GRAPH_AND_REPRODUCTION
 PRODUCT_PRODUCTION_RESUME=NO
 
 PRIMARY_REFERENCE=0_AD_RELEASE_28
-PRIMARY_REFERENCE_STATUS=SELECTED_FOR_INITIAL_END_TO_END_TRACE
 SECONDARY_VALIDATOR_A=BEYOND_ALL_REASON_RECOIL
 SECONDARY_VALIDATOR_B=WARZONE_2100
 COMMERCIAL_RESULT_REFERENCES=WARNO_BROKEN_ARROW_REGIMENTS
@@ -140,9 +92,7 @@ REFERENCE_SELECTION=docs/learning/sprint01/REFERENCE_SELECTION.md
 EVIDENCE_REGISTER=docs/learning/sprint01/EVIDENCE_REGISTER.md
 CORE_CHAIN=docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md
 CONTRACT=docs/learning/LEARNING_SPRINT_01_CONTRACT.md
-
-QUESTION=
-How does authored content/data become a running RTS battle through world construction, input, simulation, player/AI control, authoritative state, presentation and rendering—and where exactly are FRONTLINE's supported, broken, duplicated or unknown links before the final player-visible result?
+AUDIT_CONTRACT=docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md
 
 ## REQUIRED 13-LAYER EVIDENCE GRAPH
 
@@ -160,35 +110,51 @@ How does authored content/data become a running RTS battle through world constru
 12. CAMERA_AND_RENDER_PRESENTATION
 13. FINAL_PLAYER_VISIBLE_RESULT
 
-These are not thirteen independent study topics. Each important edge between them must be evidenced.
+These are not thirteen independent topics. Critical edges between layers must be evidenced.
 
-Required evidence fields for a major edge:
-- CLAIM
-- CHAIN_LAYER_OR_EDGE
-- SOURCE
-- STATUS=`OBSERVED|REPRODUCED|INFERRED|HYPOTHESIS|UNKNOWN|REJECTED`
-- WHAT_THE_SOURCE_ACTUALLY_PROVES
-- WHAT_IT_DOES_NOT_PROVE
-- FRONTLINE_CURRENT_IMPLEMENTATION
-- EXTERNAL_REFERENCE_IMPLEMENTATION
-- GAP
-- REPRODUCTION_REQUIRED
+---
 
-Reference selection rationale:
-- 0 A.D. Release 28 is the first primary inspectable teacher because its source/data ecosystem exposes maps, art, GUI, shaders, simulation, AI, helpers and templates;
-- it is not FRONTLINE's visual/gameplay template and not a universal RTS truth;
-- BAR/Recoil and Warzone 2100 are counterexample/cross-check sources;
-- commercial games primarily establish observable player-facing result unless production method is publicly documented.
+## WINDOW 03 STRICT AUDIT GATE
 
-Required sequence:
-1. Window 01 selects and traces one real playable chain through all thirteen layers;
-2. Window 03 audits versions, source provenance, inference scope and counterexamples in parallel;
-3. Window 01 maps the same critical edges onto FRONTLINE current/historical implementation where evidence exists;
-4. unsupported edges remain UNKNOWN rather than being bridged by prose;
-5. Window 02 independently reproduces a small complete chain on different content;
-6. the reproduction must reach player-visible behavior/feedback, not only code/CI;
-7. Window 03 reviews the real artifact and whether the claimed edge was actually reproduced;
-8. Window 00 only then decides what can transfer to FRONTLINE production.
+WINDOW_03_STATUS=ACTIVE_STRICT_EVIDENCE_AUDIT
+
+Window 03 audits the boundary between evidence, fact, inference, pattern and recommendation.
+
+Six mandatory checks:
+1. PRIMARY_SOURCE_INTEGRITY
+2. VERSION_IDENTITY
+3. RUNTIME_SEMANTICS
+4. GENERALIZATION_BOUNDARY
+5. ALTERNATIVE_EXPLANATIONS
+6. COUNTEREXAMPLE_SEARCH
+
+Allowed generalization levels:
+- SOURCE_FACT
+- PROJECT_SPECIFIC_INFERENCE
+- CROSS_PROJECT_PATTERN
+- DESIGN_RECOMMENDATION
+- UNSUPPORTED_GENERALIZATION
+
+Allowed audit verdicts:
+- PASS
+- DOWNGRADE
+- FIX
+- REJECT
+- UNKNOWN
+
+### Verified current audit alerts
+
+ALERT_01_0AD_GITHUB_ARCHIVE=ACTIVE
+The `0ad/0ad` GitHub repository is archived and labels itself a deprecated Git mirror, with source migrated to Wildfire Games Gitea on 2024-08-20. It must not be treated as current 2026 / Release-28 source by default. Historical use requires explicit version qualification; Release-28 source claims require version-matched authoritative source evidence.
+
+ALERT_02_0AD_COMPONENT_TAXONOMY_NOT_RUNTIME_CHAIN=ACTIVE
+0 A.D. Release-28 documentation exposes different component categories including systems, C++ script wrappers and scripted components. The existence of `UnitAI`, `Pathfinder`, `GuiInterface` or another component does not by itself prove the exact runtime path of a specific command.
+
+ALERT_03_BAR_ENGINE_GAME_LOBBY_BOUNDARY=ACTIVE
+Beyond All Reason explicitly separates game code from the Recoil RTS Engine and has a separate lobby/client layer. Reading only the BAR game repository is insufficient to infer the full RTS engine/runtime architecture.
+
+ALERT_04_WARZONE_DIFFERENT_SCRIPT_BOUNDARY=ACTIVE
+Warzone 2100 documents JavaScript scripting for AIs, campaigns and some game rules on top of its native/core implementation. This is a mature counterexample pool against unsupported claims that one project's component boundary is necessary for RTS.
 
 ---
 
@@ -198,13 +164,13 @@ WINDOW_00_STATUS=ACTIVE
 WINDOW_00_TASK=Maintain one shared state, Issue #39, task boundaries, evidence gates, repository clarity, and final integration/rejection decisions.
 
 WINDOW_01_STATUS=ACTIVE
-WINDOW_01_TASK=Build the linked 13-layer evidence graph; trace one 0 A.D. Release 28 playable chain end-to-end; map comparable FRONTLINE links; preserve UNKNOWN and competing explanations.
+WINDOW_01_TASK=Build the linked 13-layer evidence graph; trace one version-correct real playable chain end-to-end; map comparable FRONTLINE links; preserve UNKNOWN and competing explanations.
 
 WINDOW_02_STATUS=STAGED_WAITING_FOR_REPRODUCIBLE_CHAIN
 WINDOW_02_TASK=Once Window 01 produces a concrete linked chain, build the isolated runnable reproduction on the learning branch; produce real runtime/player-visible evidence, not semantic placeholders.
 
 WINDOW_03_STATUS=ACTIVE
-WINDOW_03_TASK=Audit Window 01 evidence immediately; verify source/version and claim scope; search for BAR/Warzone counterexamples; later falsify/review Window 02 reproduction against pre-stated criteria and actual source/artifact evidence.
+WINDOW_03_TASK=Apply the six-check hard audit contract to Window 01 claims now; later apply the same evidence discipline to Window 02's actual reproduction and player-visible artifact.
 
 WINDOWS_SHARE_ONE_ISSUE=#39
 FOUR_INDEPENDENT_ROADMAPS=NO
@@ -212,27 +178,15 @@ FOUR_INDEPENDENT_TRUTHS=NO
 
 ---
 
-## RETIRED OPEN WORK
+## HISTORICAL REAL ARTIFACTS / REUSABLE TOOLBOX
 
-Closed on 2026-09-12 and historical only:
-- Issue #20 — Prototype B representative command battle;
-- Issue #29 — representative battle content batch 1;
-- Issue #31 — old window-based independent review;
-- Issue #32 — Golden Frame engine/asset feasibility;
-- Issue #33 — Golden Scene visual spike;
-- PR #30 — Prototype B content branch, closed/superseded;
-- PR #35 — visual-reset blind tuning branch, closed/superseded;
-- PR #36 — pre-reset repository hygiene PR, closed/superseded.
-
-Branch/commit history is retained for evidence and reuse.
-
-Issue #37 remains open only as the branch-hygiene operations register.
-Issue #39 is the only current product-learning issue.
-OPEN_PRODUCT_PRS=0
-
----
-
-## ACCEPTED TECHNICAL TOOLBOX
+Historical evidence/tooling, not active product tasks:
+- Golden Scene V1 / former Issue #33;
+- River Town visual reset / former PR #35;
+- Prototype B representative battle / former PR #30;
+- Battle01 and older production attempts;
+- Reference Region and local high-fidelity branches;
+- existing asset-import, runtime-capture and screenshot tooling.
 
 Reusable technical assets, not product-definition authority:
 - Core V1 merged at 74c40115b6942df07ffca14b81f2fdbb2261e7ab;
@@ -262,28 +216,22 @@ MODEL_HYPOTHESIS_NOT_AUTOMATIC_TECHNICAL_FACT=YES
 USER_VISUAL_ACCEPTANCE_IS_AUTHORITATIVE=YES
 UNKNOWN_ALLOWED=YES
 ESSAY_WITHOUT_REPRODUCTION_IS_NOT_LEARNING_PASS=YES
-OLD_OPEN_TASKS_DO_NOT_CONTROL_CURRENT_WORK=YES
-RECENT_COMPLAINT_MUST_NOT_NARROW_THE_ENTIRE_LEARNING_PROBLEM=YES
 PRIMARY_REFERENCE_IS_NOT_UNIVERSAL_TRUTH=YES
 WINDOW_NUMBER_IS_NOT_PROOF=YES
 FOUR_WINDOWS_RETAINED=YES
 ISOLATED_SUBSYSTEM_NOTES_ARE_NOT_END_TO_END_LEARNING=YES
 PLAYER_LAYER_MUST_BE_REACHED=YES
+SECONDARY_SOURCE_NOT_SOURCE_CODE_PROOF=YES
+VERSION_IDENTITY_REQUIRED=YES
+SYMBOL_EXISTENCE_NOT_RUNTIME_CHAIN=YES
+COUNTEREXAMPLE_SEARCH_REQUIRED_FOR_GENERALIZATION=YES
 
 ---
 
 ## TASK ROUTING
 
-Four windows are the standard collaboration topology:
-- 00 CONTROL / INTEGRATION
-- 01 EVIDENCE / LEARNING
-- 02 REPRODUCTION / BUILD
-- 03 INDEPENDENT REVIEW / FALSIFICATION
-
-Authority comes from evidence and artifacts, not a window number.
-
-NEXT=WINDOW_01_BUILD_FIRST_13_LAYER_TRACE_FOR_ONE_REAL_PLAYABLE_CHAIN
-PARALLEL_NEXT=WINDOW_03_AUDIT_FIRST_CHAIN_SOURCES_AND_GENERALIZATION
+NEXT=WINDOW_01_BUILD_FIRST_VERSION_CORRECT_13_LAYER_TRACE
+PARALLEL_NEXT=WINDOW_03_AUDIT_WITH_SIX_HARD_CHECKS
 NEXT_AFTER_CHAIN=WINDOW_02_INDEPENDENT_SMALL_COMPLETE_REPRODUCTION
 NEXT_AFTER_REPRODUCTION=WINDOW_03_REPRODUCTION_REVIEW
 NEXT_AFTER_REVIEW=WINDOW_00_FRONTLINE_TRANSFER_DECISION
