@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/production/golden_scene_v1.gd" id="1_root"]
-[ext_resource type="Script" path="res://scripts/production/golden/golden_world_v23.gd" id="2_world"]
+[ext_resource type="Script" path="res://scripts/production/golden/golden_world_v24.gd" id="2_world"]
 [ext_resource type="Script" path="res://scripts/production/golden/golden_units_v22.gd" id="3_units"]
-[ext_resource type="Script" path="res://scripts/production/golden/golden_vfx_v23.gd" id="4_vfx"]
+[ext_resource type="Script" path="res://scripts/production/golden/golden_vfx_v24.gd" id="4_vfx"]
 [ext_resource type="Script" path="res://scripts/production/golden/golden_hud_v1.gd" id="5_hud"]
 
 [node name="GoldenSceneV1" type="Node3D"]
