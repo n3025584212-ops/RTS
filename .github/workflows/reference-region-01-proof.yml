@@ -1,0 +1,133 @@
+name: FRONTLINE Reference Region 01 Proof
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/reference-region-v1
+    paths:
+      - 'scripts/production/reference_region_01.gd'
+      - 'scenes/production/ReferenceRegion01.tscn'
+      - 'scripts/production/infrastructure/**'
+      - 'scenes/production/infrastructure/**'
+      - '.github/workflows/reference-region-01-proof.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontline-reference-region-01-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-proof:
+    name: Godot 4.7.1 integrated world-cell proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assert protected baseline and region inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/visual_slice/abrams.glb
+          test -s assets/golden_scene/city_v20/family_house_00.glb
+          test -s assets/golden_scene/city_v20/family_house_04.glb
+          test -s scenes/production/RiverTownHeroHouseHF.tscn
+          test -s scripts/production/reference_region_01.gd
+          test -s scenes/production/ReferenceRegion01.tscn
+          for f in BridgeDeckSmall BridgeAbutmentConcrete BridgePierConcrete BridgeRailSteel RetainingWallConcrete CulvertSmall RoadGuardrailSteel RiverBankRiprap; do
+            test -s "scenes/production/infrastructure/${f}.tscn"
+          done
+          echo FRONTLINE_REFERENCE_REGION_INPUTS=PASS
+
+      - name: Install render runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1 libvulkan1 mesa-vulkan-drivers vulkan-tools
+          vulkaninfo --summary || true
+
+      - name: Install Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          curl -fL --retry 4 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          GODOT="$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          chmod +x "$GODOT"
+          echo "GODOT=$GODOT" >> "$GITHUB_ENV"
+          "$GODOT" --version
+
+      - name: Import and compile Reference Region 01
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: |
+          set -euo pipefail
+          timeout 1000s "$GODOT" --headless --editor --path . --rendering-method forward_plus --rendering-driver vulkan --quit 2>&1 | tee reference-region-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' reference-region-import.log
+
+      - name: Render three RTS viewpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/reference_region_01
+          for view in overview bridge village; do
+            echo "RENDER_VIEW=$view"
+            timeout 1500s xvfb-run -a -s "-screen 0 1920x1080x24" \
+              "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
+              --resolution 1920x1080 res://scenes/production/ReferenceRegion01.tscn -- \
+              --capture --capture-frame=12 --view="$view" 2>&1 | tee "reference-region-${view}.log"
+            grep -q 'FRONTLINE_REFERENCE_REGION_READY' "reference-region-${view}.log"
+            grep -q "FRONTLINE_REFERENCE_REGION_CAPTURED view=${view}" "reference-region-${view}.log"
+            grep -q 'three_lane_authoring=NO' "reference-region-${view}.log"
+            grep -q 'Forward+' "reference-region-${view}.log"
+            ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' "reference-region-${view}.log"
+          done
+
+      - name: Verify actual viewport evidence and world metrics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, struct
+          for view in ('overview','bridge','village'):
+              p=f'artifacts/reference_region_01/reference_region_01_{view}_1920x1080.png'
+              data=open(p,'rb').read()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n'
+              assert struct.unpack('>II', data[16:24]) == (1920,1080)
+              m=json.load(open(f'artifacts/reference_region_01/runtime_metrics_{view}.json','r',encoding='utf-8'))
+              e=m['engine']
+              assert e['major']==4 and e['minor']==7 and e['patch']==1
+              assert m['world_extent_m']==[600,600]
+              assert m['river_rectangular_plane'] is False
+              assert m['three_lane_authoring'] is False
+              assert m['approved_abrams_retained'] is True
+              assert m['old_run5_primitive_bridge'] is False
+              assert m['building_count'] >= 9
+              assert m['field_count'] >= 4
+              assert m['infrastructure_instance_count'] >= 18
+              assert m['road_segment_count'] >= 4
+              assert m['visual_acceptance'] == 'NOT_CLAIMED'
+              assert m['post_capture_image_editing'] is False
+              print('FRONTLINE_REFERENCE_REGION_VIEW_PASS', view, len(data), m['building_count'], m['infrastructure_instance_count'], m['tree_count'])
+          PY
+
+      - name: Upload Reference Region proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontline-reference-region-01-proof
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            artifacts/reference_region_01/*.png
+            artifacts/reference_region_01/*.json
+            reference-region-import.log
+            reference-region-*.log
