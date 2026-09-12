@@ -1,0 +1,870 @@
+[
+  {
+    "file": "assets/visual_slice/abrams.glb",
+    "sha256": "a010d109b72b096565c0050e159aaa0a5e49fc3574ea5103539c986cd4536623",
+    "bytes": 26714852,
+    "meshes": 29,
+    "primitives": 29,
+    "triangles": 255884,
+    "vertices": 327079,
+    "materials": 27,
+    "textures": 38,
+    "missing_vertex_attributes": [
+      "TANGENT"
+    ],
+    "material_maps": [
+      {
+        "name": "DMachWheels",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "DMainMetal_Guns",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "DMainMetal_Props",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "DMainMetal_Shield",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "material",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Light",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MachWheels",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Armor",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Guns",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_LH",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_LH_NONE",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Props",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Props_NONE",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_ROT",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Shield",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MetalWheels_Gear",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Metal_Wheels",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Radiator",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Rubber_Props",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Rubber_W",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Rubber_Wheels",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Screw",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Screw_Gear",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Screw_Props",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Screw_Shield",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Screw_W",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/hero_house_ruined.glb",
+    "sha256": "db5cf731cdeccdbddee01a74212812b34fef30aebec70898303a2a02a3f0b6b7",
+    "bytes": 7209908,
+    "meshes": 8,
+    "primitives": 8,
+    "triangles": 70592,
+    "vertices": 141186,
+    "materials": 8,
+    "textures": 0,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "brick",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "interior",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "plaster",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "wood",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "trim",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "glass",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "roof",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "metal",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/hero_house_ruined_hf.glb",
+    "sha256": "c2c5bc07ecf12b3e717af945339e2e125a229a14281dc9c9981ff03d8a81e05e",
+    "bytes": 40333768,
+    "meshes": 8,
+    "primitives": 8,
+    "triangles": 300930,
+    "vertices": 765456,
+    "materials": 8,
+    "textures": 0,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "brick",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "interior",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "plaster",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "wood",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "trim",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "glass",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "roof",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "metal",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/house_intact.glb",
+    "sha256": "a88f2529855e8165c043242cbf0cd0dc5e95a9eb00922b9dd9eebc0ce40ed7a5",
+    "bytes": 1914772,
+    "meshes": 8,
+    "primitives": 8,
+    "triangles": 18568,
+    "vertices": 37376,
+    "materials": 8,
+    "textures": 0,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "brick",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "interior",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "plaster",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "wood",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "trim",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "glass",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "roof",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "metal",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/house_damaged.glb",
+    "sha256": "6fc10e3b913eb655baf751951a477919f5a4b28d59b907860d99257c38fe29c0",
+    "bytes": 2331496,
+    "meshes": 8,
+    "primitives": 8,
+    "triangles": 21411,
+    "vertices": 45701,
+    "materials": 8,
+    "textures": 0,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "brick",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "interior",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "plaster",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "wood",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "trim",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "glass",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "roof",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "metal",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/hero_v2/abrams_v2.glb",
+    "sha256": "6d3189a16f860cf1ed35911a9cb1c2f5570e42bce8ca622844a0b614bb74bab3",
+    "bytes": 37153080,
+    "meshes": 29,
+    "primitives": 44,
+    "triangles": 291342,
+    "vertices": 455722,
+    "materials": 28,
+    "textures": 38,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "MainMetal",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "V2_ExposedSteelEdges",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Armor",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Guns",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_LH",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_LH_NONE",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Props",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Props_NONE",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_ROT",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MainMetal_Shield",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "DMachWheels",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MetalWheels_Gear",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Metal_Wheels",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Radiator",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Rubber_Props",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Rubber_W",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Rubber_Wheels",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Screw",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Screw_Gear",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Screw_Props",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Screw_Shield",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "DMainMetal_Guns",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Screw_W",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "DMainMetal_Props",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "DMainMetal_Shield",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "material",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Light",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "MachWheels",
+        "normal": false,
+        "orm": true,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/hero_v2/urban_ruin/urban_ruin.gltf",
+    "sha256": "c100838da9ca336888367cd871017bf7dda611b399b4a64dca75308226d9b455",
+    "bytes": 184220,
+    "meshes": 124,
+    "primitives": 140,
+    "triangles": 205400,
+    "vertices": 152010,
+    "materials": 7,
+    "textures": 15,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "modular_urban_apartments_facade_plaster",
+        "normal": true,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "modular_urban_apartments_facade_objects",
+        "normal": true,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "modular_urban_apartments_facade_glass",
+        "normal": true,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "modular_urban_apartments_facade_trim_01",
+        "normal": true,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "modular_urban_apartments_facade_trim_02",
+        "normal": true,
+        "orm": true,
+        "ao": false
+      },
+      {
+        "name": "Broken brick wall core",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Charred structural oak",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod0.glb",
+    "sha256": "212c863c471e97f762eb7783575e8fc7b58e4c17d1f3bfdcdeee9d4a31207f2b",
+    "bytes": 24525144,
+    "meshes": 1,
+    "primitives": 9,
+    "triangles": 228000,
+    "vertices": 466462,
+    "materials": 9,
+    "textures": 18,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "Workshop_brick",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_windows",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_garage",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_doors",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_trim_01",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Painted_structural_steel",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Faded_ochre_stencil",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Galvanized_corrugated_roof",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Roof_flashing_and_seals",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod1.glb",
+    "sha256": "9f7236229f7a6c63ca64d360cbb5a5962358f1b8bbb14400b3c09f9e1ee2d5d4",
+    "bytes": 11964548,
+    "meshes": 1,
+    "primitives": 9,
+    "triangles": 101985,
+    "vertices": 229347,
+    "materials": 9,
+    "textures": 18,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "Workshop_brick",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_windows",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_garage",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_doors",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_trim_01",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Painted_structural_steel",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Faded_ochre_stencil",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Galvanized_corrugated_roof",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Roof_flashing_and_seals",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  },
+  {
+    "file": "assets/visual_slice/industrial_workshop/repair_workshop_lod2.glb",
+    "sha256": "f10df2a70a22f8d958f502e36d543f30613fab2c7b77265abc38bb74b03f6257",
+    "bytes": 5046696,
+    "meshes": 1,
+    "primitives": 9,
+    "triangles": 45230,
+    "vertices": 99225,
+    "materials": 9,
+    "textures": 18,
+    "missing_vertex_attributes": [],
+    "material_maps": [
+      {
+        "name": "Workshop_brick",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_windows",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_garage",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_doors",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Workshop_trim_01",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Painted_structural_steel",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Faded_ochre_stencil",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      },
+      {
+        "name": "Galvanized_corrugated_roof",
+        "normal": true,
+        "orm": true,
+        "ao": true
+      },
+      {
+        "name": "Roof_flashing_and_seals",
+        "normal": false,
+        "orm": false,
+        "ao": false
+      }
+    ]
+  }
+]

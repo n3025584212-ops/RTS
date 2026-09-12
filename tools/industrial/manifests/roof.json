@@ -1,0 +1,39 @@
+{
+  "source": "https://polyhaven.com/a/corrugated_iron_03",
+  "author": "Charlotte Baglioni",
+  "license": "CC0-1.0",
+  "files": [
+    {
+      "file": "corrugated_iron_03_diff.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/corrugated_iron_03/corrugated_iron_03_diff_4k.jpg",
+      "author": "Charlotte Baglioni",
+      "license": "CC0-1.0",
+      "md5": "52d4abc2677863c7b07da6b583659c29",
+      "sha256": "6c6c7524420f701895e25f68af6249f48e2cec662e41731f5b4205fdb361829a"
+    },
+    {
+      "file": "corrugated_iron_03_nor_gl.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/corrugated_iron_03/corrugated_iron_03_nor_gl_4k.jpg",
+      "author": "Charlotte Baglioni",
+      "license": "CC0-1.0",
+      "md5": "50cbd52cd7324cb2dd55c9ae84d73c11",
+      "sha256": "d0ebb1c3e530f71d4be1838cd7b503bc5ca3124a84502692c7e1c5a989dfcb0d"
+    },
+    {
+      "file": "corrugated_iron_03_arm.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/corrugated_iron_03/corrugated_iron_03_arm_4k.jpg",
+      "author": "Charlotte Baglioni",
+      "license": "CC0-1.0",
+      "md5": "bb13803f0938e62a6ea1c2894fc1a515",
+      "sha256": "7d491583eada06a9028e3ecce2ccbae4a32cb2c6659d1dadd5ed1aaeb0f8a028"
+    },
+    {
+      "file": "corrugated_iron_03_disp.jpg",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/corrugated_iron_03/corrugated_iron_03_disp_4k.jpg",
+      "author": "Charlotte Baglioni",
+      "license": "CC0-1.0",
+      "md5": "25accb21192e7892a1eec50ace499f92",
+      "sha256": "65f1403bd7a6d10e927a82de32cb3cd5cf81f7737cfc3b288d8697165f974ff0"
+    }
+  ]
+}

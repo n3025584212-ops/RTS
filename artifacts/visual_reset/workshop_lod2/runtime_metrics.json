@@ -1,0 +1,38 @@
+{
+	"asset_glb_sha256": {
+		"lod0": "1669dc13e18afdb7c5bf8fcf07b345d1a04a6cf75202f52328bd89131244daa8",
+		"lod1": "97856d0d8d0a2242cb184bde169db8102f9fe5f1c950b454abdd70dd0ce555b8",
+		"lod2": "f10df2a70a22f8d958f502e36d543f30613fab2c7b77265abc38bb74b03f6257"
+	},
+	"asset_view": "workshop",
+	"camera_position": "(35.11031, 9.919797, 16.45933)",
+	"camera_rotation": "(-15.85894, 27.30395, 0.0)",
+	"captured_at_utc": "2026-09-12T08:55:10",
+	"draw_calls": 1635.0,
+	"engine": {
+		"build": "official",
+		"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+		"hex": 263937,
+		"major": 4,
+		"minor": 7,
+		"patch": 1,
+		"status": "stable",
+		"string": "4.7.1-stable (official)",
+		"timestamp": 0
+	},
+	"forced_lod": 2,
+	"fov": 46.0,
+	"gameplay_changes": false,
+	"gpu": "Intel(R) UHD Graphics",
+	"grass_instances": 99041,
+	"height": 1080,
+	"internal_3d_render_scale": 1.5,
+	"post_capture_image_editing": false,
+	"rendered_primitives": 38067223.0,
+	"renderer": "forward_plus",
+	"save_error": 0,
+	"screenshot_source": "Viewport.get_texture().get_image() after frame_post_draw",
+	"settling_frames": 32,
+	"wall_clock_frame_ms_mean": 8.28662360995689,
+	"width": 1920
+}

@@ -1,0 +1,37 @@
+{
+	"asset_validation": [
+		{
+			"errors": [],
+			"generated_surface_lods": 20,
+			"lod": 0,
+			"surfaces": 9,
+			"triangles": 228000
+		},
+		{
+			"errors": [],
+			"generated_surface_lods": 19,
+			"lod": 1,
+			"surfaces": 9,
+			"triangles": 101985
+		},
+		{
+			"errors": [],
+			"generated_surface_lods": 17,
+			"lod": 2,
+			"surfaces": 9,
+			"triangles": 45230
+		}
+	],
+	"engine": {
+		"build": "official",
+		"hash": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+		"hex": 263937,
+		"major": 4,
+		"minor": 7,
+		"patch": 1,
+		"status": "stable",
+		"string": "4.7.1-stable (official)",
+		"timestamp": 0
+	},
+	"passed": true
+}
