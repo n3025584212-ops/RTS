@@ -8,7 +8,12 @@ on:
     paths:
       - 'scripts/production/reference_region_01.gd'
       - 'scripts/production/reference_region_01_aligned.gd'
+      - 'scripts/production/reference_region_01_workshop.gd'
+      - 'scripts/production/repair_workshop_lod.gd'
       - 'scenes/production/ReferenceRegion01.tscn'
+      - 'scenes/production/ReferenceRegion01Workshop.tscn'
+      - 'scenes/production/RepairWorkshop.tscn'
+      - 'assets/visual_slice/industrial_workshop/**'
       - 'scripts/production/infrastructure/**'
       - 'scenes/production/infrastructure/**'
       - '.github/workflows/reference-region-01-proof.yml'
@@ -39,7 +44,12 @@ jobs:
           test -s scenes/production/RiverTownHeroHouseHF.tscn
           test -s scripts/production/reference_region_01.gd
           test -s scripts/production/reference_region_01_aligned.gd
-          test -s scenes/production/ReferenceRegion01.tscn
+          test -s scripts/production/reference_region_01_workshop.gd
+          test -s scenes/production/ReferenceRegion01Workshop.tscn
+          test -s scenes/production/RepairWorkshop.tscn
+          test -s assets/visual_slice/industrial_workshop/repair_workshop_lod0.glb
+          test -s assets/visual_slice/industrial_workshop/repair_workshop_lod1.glb
+          test -s assets/visual_slice/industrial_workshop/repair_workshop_lod2.glb
           for f in BridgeDeckSmall BridgeAbutmentConcrete BridgePierConcrete BridgeRailSteel RetainingWallConcrete CulvertSmall RoadGuardrailSteel RiverBankRiprap; do
             test -s "scenes/production/infrastructure/${f}.tscn"
           done
@@ -75,16 +85,16 @@ jobs:
           timeout 1000s "$GODOT" --headless --editor --path . --rendering-method forward_plus --rendering-driver vulkan --quit 2>&1 | tee reference-region-import.log
           ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' reference-region-import.log
 
-      - name: Render three RTS viewpoints
+      - name: Render four RTS viewpoints
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p artifacts/reference_region_01
-          for view in overview bridge village; do
+          for view in overview bridge village industrial; do
             echo "RENDER_VIEW=$view"
             timeout 1500s xvfb-run -a -s "-screen 0 1920x1080x24" \
               "$GODOT" --path . --display-driver x11 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy \
-              --resolution 1920x1080 res://scenes/production/ReferenceRegion01.tscn -- \
+              --resolution 1920x1080 res://scenes/production/ReferenceRegion01Workshop.tscn -- \
               --capture --capture-frame=3 --view="$view" 2>&1 | tee "reference-region-${view}.log"
             grep -q 'FRONTLINE_REFERENCE_REGION_READY' "reference-region-${view}.log"
             grep -q "FRONTLINE_REFERENCE_REGION_CAPTURED view=${view}" "reference-region-${view}.log"
@@ -99,7 +109,8 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           import json, struct
-          for view in ('overview','bridge','village'):
+          workshop='res://scenes/production/RepairWorkshop.tscn'
+          for view in ('overview','bridge','village','industrial'):
               p=f'artifacts/reference_region_01/reference_region_01_{view}_1920x1080.png'
               data=open(p,'rb').read()
               assert data[:8] == b'\x89PNG\r\n\x1a\n'
@@ -112,13 +123,14 @@ jobs:
               assert m['three_lane_authoring'] is False
               assert m['approved_abrams_retained'] is True
               assert m['old_run5_primitive_bridge'] is False
-              assert m['building_count'] >= 9
+              assert m['building_count'] >= 10
               assert m['field_count'] >= 4
               assert m['infrastructure_instance_count'] >= 18
-              assert m['road_segment_count'] >= 4
+              assert m['road_segment_count'] >= 5
+              assert workshop in m['used_assets']
               assert m['visual_acceptance'] == 'NOT_CLAIMED'
               assert m['post_capture_image_editing'] is False
-              print('FRONTLINE_REFERENCE_REGION_VIEW_PASS', view, len(data), m['building_count'], m['infrastructure_instance_count'], m['tree_count'])
+              print('FRONTLINE_REFERENCE_REGION_WORKSHOP_PASS', view, len(data), m['building_count'], m['road_segment_count'], m['tree_count'])
           PY
 
       - name: Upload Reference Region proof
