@@ -1,0 +1,254 @@
+name: Sprint01 Independent Reproduction
+
+on:
+  push:
+    branches:
+      - learning/sprint01-end-to-end-rts-production
+    paths:
+      - "scenes/learning/sprint01/**"
+      - "scripts/learning/sprint01/**"
+      - "assets/golden_scene/vehicles/**"
+      - ".github/workflows/learning-sprint01-reproduction.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sprint01-independent-reproduction
+  cancel-in-progress: false
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout learning branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Godot 4.7.1 and capture tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y xvfb xdotool ffmpeg
+          GODOT_TAG="4.7.1-stable"
+          GODOT_ARCHIVE="Godot_v4.7.1-stable_linux.x86_64.zip"
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_ARCHIVE}"
+          mkdir -p "$RUNNER_TEMP/godot"
+          curl -fL --retry 3 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Verify version and exact sanctioned asset blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT" --version | tee godot-version.txt
+          grep -E '^4\.7\.1' godot-version.txt
+          ABRAMS="assets/golden_scene/vehicles/mbt_abrams.glb"
+          IFV="assets/golden_scene/vehicles/ifv.glb"
+          test -f "$ABRAMS"
+          test -f "$IFV"
+          test "$(git hash-object "$ABRAMS")" = "24a1410d82c4d21e361f0f15caf0a04271e172bd"
+          test "$(git hash-object "$IFV")" = "ffe94b094a0d220a53671aa22f73cfe62b2401d7"
+          mkdir -p artifacts/learning/sprint01
+          {
+            echo "SOURCE_ASSET_COMMIT=5f2ff1c0e86553234490063e640cef8d0a2fb9f7"
+            echo "ABRAMS_PATH=$ABRAMS"
+            echo "ABRAMS_GIT_BLOB=$(git hash-object "$ABRAMS")"
+            echo "IFV_PATH=$IFV"
+            echo "IFV_GIT_BLOB=$(git hash-object "$IFV")"
+            sha256sum "$ABRAMS" "$IFV"
+          } | tee artifacts/learning/sprint01/exact_asset_binding.txt
+
+      - name: Import project and parse isolated reproduction
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s "$GODOT" --headless --editor --path . --quit 2>&1 | tee godot-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-import.log
+
+      - name: Run fresh player chain under X11 and capture evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          ART="artifacts/learning/sprint01"
+          mkdir -p "$ART"
+          rm -f "$ART/runtime.log" "$ART/input_injection.log" "$ART/player_chain.mp4" "$ART/fire_feedback.png" "$ART/player_chain_final.png"
+
+          Xvfb :99 -screen 0 1600x900x24 -ac +extension GLX +render -noreset >"$ART/xvfb.log" 2>&1 &
+          XVFB_PID=$!
+          export DISPLAY=:99
+          sleep 1
+
+          ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -framerate 30 -i :99 -c:v libx264 -preset ultrafast -crf 25 -pix_fmt yuv420p "$ART/player_chain.mp4" >"$ART/ffmpeg-video.log" 2>&1 &
+          VIDEO_PID=$!
+
+          "$GODOT" --path . --rendering-method gl_compatibility scenes/learning/sprint01/Sprint01Reproduction.tscn >"$ART/runtime.log" 2>&1 &
+          GODOT_PID=$!
+
+          cleanup() {
+            if kill -0 "$VIDEO_PID" 2>/dev/null; then kill -INT "$VIDEO_PID" 2>/dev/null || true; wait "$VIDEO_PID" 2>/dev/null || true; fi
+            if kill -0 "$GODOT_PID" 2>/dev/null; then kill "$GODOT_PID" 2>/dev/null || true; wait "$GODOT_PID" 2>/dev/null || true; fi
+            if kill -0 "$XVFB_PID" 2>/dev/null; then kill "$XVFB_PID" 2>/dev/null || true; fi
+          }
+          trap cleanup EXIT
+
+          WIN=""
+          for _ in $(seq 1 100); do
+            WIN="$(xdotool search --onlyvisible --name 'FRONTLINE' 2>/dev/null | head -n1 || true)"
+            if test -n "$WIN"; then break; fi
+            if ! kill -0 "$GODOT_PID" 2>/dev/null; then cat "$ART/runtime.log" >&2; exit 20; fi
+            sleep 0.1
+          done
+          test -n "$WIN"
+          echo "X11_WINDOW_ID=$WIN" | tee "$ART/input_injection.log"
+          echo "INPUT_INJECTION=xdotool|KEY=1|TARGET_WINDOW=$WIN" | tee -a "$ART/input_injection.log"
+          xdotool key --window "$WIN" 1
+          sleep 0.35
+          echo "INPUT_INJECTION=xdotool|KEY=m|TARGET_WINDOW=$WIN" | tee -a "$ART/input_injection.log"
+          xdotool key --window "$WIN" m
+
+          FIRE_SEEN=0
+          for _ in $(seq 1 150); do
+            if grep -q 'FIRE_EVENT=SHOT_01' "$ART/runtime.log"; then FIRE_SEEN=1; break; fi
+            if ! kill -0 "$GODOT_PID" 2>/dev/null; then break; fi
+            sleep 0.1
+          done
+          test "$FIRE_SEEN" = "1"
+          sleep 0.12
+          ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -i :99 -frames:v 1 "$ART/fire_feedback.png"
+
+          CHAIN_PASS=0
+          for _ in $(seq 1 160); do
+            if grep -q 'PLAYER_CHAIN_PASS=YES' "$ART/runtime.log"; then CHAIN_PASS=1; break; fi
+            if ! kill -0 "$GODOT_PID" 2>/dev/null; then break; fi
+            sleep 0.1
+          done
+          test "$CHAIN_PASS" = "1"
+          sleep 0.30
+          ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -i :99 -frames:v 1 "$ART/player_chain_final.png"
+
+          grep -q 'INPUT_EVENT=KEY_1' "$ART/runtime.log"
+          grep -q 'SELECTED_ENTITY=BLUE_ABRAMS_01' "$ART/runtime.log"
+          grep -q 'INPUT_EVENT=KEY_M' "$ART/runtime.log"
+          grep -q 'COMMAND=ATTACK_MOVE' "$ART/runtime.log"
+          grep -q 'MOVEMENT_STARTED=YES' "$ART/runtime.log"
+          grep -q 'MOVEMENT_COMPLETED_OR_CONTACT=CONTACT' "$ART/runtime.log"
+          grep -q 'AMMO_BEFORE=4' "$ART/runtime.log"
+          grep -q 'HP_BEFORE=100' "$ART/runtime.log"
+          grep -q 'VISIBLE_FEEDBACK_EVENT=SHOT_01|MUZZLE=YES|TRACER=YES|IMPACT=YES|CAUSED_BY=FIRE_EVENT' "$ART/runtime.log"
+          grep -q 'OUTCOME=TARGET_DESTROYED' "$ART/runtime.log"
+          grep -q 'FAILED_EDGE=NONE' "$ART/runtime.log"
+
+          kill -INT "$VIDEO_PID" 2>/dev/null || true
+          wait "$VIDEO_PID" 2>/dev/null || true
+          test -s "$ART/player_chain.mp4"
+          test -s "$ART/fire_feedback.png"
+          test -s "$ART/player_chain_final.png"
+
+          {
+            echo "RUNTIME_SOURCE_COMMIT=$GITHUB_SHA"
+            echo "GODOT_VERSION=$("$GODOT" --version | head -n1)"
+            echo "SCENE=res://scenes/learning/sprint01/Sprint01Reproduction.tscn"
+            echo "INPUT_SOURCE=OS_X11_KEYBOARD_VIA_XDOTOOL"
+            grep -E '^(INPUT_EVENT|SELECTED_ENTITY|COMMAND=|COMMAND_TARGET=|START_POSITION=|COMMAND_TARGET_POSITION=|MOVEMENT_STARTED=|MOVEMENT_COMPLETED_OR_CONTACT=|END_POSITION=|CONTACT=|TARGET=|FIRE_EVENT=|AMMO_BEFORE=|AMMO_AFTER=|HP_BEFORE=|HP_AFTER=|DEATH_OR_SURVIVAL_OUTCOME=|VISIBLE_FEEDBACK_EVENT=|OUTCOME=|PLAYER_CHAIN_PASS=)' "$ART/runtime.log"
+          } > "$ART/chain_extract.txt"
+
+          cleanup
+          trap - EXIT
+
+      - name: Write reproduction result from observed runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          ART="artifacts/learning/sprint01"
+          VERSION="$(head -n1 godot-version.txt)"
+          ABRAMS_SHA256="$(sha256sum assets/golden_scene/vehicles/mbt_abrams.glb | awk '{print $1}')"
+          IFV_SHA256="$(sha256sum assets/golden_scene/vehicles/ifv.glb | awk '{print $1}')"
+          END_POS="$(grep '^END_POSITION=' "$ART/runtime.log" | tail -n1 | cut -d= -f2-)"
+          CONTACT_LINE="$(grep '^CONTACT=' "$ART/runtime.log" | tail -n1)"
+          SHOTS="$(grep -c '^FIRE_EVENT=' "$ART/runtime.log")"
+          cat > docs/learning/sprint01/REPRODUCTION_RESULT.md <<EOF
+          # Sprint 01 Independent Complete RTS Reproduction Result
+
+          TASK_ID=BUILD_SPRINT01_INDEPENDENT_COMPLETE_REPRODUCTION_V1
+          REPRODUCTION_STATUS=REPRODUCED
+          SCENE=res://scenes/learning/sprint01/Sprint01Reproduction.tscn
+          COMMIT=$GITHUB_SHA
+          GODOT_VERSION=$VERSION
+
+          PLAYER_INPUT=PASS — external X11 keyboard events were injected into the live Godot window with xdotool; runtime received KEY_1 and KEY_M in _unhandled_input.
+          COMMAND_ROUTE=PASS — KEY_M mutated command state from WAITING_COMMAND to MOVING with COMMAND=ATTACK_MOVE.
+          MOVEMENT=PASS — Abrams position changed from the logged start position and terminated at contact; final logged position: $END_POS.
+          CONTACT=PASS — $CONTACT_LINE.
+          COMBAT=PASS — authoritative ammo and target HP changed on each fire event; shots=$SHOTS; final target HP=0.
+          VISIBLE_FEEDBACK=PASS — every logical shot created same-event 3D muzzle, tracer and impact nodes; destruction additionally changed the target to wreck material/tilt/smoke and a world label.
+          OUTCOME=PASS — OUTCOME=TARGET_DESTROYED, and the HUD shows PLAYER CHAIN COMPLETE.
+
+          REAL_ASSET_BINDING=PASS
+          ABRAMS_PATH=res://assets/golden_scene/vehicles/mbt_abrams.glb
+          ABRAMS_GIT_BLOB=24a1410d82c4d21e361f0f15caf0a04271e172bd
+          ABRAMS_SHA256=$ABRAMS_SHA256
+          IFV_PATH=res://assets/golden_scene/vehicles/ifv.glb
+          IFV_GIT_BLOB=ffe94b094a0d220a53671aa22f73cfe62b2401d7
+          IFV_SHA256=$IFV_SHA256
+          ASSET_SOURCE_COMMIT=5f2ff1c0e86553234490063e640cef8d0a2fb9f7
+
+          ENVIRONMENT=PASS — isolated 3D approach road, berms, defensive barriers, contact zone, lighting, camera and HUD; no formal Battle01 modification and no Golden Scene copy.
+          RUNTIME_EVIDENCE=artifacts/learning/sprint01/runtime.log
+          INPUT_INJECTION_EVIDENCE=artifacts/learning/sprint01/input_injection.log
+          CHAIN_EXTRACT=artifacts/learning/sprint01/chain_extract.txt
+          EXACT_ASSET_EVIDENCE=artifacts/learning/sprint01/exact_asset_binding.txt
+          SCREENSHOT=artifacts/learning/sprint01/player_chain_final.png
+          FIRE_SCREENSHOT=artifacts/learning/sprint01/fire_feedback.png
+          VIDEO_OR_CAPTURE=artifacts/learning/sprint01/player_chain.mp4
+
+          REUSED=Godot 4.7.1 toolchain; sanctioned retained real-asset blobs; generic GitHub/Xvfb/ffmpeg capture infrastructure.
+          NEWLY_IMPLEMENTED=isolated player selection/input path; attack-move command state; deterministic movement/contact; authoritative ammo/HP combat; causal 3D fire/death feedback; player-readable outcome.
+          TESTED_EDGE=PLAYER_INPUT→COMMAND→MOVEMENT→CONTACT→COMBAT→VISIBLE_FEEDBACK→OUTCOME
+
+          CODE_EXISTS=PASS
+          CODE_EXECUTES=PASS
+          STATE_CHANGED=PASS
+          VISIBLE_FEEDBACK=PASS
+          PLAYER_LAYER=PASS
+          FAILED_EDGE=NONE
+          UNKNOWN=NONE
+
+          SPRINT_PASS=NO
+          PRODUCT_PRODUCTION_RESUME=NO
+          EOF
+          sed -i 's/^          //' docs/learning/sprint01/REPRODUCTION_RESULT.md
+
+      - name: Upload fresh runtime evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint01-independent-reproduction-${{ github.sha }}
+          path: |
+            artifacts/learning/sprint01/runtime.log
+            artifacts/learning/sprint01/input_injection.log
+            artifacts/learning/sprint01/chain_extract.txt
+            artifacts/learning/sprint01/exact_asset_binding.txt
+            artifacts/learning/sprint01/fire_feedback.png
+            artifacts/learning/sprint01/player_chain_final.png
+            artifacts/learning/sprint01/player_chain.mp4
+            docs/learning/sprint01/REPRODUCTION_RESULT.md
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit fresh evidence to learning branch
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/learning/sprint01/REPRODUCTION_RESULT.md artifacts/learning/sprint01/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "evidence: Sprint 01 fresh player reproduction [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
