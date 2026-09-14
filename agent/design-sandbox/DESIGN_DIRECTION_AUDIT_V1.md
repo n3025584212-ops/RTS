@@ -53,6 +53,7 @@ CAN_DESIGN=YES_WITH_SCOPE
   - 从通用理论直接跳原创设计 → 新假设必须逐条锚定在 §1 的 A 项上;
   - 语义实现被当成品 → 一切设计声明区分"设计意图"与"已验证";
   - 同一模型定义方案+验收+自评 → 每个假设自带证伪条件,判定权留给真人。
+- 2.6 对抗结构从未被显式决策:全库(文档+代码)0 处提及 PvP / multiplayer / network(2026-09-14 代码搜索核实),但所有历史工件一致隐含 PvE——Design Package §2 "RED defends and counter-commits based on battlefield state"、§11 复用清单 "state-driven enemy commander work"、battle01 约 140KB enemy_ai_* 代码、13 层证据链第 9 层 AI_COMMAND_GENERATION。即:PvE 是继承下来的隐含假设,不是 ACCEPTED 决策。
 
 ## 3. 判定
 
@@ -76,6 +77,7 @@ CAN_DESIGN=YES_WITH_SCOPE
 - U2 单局时长目标与一场战斗内预期的玩家决策密度(历史文档无任何数字)。
 - U3 Design Package V1:原样批准、修改后批准、还是搁置重议?
 - U4 情报不确定性是否进入核心循环第一层(决定 H2 是主循环还是调制器)。
+- U5 对抗结构:PvE(AI 指挥官)还是 PvP?历史工件全部隐含 PvE(§2.6),商业参考则混合(Regiments 纯 PvE、WARNO 以 PvP 为主、Broken Arrow 双轨)。确认 PvE 应升格为显式 ACCEPTED 决策;改选 PvP 则 AI 层降级、需新增确定性模拟/网络同步/匹配等全部缺失基建,并与核心循环假设 H2 的情报设计冲突部分重议。
 
 ## 4. 一句话结论
 
