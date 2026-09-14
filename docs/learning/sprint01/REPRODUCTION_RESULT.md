@@ -1,9 +1,10 @@
 # Sprint 01 Independent Complete RTS Reproduction Result
 
-TASK_ID=BUILD_SPRINT01_INDEPENDENT_COMPLETE_REPRODUCTION_V1
+TASK_ID=COMPLETE_SPRINT01_RUNTIME_PLAYER_GATE_V1
+IMPLEMENTATION_TASK_ID=BUILD_SPRINT01_INDEPENDENT_COMPLETE_REPRODUCTION_V1
 REPRODUCTION_STATUS=PARTIALLY_REPRODUCED
 SCENE=res://scenes/learning/sprint01/Sprint01Reproduction.tscn
-COMMIT=399b181fdf9b66bbd17ecded617ef7a124be8231
+IMPLEMENTATION_COMMIT=399b181fdf9b66bbd17ecded617ef7a124be8231
 GODOT_VERSION=4.7.1_TARGET_NOT_FRESHLY_EXECUTED
 
 PLAYER_INPUT=UNKNOWN_NOT_EXECUTED
@@ -22,15 +23,22 @@ IFV_GIT_BLOB=ffe94b094a0d220a53671aa22f73cfe62b2401d7
 ASSET_SOURCE_COMMIT=5f2ff1c0e86553234490063e640cef8d0a2fb9f7
 
 ENVIRONMENT=NEW_ISOLATED_3D_REPRODUCTION_IMPLEMENTED_NOT_RUNTIME_VERIFIED
-RUNTIME_EVIDENCE=NOT_PRODUCED_RUNNER_PRE_EXECUTION_BLOCKER
-SCREENSHOT=NOT_PRODUCED_RUNNER_PRE_EXECUTION_BLOCKER
-VIDEO_OR_CAPTURE=NOT_PRODUCED_RUNNER_PRE_EXECUTION_BLOCKER
+RUNTIME_EVIDENCE=NOT_PRODUCED
+INPUT_INJECTION_EVIDENCE=NOT_PRODUCED
+CHAIN_EXTRACT=NOT_PRODUCED
+EXACT_ASSET_EVIDENCE=NOT_PRODUCED_BY_FRESH_RUNTIME_ROUTE
+SCREENSHOT=NOT_PRODUCED
+FIRE_SCREENSHOT=NOT_PRODUCED
+VIDEO_OR_CAPTURE=NOT_PRODUCED
 RUNTIME_BLOCKER_EVIDENCE=docs/learning/sprint01/REPRODUCTION_RUNTIME_BLOCKER.md
 WORKFLOW_RUN=34879482970
+LATEST_WORKFLOW_JOB=104107122134
+LATEST_WORKFLOW_RESULT=FAILURE_BEFORE_RUNNER_STEP_1
+SECONDARY_RUNTIME_ROUTE=UNAVAILABLE_IN_CURRENT_EXECUTION_ENVIRONMENT
 
 REUSED=Godot 4.7.1 toolchain target; sanctioned retained real-asset blobs; generic capture/runtime infrastructure.
 NEWLY_IMPLEMENTED=isolated player selection/input path; ATTACK_MOVE command state; movement/contact; authoritative ammo/HP combat; causal 3D muzzle/tracer/impact/death feedback; player-readable outcome; fresh evidence workflow.
-TESTED_EDGE=NONE_AT_PLAYER_LAYER_BECAUSE_RUNNER_NEVER_EXECUTED_STEP_1
+TESTED_EDGE=NONE_AT_PLAYER_LAYER_BECAUSE_NO_FRESH_GODOT_PROCESS_EXECUTED
 
 CODE_EXISTS=PASS
 CODE_EXECUTES=UNKNOWN
@@ -38,10 +46,14 @@ STATE_CHANGED=UNKNOWN
 VISIBLE_FEEDBACK=UNKNOWN
 PLAYER_LAYER=UNKNOWN
 
-FAILED_EDGE=INFRASTRUCTURE_BEFORE_JOB_STEP_1
+FAILED_EDGE=INFRASTRUCTURE_BEFORE_RUNTIME_EXECUTION
 UNKNOWN=EXACT_PLATFORM_REASON;GODOT_RUNTIME_RESULT;PLAYER_INPUT_CHAIN;COMMAND_CHAIN;MOVEMENT_CHAIN;COMBAT_CHAIN;VISIBLE_FEEDBACK_CHAIN;OUTCOME_CHAIN
 
-The new reproduction workflow was attempted twice. Both jobs failed before a runner executed any step. As an independent control, a historical workflow/job that had previously completed successfully with 45 steps was re-run and now failed in the same pre-runner form. Therefore no gameplay edge is marked failed or passed from these attempts. Fresh player-layer evidence is still mandatory before changing REPRODUCTION_STATUS to REPRODUCED.
+The existing reproduction workflow has now been attempted three times. The third attempt again produced a job with no executed steps and failed before checkout or runner execution. The previously successful Golden Scene workflow control had already been re-run and failed in the same pre-runner form, so this is not evidence that the Sprint 01 gameplay implementation failed.
+
+A second execution route was also evaluated without changing the reproduction: the available execution environment has Xvfb, ffmpeg, and an OS-level X11/XTest input-injection path, but it does not contain Godot 4.7.1 or the private repository binary assets. Its binary network ingress is unavailable, and the available external file-import service returned a credits-exceeded error. Therefore that route could not start a fresh Godot process while preserving the exact audited asset bytes.
+
+No historical Golden Scene runtime, screenshot, node count, or static code inspection has been promoted to PLAYER evidence. Fresh player-layer runtime artifacts remain mandatory before changing REPRODUCTION_STATUS to REPRODUCED.
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
