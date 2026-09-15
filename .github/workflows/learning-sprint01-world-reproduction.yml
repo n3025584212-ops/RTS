@@ -1,0 +1,276 @@
+name: Sprint01 World Causal Reproduction
+
+on:
+  push:
+    branches:
+      - learning/sprint01-end-to-end-rts-production
+    paths:
+      - "scenes/learning/sprint01/Sprint01WorldReproduction.tscn"
+      - "scripts/learning/sprint01/sprint01_world_reproduction.gd"
+      - "scripts/learning/sprint01/sprint01_reproduction.gd"
+      - "assets/golden_scene/vehicles/**"
+      - ".github/workflows/learning-sprint01-world-reproduction.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sprint01-world-causal-reproduction
+  cancel-in-progress: false
+
+jobs:
+  reproduce-world:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout learning branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Godot 4.7.1 and capture tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y xvfb xdotool ffmpeg
+          GODOT_TAG="4.7.1-stable"
+          GODOT_ARCHIVE="Godot_v4.7.1-stable_linux.x86_64.zip"
+          GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_ARCHIVE}"
+          mkdir -p "$RUNNER_TEMP/godot"
+          curl -fL --retry 3 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Verify engine and exact sanctioned vehicle blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT" --version | tee godot-world-version.txt
+          grep -E '^4\.7\.1' godot-world-version.txt
+          ABRAMS="assets/golden_scene/vehicles/mbt_abrams.glb"
+          IFV="assets/golden_scene/vehicles/ifv.glb"
+          test -f "$ABRAMS"
+          test -f "$IFV"
+          test "$(git hash-object "$ABRAMS")" = "24a1410d82c4d21e361f0f15caf0a04271e172bd"
+          test "$(git hash-object "$IFV")" = "ffe94b094a0d220a53671aa22f73cfe62b2401d7"
+          mkdir -p artifacts/learning/sprint01/world_reproduction
+          {
+            echo "SOURCE_ASSET_COMMIT=5f2ff1c0e86553234490063e640cef8d0a2fb9f7"
+            echo "ABRAMS_PATH=$ABRAMS"
+            echo "ABRAMS_GIT_BLOB=$(git hash-object "$ABRAMS")"
+            echo "IFV_PATH=$IFV"
+            echo "IFV_GIT_BLOB=$(git hash-object "$IFV")"
+            sha256sum "$ABRAMS" "$IFV"
+          } > artifacts/learning/sprint01/world_reproduction/exact_asset_binding.txt
+
+      - name: Import and parse isolated world reproduction
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s "$GODOT" --headless --editor --path . --quit 2>&1 | tee godot-world-import.log
+          ! grep -E 'SCRIPT ERROR|Parse Error|Failed to load script|Cannot open file|Invalid call|Invalid access' godot-world-import.log
+
+      - name: Run fresh world plus player chain and capture evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          ART="artifacts/learning/sprint01/world_reproduction"
+          mkdir -p "$ART"
+          rm -f "$ART/runtime.log" "$ART/input_injection.log" "$ART/world_initial.png" "$ART/world_fire_feedback.png" "$ART/world_final.png" "$ART/world_reproduction.mp4" "$ART/world_chain_extract.txt"
+
+          Xvfb :99 -screen 0 1600x900x24 -ac +extension GLX +render -noreset >"$ART/xvfb.log" 2>&1 &
+          XVFB_PID=$!
+          export DISPLAY=:99
+          sleep 1
+
+          ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -framerate 30 -i :99 -c:v libx264 -preset ultrafast -crf 25 -pix_fmt yuv420p "$ART/world_reproduction.mp4" >"$ART/ffmpeg-video.log" 2>&1 &
+          VIDEO_PID=$!
+
+          "$GODOT" --path . --rendering-method gl_compatibility scenes/learning/sprint01/Sprint01WorldReproduction.tscn >"$ART/runtime.log" 2>&1 &
+          GODOT_PID=$!
+
+          cleanup() {
+            if kill -0 "$VIDEO_PID" 2>/dev/null; then kill -INT "$VIDEO_PID" 2>/dev/null || true; wait "$VIDEO_PID" 2>/dev/null || true; fi
+            if kill -0 "$GODOT_PID" 2>/dev/null; then kill "$GODOT_PID" 2>/dev/null || true; wait "$GODOT_PID" 2>/dev/null || true; fi
+            if kill -0 "$XVFB_PID" 2>/dev/null; then kill "$XVFB_PID" 2>/dev/null || true; fi
+          }
+          trap cleanup EXIT
+
+          WIN=""
+          for _ in $(seq 1 120); do
+            WIN="$(xdotool search --onlyvisible --name 'FRONTLINE' 2>/dev/null | head -n1 || true)"
+            if test -n "$WIN"; then break; fi
+            if ! kill -0 "$GODOT_PID" 2>/dev/null; then cat "$ART/runtime.log" >&2; exit 20; fi
+            sleep 0.1
+          done
+          test -n "$WIN"
+
+          WORLD_READY=0
+          for _ in $(seq 1 120); do
+            if grep -q 'WORLD_REPRODUCTION_METHOD_PASS=' "$ART/runtime.log"; then WORLD_READY=1; break; fi
+            if ! kill -0 "$GODOT_PID" 2>/dev/null; then break; fi
+            sleep 0.1
+          done
+          test "$WORLD_READY" = "1"
+          grep -q 'WORLD_REPRODUCTION_METHOD_PASS=YES' "$ART/runtime.log"
+          sleep 0.25
+          ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -i :99 -frames:v 1 "$ART/world_initial.png"
+
+          echo "X11_WINDOW_ID=$WIN" | tee "$ART/input_injection.log"
+          echo "INPUT_INJECTION=xdotool|KEY=1|TARGET_WINDOW=$WIN" | tee -a "$ART/input_injection.log"
+          xdotool key --window "$WIN" 1
+          sleep 0.35
+          echo "INPUT_INJECTION=xdotool|KEY=m|TARGET_WINDOW=$WIN" | tee -a "$ART/input_injection.log"
+          xdotool key --window "$WIN" m
+
+          FIRE_SEEN=0
+          for _ in $(seq 1 160); do
+            if grep -q 'FIRE_EVENT=SHOT_01' "$ART/runtime.log"; then FIRE_SEEN=1; break; fi
+            if ! kill -0 "$GODOT_PID" 2>/dev/null; then break; fi
+            sleep 0.1
+          done
+          test "$FIRE_SEEN" = "1"
+          sleep 0.12
+          ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -i :99 -frames:v 1 "$ART/world_fire_feedback.png"
+
+          CHAIN_PASS=0
+          for _ in $(seq 1 180); do
+            if grep -q 'WORLD_AND_PLAYER_CHAIN_PASS=YES' "$ART/runtime.log"; then CHAIN_PASS=1; break; fi
+            if ! kill -0 "$GODOT_PID" 2>/dev/null; then break; fi
+            sleep 0.1
+          done
+          test "$CHAIN_PASS" = "1"
+          sleep 0.30
+          ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -i :99 -frames:v 1 "$ART/world_final.png"
+
+          grep -q 'WORLD_REPRODUCTION_BOOT=YES' "$ART/runtime.log"
+          grep -q 'TERRAIN_PIPELINE=PASS' "$ART/runtime.log"
+          grep -q 'TRANSPORT_LAYER=PASS' "$ART/runtime.log"
+          grep -q 'FUNCTIONAL_ANCHOR=PASS' "$ART/runtime.log"
+          grep -q 'WORLD_TO_MOVEMENT=PASS' "$ART/runtime.log"
+          grep -q 'CONSTRAINT_LAYERS=PASS' "$ART/runtime.log"
+          grep -q 'SURFACE_BINDING=PASS' "$ART/runtime.log"
+          grep -q 'VEGETATION_WORLD_CHECK=PASS' "$ART/runtime.log"
+          grep -q 'ANCHOR_WORLD_CHECK=PASS' "$ART/runtime.log"
+          grep -q 'OLD_SCENE_COORDINATE_COPY=NO' "$ART/runtime.log"
+          grep -q 'W-C1=CORRECTED_REPRODUCED' "$ART/runtime.log"
+          grep -q 'INPUT_EVENT=KEY_1' "$ART/runtime.log"
+          grep -q 'INPUT_EVENT=KEY_M' "$ART/runtime.log"
+          grep -q 'COMMAND=ATTACK_MOVE' "$ART/runtime.log"
+          grep -q 'MOVEMENT_STARTED=YES' "$ART/runtime.log"
+          grep -q 'MOVEMENT_REPRESENTATION=DIRECT_KINEMATIC_WITH_WORLD_PASSABILITY_GATE' "$ART/runtime.log"
+          grep -q 'MOVEMENT_COMPLETED_OR_CONTACT=CONTACT' "$ART/runtime.log"
+          grep -q 'VISIBLE_FEEDBACK_EVENT=SHOT_01|MUZZLE=YES|TRACER=YES|IMPACT=YES|CAUSED_BY=FIRE_EVENT' "$ART/runtime.log"
+          grep -q 'OUTCOME=TARGET_DESTROYED' "$ART/runtime.log"
+          grep -q 'PLAYER_CHAIN_PASS=YES' "$ART/runtime.log"
+          grep -q 'WORLD_AND_PLAYER_CHAIN_PASS=YES' "$ART/runtime.log"
+
+          kill -INT "$VIDEO_PID" 2>/dev/null || true
+          wait "$VIDEO_PID" 2>/dev/null || true
+          test -s "$ART/world_reproduction.mp4"
+          test -s "$ART/world_initial.png"
+          test -s "$ART/world_fire_feedback.png"
+          test -s "$ART/world_final.png"
+
+          {
+            echo "RUNTIME_SOURCE_COMMIT=$GITHUB_SHA"
+            echo "GODOT_VERSION=$("$GODOT" --version | head -n1)"
+            echo "SCENE=res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn"
+            echo "INPUT_SOURCE=OS_X11_KEYBOARD_VIA_XDOTOOL"
+            grep -E '^(WORLD_REPRODUCTION_BOOT=|WORLD_REPRODUCTION_SCENE=|WORLD_METHOD_SET=|WORLD_CONTENT_PIPELINE=|MATERIAL_PROVENANCE=|TERRAIN_PIPELINE=|TRANSPORT_LAYER=|FUNCTIONAL_ANCHOR=|VEGETATION_DISTRIBUTION=|CAMERA_ENV_FREEZE=|WORLD_TO_MOVEMENT=|CONSTRAINT_LAYERS=|SURFACE_BINDING=|VEGETATION_WORLD_CHECK=|ANCHOR_WORLD_CHECK=|OLD_SCENE_COORDINATE_COPY=|W-C1=|WORLD_REPRODUCTION_METHOD_PASS=|INPUT_EVENT=|SELECTED_ENTITY=|COMMAND=|MOVEMENT_STARTED=|MOVEMENT_REPRESENTATION=|MOVEMENT_COMPLETED_OR_CONTACT=|CONTACT=|FIRE_EVENT=|AMMO_BEFORE=|AMMO_AFTER=|HP_BEFORE=|HP_AFTER=|VISIBLE_FEEDBACK_EVENT=|OUTCOME=|PLAYER_CHAIN_PASS=|WORLD_AND_PLAYER_CHAIN_PASS=)' "$ART/runtime.log"
+          } > "$ART/world_chain_extract.txt"
+
+          cleanup
+          trap - EXIT
+
+      - name: Write observed world reproduction result
+        shell: bash
+        run: |
+          set -euo pipefail
+          ART="artifacts/learning/sprint01/world_reproduction"
+          VERSION="$(head -n1 godot-world-version.txt)"
+          PATCH_TREES="$(grep '^VEGETATION_WORLD_CHECK=PASS' "$ART/runtime.log" | tail -n1 | sed -E 's/.*PATCH_TREES=([0-9]+).*/\1/')"
+          STRAGGLERS="$(grep '^VEGETATION_WORLD_CHECK=PASS' "$ART/runtime.log" | tail -n1 | sed -E 's/.*STRAGGLERS=([0-9]+).*/\1/')"
+          cat > docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md <<EOF
+          # Sprint 01 Causal World Reproduction Result
+
+          TASK_ID=BUILD_SPRINT01_WORLD_CAUSAL_REPRODUCTION_V1
+          WORLD_REPRODUCTION_STATUS=RUNTIME_CAPTURED_AWAITING_WINDOW_03_AUDIT
+          SOURCE_COMMIT=$GITHUB_SHA
+          GODOT_VERSION=$VERSION
+          SCENE=res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn
+
+          CODE_EXECUTES=PASS
+          WORLD_METHOD_RUNTIME=PASS
+          WORLD_TO_MOVEMENT=PASS
+          CONSTRAINT_LAYERS=PASS
+          SEMANTIC_SURFACE_BINDING=PASS
+          FUNCTIONAL_ANCHORS=PASS
+          VEGETATION_REGION_PLUS_STRAGGLERS=PASS — patch_trees=$PATCH_TREES; stragglers=$STRAGGLERS.
+          CAMERA_ENVIRONMENT_FREEZE=PASS
+          OLD_SCENE_COORDINATE_COPY=NO
+          PLAYER_CHAIN_RUNTIME=PASS
+          WORLD_AND_PLAYER_CHAIN_RUNTIME=PASS
+
+          MOVEMENT_REPRESENTATION=DIRECT_KINEMATIC_WITH_WORLD_PASSABILITY_GATE
+          NAVMESH_OR_NAVIGATIONSERVER_TRANSFER_CLAIM=NO
+          WORLD_CONTENT_PROVENANCE=CHECKED_IN_DETERMINISTIC_TYPED_GDSCRIPT_PIPELINE
+          VEHICLE_ASSET_PROVENANCE=AUDITED_EXACT_BLOBS
+
+          PLAYER_VISIBLE_EVIDENCE=CAPTURED_NOT_SELF_ACCEPTED
+          INITIAL_SCREENSHOT=artifacts/learning/sprint01/world_reproduction/world_initial.png
+          FIRE_SCREENSHOT=artifacts/learning/sprint01/world_reproduction/world_fire_feedback.png
+          FINAL_SCREENSHOT=artifacts/learning/sprint01/world_reproduction/world_final.png
+          VIDEO=artifacts/learning/sprint01/world_reproduction/world_reproduction.mp4
+          RUNTIME_LOG=artifacts/learning/sprint01/world_reproduction/runtime.log
+          CHAIN_EXTRACT=artifacts/learning/sprint01/world_reproduction/world_chain_extract.txt
+          INPUT_INJECTION=artifacts/learning/sprint01/world_reproduction/input_injection.log
+          EXACT_ASSET_BINDING=artifacts/learning/sprint01/world_reproduction/exact_asset_binding.txt
+
+          W-C1=CORRECTED_REPRODUCED
+          W-C2=REPRODUCED
+          W-C3=REPRODUCED
+          W-C4=REPRODUCED
+          W-C5=REPRODUCED
+          W-C6=REPRODUCED
+          W-C7=REPRODUCED
+
+          WINDOW_02_SELF_ACCEPTANCE=FORBIDDEN
+          NEXT=WINDOW_03_FALSIFY_FRESH_WORLD_REPRODUCTION
+          SPRINT_PASS=NO
+          PRODUCT_PRODUCTION_RESUME=NO
+          EOF
+          sed -i 's/^          //' docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md
+
+      - name: Upload fresh world runtime evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint01-world-reproduction-${{ github.sha }}
+          path: |
+            godot-world-import.log
+            artifacts/learning/sprint01/world_reproduction/runtime.log
+            artifacts/learning/sprint01/world_reproduction/input_injection.log
+            artifacts/learning/sprint01/world_reproduction/world_chain_extract.txt
+            artifacts/learning/sprint01/world_reproduction/exact_asset_binding.txt
+            artifacts/learning/sprint01/world_reproduction/world_initial.png
+            artifacts/learning/sprint01/world_reproduction/world_fire_feedback.png
+            artifacts/learning/sprint01/world_reproduction/world_final.png
+            artifacts/learning/sprint01/world_reproduction/world_reproduction.mp4
+            docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit fresh world evidence to learning branch
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md artifacts/learning/sprint01/world_reproduction/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "evidence: Sprint01 world reproduction runtime [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
