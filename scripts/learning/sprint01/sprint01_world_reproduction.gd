@@ -11,12 +11,12 @@ const MOVEMENT_CLEARANCE := 0.75
 const JUNCTION_ANCHOR := Vector3(6.5, 0.0, -2.0)
 const BRANCH_END := Vector3(7.5, 0.0, -17.0)
 const OBJECTIVE_ANCHOR := Vector3(15.5, 0.0, -2.0)
-const FOREST_PATCH_CENTERS := [
+const FOREST_PATCH_CENTERS: Array[Vector3] = [
 	Vector3(-14.0, 0.0, -14.0),
 	Vector3(-5.0, 0.0, 11.5),
 	Vector3(20.5, 0.0, 12.5),
 ]
-const FOREST_PATCH_RADII := [7.5, 8.5, 7.0]
+const FOREST_PATCH_RADII: Array[float] = [7.5, 8.5, 7.0]
 
 var world_method_pass: bool = false
 var patch_tree_count: int = 0
@@ -96,7 +96,7 @@ func _procedural_surface_material(role: String, base: Color, roughness_value: fl
 	for y: int in range(64):
 		for x: int in range(64):
 			var n1 := _hash_noise(x, y, seed)
-			var n2 := _hash_noise(x / 4, y / 4, seed + 17)
+			var n2 := _hash_noise(int(x / 4), int(y / 4), seed + 17)
 			var factor := 0.82 + n1 * 0.22 + n2 * 0.10
 			var pixel := Color(
 				clampf(base.r * factor, 0.0, 1.0),
@@ -191,7 +191,8 @@ func _add_textured_triangle(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3)
 	var normal := (b - a).cross(c - a).normalized()
 	if normal.y < 0.0:
 		normal = -normal
-	for point: Vector3 in [a, b, c]:
+	var points: Array[Vector3] = [a, b, c]
+	for point: Vector3 in points:
 		st.set_normal(normal)
 		st.set_uv(Vector2(point.x * 0.13, point.z * 0.13))
 		st.add_vertex(point)
@@ -234,8 +235,8 @@ func _build_ribbon(node_name: String, points: Array[Vector3], half_width: float,
 		var a_right := Vector3(a.x, a_height, a.z) + side
 		var b_left := Vector3(b.x, b_height, b.z) - side
 		var b_right := Vector3(b.x, b_height, b.z) + side
-		_add_textured_triangle(st, a_left, b_left, b_right)
-		_add_textured_triangle(st, a_left, b_right, a_right)
+		_add_textured_triangle(st, a_left, a_right, b_right)
+		_add_textured_triangle(st, a_left, b_right, b_left)
 	var mesh := st.commit()
 	var instance := MeshInstance3D.new()
 	instance.name = node_name
@@ -289,7 +290,7 @@ func _add_earthwork(node_name: String, center: Vector3, half_size: Vector2, heig
 
 func _add_rock_cluster(center: Vector3, count: int) -> void:
 	for i: int in range(count):
-		var offset := Vector3(float(i % 2) * 0.9 - 0.4, 0.0, float(i / 2) * 0.7 - 0.35)
+		var offset := Vector3(float(i % 2) * 0.9 - 0.4, 0.0, (float(i) / 2.0) * 0.7 - 0.35)
 		var point := center + offset
 		var rock := MeshInstance3D.new()
 		rock.name = "Rock_%s_%02d" % [str(center), i]
@@ -445,7 +446,7 @@ func _tick_movement(delta: float) -> void:
 		var step := minf(MOVE_SPEED * delta, remaining)
 		var proposed := player_unit.position + offset.normalized() * step
 		if not _movement_point_passable(proposed):
-			print("WORLD_TO_MOVEMENT=FAIL|POINT=%s|REASON=PASSABILITY_GATE_REJECTED")
+			print("WORLD_TO_MOVEMENT=FAIL|POINT=%s|REASON=PASSABILITY_GATE_REJECTED" % _fmt_vec(proposed))
 			print("FAILED_EDGE=WORLD_TO_MOVEMENT_PASSABILITY")
 			phase = Phase.COMPLETE
 			_update_hud()
