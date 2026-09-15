@@ -32,9 +32,9 @@ FIRE_SCREENSHOT=NOT_PRODUCED
 VIDEO_OR_CAPTURE=NOT_PRODUCED
 RUNTIME_BLOCKER_EVIDENCE=docs/learning/sprint01/REPRODUCTION_RUNTIME_BLOCKER.md
 WORKFLOW_RUN=34879482970
-LATEST_WORKFLOW_JOB=104107122134
+LATEST_WORKFLOW_JOB=104408501025
 LATEST_WORKFLOW_RESULT=FAILURE_BEFORE_RUNNER_STEP_1
-SECONDARY_RUNTIME_ROUTE=UNAVAILABLE_IN_CURRENT_EXECUTION_ENVIRONMENT
+SECONDARY_RUNTIME_ROUTE=BLOCKED_BEFORE_GODOT_PROCESS_START
 
 REUSED=Godot 4.7.1 toolchain target; sanctioned retained real-asset blobs; generic capture/runtime infrastructure.
 NEWLY_IMPLEMENTED=isolated player selection/input path; ATTACK_MOVE command state; movement/contact; authoritative ammo/HP combat; causal 3D muzzle/tracer/impact/death feedback; player-readable outcome; fresh evidence workflow.
@@ -49,9 +49,9 @@ PLAYER_LAYER=UNKNOWN
 FAILED_EDGE=INFRASTRUCTURE_BEFORE_RUNTIME_EXECUTION
 UNKNOWN=EXACT_PLATFORM_REASON;GODOT_RUNTIME_RESULT;PLAYER_INPUT_CHAIN;COMMAND_CHAIN;MOVEMENT_CHAIN;COMBAT_CHAIN;VISIBLE_FEEDBACK_CHAIN;OUTCOME_CHAIN
 
-The existing reproduction workflow has now been attempted three times. The third attempt again produced a job with no executed steps and failed before checkout or runner execution. The previously successful Golden Scene workflow control had already been re-run and failed in the same pre-runner form, so this is not evidence that the Sprint 01 gameplay implementation failed.
+The reproduction workflow has now been attempted four times. Attempt 4 job `104408501025` again completed with failure and no recorded steps, before checkout or any custom runtime work. This remains a pre-execution infrastructure result, not a gameplay-chain failure.
 
-A second execution route was also evaluated without changing the reproduction: the available execution environment has Xvfb, ffmpeg, and an OS-level X11/XTest input-injection path, but it does not contain Godot 4.7.1 or the private repository binary assets. Its binary network ingress is unavailable, and the available external file-import service returned a credits-exceeded error. Therefore that route could not start a fresh Godot process while preserving the exact audited asset bytes.
+The direct runtime route was advanced without changing the reproduction. Xvfb, ffmpeg and Python X11/XTest are present. An official Godot 4.7.1 Linux release ZIP was successfully fetched server-side through a file relay and reported at 76,056,717 bytes, but the isolated execution container could not reach or mount the returned storage URL, so the binary could not be executed or version-verified locally. The private repository's exact Abrams/IFV Git blob identities remain verified, but the connector does not expose those binary bytes into the runtime container. No regenerated or visually similar asset was substituted.
 
 No historical Golden Scene runtime, screenshot, node count, or static code inspection has been promoted to PLAYER evidence. Fresh player-layer runtime artifacts remain mandatory before changing REPRODUCTION_STATUS to REPRODUCED.
 
