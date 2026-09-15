@@ -3,7 +3,7 @@
 TASK_ID=COMPLETE_SPRINT01_RUNTIME_PLAYER_GATE_V1
 IMPLEMENTATION_TASK_ID=BUILD_SPRINT01_INDEPENDENT_COMPLETE_REPRODUCTION_V1
 WINDOW_ID=02
-RECORDED_AT_UTC=2026-09-14
+RECORDED_AT_UTC=2026-09-15
 
 ## Status
 
@@ -35,7 +35,11 @@ ATTEMPT_3_RESULT=FAILURE_BEFORE_RUNNER
 ATTEMPT_3_STEPS=NULL
 ATTEMPT_3_JOB_LOG=NOT_AVAILABLE_BLOB_NOT_FOUND
 
-All three attempts failed before checkout, dependency installation, exact-asset checks, Godot import, scene execution, X11 input injection, capture, or runtime assertions.
+ATTEMPT_4_JOB_ID=104408501025
+ATTEMPT_4_RESULT=FAILURE_BEFORE_RUNNER
+ATTEMPT_4_STEPS=NULL
+
+All four attempts failed before checkout, dependency installation, exact-asset checks, Godot import, scene execution, X11 input injection, capture, or runtime assertions.
 
 ## Cross-workflow control
 
@@ -65,10 +69,14 @@ GODOT_4_7_1_PRESENT=NO
 PRIVATE_REPOSITORY_CHECKOUT_PRESENT=NO
 EXACT_ASSET_BYTES_LOCALLY_PRESENT=NO
 DIRECT_NETWORK_BINARY_INGRESS=UNAVAILABLE
-EXTERNAL_FILE_IMPORT_ROUTE=FAILED_CREDITS_EXCEEDED
+OFFICIAL_GODOT_4_7_1_REMOTE_RELAY=AVAILABLE_NOT_MOUNTABLE_TO_EXECUTION_CONTAINER
+OFFICIAL_GODOT_4_7_1_REMOTE_RELAY_SIZE_BYTES=76056717
+PRIVATE_BINARY_GITHUB_FETCH=METADATA_ONLY_OR_BINARY_DECODE_UNSUPPORTED
 SECONDARY_ROUTE_RESULT=NO_GODOT_PROCESS_STARTED
 
-The sanctioned asset provenance was rechecked without using old runtime evidence. Abrams is generated from the audited OpenGameArt CC0 `abrams-tank.blend` route and the IFV from the audited `Recon_Tank.zip` route. However, reproducing a visually similar model is not accepted as a substitute for the branch-bound asset blobs. The alternate route therefore stopped rather than lowering the exact-asset gate.
+The official `Godot_v4.7.1-stable_linux.x86_64.zip` was successfully fetched server-side through a file relay without changing the reproduction. The relay produced a 76,056,717-byte completed export, but the isolated execution container could not reach or mount the returned signed storage URL. Direct IP attempts also could not establish outbound HTTPS. Therefore the engine bytes still did not enter the runtime container and `Godot --version` could not be executed.
+
+The exact private asset blobs were rechecked through GitHub metadata: Abrams `24a1410d82c4d21e361f0f15caf0a04271e172bd` and IFV `ffe94b094a0d220a53671aa22f73cfe62b2401d7`. The available GitHub file/blob actions do not expose their binary bytes into the execution container; binary blob decoding fails or returns metadata without content. Rebuilding visually similar assets is not accepted as a substitute for those exact branch-bound blobs, so the alternate route stopped rather than lowering the exact-asset gate.
 
 ## Evidence interpretation
 
