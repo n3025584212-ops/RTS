@@ -35,7 +35,7 @@ func _ready() -> void:
 	print("WORLD_METHOD_SET=W-C1_CORRECTED;W-C2;W-C3;W-C4;W-C5;W-C6;W-C7")
 	print("WORLD_CONTENT_PIPELINE=DETERMINISTIC_SCRIPT_AUTHORED_MESH_AND_TEXTURE_PIPELINE")
 	print("WORLD_CONTENT_SOURCE=res://scripts/learning/sprint01/sprint01_world_reproduction.gd")
-	super._ready()
+	super()
 
 
 func _build_environment() -> void:
@@ -262,8 +262,8 @@ func _add_hardstand(node_name: String, center: Vector3, radius: float, material:
 func _build_anchor_content() -> void:
 	_add_earthwork("ObjectiveEarthworkNorth", OBJECTIVE_ANCHOR + Vector3(0.0, 0.0, -5.7), Vector2(5.2, 0.75), 1.15)
 	_add_earthwork("ObjectiveEarthworkSouth", OBJECTIVE_ANCHOR + Vector3(0.0, 0.0, 5.7), Vector2(5.2, 0.75), 1.15)
-	_add_earthwork("ObjectiveEarthworkRear", OBJECTIVE_ANCHOR + Vector3(5.5, 0.0, 0.0), Vector2(0.8, 4.0), 1.25)
-	_add_earthwork("JunctionScreenNorth", JUNCTION_ANCHOR + Vector3(-1.5, 0.0, -6.0), Vector2(3.0, 0.65), 0.85)
+	_add_earthwork("ObjectiveEarthworkRear", OBJECTIVE_ANCHOR + Vector3(5.5, 0.0, 5.0), Vector2(0.8, 3.0), 1.25)
+	_add_earthwork("JunctionScreenNorth", JUNCTION_ANCHOR + Vector3(-4.5, 0.0, -6.0), Vector2(2.2, 0.65), 0.85)
 	_add_rock_cluster(OBJECTIVE_ANCHOR + Vector3(5.8, 0.0, -5.1), 4)
 	_add_rock_cluster(JUNCTION_ANCHOR + Vector3(-4.8, 0.0, 5.8), 3)
 	_add_world_label(JUNCTION_ANCHOR + Vector3(0.0, 3.8, 0.0), "JUNCTION ECHO", Color(0.86, 0.88, 0.72))
@@ -437,6 +437,20 @@ func _movement_point_passable(point: Vector3) -> bool:
 	return true
 
 
+func _verify_authored_corridor_clearance() -> bool:
+	for i: int in range(60):
+		var t := float(i) / 59.0
+		var main_point := Vector2(lerpf(-31.0, 28.0, t), MAIN_ROAD_Z)
+		if _point_inside_blocker(main_point, MOVEMENT_CLEARANCE):
+			return false
+	for i: int in range(24):
+		var t := float(i) / 23.0
+		var branch_point := Vector2(JUNCTION_ANCHOR.x, JUNCTION_ANCHOR.z).lerp(Vector2(BRANCH_END.x, BRANCH_END.z), t)
+		if _point_inside_blocker(branch_point, MOVEMENT_CLEARANCE):
+			return false
+	return true
+
+
 func _tick_movement(delta: float) -> void:
 	var before := player_unit.position
 	var offset := COMMAND_TARGET - before
@@ -469,14 +483,16 @@ func _tick_movement(delta: float) -> void:
 
 
 func _verify_world_method() -> bool:
-	var sample_count := 33
-	var route_clear := true
-	for i: int in range(sample_count):
-		var t := float(i) / float(sample_count - 1)
+	var player_route_clear := true
+	var player_sample_count := 33
+	for i: int in range(player_sample_count):
+		var t := float(i) / float(player_sample_count - 1)
 		var point := PLAYER_START.lerp(COMMAND_TARGET, t)
 		if not _movement_point_passable(point):
-			route_clear = false
+			player_route_clear = false
 			break
+	var authored_corridors_clear := _verify_authored_corridor_clearance()
+	var route_clear := player_route_clear and authored_corridors_clear
 
 	var vegetation_clear := true
 	for tree_point: Vector3 in placed_tree_points:
@@ -491,7 +507,7 @@ func _verify_world_method() -> bool:
 	var camera_pass := get_node_or_null("WorldReproductionCamera") != null
 	var overall := route_clear and surface_pass and vegetation_pass and anchors_pass and constraints_pass and camera_pass
 
-	print("WORLD_TO_MOVEMENT=%s|SAMPLES=%d|REPRESENTATION=DIRECT_KINEMATIC_WITH_WORLD_PASSABILITY_GATE" % ["PASS" if route_clear else "FAIL", sample_count])
+	print("WORLD_TO_MOVEMENT=%s|PLAYER_SAMPLES=%d|AUTHORED_CORRIDORS_CLEAR=%s|REPRESENTATION=DIRECT_KINEMATIC_WITH_WORLD_PASSABILITY_GATE" % ["PASS" if route_clear else "FAIL", player_sample_count, str(authored_corridors_clear)])
 	print("CONSTRAINT_LAYERS=%s|ROUTE_CLEARANCE=%s|VEGETATION_CLEARANCE=%s|BLOCKER_COUNT=%d" % ["PASS" if constraints_pass else "FAIL", str(route_clear), str(vegetation_clear), blocker_centers.size()])
 	print("SURFACE_BINDING=%s|SEMANTIC_ROLES=%d|MATERIAL_BINDINGS=%d" % ["PASS" if surface_pass else "FAIL", world_surface_roles.size(), world_materials.size()])
 	print("VEGETATION_WORLD_CHECK=%s|PATCH_TREES=%d|STRAGGLERS=%d" % ["PASS" if vegetation_pass else "FAIL", patch_tree_count, straggler_tree_count])
@@ -503,7 +519,7 @@ func _verify_world_method() -> bool:
 
 
 func _verify_player_chain() -> void:
-	super._verify_player_chain()
+	super()
 	var chain_ok := (
 		player_input_events >= 2
 		and selected
