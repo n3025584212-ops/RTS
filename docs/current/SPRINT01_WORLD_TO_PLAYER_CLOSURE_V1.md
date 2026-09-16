@@ -1,83 +1,127 @@
 # FRONTLINE — Sprint 01 World-to-Player Closure V1
 
-STATUS=ACTIVE
+STATUS=ACTIVE_CURRENT_PHASE_UPDATED
 CONTROL_WINDOW=00
 ACTIVE_ISSUE=#39
+ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 
-## Decision
+## Original closure objective
 
-Do not resume old product production and do not continue visual polishing of the current Sprint01 primitive test scene.
+Do not resume old product production and do not visually polish the primitive first Sprint01 test scene as if it were the product baseline.
 
-The active unresolved Sprint 01 gap is the missing evidence-backed world-production chain required by Stage 4 of the Sprint contract.
+Close the missing world-production chain, reproduce it independently, then judge the PLAYER result before any FRONTLINE transfer.
 
-## Preserved proven result
+## Completed closure stages
 
-The following isolated runtime causal chain is already proven and must be preserved during later player-layer repair:
+### 1. Preserved player causal chain
+
+Previously proven in fresh runtime:
 
 `PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT -> COMBAT -> VISIBLE FEEDBACK -> OUTCOME`
 
-This evidence is not permission to promote the current primitive reproduction as a product visual baseline.
+This remains preserved and is not permission to accept the old primitive world.
 
-## Active gap
+### 2. Stage 4 world causal decomposition
 
-The world/content production chain must be reconstructed with evidence:
+Completed by Window 01.
 
-`terrain -> transport -> parcels/land-use -> settlement -> vegetation -> tactical space -> materials -> lighting -> camera -> PLAYER`
-
-The Stage 4 artifact required by the Sprint contract is:
-
+Artifact:
 `docs/learning/sprint01/WORLD_CAUSAL_DECOMPOSITION.md`
 
-## Routing
+Commit:
+`dcd891d7947e0ec6b97257681f258ecf6432c037`
 
-### Window 01
+### 3. Independent world-method audit
 
-ACTIVE.
+Completed by Window 03.
 
-Task:
-`docs/learning/sprint01/TASK_01_WORLD_CAUSAL_DECOMPOSITION_V1.md`
+Artifact:
+`docs/audit/AUDIT_SPRINT01_WORLD_CAUSAL_DECOMPOSITION_V1.md`
 
-Deliver the Stage 4 world causal decomposition on the learning branch.
+Commit:
+`7e6bf5636af83933b6e0b60269f33aafa8a7715f`
 
-### Window 02
+Verdict:
+`PASS_WITH_DOWNGRADES`
+`BLOCKING_DEFECTS=0`
+`WINDOW_02_ROUTING=READY_FOR_02_WORLD_REPRODUCTION`
 
-HOLD.
+This approves only the bounded isolated reproduction candidates. It does not approve a permanent FRONTLINE world architecture.
 
-Do not:
-- modify the proven gameplay causal semantics;
-- polish the primitive Sprint01 test scene;
-- restore an old visual branch as product authority;
-- start a new FRONTLINE product slice.
+### 4. World reproduction implementation
 
-### Window 03
+Built by Window 02 on the learning branch.
 
-HOLD until Window 01 commits the Stage 4 artifact.
+Scene:
+`res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn`
 
-Next task after Window 01 delivery:
-independently audit the world-production method and reject unsupported visual-production claims.
+Script:
+`res://scripts/learning/sprint01/sprint01_world_reproduction.gd`
+
+Implementation contract:
+`docs/learning/sprint01/WORLD_REPRODUCTION_IMPLEMENTATION.md`
+
+Workflow:
+`.github/workflows/learning-sprint01-world-reproduction.yml`
+
+Key commits:
+- `202cc6a8d282d3ec5c8d40932cf740b5e664cfe9`
+- `5df520722d32d4173fa9ea4c2307c95bed1daca5`
+- `e5eff694f58144a162e411aae6fd50ecad299be2`
+- `7dd7c78160ec8952bf857fd8f2edd368e19de004`
+
+## Current unresolved gate
+
+Latest known branch checkpoint:
+`7a0f24d0ef82f6afcf1666610bd3eb520a94d3de`
+
+Blocker artifact:
+`docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
+
+Latest hosted attempt:
+- run `35004033644`;
+- job `104499190425`;
+- `FAILURE_BEFORE_RUNNER`;
+- `runner_id=0`;
+- `steps=[]`.
+
+Therefore:
+
+`CODE_EXISTS=PASS`
+`CODE_EXECUTES=UNKNOWN`
+`WORLD_METHOD_RUNTIME=UNKNOWN`
+`PLAYER_CHAIN_RUNTIME_ON_NEW_WORLD=UNKNOWN`
+`PLAYER_VISIBLE_WORLD_EVIDENCE=NOT_PRODUCED`
+
+This is not a gameplay failure and not a reproduction PASS.
+
+## Current routing
 
 ### Window 00
+`ACTIVE_CONTROL`
 
-CONTROL.
+Maintain one state and prevent old/current branch confusion.
 
-After 03 passes the Stage 4 method, route Window 02 to produce a new isolated PLAYER-delivery reproduction that preserves the already-proven causal chain while replacing the primitive world with an evidence-backed real-content pipeline.
+### Window 01
+`HOLD_STAGE4_COMPLETE`
 
-## Historical work status
+Do not extend theory without a specific evidence defect.
 
-Golden Scene V1, River Town, Reference Region, local-high-fidelity branches, Battle01 and Prototype B remain:
+### Window 02
+`ACTIVE_RUNTIME_GATE`
 
-- evidence;
-- tooling;
-- reusable assets where provenance and method are supported;
-- failure examples.
+Run the existing world reproduction in fresh Godot 4.7.1 with exact sanctioned assets and produce fresh logs/screenshots/video.
 
-They do not regain current product-direction authority.
+### Window 03
+`HOLD_PENDING_FRESH_RUNTIME`
 
-## Exit sequence
+After runtime exists, independently audit world-method execution and PLAYER-visible quality.
 
-`01 Stage 4 evidence -> 03 method audit -> 02 player-delivery reproduction -> 03 real artifact audit -> 00 FRONTLINE transfer decision`
+## Exit sequence from here
 
-Until this sequence passes:
+`02 fresh world runtime -> 03 independent world/player artifact audit -> 00 Sprint01 transfer/repair decision`
+
+Only after Sprint 01 passes may Window 00 authorize the first post-restart FRONTLINE product slice.
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
