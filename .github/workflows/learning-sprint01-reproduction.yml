@@ -28,20 +28,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Godot 4.7.1 and capture tools
+      - name: Install capture tools
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y xvfb xdotool ffmpeg
-          GODOT_TAG="4.7.1-stable"
-          GODOT_ARCHIVE="Godot_v4.7.1-stable_linux.x86_64.zip"
-          GODOT_URL="https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_ARCHIVE}"
-          mkdir -p "$RUNNER_TEMP/godot"
-          curl -fL --retry 3 --retry-delay 2 "$GODOT_URL" -o "$RUNNER_TEMP/godot.zip"
-          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
-          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64"
-          echo "GODOT=$RUNNER_TEMP/godot/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      # Shared toolchain action: one repository-wide cache keyed by the pinned
+      # SHA256, archive served from the RTS release asset, re-verified every run.
+      - name: Install Godot 4.7.1 (cached, SHA256-locked)
+        uses: ./.github/actions/install-godot
 
       - name: Verify version and exact sanctioned asset blobs
         shell: bash
