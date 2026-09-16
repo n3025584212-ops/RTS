@@ -3,12 +3,13 @@
 STATUS=CURRENT_NAVIGATION
 DATE=2026-09-16
 PROJECT=FRONTLINE
+CONTROL_AUTHORITY=main
 
 ## Single recovery path
 
 `README.md -> START_HERE.md -> docs/current/CURRENT_STATE.md -> docs/current/ACTIVE_WORK.md -> docs/current/WINDOW_RECOVERY_INDEX.md`
 
-On this branch, these files are mirrors so windows do not recover obsolete control state. Final routing/product authority remains main / Window 00.
+On this branch these files are mirrors so windows do not recover obsolete control state. Final routing/product authority remains main / Window 00.
 
 ## Current authority layers
 
@@ -19,6 +20,7 @@ Use for:
 - active task;
 - window routing;
 - product-resume permission;
+- branch/recycle policy;
 - current/historical authority boundary.
 
 ### learning Sprint 01 execution plane
@@ -30,7 +32,7 @@ Use for:
 - evidence and learning artifacts;
 - Window 03 audits;
 - isolated scenes/scripts;
-- runtime blockers and evidence;
+- runtime evidence;
 - learning-only workflows.
 
 Key paths:
@@ -41,44 +43,69 @@ Key paths:
 - `artifacts/learning/sprint01/`
 - `.github/workflows/learning-sprint01-*.yml`
 
-## Current Sprint 01 objects
+## Current Sprint 01 gate
 
-World learning:
-- `docs/learning/sprint01/WORLD_CAUSAL_DECOMPOSITION.md`
+`SPRINT01_PLAYER_WORLD_DELIVERY_FIX`
 
-World audit:
-- `docs/audit/AUDIT_SPRINT01_WORLD_CAUSAL_DECOMPOSITION_V1.md`
+Fresh world reproduction runtime has executed successfully.
 
-World reproduction:
-- `scenes/learning/sprint01/Sprint01WorldReproduction.tscn`
-- `scripts/learning/sprint01/sprint01_world_reproduction.gd`
-- `docs/learning/sprint01/WORLD_REPRODUCTION_IMPLEMENTATION.md`
-- `.github/workflows/learning-sprint01-world-reproduction.yml`
+Latest independent audit:
+`docs/audit/AUDIT_SPRINT01_WINDOW02_WORLD_REPRODUCTION_V1.md`
 
-Current blocker:
-- `docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
+Passed:
+- runtime execution;
+- exact vehicle assets;
+- world-method causal execution;
+- player causal chain;
+- capture-state alignment.
 
-## Current unresolved gate
+Failed:
+- player unit readability;
+- world-label occlusion;
+- real-enough world delivery;
+- player world readability.
 
-`fresh Godot 4.7.1 world reproduction runtime + PLAYER-visible capture`
+Current route:
+`02 repair PLAYER world delivery -> fresh runtime -> 03 re-audit -> 00 transfer/repair decision`
 
-No runtime evidence currently exists for the new world reproduction because the latest hosted attempt failed before runner assignment.
+## Branch map
 
-## Historical/tool pools
+### ACTIVE — only 2
+- `main`
+- `learning/sprint01-end-to-end-rts-production`
 
-The following remain useful evidence/assets/tools but are not current product authority:
-- Battle01;
-- Prototype A/B;
-- Golden Scene V1;
-- River Town;
-- Reference Region;
-- local-high-fidelity branches;
-- older visual and three-lane experiments.
+### REFERENCE / HOLD — not current authority
+- `archive/legacy-unused`
+- `dev/godot-golden-scene-v1`
+- `dev/visual-production-reset`
+- `dev/river-town-local-high-fidelity-v1`
+- `dev/reference-region-v1`
+- `dev/prototype-b-representative-battle-content-v1`
+- `discovery/prototype-b-task-reserve-v1`
+- `agent/design-sandbox-01`
+- `dev/asset-pipeline-v1`
+- `dev/asset-pipeline-v2-multi-source`
+- `dev/industrial-repair-workshop-v1`
+- `ci/godot-toolchain-unified-cache-sha256-lock`
+
+### RECYCLE BIN
+
+First-pass cleanup reduced branch count from `37` to `14`.
+
+23 reviewed stale/merged/superseded/CI-only branch heads were preserved as exact recovery tags under:
+
+`recycle/2026-09-16/<original-branch-name>`
+
+Canonical recycle policy and manifest live on `main`:
+- `docs/ops/BRANCH_RECYCLE_BIN.md`
+- `docs/ops/BRANCH_RECYCLE_MANIFEST_2026-09-16.md`
+
+Recycle tags are historical recovery pointers only.
 
 ## Directory meaning
 
 - `docs/current/` = state/routing mirrors on this branch.
-- `docs/learning/` = learning/evidence/reproduction contracts.
+- `docs/learning/` = learning/evidence/reproduction contracts/results.
 - `docs/audit/` = independent reviews.
 - `scenes/learning/`, `scripts/learning/`, `artifacts/learning/` = isolated Sprint experiments.
 - product directories do not resume until Window 00 authorizes transfer.
