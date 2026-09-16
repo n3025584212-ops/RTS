@@ -113,9 +113,9 @@ jobs:
           done
           test "$WORLD_READY" = "1"
           grep -q 'WORLD_REPRODUCTION_METHOD_PASS=YES' "$ART/runtime.log"
-          # _ready() can finish before the first fully rendered gameplay frame on llvmpipe.
-          # Give the window enough time to leave the Godot boot splash before capturing.
-          sleep 3.0
+          # llvmpipe keeps the Godot boot splash visible for several seconds after _ready().
+          # Wait long enough for the first stable gameplay frame before the initial capture/input.
+          sleep 6.0
           ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -i :99 -frames:v 1 "$ART/world_initial.png"
 
           echo "X11_WINDOW_ID=$WIN" | tee "$ART/input_injection.log"
@@ -132,9 +132,8 @@ jobs:
             sleep 0.1
           done
           test "$FIRE_SEEN" = "1"
-          # FIRE_EVENT is logged before the HUD refresh completes in the same tick.
-          # Stay within SHOT_01's 0.72 s interval while allowing one visible frame to settle.
-          sleep 0.40
+          # Runtime logging leads the llvmpipe-rendered HUD. Let the visible combat frame catch up.
+          sleep 0.90
           ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -i :99 -frames:v 1 "$ART/world_fire_feedback.png"
 
           CHAIN_PASS=0
