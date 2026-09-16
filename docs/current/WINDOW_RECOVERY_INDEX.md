@@ -8,8 +8,6 @@ PURPOSE=Recover any 00/01/02/03 window from GitHub without relying on chat memor
 
 Every window recovery starts from `main` and then follows the active branch.
 
-Do not assume the commit SHAs below remain the branch HEAD forever. They are checkpoints for reconstructing the current causal history. Always refresh branch HEAD first.
-
 Authority split:
 
 - `main` = control/routing/product-authority state.
@@ -21,6 +19,8 @@ If they diverge:
 2. routing/product-resume authority is read from `main` / Window 00;
 3. a window must not silently turn its own branch result into project authority.
 
+Before answering any status question, always refresh both branch HEADs.
+
 ## 2. Mandatory main files
 
 Read in this order:
@@ -29,21 +29,25 @@ Read in this order:
 2. `docs/current/CURRENT_STATE.md`
 3. `docs/current/ACTIVE_WORK.md`
 4. `docs/current/RESTART_DECISION.md`
-5. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
-6. `docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md`
+5. `docs/ops/REPOSITORY_MAP_V3.md`
+6. `docs/ops/BRANCH_RECYCLE_BIN.md`
+7. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
+8. `docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md`
 
 ## 3. Active Sprint branch
 
 BRANCH=`learning/sprint01-end-to-end-rts-production`
 ACTIVE_ISSUE=`#39`
+LATEST_KNOWN_CHECKPOINT=`6dfe56da2c87b62fcb581c06b728c965d4e47bac`
 
-Latest known checkpoint at this reorganization:
+Meaning at this checkpoint:
+- fresh hosted Godot 4.7.1 world reproduction runtime exists;
+- world-method causal execution = PASS;
+- preserved player causal chain = PASS;
+- exact combat vehicle binding = PASS;
+- Window 03 rejected final PLAYER delivery because unit/world readability and real-enough world presentation still fail.
 
-`7a0f24d0ef82f6afcf1666610bd3eb520a94d3de`
-
-Meaning: Window 02 world reproduction code exists, but the latest hosted runtime attempt failed before runner assignment and produced no fresh PLAYER runtime evidence.
-
-Before answering any status question, refresh the branch HEAD. If it advanced, inspect the new commits and artifacts before using this snapshot.
+Always refresh branch HEAD before relying on this checkpoint.
 
 ## 4. Sprint 01 checkpoint chain
 
@@ -52,31 +56,28 @@ Before answering any status question, refresh the branch HEAD. If it advanced, i
 Implementation:
 `399b181fdf9b66bbd17ecded617ef7a124be8231`
 
-Fresh local runtime later proved:
+Fresh runtime later proved:
 `PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT -> COMBAT -> VISIBLE FEEDBACK -> OUTCOME`
 
-Window 03 runtime/PLAYER audit:
+Window 03 audit:
 `5c136ea93657cddf5db1111a680782d7b62b0e4d`
 
-Important result:
+Result:
 - causal runtime chain = PASS;
 - exact combat assets = PASS;
-- fire/outcome visibility = PASS;
 - overall PLAYER delivery = FAIL because unit readability and primitive environment delivery failed.
-
-This is why the project did not resume product production.
 
 ### B. Stage 4 world causal decomposition
 
-Window 01 artifact:
+Artifact:
 `docs/learning/sprint01/WORLD_CAUSAL_DECOMPOSITION.md`
 
 Commit:
 `dcd891d7947e0ec6b97257681f258ecf6432c037`
 
-Key boundary:
+Boundary:
 - world model = branching constraint graph;
-- candidate methods W-C1..W-C7 identified;
+- candidates W-C1..W-C7 identified;
 - exact R28 identity remains UNKNOWN;
 - no product transfer self-approval.
 
@@ -93,109 +94,127 @@ Verdict:
 `BLOCKING_DEFECTS=0`
 `WINDOW_02_ROUTING=READY_FOR_02_WORLD_REPRODUCTION`
 
-This approved only a bounded isolated reproduction. It did not approve a permanent FRONTLINE world architecture.
+### D. World reproduction implementation and runtime
 
-### D. Current world reproduction implementation
+Scene:
+`res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn`
 
-Script/corridor fix checkpoint:
-`202cc6a8d282d3ec5c8d40932cf740b5e664cfe9`
-
-Scene checkpoint:
-`5df520722d32d4173fa9ea4c2307c95bed1daca5`
+Script:
+`res://scripts/learning/sprint01/sprint01_world_reproduction.gd`
 
 Implementation contract:
 `docs/learning/sprint01/WORLD_REPRODUCTION_IMPLEMENTATION.md`
 
-Implementation-contract commit:
-`e5eff694f58144a162e411aae6fd50ecad299be2`
+Fresh runtime source commit:
+`edf8cede10cea24a6218beb73bcca14ef424f5c7`
 
-Workflow commit:
-`7dd7c78160ec8952bf857fd8f2edd368e19de004`
+Evidence commit:
+`03a56be1b0abfaf2248f23b4f9766ebd60aec27e`
 
-Runtime scene:
-`res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn`
+Runtime result:
+`docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md`
 
-Runtime script:
-`res://scripts/learning/sprint01/sprint01_world_reproduction.gd`
+Fresh run:
+`RUN_ID=35090538247`
+`JOB_ID=104775532507`
+`GODOT_VERSION=4.7.1.stable.official.a13da4feb`
 
-Workflow:
-`.github/workflows/learning-sprint01-world-reproduction.yml`
+Runtime facts accepted by 03:
+- hosted runtime PASS;
+- world method causal execution PASS;
+- world-to-movement causal gate PASS;
+- exact Abrams/IFV asset binding PASS;
+- player input-to-outcome chain PASS;
+- capture state alignment PASS.
 
-### E. Current blocker
+### E. Current independent audit
 
 Artifact:
-`docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
+`docs/audit/AUDIT_SPRINT01_WINDOW02_WORLD_REPRODUCTION_V1.md`
 
 Commit:
-`7a0f24d0ef82f6afcf1666610bd3eb520a94d3de`
+`6dfe56da2c87b62fcb581c06b728c965d4e47bac`
 
-Hosted run:
-`35004033644`
+Verdict:
 
-Job:
-`104499190425`
+`WINDOW_03_WORLD_REPRODUCTION_AUDIT=FAIL_PLAYER_DELIVERY`
 
-Observed:
-`RESULT=FAILURE_BEFORE_RUNNER`
-`RUNNER_ID=0`
-`JOB_STEPS=[]`
+Passed:
+- `RUNTIME_EXECUTION_VERDICT=PASS`
+- `EXACT_VEHICLE_ASSET_BINDING=PASS`
+- `WORLD_METHOD_SOURCE_PATH=PASS`
+- `WORLD_METHOD_CAUSAL_EXECUTION=PASS`
+- `PLAYER_CAUSAL_CHAIN_RUNTIME=PASS`
+- `CAPTURE_STATE_ALIGNMENT=PASS`
 
-Allowed interpretation:
-`CODE_EXISTS=PASS`
-`CODE_EXECUTES=UNKNOWN`
-`WORLD_METHOD_RUNTIME=UNKNOWN`
-`PLAYER_VISIBLE_WORLD_EVIDENCE=NOT_PRODUCED`
+Failed:
+- `PLAYER_UNIT_READABILITY=FAIL`
+- `WORLD_LABEL_OCCLUSION=FAIL`
+- `REAL_ENOUGH_WORLD_DELIVERY=FAIL`
+- `PLAYER_WORLD_READABILITY=FAIL`
 
-Forbidden interpretations:
-- world reproduction PASS;
-- gameplay failure;
-- exact GitHub billing/quota/policy root cause without evidence.
+Current route:
+`RETURN_TO_02_FOR_PLAYER_WORLD_DELIVERY_FIX`
 
 ## 5. Current window recovery targets
 
 ### Window 00
 
-Read main control files, refresh active branch, reconcile conflicts, keep one active primary task.
-
-Current role:
+Role:
 `ACTIVE_CONTROL`
+
+Read main, refresh active branch, preserve one active task, maintain branch/recycle clarity.
 
 ### Window 01
 
-Current role:
+Role:
 `HOLD_STAGE4_COMPLETE`
 
-Do not restart world-method research unless a specific later audit identifies a missing evidence edge.
+Do not restart world-method research unless a later audit identifies a specific missing evidence edge.
 
 ### Window 02
 
-Current role:
-`ACTIVE_RUNTIME_GATE`
+Role:
+`ACTIVE_PLAYER_WORLD_DELIVERY_FIX`
 
-Resume from the existing world reproduction. Do not rebuild the task from scratch.
+Resume from the existing running world reproduction. Do not rebuild from scratch.
 
-Required next action:
-run the existing scene in fresh Godot 4.7.1 with exact sanctioned asset bytes, real external player input and fresh runtime capture.
+Repair only:
+1. exact Abrams player readability;
+2. occluding world labels;
+3. primitive/placeholder terrain/material/vegetation/built-content presentation.
+
+Preserve already-proven topology/passability, anchor/constraint and player/combat semantics.
+
+Then rerun fresh Godot 4.7.1 evidence.
 
 ### Window 03
 
-Current role:
-`HOLD_PENDING_FRESH_RUNTIME`
+Role:
+`HOLD_PENDING_REPAIRED_RUNTIME`
 
-Do not audit static code again as if it were the final artifact. Wait for fresh world runtime evidence, then independently inspect runtime causality and PLAYER-visible result.
+When repaired fresh screenshots/video/logs exist, independently re-audit the PLAYER delivery boundary.
 
-## 6. Historical branches are not missing current state
+## 6. Branch recovery / recycle map
 
-These are deliberately historical/tool pools unless re-authorized by 00:
+Current branch count after first cleanup:
+`14`
 
-- `dev/godot-golden-scene-v1`
-- `dev/visual-production-reset`
-- `dev/river-town-local-high-fidelity-v1`
-- `dev/reference-region-v1`
-- `dev/prototype-b-representative-battle-content-v1`
-- Battle01-related older branches
+ACTIVE branches:
+- `main`
+- `learning/sprint01-end-to-end-rts-production`
 
-A file only existing there is not automatically a current requirement. Conversely, do not delete unique assets/evidence merely because a branch is historical.
+Reference/Hold branches are listed in:
+`docs/ops/REPOSITORY_MAP_V3.md`
+
+23 stale reviewed branches were removed from the Branch list after preserving their exact HEADs as:
+
+`recycle/2026-09-16/<original-branch-name>`
+
+Manifest:
+`docs/ops/BRANCH_RECYCLE_MANIFEST_2026-09-16.md`
+
+Do not treat recycle tags as current authority.
 
 ## 7. Anti-loss rule for future handoffs
 
