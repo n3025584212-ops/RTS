@@ -1,0 +1,127 @@
+name: Install Godot toolchain
+description: >-
+  Single source of truth for the Godot 4.7.1 Linux x86_64 runtime toolchain.
+  Restores one repository-wide toolchain cache, fetches the archive from this
+  repository's own release asset (with the official Godot release as a fully
+  verified fallback), checks a pinned SHA256, then extracts and exports GODOT.
+  The engine binary is never committed to Git.
+
+inputs:
+  version:
+    description: Godot release version tag.
+    required: false
+    default: "4.7.1-stable"
+  archive:
+    description: Release archive file name.
+    required: false
+    default: "Godot_v4.7.1-stable_linux.x86_64.zip"
+  binary:
+    description: Executable name contained in the archive.
+    required: false
+    default: "Godot_v4.7.1-stable_linux.x86_64"
+  sha256:
+    description: Pinned SHA256 of the archive; this value is the toolchain lock.
+    required: false
+    default: "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba"
+  toolchain-release-tag:
+    description: Tag of the RTS release asset that hosts the archive.
+    required: false
+    default: "godot-4.7.1-stable-linux-x86_64"
+  upstream-repo:
+    description: Repository publishing the official Godot release.
+    required: false
+    default: "godotengine/godot"
+
+outputs:
+  godot:
+    description: Absolute path of the verified Godot executable.
+    value: ${{ steps.export.outputs.godot }}
+  cache-hit:
+    description: Whether the toolchain was restored from the repository cache.
+    value: ${{ steps.cache.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve toolchain paths
+      id: paths
+      shell: bash
+      env:
+        ARCHIVE_NAME: ${{ inputs.archive }}
+        BINARY_NAME: ${{ inputs.binary }}
+      run: |
+        set -euo pipefail
+        TOOLCHAIN_DIR="$RUNNER_TEMP/godot-toolchain"
+        mkdir -p "$TOOLCHAIN_DIR"
+        {
+          echo "dir=$TOOLCHAIN_DIR"
+          echo "archive=$TOOLCHAIN_DIR/$ARCHIVE_NAME"
+          echo "godot=$TOOLCHAIN_DIR/$BINARY_NAME"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Restore unified Godot toolchain cache
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}/godot-toolchain
+        key: godot-${{ inputs.version }}-linux-x86_64-${{ inputs.sha256 }}
+
+    - name: Fetch Godot archive
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TOOLCHAIN_RELEASE_TAG: ${{ inputs.toolchain-release-tag }}
+        ARCHIVE_NAME: ${{ inputs.archive }}
+        GODOT_VERSION: ${{ inputs.version }}
+        UPSTREAM_REPO: ${{ inputs.upstream-repo }}
+        TOOLCHAIN_DIR: ${{ steps.paths.outputs.dir }}
+      run: |
+        set -euo pipefail
+        if gh release download "$TOOLCHAIN_RELEASE_TAG" \
+             --repo "$GITHUB_REPOSITORY" \
+             --pattern "$ARCHIVE_NAME" \
+             --dir "$TOOLCHAIN_DIR" \
+             --clobber; then
+          echo "GODOT_ARCHIVE_SOURCE=repository_release:${GITHUB_REPOSITORY}@${TOOLCHAIN_RELEASE_TAG}"
+        else
+          echo "::warning::RTS toolchain release asset '$TOOLCHAIN_RELEASE_TAG' unavailable; falling back to the official Godot release"
+          curl -fL --retry 3 --retry-delay 2 \
+            "https://github.com/${UPSTREAM_REPO}/releases/download/${GODOT_VERSION}/${ARCHIVE_NAME}" \
+            -o "${TOOLCHAIN_DIR}/${ARCHIVE_NAME}"
+          echo "GODOT_ARCHIVE_SOURCE=upstream_release:${UPSTREAM_REPO}@${GODOT_VERSION}"
+        fi
+
+    - name: Verify pinned SHA256 lock
+      shell: bash
+      env:
+        ARCHIVE_PATH: ${{ steps.paths.outputs.archive }}
+        PINNED_SHA256: ${{ inputs.sha256 }}
+      run: |
+        set -euo pipefail
+        test -f "$ARCHIVE_PATH"
+        echo "${PINNED_SHA256}  ${ARCHIVE_PATH}" | sha256sum --check --strict -
+        echo "GODOT_ARCHIVE_SHA256=${PINNED_SHA256}"
+
+    - name: Extract and export Godot
+      id: export
+      shell: bash
+      env:
+        TOOLCHAIN_DIR: ${{ steps.paths.outputs.dir }}
+        ARCHIVE_PATH: ${{ steps.paths.outputs.archive }}
+        GODOT_PATH: ${{ steps.paths.outputs.godot }}
+      run: |
+        set -euo pipefail
+        if test ! -x "$GODOT_PATH"; then
+          unzip -q -o "$ARCHIVE_PATH" -d "$TOOLCHAIN_DIR"
+        fi
+        chmod +x "$GODOT_PATH"
+        test -x "$GODOT_PATH"
+        VERSION="$("$GODOT_PATH" --version | head -n1)"
+        if ! echo "$VERSION" | grep -Eq '^4\.7\.1'; then
+          echo "::error::Godot toolchain version mismatch: '$VERSION' does not start with 4.7.1"
+          exit 1
+        fi
+        echo "GODOT=$GODOT_PATH" >> "$GITHUB_ENV"
+        echo "godot=$GODOT_PATH" >> "$GITHUB_OUTPUT"
+        echo "GODOT_TOOLCHAIN_VERSION=$VERSION"
