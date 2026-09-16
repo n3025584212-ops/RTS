@@ -2,7 +2,7 @@
 
 STATUS=ACTIVE_BRANCH_MIRROR_OF_CONTROL_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V32
+STATE_VERSION=V33
 CONTROL_AUTHORITY=main:docs/current/CURRENT_STATE.md
 BRANCH_ROLE=SPRINT01_EVIDENCE_BUILD_RUNTIME_ARTIFACTS
 
@@ -16,76 +16,82 @@ WINDOW_03_AUDIT_CONTRACT=docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md
 
 ## Authority rule
 
-This branch-local file exists so a window checked out on the learning branch does not recover obsolete project state.
+This branch-local file prevents a window checked out on the learning branch from recovering obsolete project state.
 
 Final control/routing authority remains `main` / Window 00.
-
-Branch-local implementation, audit and runtime facts are authoritative for work performed on this branch. Product-resume and routing decisions are not self-authorized by this branch.
+Branch-local implementation, audit and runtime facts are authoritative for work performed here, but product-resume and routing decisions are not self-authorized by this branch.
 
 ## Current phase
 
 ACTIVE_ISSUE=#39
 ACTIVE_SPRINT=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
-CURRENT_GATE=SPRINT01_WORLD_REPRODUCTION_RUNTIME_GATE
+CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_FIX
 PRODUCT_PRODUCTION_RESUME=NO
 SPRINT_PASS=NO
 
-## Completed checkpoints
+## Latest evidence
 
-PLAYER_CAUSAL_CHAIN_PREVIOUS_RUNTIME=PASS
-WORLD_CAUSAL_DECOMPOSITION=COMPLETED_BY_WINDOW_01
 WORLD_CAUSAL_DECOMPOSITION_COMMIT=dcd891d7947e0ec6b97257681f258ecf6432c037
-
-WINDOW_03_WORLD_METHOD_AUDIT=PASS_WITH_DOWNGRADES
 WORLD_METHOD_AUDIT_COMMIT=7e6bf5636af83933b6e0b60269f33aafa8a7715f
-BLOCKING_DEFECTS=0
-WINDOW_02_ROUTING=READY_FOR_02_WORLD_REPRODUCTION
+WORLD_REPRODUCTION_RUNTIME_SOURCE_COMMIT=edf8cede10cea24a6218beb73bcca14ef424f5c7
+WORLD_REPRODUCTION_EVIDENCE_COMMIT=03a56be1b0abfaf2248f23b4f9766ebd60aec27e
+WORLD_REPRODUCTION_AUDIT_COMMIT=6dfe56da2c87b62fcb581c06b728c965d4e47bac
 
-## Current Window 02 implementation
+RUNTIME_EXECUTION_VERDICT=PASS
+GODOT_4_7_1_RUNTIME=PASS
+EXACT_VEHICLE_ASSET_BINDING=PASS
+WORLD_METHOD_SOURCE_PATH=PASS
+WORLD_METHOD_CAUSAL_EXECUTION=PASS
+PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
+CAPTURE_STATE_ALIGNMENT=PASS
 
-WORLD_REPRODUCTION_TASK=BUILD_SPRINT01_WORLD_CAUSAL_REPRODUCTION_V1
-SCENE=res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn
-SCRIPT=res://scripts/learning/sprint01/sprint01_world_reproduction.gd
-IMPLEMENTATION_DOC=docs/learning/sprint01/WORLD_REPRODUCTION_IMPLEMENTATION.md
-WORKFLOW=.github/workflows/learning-sprint01-world-reproduction.yml
+## Current failed boundary
 
-WORLD_REPRODUCTION_SCRIPT_FIX_COMMIT=202cc6a8d282d3ec5c8d40932cf740b5e664cfe9
-WORLD_REPRODUCTION_SCENE_COMMIT=5df520722d32d4173fa9ea4c2307c95bed1daca5
-WORLD_REPRODUCTION_IMPLEMENTATION_DOC_COMMIT=e5eff694f58144a162e411aae6fd50ecad299be2
-WORLD_REPRODUCTION_WORKFLOW_COMMIT=7dd7c78160ec8952bf857fd8f2edd368e19de004
+WINDOW_03_WORLD_REPRODUCTION_AUDIT=FAIL_PLAYER_DELIVERY
+PLAYER_UNIT_READABILITY=FAIL
+WORLD_LABEL_OCCLUSION=FAIL
+REAL_ENOUGH_WORLD_DELIVERY=FAIL
+PLAYER_WORLD_READABILITY=FAIL
 
-## Current blocker checkpoint
-
-BLOCKER_COMMIT=7a0f24d0ef82f6afcf1666610bd3eb520a94d3de
-BLOCKER_DOC=docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md
-HOSTED_RUN_ID=35004033644
-HOSTED_JOB_ID=104499190425
-HOSTED_RESULT=FAILURE_BEFORE_RUNNER
-RUNNER_ID=0
-JOB_STEPS=[]
-
-CODE_EXISTS=PASS
-CODE_EXECUTES=UNKNOWN
-WORLD_METHOD_RUNTIME=UNKNOWN
-PLAYER_CHAIN_RUNTIME_ON_NEW_WORLD=UNKNOWN
-PLAYER_VISIBLE_WORLD_EVIDENCE=NOT_PRODUCED
-FAILED_EDGE=RUNTIME_EXECUTION_INFRASTRUCTURE_BEFORE_GODOT
-
-This blocker is not evidence of gameplay failure and not a reproduction PASS.
+The previous runner blocker is closed for this gate. The current failure is downstream at PLAYER delivery, not runtime infrastructure.
 
 ## Current windows
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
 WINDOW_01_STATUS=HOLD_STAGE4_COMPLETE
-WINDOW_02_STATUS=ACTIVE_RUNTIME_GATE
-WINDOW_03_STATUS=HOLD_PENDING_FRESH_RUNTIME
+WINDOW_02_STATUS=ACTIVE_PLAYER_WORLD_DELIVERY_FIX
+WINDOW_03_STATUS=HOLD_PENDING_REPAIRED_RUNTIME
+
+## Window 02 repair scope
+
+Preserve:
+- topology/passability coupling;
+- functional anchors and constraint rules;
+- exact Abrams/IFV identity;
+- player input -> command -> movement -> combat -> feedback -> outcome semantics;
+- fresh player-camera capture process.
+
+Repair only:
+1. exact Abrams player readability;
+2. occluding world labels;
+3. primitive/placeholder terrain/material/vegetation/built-content presentation.
+
+Then rerun fresh Godot 4.7.1 evidence and return to Window 03.
+
+## Repository hygiene
+
+Current active branches:
+- `main`
+- `learning/sprint01-end-to-end-rts-production`
+
+First-pass cleanup reduced branches from 37 to 14. Recycled historical branch heads are preserved as tags under `recycle/2026-09-16/...` according to the main branch recycle policy.
 
 ## Next route
 
-NEXT=WINDOW_02_COMPLETE_FRESH_WORLD_REPRODUCTION_RUNTIME
-NEXT_AFTER_RUNTIME=WINDOW_03_INDEPENDENT_WORLD_ARTIFACT_AUDIT
+NEXT=WINDOW_02_PLAYER_WORLD_DELIVERY_FIX
+NEXT_AFTER_FIX=WINDOW_03_REAUDIT_REPAIRED_WORLD_PLAYER_ARTIFACT
 NEXT_AFTER_AUDIT=WINDOW_00_SPRINT01_TRANSFER_OR_REPAIR_DECISION
 
 ## Historical boundary
 
-Battle01, Prototype B, Golden Scene, River Town, Reference Region and local-high-fidelity branches remain historical evidence/tool pools and do not automatically regain current product authority.
+Battle01, Prototype B, Golden Scene, River Town, Reference Region and local-high-fidelity work remain historical/reference evidence/tool pools and do not automatically regain current product authority.
