@@ -5,25 +5,21 @@ CONTROL_WINDOW=00
 ACTIVE_ISSUE=#39
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 
-## Original closure objective
+## Objective
 
-Do not resume old product production and do not visually polish the primitive first Sprint01 test scene as if it were the product baseline.
+Do not resume old product production and do not accept a technically correct but player-unreadable learning scene as a Sprint PASS.
 
-Close the missing world-production chain, reproduce it independently, then judge the PLAYER result before any FRONTLINE transfer.
+Close the world-production chain, reproduce it independently, and require the final PLAYER result to be readable and real enough before any FRONTLINE transfer.
 
 ## Completed closure stages
 
-### 1. Preserved player causal chain
+### 1. Player causal chain
 
-Previously proven in fresh runtime:
+Fresh runtime proved:
 
 `PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT -> COMBAT -> VISIBLE FEEDBACK -> OUTCOME`
 
-This remains preserved and is not permission to accept the old primitive world.
-
 ### 2. Stage 4 world causal decomposition
-
-Completed by Window 01.
 
 Artifact:
 `docs/learning/sprint01/WORLD_CAUSAL_DECOMPOSITION.md`
@@ -32,8 +28,6 @@ Commit:
 `dcd891d7947e0ec6b97257681f258ecf6432c037`
 
 ### 3. Independent world-method audit
-
-Completed by Window 03.
 
 Artifact:
 `docs/audit/AUDIT_SPRINT01_WORLD_CAUSAL_DECOMPOSITION_V1.md`
@@ -44,13 +38,8 @@ Commit:
 Verdict:
 `PASS_WITH_DOWNGRADES`
 `BLOCKING_DEFECTS=0`
-`WINDOW_02_ROUTING=READY_FOR_02_WORLD_REPRODUCTION`
 
-This approves only the bounded isolated reproduction candidates. It does not approve a permanent FRONTLINE world architecture.
-
-### 4. World reproduction implementation
-
-Built by Window 02 on the learning branch.
+### 4. World reproduction implementation and fresh runtime
 
 Scene:
 `res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn`
@@ -58,68 +47,81 @@ Scene:
 Script:
 `res://scripts/learning/sprint01/sprint01_world_reproduction.gd`
 
-Implementation contract:
-`docs/learning/sprint01/WORLD_REPRODUCTION_IMPLEMENTATION.md`
+Fresh runtime source:
+`edf8cede10cea24a6218beb73bcca14ef424f5c7`
 
-Workflow:
-`.github/workflows/learning-sprint01-world-reproduction.yml`
+Evidence commit:
+`03a56be1b0abfaf2248f23b4f9766ebd60aec27e`
 
-Key commits:
-- `202cc6a8d282d3ec5c8d40932cf740b5e664cfe9`
-- `5df520722d32d4173fa9ea4c2307c95bed1daca5`
-- `e5eff694f58144a162e411aae6fd50ecad299be2`
-- `7dd7c78160ec8952bf857fd8f2edd368e19de004`
+Fresh hosted run:
+`35090538247`
 
-## Current unresolved gate
+Godot:
+`4.7.1.stable.official.a13da4feb`
 
-Latest known branch checkpoint:
-`7a0f24d0ef82f6afcf1666610bd3eb520a94d3de`
+Accepted runtime facts:
+- runtime execution PASS;
+- exact Abrams/IFV binding PASS;
+- world-method causal execution PASS;
+- player causal chain PASS;
+- capture-state alignment PASS.
 
-Blocker artifact:
-`docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
+### 5. Independent world/player artifact audit
 
-Latest hosted attempt:
-- run `35004033644`;
-- job `104499190425`;
-- `FAILURE_BEFORE_RUNNER`;
-- `runner_id=0`;
-- `steps=[]`.
+Artifact:
+`docs/audit/AUDIT_SPRINT01_WINDOW02_WORLD_REPRODUCTION_V1.md`
 
-Therefore:
+Commit:
+`6dfe56da2c87b62fcb581c06b728c965d4e47bac`
 
-`CODE_EXISTS=PASS`
-`CODE_EXECUTES=UNKNOWN`
-`WORLD_METHOD_RUNTIME=UNKNOWN`
-`PLAYER_CHAIN_RUNTIME_ON_NEW_WORLD=UNKNOWN`
-`PLAYER_VISIBLE_WORLD_EVIDENCE=NOT_PRODUCED`
+Verdict:
+`WINDOW_03_WORLD_REPRODUCTION_AUDIT=FAIL_PLAYER_DELIVERY`
 
-This is not a gameplay failure and not a reproduction PASS.
+Passed:
+- `RUNTIME_EXECUTION_VERDICT=PASS`
+- `EXACT_VEHICLE_ASSET_BINDING=PASS`
+- `WORLD_METHOD_SOURCE_PATH=PASS`
+- `WORLD_METHOD_CAUSAL_EXECUTION=PASS`
+- `PLAYER_CAUSAL_CHAIN_RUNTIME=PASS`
+- `CAPTURE_STATE_ALIGNMENT=PASS`
+
+Failed:
+- `PLAYER_UNIT_READABILITY=FAIL`
+- `WORLD_LABEL_OCCLUSION=FAIL`
+- `REAL_ENOUGH_WORLD_DELIVERY=FAIL`
+- `PLAYER_WORLD_READABILITY=FAIL`
+
+## Current gate
+
+`SPRINT01_PLAYER_WORLD_DELIVERY_FIX`
+
+The previous runtime-infrastructure blocker is closed. The remaining failure is downstream at the actual PLAYER-facing world.
+
+Window 02 must preserve the proven causal/world methods and repair only:
+
+1. Abrams readability at battlefield scale;
+2. occluding world labels;
+3. primitive/placeholder terrain/material/vegetation/built-content presentation.
+
+Then rerun fresh Godot 4.7.1 evidence and return the repaired artifact to Window 03.
 
 ## Current routing
 
 ### Window 00
 `ACTIVE_CONTROL`
 
-Maintain one state and prevent old/current branch confusion.
-
 ### Window 01
 `HOLD_STAGE4_COMPLETE`
 
-Do not extend theory without a specific evidence defect.
-
 ### Window 02
-`ACTIVE_RUNTIME_GATE`
-
-Run the existing world reproduction in fresh Godot 4.7.1 with exact sanctioned assets and produce fresh logs/screenshots/video.
+`ACTIVE_PLAYER_WORLD_DELIVERY_FIX`
 
 ### Window 03
-`HOLD_PENDING_FRESH_RUNTIME`
+`HOLD_PENDING_REPAIRED_RUNTIME`
 
-After runtime exists, independently audit world-method execution and PLAYER-visible quality.
+## Exit sequence
 
-## Exit sequence from here
-
-`02 fresh world runtime -> 03 independent world/player artifact audit -> 00 Sprint01 transfer/repair decision`
+`02 player-world delivery fix -> fresh runtime -> 03 re-audit -> 00 Sprint01 transfer/repair decision`
 
 Only after Sprint 01 passes may Window 00 authorize the first post-restart FRONTLINE product slice.
 
