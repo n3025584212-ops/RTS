@@ -1,5 +1,6 @@
 name: Recycle Reviewed Stale Branches
 
+# Trigger marker: 2026-09-16 first reviewed cleanup run
 on:
   push:
     branches:
