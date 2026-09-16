@@ -7,8 +7,10 @@ on:
     paths:
       - "scenes/learning/sprint01/Sprint01WorldReproduction.tscn"
       - "scripts/learning/sprint01/sprint01_world_reproduction.gd"
+      - "scripts/learning/sprint01/sprint01_world_delivery_repair.gd"
       - "scripts/learning/sprint01/sprint01_reproduction.gd"
       - "assets/golden_scene/vehicles/**"
+      - "assets/learning/sprint01/world_delivery/**"
       - ".github/workflows/learning-sprint01-world-reproduction.yml"
   workflow_dispatch:
 
@@ -125,19 +127,21 @@ jobs:
           echo "INPUT_INJECTION=xdotool|KEY=m|TARGET_WINDOW=$WIN" | tee -a "$ART/input_injection.log"
           xdotool key --window "$WIN" m
 
+          # PLAYER delivery assets make software-rendered wall-clock progress slower.
+          # Extend observation time only; simulation speed/contact/combat semantics stay unchanged.
           FIRE_SEEN=0
-          for _ in $(seq 1 160); do
+          for _ in $(seq 1 400); do
             if grep -q 'FIRE_EVENT=SHOT_01' "$ART/runtime.log"; then FIRE_SEEN=1; break; fi
             if ! kill -0 "$GODOT_PID" 2>/dev/null; then break; fi
             sleep 0.1
           done
           test "$FIRE_SEEN" = "1"
-          # Runtime logging leads the llvmpipe-rendered HUD. Let the visible combat frame catch up.
-          sleep 0.90
+          # Runtime logging can lead the llvmpipe-presented HUD by more than one slow frame.
+          sleep 1.50
           ffmpeg -y -loglevel error -f x11grab -video_size 1600x900 -i :99 -frames:v 1 "$ART/world_fire_feedback.png"
 
           CHAIN_PASS=0
-          for _ in $(seq 1 180); do
+          for _ in $(seq 1 400); do
             if grep -q 'WORLD_AND_PLAYER_CHAIN_PASS=YES' "$ART/runtime.log"; then CHAIN_PASS=1; break; fi
             if ! kill -0 "$GODOT_PID" 2>/dev/null; then break; fi
             sleep 0.1
@@ -183,7 +187,7 @@ jobs:
             echo "GODOT_VERSION=$("$GODOT" --version | head -n1)"
             echo "SCENE=res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn"
             echo "INPUT_SOURCE=OS_X11_KEYBOARD_VIA_XDOTOOL"
-            grep -E '^(WORLD_REPRODUCTION_BOOT=|WORLD_REPRODUCTION_SCENE=|WORLD_METHOD_SET=|WORLD_CONTENT_PIPELINE=|MATERIAL_PROVENANCE=|TERRAIN_PIPELINE=|TRANSPORT_LAYER=|FUNCTIONAL_ANCHOR=|VEGETATION_DISTRIBUTION=|CAMERA_ENV_FREEZE=|WORLD_TO_MOVEMENT=|CONSTRAINT_LAYERS=|SURFACE_BINDING=|VEGETATION_WORLD_CHECK=|ANCHOR_WORLD_CHECK=|OLD_SCENE_COORDINATE_COPY=|W-C1=|WORLD_REPRODUCTION_METHOD_PASS=|INPUT_EVENT=|SELECTED_ENTITY=|COMMAND=|MOVEMENT_STARTED=|MOVEMENT_REPRESENTATION=|MOVEMENT_COMPLETED_OR_CONTACT=|CONTACT=|FIRE_EVENT=|AMMO_BEFORE=|AMMO_AFTER=|HP_BEFORE=|HP_AFTER=|VISIBLE_FEEDBACK_EVENT=|OUTCOME=|PLAYER_CHAIN_PASS=|WORLD_AND_PLAYER_CHAIN_PASS=)' "$ART/runtime.log"
+            grep -E '^(PLAYER_WORLD_DELIVERY_REPAIR_BOOT=|PLAYER_WORLD_DELIVERY_ASSET_PREFLIGHT=|PLAYER_WORLD_DELIVERY_REPAIR=|PLAYER_UNIT_READABILITY_REPAIR=|REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=|DELIVERY_SURFACE_OVERLAY=|DELIVERY_BUILT_CONTENT=|WORLD_REPRODUCTION_BOOT=|WORLD_REPRODUCTION_SCENE=|WORLD_METHOD_SET=|WORLD_CONTENT_PIPELINE=|MATERIAL_PROVENANCE=|TERRAIN_PIPELINE=|TRANSPORT_LAYER=|FUNCTIONAL_ANCHOR=|VEGETATION_DISTRIBUTION=|CAMERA_ENV_FREEZE=|WORLD_TO_MOVEMENT=|CONSTRAINT_LAYERS=|SURFACE_BINDING=|VEGETATION_WORLD_CHECK=|ANCHOR_WORLD_CHECK=|OLD_SCENE_COORDINATE_COPY=|W-C1=|WORLD_REPRODUCTION_METHOD_PASS=|INPUT_EVENT=|SELECTED_ENTITY=|COMMAND=|MOVEMENT_STARTED=|MOVEMENT_REPRESENTATION=|MOVEMENT_COMPLETED_OR_CONTACT=|CONTACT=|FIRE_EVENT=|AMMO_BEFORE=|AMMO_AFTER=|HP_BEFORE=|HP_AFTER=|VISIBLE_FEEDBACK_EVENT=|OUTCOME=|PLAYER_CHAIN_PASS=|WORLD_AND_PLAYER_CHAIN_PASS=)' "$ART/runtime.log"
           } > "$ART/world_chain_extract.txt"
 
           cleanup
@@ -220,8 +224,9 @@ jobs:
 
           MOVEMENT_REPRESENTATION=DIRECT_KINEMATIC_WITH_WORLD_PASSABILITY_GATE
           NAVMESH_OR_NAVIGATIONSERVER_TRANSFER_CLAIM=NO
-          WORLD_CONTENT_PROVENANCE=CHECKED_IN_DETERMINISTIC_TYPED_GDSCRIPT_PIPELINE
+          WORLD_CONTENT_PROVENANCE=CHECKED_IN_DETERMINISTIC_TYPED_GDSCRIPT_PIPELINE_PLUS_PROVENANCE_RECORDED_DELIVERY_ASSET_POOL
           VEHICLE_ASSET_PROVENANCE=AUDITED_EXACT_BLOBS
+          PLAYER_DELIVERY_REPAIR_LAYER=res://scripts/learning/sprint01/sprint01_world_delivery_repair.gd
 
           PLAYER_VISIBLE_EVIDENCE=CAPTURED_NOT_SELF_ACCEPTED
           INITIAL_SCREENSHOT=artifacts/learning/sprint01/world_reproduction/world_initial.png
