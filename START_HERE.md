@@ -3,62 +3,87 @@
 STATUS=CURRENT_ENTRYPOINT
 PROJECT=FRONTLINE《战线》
 
-如果你刚打开这个仓库，不要从历史 Issue、旧 PR 或旧 Battle01 文档开始。
+如果你刚打开仓库、聊天窗口断档、上下文超限，或者怀疑“库里信息丢了”，不要从旧 Issue、旧 PR、旧 Battle01 文档或 README 历史段落自行猜状态。
 
-## 当前只读顺序
+## 强制恢复顺序
+
+先读 main：
 
 1. `docs/current/CURRENT_STATE.md`
-2. `docs/FRONTLINE_LEARNING_SYSTEM_V1.md`
-3. `docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md`
-4. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
-5. `docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md`
-6. `docs/FRONTLINE_PROJECT_SYSTEM_V3.md`
-7. `docs/current/ACTIVE_WORK.md`
+2. `docs/current/ACTIVE_WORK.md`
+3. `docs/current/WINDOW_RECOVERY_INDEX.md`
+4. `docs/current/RESTART_DECISION.md`
+5. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
 
-以上之后，才按当前任务读取代码、资产和历史证据。
+然后根据 `CURRENT_STATE.md` 中的 `ACTIVE_BRANCH`：
+
+6. 读取该分支最新 HEAD；
+7. 读取 `WINDOW_RECOVERY_INDEX.md` 列出的当前 Sprint 关键产物；
+8. 只有完成上述步骤后，才读取代码、资产、历史分支或旧 Issue。
+
+## 双层状态规则
+
+`main` = 控制面：
+- 当前阶段；
+- 当前唯一任务；
+- 窗口路由；
+- 是否允许产品恢复；
+- 历史/现行权威边界。
+
+`learning/sprint01-end-to-end-rts-production` = 当前 Sprint 执行面：
+- 01证据产物；
+- 03审核产物；
+- 02复现场景/脚本；
+- runtime evidence / blockers。
+
+不要假设 main 会包含 learning 分支的全部施工文件。
+
+如果两边看起来冲突：
+- 施工/运行事实看 active branch；
+- 路由/产品权威看 main / Window 00；
+- 不能让旧 main 文档覆盖新 branch 事实，也不能让某个 branch 自行宣布产品恢复。
 
 ## 当前四窗口
 
-- `00`：中控 / 整合；维护唯一状态、派工和迁移门槛。
-- `01`：证据 / 学习；沿13层建立端到端证据图谱。
-- `02`：复现 / 施工；把已证明的链做成真实运行实物。
-- `03`：独立审核 / 反证；按硬审计合同检查证据、版本、运行语义、泛化、替代解释和反例。
+- `00`：CONTROL / INTEGRATION — 唯一控制、整合、冲突裁决。
+- `01`：EVIDENCE / LEARNING — 当前 Stage 4 已完成，HOLD。
+- `02`：REPRODUCTION / BUILD — 当前 ACTIVE，负责 Sprint01 世界复现 runtime gate。
+- `03`：INDEPENDENT REVIEW / FALSIFICATION — 当前 HOLD，等待02 fresh runtime 后审实物。
 
-窗口编号不代表能力或正确性；四个窗口共用同一 `CURRENT_STATE` 和 Issue #39。
+窗口编号不代表正确性。四个窗口共用一个项目状态和 Issue #39。
 
 ## 当前核心链
 
 `CONTENT -> WORLD -> INPUT -> SIMULATION -> CONTROL -> STATE -> PRESENTATION -> RENDER -> PLAYER`
 
-重点不是分别积累地图、AI、材质、UI知识，而是证明它们怎样连接并最终形成玩家实际看到和感受到的战争。
+目前已通过：
+- 一条真实 player causal chain；
+- Stage 4 world causal decomposition；
+- 03 对 world method 的独立审核（PASS_WITH_DOWNGRADES）。
 
-## 当前证据原则
+当前未通过：
+- 新世界复现的 fresh Godot 4.7.1 runtime；
+- 新世界 PLAYER-visible artifact audit；
+- Sprint 01 总 PASS；
+- FRONTLINE 产品恢复。
 
-- 模型总结、通用理论、用户临时假设都不是已验证事实。
-- 重要结论必须标记为 `OBSERVED / REPRODUCED / INFERRED / HYPOTHESIS / UNKNOWN / REJECTED`。
-- 二手文章不能冒充源码证据。
-- 核心源码结论必须确认版本身份。
-- 类/函数/组件存在不等于运行时真的走该链。
-- 单一项目事实不能自动泛化成 RTS 通则。
-- 重要因果解释必须寻找替代解释。
-- 泛化结论必须主动寻找 BAR/Recoil、Warzone 或其他成熟项目反例。
-- 没有复现或直接验证，不允许声称“已经学会怎么做”。
-- CI、元素数量、代码存在都不能替代实际玩家结果。
+## 当前唯一下一步
 
-## 当前重要版本警报
+Window 02：运行已经构建好的 `Sprint01WorldReproduction.tscn`，用 fresh Godot 4.7.1 + exact sanctioned asset bytes 生成新的日志、截图和视频。
 
-`0ad/0ad` GitHub 仓库已经归档，并注明源码于 2024-08-20 迁往 Wildfire Games Gitea。
+最新已知 hosted attempt 在 runner 分配前失败，不是 gameplay PASS/FAIL。
 
-因此 GitHub `master` 默认是历史证据，不得直接冒充 2026 / Release 28 当前源码。01必须证明版本匹配；03必须优先审这一点。
+具体看：
+- `docs/current/CURRENT_STATE.md`
+- `docs/current/ACTIVE_WORK.md`
+- active branch: `docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
 
-## 历史状态
+## 历史边界
 
-旧 Battle01、Prototype B、Golden Scene V1、River Town 视觉尝试均保留为技术资产、失败证据和可复用工具，不再自动拥有产品设计权威。
+Battle01、Prototype B、Golden Scene、River Town、Reference Region、local-high-fidelity branches 都保留，但只是：
+- 技术资产；
+- 失败/实物证据；
+- 可复用工具；
+- 参考材料。
 
-## 现在要做什么
-
-当前第一阶段：
-
-`真实参考/FRONTLINE实物 -> 13层证据图谱 -> 03反证 -> 02小型完整复现 -> 03实物审核 -> 00迁移决定`
-
-具体任务只看 `docs/current/ACTIVE_WORK.md` 和 Issue #39。
+它们不自动拥有当前产品方向权威。
