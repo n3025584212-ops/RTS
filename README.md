@@ -4,64 +4,64 @@
 
 ## 当前状态
 
-- Engine: Godot 4.7.1
-- Current phase: `P0_DISCOVER`
-- Battle01 production: `PAUSED`
-- Source of truth: `docs/current/CURRENT_STATE.md`
-- Active task: GitHub Issue #20 — Prototype B representative command-battle slice
-- GPT collaboration: four-window shared-state runtime
+- Engine baseline: Godot 4.7.1
+- Operating mode: `RESTARTED_EVIDENCE_REPRODUCTION_BEFORE_PRODUCT_TRANSFER`
+- Active issue: `#39`
+- Active Sprint branch: `learning/sprint01-end-to-end-rts-production`
+- Current gate: `SPRINT01_WORLD_REPRODUCTION_RUNTIME_GATE`
+- Product production resume: `NO`
+- Control authority: `main:docs/current/CURRENT_STATE.md`
+
+旧 P0 / Prototype B / Battle01 / Golden Scene / River Town 路线均已退出当前产品权威层，只保留为技术资产、实物/失败证据和可复用工具。
 
 ## 开始阅读
 
-1. `docs/current/CURRENT_STATE.md` — 唯一当前项目状态
-2. `docs/FRONTLINE_PROJECT_CHARTER_V3.md` — 项目最高运行规则
-3. `docs/FRONTLINE_PROJECT_SYSTEM_V1.md` — 日常项目系统
-4. `docs/GPT_MULTI_WINDOW_SYSTEM_V2.md` — 四窗口协作规则
-5. `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md` — 窗口启用/待命/证据门运行方案
-6. `docs/gpt_windows/` — 四个可直接复制的 ChatGPT 初始化指令
-7. `docs/current/DECISION_LOG.md` — 项目决策历史
-8. 当前 Active Issue — 当前工作的合同与证据线程
+1. `START_HERE.md`
+2. `docs/current/CURRENT_STATE.md`
+3. `docs/current/ACTIVE_WORK.md`
+4. `docs/current/WINDOW_RECOVERY_INDEX.md`
+5. `docs/current/RESTART_DECISION.md`
+6. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
 
-明确过时/废弃的历史资料统一保存在 `archive/legacy-unused` 分支；该分支没有当前产品权威。
+不要从历史 Issue、旧 PR、聊天记忆或旧窗口提示推断当前状态。
 
-## GPT 四窗口
+## 当前四窗口
 
 ```text
-00  Project Control / Integration   项目总控、状态整合、冲突裁决
-01  Design / Experience             游戏设计、UX/UI、玩家体验与战斗结构
-02  Development                     Godot、Gameplay、Combat、Units、AI、实现
-03  Review / Operations             QA、Playtest Evidence、PR/CI、GitHub运维
+00  CONTROL / INTEGRATION                 ACTIVE_CONTROL
+01  EVIDENCE / LEARNING                   HOLD_STAGE4_COMPLETE
+02  REPRODUCTION / BUILD                  ACTIVE_RUNTIME_GATE
+03  INDEPENDENT REVIEW / FALSIFICATION    HOLD_PENDING_FRESH_RUNTIME
 ```
 
-### 当前 P0 运行状态
+## 当前 Sprint 01
+
+已完成：
+- 真实 RTS 端到端证据学习；
+- 第一条 player causal chain fresh runtime；
+- Stage 4 world causal decomposition；
+- Window 03 world-method audit (`PASS_WITH_DOWNGRADES`)；
+- 新 `Sprint01WorldReproduction` 场景、脚本和 workflow 实现。
+
+当前未完成：
+- 新世界复现的 fresh Godot 4.7.1 runtime；
+- fresh PLAYER-visible screenshots/video；
+- Window 03 新世界实物审核；
+- Sprint 01 PASS；
+- FRONTLINE 产品生产恢复。
+
+当前 blocker：最近 hosted world-reproduction run 在 runner 分配前失败（`runner_id=0`, `steps=[]`），因此仍是 execution-infrastructure blocker，不是 gameplay PASS/FAIL。
+
+## 当前关键路径
 
 ```text
-WINDOW_00 = ACTIVE
-WINDOW_01 = ACTIVE_BATTLE_AND_COMMAND_DESIGN
-WINDOW_02 = ACTIVE_REPRESENTATIVE_SLICE_BUILD
-WINDOW_03 = STANDBY_ON_DEMAND
+docs/current/       当前状态/任务/恢复入口
+docs/learning/      学习合同、证据、生产方法、复现说明
+docs/audit/         独立审核
+scenes/learning/    隔离复现场景
+scripts/learning/   隔离复现代码
+artifacts/learning/ runtime / screenshot / video 证据
+assets/              可复用资产与 provenance
 ```
 
-不是四个窗口全部同时制造工作。00 常驻；01/02 当前围绕同一个代表性战斗切片工作；03 在有实质构建或审查对象时进入。
-
-这些窗口只是 GPT 分工/上下文路由，不各自拥有项目状态、路线图或冻结权。窗口间不使用强制回执链；共享成果落在 GitHub Issue、branch/PR、代码、测试和 CI 证据中。
-
-## Repository layout
-
-```text
-project.godot                 Godot 4.7.1 project entry
-scenes/                       runtime scenes
-scripts/                      runtime scripts
-resources/                    game data/resources
-assets/                       UI and visual assets
-tests/                        focused runtime/smoke verification
-docs/current/                 current state + decision history
-docs/gpt_windows/             four reusable GPT initialization prompts
-.github/workflows/            automated runtime verification
-```
-
-## 当前开发原则
-
-当前阶段不再用几个盒子、一次接触、一个孤立决策来代表整款 RTS。Prototype B 必须形成一个具有持续指挥负荷的代表性灰盒战斗：多个责任区/战场需求、敌军主动变化、局部自主执行、预备力量或未投入战力、再任务、战斗后果与持续结果流。精确单位数量、地图尺寸和时长保持软定义。
-
-只有当这种代表性战斗已经实际运行，才进入有意义的真人产品体验判断。Codex/自动化只负责技术验证，不模拟真人。
+仓库导航：`docs/ops/REPOSITORY_MAP_V3.md`。
