@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V33
+STATE_VERSION=V34
 SOURCE_OF_TRUTH=THIS_FILE_FOR_CONTROL_AND_ROUTING
 CONTROL_SYNC_DATE=2026-09-16
 
@@ -24,7 +24,7 @@ MAIN_BRANCH=main
 MAIN_ROLE=CONTROL_STATE_AND_ROUTING
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 ACTIVE_BRANCH_ROLE=SPRINT01_EVIDENCE_BUILD_RUNTIME_ARTIFACTS
-LATEST_KNOWN_ACTIVE_BRANCH_HEAD=374c638cd7b78c0f2fec38c52427aa1527b7e9b6
+LATEST_KNOWN_ACTIVE_BRANCH_HEAD=5188884e4a1d04e78164a895296f2466af54658c
 
 BRANCH_COUNT_AFTER_RECYCLE=14
 RECYCLED_BRANCH_COUNT=23
@@ -43,6 +43,8 @@ If control and active-branch facts appear different:
 ACTIVE_ISSUE=#39
 ACTIVE_SPRINT=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
 CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_FIX
+ACTIVE_TASK=REPAIR_SPRINT01_PLAYER_WORLD_DELIVERY_V1
+ACTIVE_TASK_ARTIFACT=docs/learning/sprint01/TASK_02_PLAYER_WORLD_DELIVERY_FIX_V1.md
 PRODUCT_PRODUCTION_RESUME=NO
 SPRINT_PASS=NO
 
@@ -71,8 +73,6 @@ WORLD_METHOD_CAUSAL_EXECUTION=PASS
 PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
 CAPTURE_STATE_ALIGNMENT=PASS
 
-The previous runner/infrastructure blocker is closed for this gate because a fresh successful hosted runtime now exists.
-
 ## Current failure boundary
 
 PLAYER_UNIT_READABILITY=FAIL
@@ -80,9 +80,7 @@ WORLD_LABEL_OCCLUSION=FAIL
 REAL_ENOUGH_WORLD_DELIVERY=FAIL
 PLAYER_WORLD_READABILITY=FAIL
 
-The current world is causally structured and runtime-valid, but still reads as a low-poly/diagnostic placeholder world at the PLAYER camera. Primitive/prototype content still dominates parts of terrain/material/vegetation/built-content presentation.
-
-This failure does NOT invalidate the already-proven topology/passability, anchor, constraint, semantic-surface, vegetation-distribution, camera/environment or player/combat causal methods.
+The current world is causally structured and runtime-valid, but still reads as a low-poly/diagnostic placeholder world at the PLAYER camera. This failure does not invalidate the already-proven topology/passability, anchor, constraint, semantic-surface, vegetation-distribution, camera/environment or player/combat causal methods.
 
 ## Current four-window allocation
 
@@ -93,23 +91,24 @@ WINDOW_01_STATUS=HOLD_STAGE4_COMPLETE
 WINDOW_01_TASK=Do not extend theory unless a later audit identifies a specific missing evidence edge.
 
 WINDOW_02_STATUS=ACTIVE_PLAYER_WORLD_DELIVERY_FIX
-WINDOW_02_TASK=Preserve the proven causal/world method and repair only the failed PLAYER output boundary: unit readability, label occlusion, and primitive/placeholder world presentation. Then rerun fresh Godot 4.7.1 evidence.
+WINDOW_02_TASK_ARTIFACT=docs/learning/sprint01/TASK_02_PLAYER_WORLD_DELIVERY_FIX_V1.md
+WINDOW_02_TASK=Preserve the proven causal/world method and repair only the failed PLAYER output boundary: Abrams readability, label occlusion, and primitive/placeholder world presentation. Then rerun fresh Godot 4.7.1 evidence.
 
 WINDOW_03_STATUS=HOLD_PENDING_REPAIRED_RUNTIME
 WINDOW_03_TASK=After Window 02 produces repaired fresh screenshots/video/logs, independently re-audit PLAYER delivery without reopening already-proven source/runtime semantics unless changed.
 
 ## Required Window 02 repair
 
-1. make the exact Abrams visibly coherent/readable at the same battlefield scale as the IFV;
-2. remove/shrink/reposition occluding world labels;
-3. replace/upgrade primitive semantic world content/material/vegetation presentation until the fresh player camera no longer reads as a diagnostic placeholder scene;
-4. preserve current topology/passability, functional-anchor, constraint and combat semantics;
+1. make the exact Abrams visibly coherent/readable at the accepted battlefield scale;
+2. remove/shrink/reposition occluding diagnostic/world labels;
+3. replace or materially upgrade primitive terrain/material/vegetation/built-content presentation until the fresh player camera no longer reads as a diagnostic placeholder scene;
+4. preserve topology/passability, functional anchors, constraints and combat semantics;
 5. rerun the exact player chain in Godot 4.7.1;
 6. return fresh initial/fire/final screenshots + continuous video + runtime log to Window 03.
 
 ## Next route
 
-NEXT=WINDOW_02_PLAYER_WORLD_DELIVERY_FIX
+NEXT=WINDOW_02_EXECUTE_TASK_02_PLAYER_WORLD_DELIVERY_FIX_V1
 NEXT_AFTER_FIX=WINDOW_03_REAUDIT_REPAIRED_WORLD_PLAYER_ARTIFACT
 NEXT_AFTER_AUDIT=WINDOW_00_SPRINT01_TRANSFER_OR_REPAIR_DECISION
 NEXT_AFTER_SPRINT_PASS=FIRST_POST_RESTART_FRONTLINE_PRODUCT_SLICE
