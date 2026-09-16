@@ -4,6 +4,7 @@ STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
 STATE_VERSION=V32
 SOURCE_OF_TRUTH=THIS_FILE_FOR_CONTROL_AND_ROUTING
+CONTROL_SYNC_DATE=2026-09-16
 
 START_HERE=START_HERE.md
 ACTIVE_WORK=docs/current/ACTIVE_WORK.md
@@ -22,8 +23,9 @@ MAIN_BRANCH=main
 MAIN_ROLE=CONTROL_STATE_AND_ROUTING
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 ACTIVE_BRANCH_ROLE=SPRINT01_EVIDENCE_BUILD_RUNTIME_ARTIFACTS
+LATEST_KNOWN_ACTIVE_BRANCH_HEAD=66717fbfd8bb2e890e1296e38f7afb6f6ba4da41
 
-IMPORTANT=main does not duplicate every learning-branch artifact. A window recovering state MUST read this file and then read the current HEAD of ACTIVE_BRANCH plus the branch artifacts listed in WINDOW_RECOVERY_INDEX.md.
+IMPORTANT=main does not duplicate every learning-branch artifact. A window recovering state MUST read this file and then refresh ACTIVE_BRANCH HEAD plus the branch artifacts listed in WINDOW_RECOVERY_INDEX.md.
 
 If control and active-branch facts appear different:
 - branch-local implementation/evidence facts come from the active branch;
@@ -77,7 +79,7 @@ Implementation intent:
 
 ## Current blocker
 
-LATEST_KNOWN_ACTIVE_BRANCH_HEAD=7a0f24d0ef82f6afcf1666610bd3eb520a94d3de
+BLOCKER_COMMIT=7a0f24d0ef82f6afcf1666610bd3eb520a94d3de
 LATEST_BLOCKER_DOC=docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md
 HOSTED_RUN_ID=35004033644
 HOSTED_JOB_ID=104499190425
@@ -97,7 +99,7 @@ Do not convert this blocker into either a gameplay failure or a reproduction PAS
 ## Current four-window allocation
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
-WINDOW_00_TASK=Maintain this shared state, repair repository clarity, and route only evidence-backed work.
+WINDOW_00_TASK=Maintain one shared state, repair repository clarity, and route only evidence-backed work.
 
 WINDOW_01_STATUS=HOLD
 WINDOW_01_TASK=Stage-4 world causal decomposition is complete; do not extend theory unless a later audit finds a specific evidence gap.
