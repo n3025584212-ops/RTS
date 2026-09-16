@@ -1,5 +1,4 @@
 SOURCE_ASSET_COMMIT=5f2ff1c0e86553234490063e640cef8d0a2fb9f7
-IMPLEMENTATION_COMMIT=399b181fdf9b66bbd17ecded617ef7a124be8231
 ABRAMS_PATH=assets/golden_scene/vehicles/mbt_abrams.glb
 ABRAMS_GIT_BLOB=24a1410d82c4d21e361f0f15caf0a04271e172bd
 IFV_PATH=assets/golden_scene/vehicles/ifv.glb
