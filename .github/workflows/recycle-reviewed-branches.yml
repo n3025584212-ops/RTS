@@ -1,0 +1,107 @@
+name: Recycle Reviewed Stale Branches
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/recycle-reviewed-branches.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  recycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate, tag, and delete reviewed stale branches
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > "$RUNNER_TEMP/recycle-branches.txt" <<'EOF'
+          build/battle01-enemy-ai-v1|f2e8b825ff0fbbb227eaf394be023fc401c2fac8
+          build/combat-skeleton-v1|999d039a07f36972dd1bf85a6f66aa12eab2f362
+          build/multi-formation-command-v1|5f35ee130305e009480aea116ed025728ef32728
+          build/recon-contact-v1|adf4f9f34df025d07df494fd09e1962f44d252a0
+          build/terrain-los-smoke-v1|0a592743c29a8504ef29bb100261cecddf8827c8
+          chore/repository-cleanup-20260902|98535f278080c7a730deaeb443957ef92f585ae2
+          ci/formation-definitions-v1|f69af7eaad6759a975226513d73b31a662d56fd1
+          ci/walking-skeleton-verify|0a897af4b3e0d3754b9491db5515d2cc400a95c2
+          design/battle01-connected-playable-contract-v1|009bccc729a0f85190d26ac4b45eb0d7d1f77f9d
+          dev/core-v1-batch1-migration|54f10d360a92f782183cf76b577ef7f80962bc09
+          dev/prototype-b-core-v1-migration|c69b6cfd045a8d2b0469ced5fe36a0c443738835
+          discovery/prototype-a-command-response-v1|f098dc45d639fbbc9f8fcba43b98b7c478974841
+          discovery/prototype-b-representative-command-battle-v1|d893906a436010c03273ccf4cbf0e2cde50fdcf8
+          governance/frontline-project-charter-v2|7a84f3b2ebc364d62071f2fd13ceeebc1b4b83b7
+          governance/game-discovery-reset-v1|3cb4f8f0bccf5232f0342b412b0de32d0ed6fcb4
+          governance/m2-01-current-state-close|3c2996d5a22dc3e8c377237caf860d1a9f9146f2
+          governance/unified-production-system-v1|ecf743f6f68daf9f52383e98b65085be4be15f60
+          m2/battle01-runtime-shell-v1|2638a749654eb73ab18245876d347736e5f36bed
+          qa/formal-roster-runtime-6bdd8dd|fab14e1b7a464b0fef16355907b1f8803bf5a67c
+          state/frontline-current-product-state-v1|fcc283d0c73ec715782c8c2a12ad12ea9d96f3e3
+          tmp/battle01-3d-foundation-integrated-v1|a197372ab5021a5acb0bb6124d734eb84dc7aa35
+          chore/repository-hygiene-20260909|eaf37f09051031c4d0823f277b0e7ed33466e220
+          learning/sprint01-battlefield-construction|7fa2fba9e12ffae424b6c8bf5090d00da4da23f0
+          EOF
+
+          echo "== Validation pass: no refs are changed here =="
+          while IFS='|' read -r branch expected; do
+            test -n "$branch" || continue
+            actual="$(git ls-remote --heads origin "refs/heads/$branch" | awk '{print $1}')"
+            tag="recycle/2026-09-16/$branch"
+            tagged="$(git ls-remote origin "refs/tags/$tag" | awk '{print $1}')"
+
+            if test -n "$actual"; then
+              if test "$actual" != "$expected"; then
+                echo "REFUSED: $branch moved: expected=$expected actual=$actual" >&2
+                exit 20
+              fi
+              echo "VALID: $branch @ $actual"
+            else
+              if test "$tagged" = "$expected"; then
+                echo "ALREADY_RECYCLED: $branch -> $tag"
+              else
+                echo "REFUSED: branch missing and exact recycle tag absent: $branch" >&2
+                exit 21
+              fi
+            fi
+          done < "$RUNNER_TEMP/recycle-branches.txt"
+
+          echo "== Recycle pass: create exact tags before deleting branches =="
+          while IFS='|' read -r branch expected; do
+            test -n "$branch" || continue
+            actual="$(git ls-remote --heads origin "refs/heads/$branch" | awk '{print $1}')"
+            tag="recycle/2026-09-16/$branch"
+            tagged="$(git ls-remote origin "refs/tags/$tag" | awk '{print $1}')"
+
+            if test -z "$actual"; then
+              echo "SKIP: already recycled $branch"
+              continue
+            fi
+
+            git fetch --no-tags origin "refs/heads/$branch"
+
+            if test -z "$tagged"; then
+              git push origin "$expected:refs/tags/$tag"
+            elif test "$tagged" != "$expected"; then
+              echo "REFUSED: recycle tag points elsewhere: $tag -> $tagged" >&2
+              exit 22
+            fi
+
+            verify="$(git ls-remote origin "refs/tags/$tag" | awk '{print $1}')"
+            test "$verify" = "$expected"
+
+            git push origin --delete "$branch"
+            echo "RECYCLED: $branch @ $expected -> $tag"
+          done < "$RUNNER_TEMP/recycle-branches.txt"
+
+          echo "== Remaining branches =="
+          git ls-remote --heads origin | sed 's#.*refs/heads/##' | sort
