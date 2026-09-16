@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V32
+STATE_VERSION=V33
 SOURCE_OF_TRUTH=THIS_FILE_FOR_CONTROL_AND_ROUTING
 CONTROL_SYNC_DATE=2026-09-16
 
@@ -11,6 +11,7 @@ ACTIVE_WORK=docs/current/ACTIVE_WORK.md
 WINDOW_RECOVERY_INDEX=docs/current/WINDOW_RECOVERY_INDEX.md
 RESTART_DECISION=docs/current/RESTART_DECISION.md
 REPOSITORY_MAP=docs/ops/REPOSITORY_MAP_V3.md
+BRANCH_RECYCLE_POLICY=docs/ops/BRANCH_RECYCLE_BIN.md
 GOVERNING_CHARTER=docs/FRONTLINE_PROJECT_CHARTER_V3.md
 GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V3.md
 LEARNING_SYSTEM=docs/FRONTLINE_LEARNING_SYSTEM_V1.md
@@ -23,7 +24,12 @@ MAIN_BRANCH=main
 MAIN_ROLE=CONTROL_STATE_AND_ROUTING
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 ACTIVE_BRANCH_ROLE=SPRINT01_EVIDENCE_BUILD_RUNTIME_ARTIFACTS
-LATEST_KNOWN_ACTIVE_BRANCH_HEAD=66717fbfd8bb2e890e1296e38f7afb6f6ba4da41
+LATEST_KNOWN_ACTIVE_BRANCH_HEAD=6dfe56da2c87b62fcb581c06b728c965d4e47bac
+
+BRANCH_COUNT_AFTER_RECYCLE=14
+RECYCLED_BRANCH_COUNT=23
+RECYCLE_TAG_PREFIX=recycle/2026-09-16/
+RECYCLE_MANIFEST=docs/ops/BRANCH_RECYCLE_MANIFEST_2026-09-16.md
 
 IMPORTANT=main does not duplicate every learning-branch artifact. A window recovering state MUST read this file and then refresh ACTIVE_BRANCH HEAD plus the branch artifacts listed in WINDOW_RECOVERY_INDEX.md.
 
@@ -36,84 +42,75 @@ If control and active-branch facts appear different:
 
 ACTIVE_ISSUE=#39
 ACTIVE_SPRINT=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
-CURRENT_GATE=SPRINT01_WORLD_REPRODUCTION_RUNTIME_GATE
+CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_FIX
 PRODUCT_PRODUCTION_RESUME=NO
 SPRINT_PASS=NO
 
-The restart remains active. Old Battle01, Prototype B, Golden Scene, River Town, Reference Region and local-high-fidelity branches are historical evidence/tool pools, not current product-direction authority.
+The restart remains active. Old Battle01, Prototype B, Golden Scene, River Town, Reference Region and local-high-fidelity work remain historical evidence/tool pools, not current product-direction authority.
 
-## What has already passed
+## Passed evidence and execution
 
-PLAYER_CAUSAL_CHAIN_PREVIOUS_RUNTIME=PASS
+PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
 CHAIN=`PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT -> COMBAT -> VISIBLE FEEDBACK -> OUTCOME`
 
-WORLD_CAUSAL_DECOMPOSITION=COMPLETED_BY_WINDOW_01
+WORLD_CAUSAL_DECOMPOSITION=PASS_FOR_REPRODUCTION_INPUT
 WORLD_CAUSAL_DECOMPOSITION_COMMIT=dcd891d7947e0ec6b97257681f258ecf6432c037
-WORLD_CAUSAL_MODEL=BRANCHING_CONSTRAINT_GRAPH
-WORLD_METHOD_TRANSFER=NOT_PRODUCT_APPROVED
-
-WINDOW_03_WORLD_METHOD_AUDIT=PASS_WITH_DOWNGRADES
+WORLD_METHOD_AUDIT=PASS_WITH_DOWNGRADES
 WORLD_METHOD_AUDIT_COMMIT=7e6bf5636af83933b6e0b60269f33aafa8a7715f
-BLOCKING_DEFECTS=0
-WINDOW_02_ROUTING=APPROVED_FOR_ISOLATED_WORLD_REPRODUCTION
 
-## Current Window 02 implementation
+WORLD_REPRODUCTION_RUNTIME_SOURCE_COMMIT=edf8cede10cea24a6218beb73bcca14ef424f5c7
+WORLD_REPRODUCTION_EVIDENCE_COMMIT=03a56be1b0abfaf2248f23b4f9766ebd60aec27e
+WORLD_REPRODUCTION_AUDIT_COMMIT=6dfe56da2c87b62fcb581c06b728c965d4e47bac
+WORLD_REPRODUCTION_AUDIT=FAIL_PLAYER_DELIVERY
 
-WORLD_REPRODUCTION_TASK=BUILD_SPRINT01_WORLD_CAUSAL_REPRODUCTION_V1
-SCENE=res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn
-SCRIPT=res://scripts/learning/sprint01/sprint01_world_reproduction.gd
-IMPLEMENTATION_DOC=docs/learning/sprint01/WORLD_REPRODUCTION_IMPLEMENTATION.md
-WORKFLOW=.github/workflows/learning-sprint01-world-reproduction.yml
+RUNTIME_EXECUTION_VERDICT=PASS
+GODOT_4_7_1_RUNTIME=PASS
+EXACT_VEHICLE_ASSET_BINDING=PASS
+WORLD_METHOD_SOURCE_PATH=PASS
+WORLD_METHOD_CAUSAL_EXECUTION=PASS
+PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
+CAPTURE_STATE_ALIGNMENT=PASS
 
-WORLD_REPRODUCTION_SCRIPT_FIX_COMMIT=202cc6a8d282d3ec5c8d40932cf740b5e664cfe9
-WORLD_REPRODUCTION_SCENE_COMMIT=5df520722d32d4173fa9ea4c2307c95bed1daca5
-WORLD_REPRODUCTION_IMPLEMENTATION_DOC_COMMIT=e5eff694f58144a162e411aae6fd50ecad299be2
-WORLD_REPRODUCTION_WORKFLOW_COMMIT=7dd7c78160ec8952bf857fd8f2edd368e19de004
+The previous runner/infrastructure blocker is closed for this gate because a fresh successful hosted runtime now exists.
 
-Implementation intent:
-- preserve the already-proven player causal chain;
-- test the audited world-production candidates W-C1(corrected) through W-C7;
-- do not restore old scene coordinates;
-- do not claim permanent FRONTLINE architecture;
-- do not use Plane/Box/color-block semantic placeholders as the delivered world.
+## Current failure boundary
 
-## Current blocker
+PLAYER_UNIT_READABILITY=FAIL
+WORLD_LABEL_OCCLUSION=FAIL
+REAL_ENOUGH_WORLD_DELIVERY=FAIL
+PLAYER_WORLD_READABILITY=FAIL
 
-BLOCKER_COMMIT=7a0f24d0ef82f6afcf1666610bd3eb520a94d3de
-LATEST_BLOCKER_DOC=docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md
-HOSTED_RUN_ID=35004033644
-HOSTED_JOB_ID=104499190425
-HOSTED_RESULT=FAILURE_BEFORE_RUNNER
-RUNNER_ID=0
-JOB_STEPS=[]
+The current world is causally structured and runtime-valid, but still reads as a low-poly/diagnostic placeholder world at the PLAYER camera. Primitive/prototype content still dominates parts of terrain/material/vegetation/built-content presentation.
 
-CODE_EXISTS=PASS
-CODE_EXECUTES=UNKNOWN
-WORLD_METHOD_RUNTIME=UNKNOWN
-PLAYER_CHAIN_RUNTIME_ON_NEW_WORLD=UNKNOWN
-PLAYER_VISIBLE_WORLD_EVIDENCE=NOT_PRODUCED
-FAILED_EDGE=RUNTIME_EXECUTION_INFRASTRUCTURE_BEFORE_GODOT
-
-Do not convert this blocker into either a gameplay failure or a reproduction PASS.
+This failure does NOT invalidate the already-proven topology/passability, anchor, constraint, semantic-surface, vegetation-distribution, camera/environment or player/combat causal methods.
 
 ## Current four-window allocation
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
-WINDOW_00_TASK=Maintain one shared state, repair repository clarity, and route only evidence-backed work.
+WINDOW_00_TASK=Maintain one shared state, branch hygiene, evidence gates and final transfer authority.
 
-WINDOW_01_STATUS=HOLD
-WINDOW_01_TASK=Stage-4 world causal decomposition is complete; do not extend theory unless a later audit finds a specific evidence gap.
+WINDOW_01_STATUS=HOLD_STAGE4_COMPLETE
+WINDOW_01_TASK=Do not extend theory unless a later audit identifies a specific missing evidence edge.
 
-WINDOW_02_STATUS=ACTIVE_RUNTIME_GATE
-WINDOW_02_TASK=Execute the existing Sprint01WorldReproduction in fresh Godot 4.7.1 with the exact sanctioned asset bytes and produce fresh logs/screenshots/video. Do not redesign the proven causal semantics merely to bypass the runtime gate.
+WINDOW_02_STATUS=ACTIVE_PLAYER_WORLD_DELIVERY_FIX
+WINDOW_02_TASK=Preserve the proven causal/world method and repair only the failed PLAYER output boundary: unit readability, label occlusion, and primitive/placeholder world presentation. Then rerun fresh Godot 4.7.1 evidence.
 
-WINDOW_03_STATUS=HOLD_PENDING_RUNTIME_EVIDENCE
-WINDOW_03_TASK=When fresh world-reproduction runtime evidence exists, independently audit method execution, player-visible world quality, exact assets, and the preserved player chain.
+WINDOW_03_STATUS=HOLD_PENDING_REPAIRED_RUNTIME
+WINDOW_03_TASK=After Window 02 produces repaired fresh screenshots/video/logs, independently re-audit PLAYER delivery without reopening already-proven source/runtime semantics unless changed.
+
+## Required Window 02 repair
+
+1. make the exact Abrams visibly coherent/readable at the same battlefield scale as the IFV;
+2. remove/shrink/reposition occluding world labels;
+3. replace/upgrade primitive semantic world content/material/vegetation presentation until the fresh player camera no longer reads as a diagnostic placeholder scene;
+4. preserve current topology/passability, functional-anchor, constraint and combat semantics;
+5. rerun the exact player chain in Godot 4.7.1;
+6. return fresh initial/fire/final screenshots + continuous video + runtime log to Window 03.
 
 ## Next route
 
-NEXT=WINDOW_02_COMPLETE_FRESH_WORLD_REPRODUCTION_RUNTIME
-NEXT_AFTER_RUNTIME=WINDOW_03_INDEPENDENT_WORLD_ARTIFACT_AUDIT
+NEXT=WINDOW_02_PLAYER_WORLD_DELIVERY_FIX
+NEXT_AFTER_FIX=WINDOW_03_REAUDIT_REPAIRED_WORLD_PLAYER_ARTIFACT
 NEXT_AFTER_AUDIT=WINDOW_00_SPRINT01_TRANSFER_OR_REPAIR_DECISION
 NEXT_AFTER_SPRINT_PASS=FIRST_POST_RESTART_FRONTLINE_PRODUCT_SLICE
 
@@ -129,3 +126,4 @@ UNKNOWN_ALLOWED=YES
 VERSION_IDENTITY_REQUIRED=YES
 COUNTEREXAMPLE_SEARCH_REQUIRED_FOR_GENERALIZATION=YES
 PLAYER_LAYER_MUST_BE_REACHED=YES
+RECYCLED_TAG_NOT_CURRENT_AUTHORITY=YES
