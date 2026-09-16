@@ -10,7 +10,7 @@ Start only here:
 
 `README.md -> START_HERE.md -> docs/current/CURRENT_STATE.md -> docs/current/ACTIVE_WORK.md -> docs/current/WINDOW_RECOVERY_INDEX.md`
 
-Do not infer current work from old Issue/PR titles, old window prompts, archived branches or historical screenshots.
+Do not infer current work from old Issue/PR titles, recycle tags, reference branches or historical screenshots.
 
 ## 2. Authority layers
 
@@ -22,6 +22,7 @@ Use for:
 - window routing;
 - product-resume permission;
 - restart boundaries;
+- branch/recycle policy;
 - history/current separation.
 
 Key files:
@@ -31,6 +32,7 @@ Key files:
 - `docs/current/WINDOW_RECOVERY_INDEX.md`
 - `docs/current/RESTART_DECISION.md`
 - `docs/current/DECISION_LOG.md`
+- `docs/ops/BRANCH_RECYCLE_BIN.md`
 
 ### B. CURRENT SPRINT EXECUTION AUTHORITY — learning branch
 
@@ -42,7 +44,7 @@ Use for:
 - Sprint 01 learning artifacts;
 - Window 03 audits;
 - isolated reproduction scenes/scripts;
-- runtime blockers and evidence;
+- runtime evidence;
 - learning-only workflows.
 
 Important paths:
@@ -53,115 +55,132 @@ Important paths:
 - `artifacts/learning/sprint01/`
 - `.github/workflows/learning-sprint01-*.yml`
 
-### C. REUSABLE TECHNICAL FOUNDATION
+### C. REFERENCE / HOLD BRANCHES
 
-Can be reused after evidence support but does not define product direction:
-- Godot 4.7.1 project/runtime tooling;
-- Formation / Task / Navigation / Combat reusable code;
-- legal asset import/provenance tooling;
-- screenshot/video/CI tooling;
-- audited combat assets;
-- preserved environment/content assets where provenance is valid.
+These may contain unique assets/evidence/tooling but have no current task authority:
 
-### D. HISTORICAL / FAILURE EVIDENCE
+- `archive/legacy-unused`
+- `dev/godot-golden-scene-v1`
+- `dev/visual-production-reset`
+- `dev/river-town-local-high-fidelity-v1`
+- `dev/reference-region-v1`
+- `dev/prototype-b-representative-battle-content-v1`
+- `discovery/prototype-b-task-reserve-v1`
+- `agent/design-sandbox-01`
+- `dev/asset-pipeline-v1`
+- `dev/asset-pipeline-v2-multi-source`
+- `dev/industrial-repair-workshop-v1`
+- `ci/godot-toolchain-unified-cache-sha256-lock`
 
-Examples:
-- Battle01;
-- Prototype A/B;
-- Golden Scene V1;
-- River Town;
-- Reference Region;
-- local-high-fidelity visual branches;
-- old three-lane battlefield attempts;
-- superseded window/governance documents.
+They must be consolidated/reviewed before later recycling.
 
-These may explain what was tried or supply reusable assets/tools. They do not automatically become the next product baseline.
+### D. RECYCLE BIN — TAGS, NOT BRANCHES
+
+First-pass branch cleanup on 2026-09-16 reduced branch count:
+
+`37 -> 14`
+
+23 reviewed stale/merged/superseded/CI-only branch heads were preserved as exact tags:
+
+`recycle/2026-09-16/<original-branch-name>`
+
+Manifest:
+`docs/ops/BRANCH_RECYCLE_MANIFEST_2026-09-16.md`
+
+Recycle policy:
+`docs/ops/BRANCH_RECYCLE_BIN.md`
+
+Recycle tags preserve recoverability without polluting the Branch list. They are historical pointers, not current authority.
 
 ## 3. Current Sprint 01 navigation
 
-Current learning question:
-prove a transferable RTS production chain from content/world through actual PLAYER result.
+Current gate:
 
-Completed checkpoints:
+`SPRINT01_PLAYER_WORLD_DELIVERY_FIX`
 
-1. evidence/reference chain;
-2. first player causal-chain reproduction;
-3. independent audit;
-4. Stage 4 world causal decomposition;
-5. independent world-method audit;
-6. current world-reproduction implementation.
+The new world reproduction has now run successfully in fresh Godot 4.7.1 and Window 03 independently audited the artifact.
 
-Current unresolved checkpoint:
+Accepted:
+- runtime execution;
+- exact vehicle assets;
+- world-method causal execution;
+- player causal chain;
+- capture state alignment.
 
-`fresh Godot 4.7.1 world-reproduction runtime + PLAYER-visible capture`
+Current failures:
+- player unit readability;
+- world-label occlusion;
+- real-enough world delivery;
+- player world readability.
 
-Canonical current blocker:
-`docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
+Current audit:
+`docs/audit/AUDIT_SPRINT01_WINDOW02_WORLD_REPRODUCTION_V1.md`
+
+Current route:
+`02 player-world delivery repair -> fresh runtime -> 03 re-audit -> 00 transfer/repair decision`
 
 ## 4. Current window locations
 
 ### 00 CONTROL
 
-Main control files only. 00 is the only window that resolves control-state conflicts and product-transfer authority.
+Main control files only. 00 resolves control-state conflicts, branch authority and product-transfer authority.
 
 ### 01 EVIDENCE
 
-Primary current/finished artifacts:
+Current role: HOLD, Stage 4 complete.
+
+Primary artifacts:
 - `docs/learning/sprint01/EVIDENCE_REGISTER.md`
 - `docs/learning/sprint01/END_TO_END_CHAIN.md`
 - `docs/learning/sprint01/WORLD_CAUSAL_DECOMPOSITION.md`
 
 ### 02 REPRODUCTION
 
-Current implementation:
+Current role: ACTIVE_PLAYER_WORLD_DELIVERY_FIX.
+
+Primary implementation/evidence:
 - `scenes/learning/sprint01/Sprint01WorldReproduction.tscn`
 - `scripts/learning/sprint01/sprint01_world_reproduction.gd`
 - `docs/learning/sprint01/WORLD_REPRODUCTION_IMPLEMENTATION.md`
-- `.github/workflows/learning-sprint01-world-reproduction.yml`
-- `docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
+- `docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md`
+- `artifacts/learning/sprint01/world_reproduction/`
 
 ### 03 AUDIT
 
-Primary audit chain:
-- `docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md`
-- `docs/audit/AUDIT_SPRINT01_REPAIR_AND_ASSET_GATE_V1.md`
-- `docs/audit/AUDIT_SPRINT01_WINDOW02_REPRODUCTION_V1.md`
-- fresh runtime/PLAYER audit for first reproduction;
-- `docs/audit/AUDIT_SPRINT01_WORLD_CAUSAL_DECOMPOSITION_V1.md`
+Current role: HOLD_PENDING_REPAIRED_RUNTIME.
 
-Do not infer an audit PASS from the existence of an audit file; read its formal verdict fields.
+Primary latest audit:
+- `docs/audit/AUDIT_SPRINT01_WINDOW02_WORLD_REPRODUCTION_V1.md`
+
+Do not infer an audit PASS from file existence; read formal verdict fields.
 
 ## 5. Branch map
 
-### Current
-- `main` — control state and repository entrypoint.
-- `learning/sprint01-end-to-end-rts-production` — active Sprint 01 execution branch.
+### ACTIVE — only 2
+- `main`
+- `learning/sprint01-end-to-end-rts-production`
 
-### Preserve as evidence/tool pools
-- `dev/godot-golden-scene-v1`
-- `dev/visual-production-reset`
-- `dev/river-town-local-high-fidelity-v1`
-- `dev/reference-region-v1`
-- `dev/prototype-b-representative-battle-content-v1`
-- `archive/legacy-unused`
+### REFERENCE / HOLD — 12
+See Section 2C. These are not active project lines.
 
-KEEP does not mean CURRENT.
+### RECYCLED — 23
+No longer appear as branches. Recover from `recycle/2026-09-16/...` tags if ever needed.
 
-### Cleanup candidates
-
-Continue tracking safe deletions in Issue #37. Do not delete branches with unique assets, evidence or unresolved provenance simply to simplify the branch list.
+Future temporary branches should be merged/consolidated and recycled promptly after task closure instead of accumulating indefinitely.
 
 ## 6. Anti-confusion conventions
 
 - `docs/current/` = current control authority, not detailed build evidence.
-- `docs/learning/` = learning/evidence and reproduction contracts.
+- `docs/learning/` = learning/evidence and reproduction contracts/results.
 - `docs/audit/` = independent review artifacts.
 - `scenes/learning/`, `scripts/learning/`, `artifacts/learning/` = isolated experiments only.
+- recycle tags = recoverable history only.
+- reference branches = evidence/tool pools only.
 - production directories are not resumed until Window 00 authorizes transfer after Sprint PASS.
 
 ## 7. Handoff completeness rule
 
-A material task is considered repository-visible only when it has:
+A material task is repository-visible only when it has:
 
 - `COMMIT_SHA`;
 - `ARTIFACT_PATH`;
