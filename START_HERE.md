@@ -3,46 +3,57 @@
 STATUS=CURRENT_ENTRYPOINT
 PROJECT=FRONTLINE《战线》
 
-如果你刚打开这个仓库，不要从历史 Issue、旧 PR、窗口编号或旧 Battle01 文档开始。
+如果你刚打开仓库、聊天窗口断档、上下文超限，或者怀疑“库里信息丢了”，不要从旧 Issue、旧 PR、旧 Battle01 文档或聊天记忆自行猜状态。
 
-## 当前只读顺序
+## 强制恢复顺序
 
 1. `docs/current/CURRENT_STATE.md`
-2. `docs/FRONTLINE_LEARNING_SYSTEM_V1.md`
-3. `docs/FRONTLINE_PROJECT_SYSTEM_V3.md`
-4. `docs/GPT_COLLABORATION_SYSTEM_V4.md`
-5. `docs/current/ACTIVE_WORK.md`
+2. `docs/current/ACTIVE_WORK.md`
+3. `docs/current/WINDOW_RECOVERY_INDEX.md`
+4. `docs/current/RESTART_DECISION.md`
+5. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
 
-以上五项之后，才按当前任务读取代码、资产和历史证据。
+然后：
 
-## 当前原则
+6. 刷新当前 branch HEAD；
+7. 读取 `WINDOW_RECOVERY_INDEX.md` 列出的 Sprint 关键产物；
+8. 之后才读取代码、资产、历史分支或旧 Issue。
 
-- 窗口编号只是聊天入口，不代表能力、专业性或审核独立性。
-- 模型总结、通用理论、用户临时假设都不是已验证事实。
-- 重要结论必须标记为 `OBSERVED / REPRODUCED / INFERRED / HYPOTHESIS / UNKNOWN / REJECTED`。
-- 优先研究真实成品、真实工程、真实开发资料和可复现制作链。
-- 没有复现或直接验证，不允许声称“已经学会怎么做”。
-- 设计必须同时说明制造路径；纯生成图只能是视觉提案。
-- Codex 负责执行已定义、可验证的施工；不得用自由发挥替代缺失的生产知识。
-- CI、元素数量、代码存在都不能替代实际游戏结果。
+## 控制面 / 执行面
 
-## 历史状态
+`main` = 控制面：阶段、任务、路由、产品恢复权威。
 
-旧 Battle01、Prototype B、Golden Scene V1、River Town 视觉尝试均保留为：
+`learning/sprint01-end-to-end-rts-production` = Sprint 01 执行面：证据、审核、复现、runtime blocker/evidence。
 
-- 技术资产；
-- 失败证据；
-- 可复用代码/工具/资产来源；
-- 不再自动拥有产品设计权威。
+这个文件在 learning 分支保留镜像，目的是防止窗口 checkout 到活动分支后又读到旧项目状态。
 
-不要为了“历史上已经做了很多”而继续错误路线，也不要为了重启而删除仍可复用的技术资产。
+若两边冲突：
+- 实现/运行事实看 active branch；
+- 路由/产品权威看 main / Window 00；
+- 任何窗口不得自行把 branch 结果升级成产品恢复。
 
-## 现在要做什么
+## 当前四窗口
 
-当前不是继续盲修 Golden Scene，也不是继续发明玩法系统。
+- `00`：ACTIVE_CONTROL
+- `01`：HOLD_STAGE4_COMPLETE
+- `02`：ACTIVE_RUNTIME_GATE
+- `03`：HOLD_PENDING_FRESH_RUNTIME
 
-第一阶段目标是建立一个经过证据和复现的真实生产链：
+## 当前唯一下一步
 
-`成熟成品观察 -> 真实制作/源码证据 -> 因果拆解 -> 小范围复现 -> 实物对比 -> 再迁移到 FRONTLINE`
+运行已经构建好的：
 
-具体当前任务只看 `docs/current/ACTIVE_WORK.md`。
+`res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn`
+
+要求 fresh Godot 4.7.1 + exact sanctioned assets + real input + fresh logs/screenshots/video。
+
+当前 hosted attempt 在 runner 分配前失败，不是 gameplay PASS/FAIL。
+
+具体看：
+- `docs/current/CURRENT_STATE.md`
+- `docs/current/ACTIVE_WORK.md`
+- `docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
+
+## 历史边界
+
+Battle01、Prototype B、Golden Scene、River Town、Reference Region、local-high-fidelity branches 都只是历史证据/工具池，不自动拥有当前产品方向权威。
