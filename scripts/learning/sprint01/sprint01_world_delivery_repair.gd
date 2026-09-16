@@ -32,16 +32,8 @@ func _ready() -> void:
 
 func _preflight_delivery_assets() -> bool:
 	var required: Array[String] = [
-		FIR_PATH,
-		SHRUB_PATH,
-		ROCK_A_PATH,
-		ROCK_B_PATH,
-		HOUSE_INTACT_PATH,
-		HOUSE_DAMAGED_PATH,
-		GRASS_TEX,
-		MUD_TEX,
-		GRAVEL_TEX,
-		ASPHALT_TEX,
+		FIR_PATH, SHRUB_PATH, ROCK_A_PATH, ROCK_B_PATH, HOUSE_INTACT_PATH, HOUSE_DAMAGED_PATH,
+		GRASS_TEX, MUD_TEX, GRAVEL_TEX, ASPHALT_TEX,
 	]
 	for path: String in required:
 		if not ResourceLoader.exists(path):
@@ -54,6 +46,7 @@ func _preflight_delivery_assets() -> bool:
 func _build_environment() -> void:
 	super._build_environment()
 	_hide_diagnostic_placeholder_meshes(self)
+	_add_delivery_ground_and_roads()
 	_add_real_world_delivery_assets()
 	print("REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=PROVENANCE_RECORDED_TEXTURES_AND_GLBS")
 
@@ -100,7 +93,6 @@ func _build_units() -> void:
 
 
 func _add_world_label(_position_value: Vector3, _text_value: String, _color: Color) -> void:
-	# Diagnostic 3D labels were the audit's largest occlusion source. Runtime HUD remains.
 	pass
 
 
@@ -116,6 +108,26 @@ func _hide_diagnostic_placeholder_meshes(node: Node) -> void:
 		_hide_diagnostic_placeholder_meshes(child)
 
 
+func _add_delivery_ground_and_roads() -> void:
+	_add_delivery_box("DeliveryGround", Vector3(0.0, -0.16, 0.0), Vector3(72.0, 0.24, 48.0), world_materials["meadow"] as Material)
+	_add_delivery_box("DeliveryMainShoulder", Vector3(-1.0, -0.01, MAIN_ROAD_Z), Vector3(64.0, 0.08, (MAIN_ROAD_HALF_WIDTH + 1.15) * 2.0), world_materials["shoulder"] as Material)
+	_add_delivery_box("DeliveryMainRoad", Vector3(-1.0, 0.035, MAIN_ROAD_Z), Vector3(64.0, 0.08, MAIN_ROAD_HALF_WIDTH * 2.0), world_materials["road"] as Material)
+	_add_delivery_box("DeliveryBranchShoulder", Vector3(7.1, -0.005, -9.5), Vector3((BRANCH_ROAD_HALF_WIDTH + 0.85) * 2.0, 0.08, 16.0), world_materials["shoulder"] as Material)
+	_add_delivery_box("DeliveryBranchRoad", Vector3(7.1, 0.04, -9.5), Vector3(BRANCH_ROAD_HALF_WIDTH * 2.0, 0.08, 16.0), world_materials["road"] as Material)
+	print("DELIVERY_SURFACE_OVERLAY=PASS|TOPOLOGY_SOURCE=PARENT_WORLD_METHOD|VISUAL_ONLY=YES")
+
+
+func _add_delivery_box(node_name: String, center: Vector3, size: Vector3, material: Material) -> void:
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.name = node_name
+	var box := BoxMesh.new()
+	box.size = size
+	mesh_instance.mesh = box
+	mesh_instance.position = center
+	mesh_instance.material_override = material
+	add_child(mesh_instance)
+
+
 func _add_real_world_delivery_assets() -> void:
 	var fir_points: Array[Vector3] = [
 		Vector3(-18.0, 0.0, -15.0), Vector3(-13.5, 0.0, -17.0), Vector3(-9.5, 0.0, -13.5),
@@ -123,7 +135,7 @@ func _add_real_world_delivery_assets() -> void:
 		Vector3(17.0, 0.0, 13.0), Vector3(22.0, 0.0, 16.0), Vector3(26.0, 0.0, 11.0),
 	]
 	for i: int in range(fir_points.size()):
-		_instance_delivery_scene(FIR_PATH, fir_points[i], 1.20 + float(i % 3) * 0.12, float((i * 47) % 360), "DeliveryFir_%02d" % i)
+		_instance_delivery_scene(FIR_PATH, fir_points[i], 0.92 + float(i % 3) * 0.09, float((i * 47) % 360), "DeliveryFir_%02d" % i)
 
 	var shrub_points: Array[Vector3] = [
 		Vector3(-22.0, 0.0, 8.0), Vector3(-15.0, 0.0, 10.5), Vector3(-8.0, 0.0, 9.5),
@@ -131,7 +143,7 @@ func _add_real_world_delivery_assets() -> void:
 		Vector3(-24.0, 0.0, -11.0), Vector3(-7.0, 0.0, -12.0), Vector3(20.0, 0.0, -13.5),
 	]
 	for i: int in range(shrub_points.size()):
-		_instance_delivery_scene(SHRUB_PATH, shrub_points[i], 1.25 + float(i % 2) * 0.18, float((i * 71) % 360), "DeliveryShrub_%02d" % i)
+		_instance_delivery_scene(SHRUB_PATH, shrub_points[i], 1.05 + float(i % 2) * 0.12, float((i * 71) % 360), "DeliveryShrub_%02d" % i)
 
 	var rock_points: Array[Vector3] = [
 		Vector3(-27.0, 0.0, 17.0), Vector3(-20.0, 0.0, 13.5), Vector3(-2.0, 0.0, 18.0),
@@ -139,10 +151,10 @@ func _add_real_world_delivery_assets() -> void:
 	]
 	for i: int in range(rock_points.size()):
 		var rock_path := ROCK_A_PATH if i % 2 == 0 else ROCK_B_PATH
-		_instance_delivery_scene(rock_path, rock_points[i], 1.15 + float(i % 3) * 0.16, float((i * 61) % 360), "DeliveryRock_%02d" % i)
+		_instance_delivery_scene(rock_path, rock_points[i], 0.48 + float(i % 3) * 0.07, float((i * 61) % 360), "DeliveryRock_%02d" % i)
 
-	_instance_delivery_scene(HOUSE_INTACT_PATH, Vector3(20.5, 0.0, 7.5), 1.35, 198.0, "DeliveryHouse_Intact")
-	_instance_delivery_scene(HOUSE_DAMAGED_PATH, Vector3(22.5, 0.0, -10.5), 1.25, 162.0, "DeliveryHouse_Damaged")
+	_instance_delivery_scene(HOUSE_INTACT_PATH, Vector3(27.0, 0.0, 8.5), 0.42, 198.0, "DeliveryHouse_Intact")
+	_instance_delivery_scene(HOUSE_DAMAGED_PATH, Vector3(27.0, 0.0, -12.5), 0.38, 162.0, "DeliveryHouse_Damaged")
 	print("DELIVERY_BUILT_CONTENT=PASS|HOUSES=2|REAL_VEGETATION=%d|REAL_ROCKS=%d" % [fir_points.size() + shrub_points.size(), rock_points.size()])
 
 
