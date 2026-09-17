@@ -3,12 +3,12 @@
 TASK_ID=BUILD_SPRINT01_INDEPENDENT_COMPLETE_REPRODUCTION_V1
 REPRODUCTION_STATUS=REPRODUCED
 SCENE=res://scenes/learning/sprint01/Sprint01Reproduction.tscn
-COMMIT=4acec6965a585bdc82a9ce025b631b5acc20606b
+COMMIT=b0fe6d8b1de747606138a9ce1b28b3541b8c464a
 GODOT_VERSION=4.7.1.stable.official.a13da4feb
 
 PLAYER_INPUT=PASS — external X11 keyboard events were injected into the live Godot window with xdotool; runtime received KEY_1 and KEY_M in _unhandled_input.
 COMMAND_ROUTE=PASS — KEY_M mutated command state from WAITING_COMMAND to MOVING with COMMAND=ATTACK_MOVE.
-MOVEMENT=PASS — Abrams position changed from the logged start position and terminated at contact; final logged position: (3.873,0.180,-2.000).
+MOVEMENT=PASS — Abrams position changed from the logged start position and terminated at contact; final logged position: (3.582,0.180,-2.000).
 CONTACT=PASS — CONTACT=PASS.
 COMBAT=PASS — authoritative ammo and target HP changed on each fire event; shots=4; final target HP=0.
 VISIBLE_FEEDBACK=PASS — every logical shot created same-event 3D muzzle, tracer and impact nodes; destruction additionally changed the target to wreck material/tilt/smoke and a world label.
