@@ -2,229 +2,91 @@
 
 STATUS=ACTIVE_RECOVERY_INDEX
 PROJECT=FRONTLINE
-PURPOSE=Recover any 00/01/02/03 window from GitHub without relying on chat memory.
+CONTROL_AUTHORITY=main
+ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 
-## 1. Recovery rule
+## Recovery rule
 
-Every window recovery starts from `main` and then follows the active branch.
-
-Authority split:
-
-- `main` = control/routing/product-authority state.
-- `learning/sprint01-end-to-end-rts-production` = Sprint 01 evidence, audits, implementation and runtime evidence.
-
-If they diverge:
-
-1. implementation/runtime facts are read from the active branch;
-2. routing/product-resume authority is read from `main` / Window 00;
-3. a window must not silently turn its own branch result into project authority.
-
-Before answering any status question, always refresh both branch HEADs.
-
-## 2. Mandatory main files
-
-Read in this order:
-
+Any recovered window must read, in order:
 1. `START_HERE.md`
 2. `docs/current/CURRENT_STATE.md`
 3. `docs/current/ACTIVE_WORK.md`
-4. `docs/current/RESTART_DECISION.md`
-5. `docs/ops/REPOSITORY_MAP_V3.md`
-6. `docs/ops/BRANCH_RECYCLE_BIN.md`
-7. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
-8. `docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md`
+4. refresh both main and active-branch HEADs
+5. inspect the current task/handoff artifacts below.
 
-## 3. Active Sprint branch
+Implementation/runtime facts belong to the active branch. Routing/product-resume authority belongs to main / Window 00.
 
-BRANCH=`learning/sprint01-end-to-end-rts-production`
-ACTIVE_ISSUE=`#39`
-LATEST_KNOWN_CHECKPOINT=`6dfe56da2c87b62fcb581c06b728c965d4e47bac`
+## Current checkpoint
 
-Meaning at this checkpoint:
-- fresh hosted Godot 4.7.1 world reproduction runtime exists;
-- world-method causal execution = PASS;
-- preserved player causal chain = PASS;
-- exact combat vehicle binding = PASS;
-- Window 03 rejected final PLAYER delivery because unit/world readability and real-enough world presentation still fail.
+CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
+ACTIVE_ISSUE=#39
 
-Always refresh branch HEAD before relying on this checkpoint.
+Latest 02 source:
+`b0fe6d8b1de747606138a9ce1b28b3541b8c464a`
 
-## 4. Sprint 01 checkpoint chain
+Latest 02 handoff:
+`docs/learning/sprint01/HANDOFF_02_REAL_ENOUGH_WORLD_DELIVERY_TO_03_V1.md`
 
-### A. Original player causal-chain reproduction
+Latest 03 task:
+`docs/audit/TASK_03_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT_V1.md`
 
-Implementation:
-`399b181fdf9b66bbd17ecded617ef7a124be8231`
+Fresh Actions evidence:
+- run `35185311167`
+- job `105086008221`
+- artifact `10481469643`
+- SHA256 `a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f`
 
-Fresh runtime later proved:
-`PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT -> COMBAT -> VISIBLE FEEDBACK -> OUTCOME`
+Important: the workflow is red only because its final git evidence push lost a non-fast-forward race. Godot import/runtime, external input, world/player assertions, screenshots/video and artifact upload all passed.
 
-Window 03 audit:
-`5c136ea93657cddf5db1111a680782d7b62b0e4d`
+## Current windows
 
-Result:
-- causal runtime chain = PASS;
-- exact combat assets = PASS;
-- overall PLAYER delivery = FAIL because unit readability and primitive environment delivery failed.
+`00 = ACTIVE_CONTROL`
+`01 = HOLD_STAGE4_COMPLETE`
+`02 = HOLD_RUNTIME_CAPTURE_COMPLETE`
+`03 = ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT`
 
-### B. Stage 4 world causal decomposition
+## 03 decision boundary
 
-Artifact:
-`docs/learning/sprint01/WORLD_CAUSAL_DECOMPOSITION.md`
+03 inspects actual fresh media and decides:
+- `REAL_ENOUGH_WORLD_DELIVERY`
+- `CAPTURE_STATE_ALIGNMENT`
 
-Commit:
+Previously passed causal/readability facts remain frozen unless regression is found.
+
+If PASS:
+`03 -> 00 Sprint01 final transfer decision`
+
+If FAIL:
+`03 -> 02 concrete remaining player-world defect only`
+
+## Historical checkpoints
+
+Stage 4 world decomposition:
 `dcd891d7947e0ec6b97257681f258ecf6432c037`
 
-Boundary:
-- world model = branching constraint graph;
-- candidates W-C1..W-C7 identified;
-- exact R28 identity remains UNKNOWN;
-- no product transfer self-approval.
-
-### C. Independent world-method audit
-
-Artifact:
-`docs/audit/AUDIT_SPRINT01_WORLD_CAUSAL_DECOMPOSITION_V1.md`
-
-Commit:
+World-method audit:
 `7e6bf5636af83933b6e0b60269f33aafa8a7715f`
 
-Verdict:
-`WINDOW_03_WORLD_METHOD_AUDIT=PASS_WITH_DOWNGRADES`
-`BLOCKING_DEFECTS=0`
-`WINDOW_02_ROUTING=READY_FOR_02_WORLD_REPRODUCTION`
+First world runtime/audit:
+`edf8cede10cea24a6218beb73bcca14ef424f5c7` / `6dfe56da2c87b62fcb581c06b728c965d4e47bac`
 
-### D. World reproduction implementation and runtime
+First PLAYER delivery repair runtime/audit:
+`73224323dea523e43d773b539912a700d286ddec` / `0d49839bf433d88018e81d0762eb0103a1e603e2`
 
-Scene:
-`res://scenes/learning/sprint01/Sprint01WorldReproduction.tscn`
+## Branch/recycle state
 
-Script:
-`res://scripts/learning/sprint01/sprint01_world_reproduction.gd`
-
-Implementation contract:
-`docs/learning/sprint01/WORLD_REPRODUCTION_IMPLEMENTATION.md`
-
-Fresh runtime source commit:
-`edf8cede10cea24a6218beb73bcca14ef424f5c7`
-
-Evidence commit:
-`03a56be1b0abfaf2248f23b4f9766ebd60aec27e`
-
-Runtime result:
-`docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md`
-
-Fresh run:
-`RUN_ID=35090538247`
-`JOB_ID=104775532507`
-`GODOT_VERSION=4.7.1.stable.official.a13da4feb`
-
-Runtime facts accepted by 03:
-- hosted runtime PASS;
-- world method causal execution PASS;
-- world-to-movement causal gate PASS;
-- exact Abrams/IFV asset binding PASS;
-- player input-to-outcome chain PASS;
-- capture state alignment PASS.
-
-### E. Current independent audit
-
-Artifact:
-`docs/audit/AUDIT_SPRINT01_WINDOW02_WORLD_REPRODUCTION_V1.md`
-
-Commit:
-`6dfe56da2c87b62fcb581c06b728c965d4e47bac`
-
-Verdict:
-
-`WINDOW_03_WORLD_REPRODUCTION_AUDIT=FAIL_PLAYER_DELIVERY`
-
-Passed:
-- `RUNTIME_EXECUTION_VERDICT=PASS`
-- `EXACT_VEHICLE_ASSET_BINDING=PASS`
-- `WORLD_METHOD_SOURCE_PATH=PASS`
-- `WORLD_METHOD_CAUSAL_EXECUTION=PASS`
-- `PLAYER_CAUSAL_CHAIN_RUNTIME=PASS`
-- `CAPTURE_STATE_ALIGNMENT=PASS`
-
-Failed:
-- `PLAYER_UNIT_READABILITY=FAIL`
-- `WORLD_LABEL_OCCLUSION=FAIL`
-- `REAL_ENOUGH_WORLD_DELIVERY=FAIL`
-- `PLAYER_WORLD_READABILITY=FAIL`
-
-Current route:
-`RETURN_TO_02_FOR_PLAYER_WORLD_DELIVERY_FIX`
-
-## 5. Current window recovery targets
-
-### Window 00
-
-Role:
-`ACTIVE_CONTROL`
-
-Read main, refresh active branch, preserve one active task, maintain branch/recycle clarity.
-
-### Window 01
-
-Role:
-`HOLD_STAGE4_COMPLETE`
-
-Do not restart world-method research unless a later audit identifies a specific missing evidence edge.
-
-### Window 02
-
-Role:
-`ACTIVE_PLAYER_WORLD_DELIVERY_FIX`
-
-Resume from the existing running world reproduction. Do not rebuild from scratch.
-
-Repair only:
-1. exact Abrams player readability;
-2. occluding world labels;
-3. primitive/placeholder terrain/material/vegetation/built-content presentation.
-
-Preserve already-proven topology/passability, anchor/constraint and player/combat semantics.
-
-Then rerun fresh Godot 4.7.1 evidence.
-
-### Window 03
-
-Role:
-`HOLD_PENDING_REPAIRED_RUNTIME`
-
-When repaired fresh screenshots/video/logs exist, independently re-audit the PLAYER delivery boundary.
-
-## 6. Branch recovery / recycle map
-
-Current branch count after first cleanup:
-`14`
-
-ACTIVE branches:
+Active branches only:
 - `main`
 - `learning/sprint01-end-to-end-rts-production`
 
-Reference/Hold branches are listed in:
-`docs/ops/REPOSITORY_MAP_V3.md`
+23 reviewed stale branch heads are preserved under `recycle/2026-09-16/...` tags. Reference/Hold branches are not current authority.
 
-23 stale reviewed branches were removed from the Branch list after preserving their exact HEADs as:
+## Anti-loss handoff rule
 
-`recycle/2026-09-16/<original-branch-name>`
+Every material completion must leave:
+- commit SHA or immutable Actions run/artifact identity;
+- named artifact path/reference;
+- formal status/verdict;
+- explicit NEXT_ROUTE or blocker.
 
-Manifest:
-`docs/ops/BRANCH_RECYCLE_MANIFEST_2026-09-16.md`
-
-Do not treat recycle tags as current authority.
-
-## 7. Anti-loss rule for future handoffs
-
-Every material window completion must leave all four:
-
-1. commit SHA;
-2. named artifact path;
-3. formal verdict/status fields;
-4. explicit `NEXT_ROUTE` or blocker.
-
-Window 00 then mirrors the resulting phase into `CURRENT_STATE.md` and `ACTIVE_WORK.md`.
-
-A chat statement such as “完成了” without these repository anchors is not enough to change project state.
+A chat statement alone does not change project state.
