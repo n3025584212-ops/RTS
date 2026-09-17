@@ -2,9 +2,9 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V34
+STATE_VERSION=V35
 SOURCE_OF_TRUTH=THIS_FILE_FOR_CONTROL_AND_ROUTING
-CONTROL_SYNC_DATE=2026-09-16
+CONTROL_SYNC_DATE=2026-09-17
 
 START_HERE=START_HERE.md
 ACTIVE_WORK=docs/current/ACTIVE_WORK.md
@@ -24,7 +24,7 @@ MAIN_BRANCH=main
 MAIN_ROLE=CONTROL_STATE_AND_ROUTING
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 ACTIVE_BRANCH_ROLE=SPRINT01_EVIDENCE_BUILD_RUNTIME_ARTIFACTS
-LATEST_KNOWN_ACTIVE_BRANCH_HEAD=ca3f5b125b0788e7da952e3fe57586d6ce15daa6
+LATEST_KNOWN_ACTIVE_BRANCH_HEAD=cf14bcf9dc747a62e5f162133c480c59ace4a7d4
 
 BRANCH_COUNT_AFTER_RECYCLE=14
 RECYCLED_BRANCH_COUNT=23
@@ -42,75 +42,84 @@ If control and active-branch facts appear different:
 
 ACTIVE_ISSUE=#39
 ACTIVE_SPRINT=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
-CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_FIX
-ACTIVE_TASK=REPAIR_SPRINT01_PLAYER_WORLD_DELIVERY_V1
-ACTIVE_TASK_ARTIFACT=docs/learning/sprint01/TASK_02_PLAYER_WORLD_DELIVERY_FIX_V1.md
+CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_REAUDIT
+ACTIVE_TASK=REAUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_V1
+ACTIVE_TASK_ARTIFACT=docs/audit/TASK_03_PLAYER_WORLD_DELIVERY_REAUDIT_V1.md
 PRODUCT_PRODUCTION_RESUME=NO
 SPRINT_PASS=NO
 
-The restart remains active. Old Battle01, Prototype B, Golden Scene, River Town, Reference Region and local-high-fidelity work remain historical evidence/tool pools, not current product-direction authority.
-
-## Passed evidence and execution
+## Preserved proven chain
 
 PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
 CHAIN=`PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT -> COMBAT -> VISIBLE FEEDBACK -> OUTCOME`
-
 WORLD_CAUSAL_DECOMPOSITION=PASS_FOR_REPRODUCTION_INPUT
-WORLD_CAUSAL_DECOMPOSITION_COMMIT=dcd891d7947e0ec6b97257681f258ecf6432c037
 WORLD_METHOD_AUDIT=PASS_WITH_DOWNGRADES
-WORLD_METHOD_AUDIT_COMMIT=7e6bf5636af83933b6e0b60269f33aafa8a7715f
-
-WORLD_REPRODUCTION_RUNTIME_SOURCE_COMMIT=edf8cede10cea24a6218beb73bcca14ef424f5c7
-WORLD_REPRODUCTION_EVIDENCE_COMMIT=03a56be1b0abfaf2248f23b4f9766ebd60aec27e
-WORLD_REPRODUCTION_AUDIT_COMMIT=6dfe56da2c87b62fcb581c06b728c965d4e47bac
-WORLD_REPRODUCTION_AUDIT=FAIL_PLAYER_DELIVERY
-
-RUNTIME_EXECUTION_VERDICT=PASS
-GODOT_4_7_1_RUNTIME=PASS
-EXACT_VEHICLE_ASSET_BINDING=PASS
-WORLD_METHOD_SOURCE_PATH=PASS
 WORLD_METHOD_CAUSAL_EXECUTION=PASS
-PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
-CAPTURE_STATE_ALIGNMENT=PASS
+EXACT_VEHICLE_ASSET_BINDING=PASS
 
-## Current failure boundary
+These facts are not reopened unless the repair changed or broke them.
 
-PLAYER_UNIT_READABILITY=FAIL
-WORLD_LABEL_OCCLUSION=FAIL
-REAL_ENOUGH_WORLD_DELIVERY=FAIL
-PLAYER_WORLD_READABILITY=FAIL
+## Previous PLAYER failure
 
-The current world is causally structured and runtime-valid, but still reads as a low-poly/diagnostic placeholder world at the PLAYER camera. This failure does not invalidate the already-proven topology/passability, anchor, constraint, semantic-surface, vegetation-distribution, camera/environment or player/combat causal methods.
+PREVIOUS_WORLD_REPRODUCTION_AUDIT_COMMIT=6dfe56da2c87b62fcb581c06b728c965d4e47bac
+PREVIOUS_AUDIT=FAIL_PLAYER_DELIVERY
+PREVIOUS_PLAYER_UNIT_READABILITY=FAIL
+PREVIOUS_WORLD_LABEL_OCCLUSION=FAIL
+PREVIOUS_REAL_ENOUGH_WORLD_DELIVERY=FAIL
+PREVIOUS_PLAYER_WORLD_READABILITY=FAIL
+
+## Window 02 repaired runtime
+
+PLAYER_WORLD_DELIVERY_REPAIR_TASK=REPAIR_SPRINT01_PLAYER_WORLD_DELIVERY_V1
+REPAIRED_RUNTIME_SOURCE_COMMIT=73224323dea523e43d773b539912a700d286ddec
+REPAIRED_EVIDENCE_COMMIT=79e7b738816c1ba476f6b4a05505e97ab1b73491
+RESULT_FILE=docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md
+
+CODE_EXECUTES=PASS
+WORLD_METHOD_RUNTIME=PASS
+PLAYER_CHAIN_RUNTIME=PASS
+WORLD_AND_PLAYER_CHAIN_RUNTIME=PASS
+PLAYER_VISIBLE_EVIDENCE=CAPTURED_NOT_SELF_ACCEPTED
+
+Repair runtime reports:
+- `PLAYER_WORLD_DELIVERY_ASSET_PREFLIGHT=PASS|COUNT=10`
+- `DELIVERY_BUILT_CONTENT=PASS|HOUSES=2|REAL_VEGETATION=18|REAL_ROCKS=6`
+- `REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=PROVENANCE_RECORDED_TEXTURES_AND_GLBS`
+- `PLAYER_UNIT_READABILITY_REPAIR=EXACT_ABRAMS|TARGET_SIZE=54.0|IFV_TARGET_SIZE=6.7`
+- `PLAYER_WORLD_DELIVERY_REPAIR=READY|REAL_ASSET_INSTANCES=26|HIDDEN_PLACEHOLDERS=223`
+
+These are runtime/implementation facts only. They do not prove PLAYER acceptance.
+
+Fresh evidence:
+- `artifacts/learning/sprint01/world_reproduction/world_initial.png`
+- `artifacts/learning/sprint01/world_reproduction/world_fire_feedback.png`
+- `artifacts/learning/sprint01/world_reproduction/world_final.png`
+- `artifacts/learning/sprint01/world_reproduction/world_reproduction.mp4`
+- `artifacts/learning/sprint01/world_reproduction/runtime.log`
+- `artifacts/learning/sprint01/world_reproduction/world_chain_extract.txt`
 
 ## Current four-window allocation
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
-WINDOW_00_TASK=Maintain one shared state, branch hygiene, evidence gates and final transfer authority.
-
 WINDOW_01_STATUS=HOLD_STAGE4_COMPLETE
-WINDOW_01_TASK=Do not extend theory unless a later audit identifies a specific missing evidence edge.
+WINDOW_02_STATUS=HOLD_REPAIR_RUNTIME_COMPLETE
+WINDOW_03_STATUS=ACTIVE_PLAYER_WORLD_DELIVERY_REAUDIT
 
-WINDOW_02_STATUS=ACTIVE_PLAYER_WORLD_DELIVERY_FIX
-WINDOW_02_TASK_ARTIFACT=docs/learning/sprint01/TASK_02_PLAYER_WORLD_DELIVERY_FIX_V1.md
-WINDOW_02_TASK=Preserve the proven causal/world method and repair only the failed PLAYER output boundary: Abrams readability, label occlusion, and primitive/placeholder world presentation. Then rerun fresh Godot 4.7.1 evidence.
+WINDOW_03_TASK_ARTIFACT=docs/audit/TASK_03_PLAYER_WORLD_DELIVERY_REAUDIT_V1.md
 
-WINDOW_03_STATUS=HOLD_PENDING_REPAIRED_RUNTIME
-WINDOW_03_TASK=After Window 02 produces repaired fresh screenshots/video/logs, independently re-audit PLAYER delivery without reopening already-proven source/runtime semantics unless changed.
+Window 03 must independently inspect the fresh screenshots/video and decide the four previous blockers:
+- PLAYER_UNIT_READABILITY
+- WORLD_LABEL_OCCLUSION
+- REAL_ENOUGH_WORLD_DELIVERY
+- PLAYER_WORLD_READABILITY
 
-## Required Window 02 repair
-
-1. make the exact Abrams visibly coherent/readable at the accepted battlefield scale;
-2. remove/shrink/reposition occluding diagnostic/world labels;
-3. replace or materially upgrade primitive terrain/material/vegetation/built-content presentation until the fresh player camera no longer reads as a diagnostic placeholder scene;
-4. preserve topology/passability, functional anchors, constraints and combat semantics;
-5. rerun the exact player chain in Godot 4.7.1;
-6. return fresh initial/fire/final screenshots + continuous video + runtime log to Window 03.
+Asset counts, log fields and provenance declarations may support evidence identity but cannot substitute for actual PLAYER-visible inspection.
 
 ## Next route
 
-NEXT=WINDOW_02_EXECUTE_TASK_02_PLAYER_WORLD_DELIVERY_FIX_V1
-NEXT_AFTER_FIX=WINDOW_03_REAUDIT_REPAIRED_WORLD_PLAYER_ARTIFACT
-NEXT_AFTER_AUDIT=WINDOW_00_SPRINT01_TRANSFER_OR_REPAIR_DECISION
+NEXT=WINDOW_03_EXECUTE_PLAYER_WORLD_DELIVERY_REAUDIT_V1
+NEXT_IF_PASS=WINDOW_00_SPRINT01_FINAL_TRANSFER_DECISION
+NEXT_IF_FAIL=WINDOW_02_FIX_ONLY_CONCRETE_REMAINING_PLAYER_BOUNDARY
 NEXT_AFTER_SPRINT_PASS=FIRST_POST_RESTART_FRONTLINE_PRODUCT_SLICE
 
 ## Hard boundaries
@@ -119,10 +128,9 @@ TECHNICAL_PASS_NOT_PRODUCT_PASS=YES
 CI_NOT_VISUAL_ACCEPTANCE=YES
 CODE_EXISTS_NOT_RUNTIME_PROOF=YES
 SCREENSHOT_NOT_HIDDEN_CAUSAL_PROOF=YES
+ASSET_COUNT_NOT_VISUAL_ACCEPTANCE=YES
 GREYBOX_AS_PRODUCTION_DELIVERY=FORBIDDEN
 OLD_VISUAL_BRANCH_AS_CURRENT_AUTHORITY=FORBIDDEN
 UNKNOWN_ALLOWED=YES
-VERSION_IDENTITY_REQUIRED=YES
-COUNTEREXAMPLE_SEARCH_REQUIRED_FOR_GENERALIZATION=YES
 PLAYER_LAYER_MUST_BE_REACHED=YES
 RECYCLED_TAG_NOT_CURRENT_AUTHORITY=YES
