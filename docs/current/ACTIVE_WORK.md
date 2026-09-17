@@ -4,63 +4,54 @@ STATUS=ACTIVE
 ACTIVE_ISSUE=#39
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 MODE=EVIDENCE_REPRODUCTION_BEFORE_PRODUCT_TRANSFER
-CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_REAUDIT
-ACTIVE_TASK=REAUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_V1
-TASK_ARTIFACT=docs/audit/TASK_03_PLAYER_WORLD_DELIVERY_REAUDIT_V1.md
+CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_FIX
+ACTIVE_TASK=REPAIR_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1
+TASK_ARTIFACT=docs/learning/sprint01/TASK_02_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1.md
 
 ## One current task
 
-WINDOW_03 is the only active task window.
+WINDOW_02 is the only active implementation window.
 
-TASK=Independently re-audit the repaired fresh PLAYER-facing world artifact produced by Window 02.
-
-## Window 02 completed handoff
-
-REPAIRED_RUNTIME_SOURCE_COMMIT=73224323dea523e43d773b539912a700d286ddec
-REPAIRED_EVIDENCE_COMMIT=79e7b738816c1ba476f6b4a05505e97ab1b73491
-RESULT_FILE=docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md
-
-Fresh runtime evidence exists:
-- world_initial.png
-- world_fire_feedback.png
-- world_final.png
-- world_reproduction.mp4
-- runtime.log
-- world_chain_extract.txt
-- input_injection.log
-- exact_asset_binding.txt
-
-Window 02 status fields:
-`WORLD_REPRODUCTION_STATUS=RUNTIME_CAPTURED_AWAITING_WINDOW_03_AUDIT`
-`PLAYER_VISIBLE_EVIDENCE=CAPTURED_NOT_SELF_ACCEPTED`
-`WINDOW_02_SELF_ACCEPTANCE=FORBIDDEN`
-
-## Window 03 re-audit scope
-
-Re-audit the previous PLAYER blockers against actual fresh screenshots/video:
-
-- `PLAYER_UNIT_READABILITY`
-- `WORLD_LABEL_OCCLUSION`
-- `REAL_ENOUGH_WORLD_DELIVERY`
-- `PLAYER_WORLD_READABILITY`
-
-Do not accept asset counts, provenance declarations or runtime assertions as substitutes for visual inspection.
-
-Preserve already-proven causal/runtime semantics unless the repair introduced a regression.
-
-## Required output
-
+Latest Window 03 re-audit:
 `docs/audit/AUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_REPAIR_V1.md`
+commit `0d49839bf433d88018e81d0762eb0103a1e603e2`
 
-If all PLAYER blockers PASS, return to Window 00 for Sprint 01 final transfer decision.
-If any blocker FAIL, identify only the concrete remaining PLAYER boundary and route it back to Window 02.
+Passed and frozen unless the next repair regresses them:
+- `RUNTIME_EVIDENCE_IDENTITY=PASS`
+- `PLAYER_CAUSAL_CHAIN_PRESERVED=PASS`
+- `EXACT_VEHICLE_ASSET_BINDING=PASS`
+- `PLAYER_UNIT_READABILITY=PASS`
+- `WORLD_LABEL_OCCLUSION=PASS`
+- `PLAYER_WORLD_READABILITY=PASS`
+
+Remaining blocker:
+`REAL_ENOUGH_WORLD_DELIVERY=FAIL`
+
+Nonblocking evidence defect to repair on rerun:
+`CAPTURE_STATE_ALIGNMENT=FAIL`
+
+## Window 02 scope
+
+Repair only the physical-world presentation boundary:
+1. remove the flat board/slab reading;
+2. integrate terrain, roads, shoulders and defensive/hardstand surfaces into one coherent physical world;
+3. stop relying on visually dominant flat BoxMesh/CylinderMesh overlay slabs;
+4. retain provenance-recorded textures and real vegetation/rocks/houses already on the runtime path;
+5. preserve topology/passability, anchors/constraints, exact vehicles and player/combat chain;
+6. rerun fresh Godot 4.7.1 with external player input;
+7. fix temporal alignment of initial/fire/final screenshots.
+
+Do not reopen Stage 4 theory. Do not restore old Golden Scene/River Town/Reference Region coordinates. Historical/reference branches remain asset/tool/evidence pools only.
 
 ## Window routing
 
 WINDOW_00=ACTIVE_CONTROL
 WINDOW_01=HOLD_STAGE4_COMPLETE
-WINDOW_02=HOLD_REPAIR_RUNTIME_COMPLETE
-WINDOW_03=ACTIVE_PLAYER_WORLD_DELIVERY_REAUDIT
+WINDOW_02=ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_FIX
+WINDOW_03=HOLD_PENDING_REAL_ENOUGH_WORLD_RERUN
+
+On completion:
+`02 fresh repaired world runtime -> 03 audit real-enough world delivery + capture alignment -> 00 Sprint01 final decision`
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
