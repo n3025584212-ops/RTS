@@ -1,3 +1,4 @@
+; runtime-refresh: transport-terrain-v2-load-reduction
 [gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://scripts/learning/sprint01/sprint01_transport_terrain_integration_v2.gd" id="1_delivery"]
