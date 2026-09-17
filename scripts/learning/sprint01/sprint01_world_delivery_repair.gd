@@ -27,6 +27,7 @@ func _ready() -> void:
 		get_tree().quit(4)
 		return
 	super()
+	call_deferred("_schedule_initial_frame_marker")
 	print("PLAYER_WORLD_DELIVERY_REPAIR=READY|REAL_ASSET_INSTANCES=%d|HIDDEN_PLACEHOLDERS=%d" % [delivery_asset_instances, hidden_placeholder_meshes])
 
 
@@ -46,9 +47,9 @@ func _preflight_delivery_assets() -> bool:
 func _build_environment() -> void:
 	super._build_environment()
 	_hide_diagnostic_placeholder_meshes(self)
-	_add_delivery_ground_and_roads()
 	_add_real_world_delivery_assets()
-	print("REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=PROVENANCE_RECORDED_TEXTURES_AND_GLBS")
+	print("REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=TERRAIN_INTEGRATED_SURFACES_PLUS_PROVENANCE_RECORDED_GLBS")
+	print("DELIVERY_SURFACE_OVERLAY=REMOVED|FLAT_BOARD_BOXES=0|ROAD_BOXES=0|CYLINDER_HARDSTANDS=0")
 
 
 func _build_material_pipeline() -> void:
@@ -78,6 +79,55 @@ func _delivery_material(role: String, texture_path: String, roughness_value: flo
 	return material
 
 
+func _build_transport_surfaces() -> void:
+	var main_points: Array[Vector3] = [
+		Vector3(-31.0, 0.0, MAIN_ROAD_Z),
+		Vector3(-18.0, 0.0, MAIN_ROAD_Z),
+		Vector3(-5.0, 0.0, MAIN_ROAD_Z),
+		JUNCTION_ANCHOR,
+		Vector3(18.0, 0.0, MAIN_ROAD_Z),
+		Vector3(28.0, 0.0, MAIN_ROAD_Z),
+	]
+	var branch_points: Array[Vector3] = [
+		JUNCTION_ANCHOR,
+		Vector3(7.1, 0.0, -8.5),
+		BRANCH_END,
+	]
+	_build_ribbon("MainRoadShoulder", main_points, MAIN_ROAD_HALF_WIDTH + 1.15, 0.035, world_materials["shoulder"] as Material)
+	_build_ribbon("MainRoadSurface", main_points, MAIN_ROAD_HALF_WIDTH, 0.065, world_materials["road"] as Material)
+	_build_ribbon("BranchRoadShoulder", branch_points, BRANCH_ROAD_HALF_WIDTH + 0.85, 0.040, world_materials["shoulder"] as Material)
+	_build_ribbon("BranchRoadSurface", branch_points, BRANCH_ROAD_HALF_WIDTH, 0.072, world_materials["road"] as Material)
+	_add_terrain_fitted_patch("JunctionHardstandSurface", JUNCTION_ANCHOR, Vector2(5.1, 4.0), 0.078, world_materials["hardstand"] as Material, 17.0)
+	_add_terrain_fitted_patch("ObjectiveHardstandSurface", OBJECTIVE_ANCHOR, Vector2(5.4, 3.6), 0.080, world_materials["shoulder"] as Material, -11.0)
+	print("TRANSPORT_LAYER=PASS|MAIN_CORRIDOR=EXPLICIT|BRANCH=EXPLICIT|JUNCTION_ANCHOR=%s" % _fmt_vec(JUNCTION_ANCHOR))
+	print("TRANSPORT_PRESENTATION=TERRAIN_FITTED_RIBBONS_AND_PATCHES|BOX_ROADS=NO|CYLINDER_HARDSTANDS=NO")
+
+
+func _add_terrain_fitted_patch(node_name: String, center: Vector3, radii: Vector2, y_offset: float, material: Material, yaw_degrees: float) -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var yaw := deg_to_rad(yaw_degrees)
+	var center_height := _terrain_height(center.x, center.z) + y_offset
+	var center_point := Vector3(center.x, center_height, center.z)
+	var segments := 18
+	for i: int in range(segments):
+		var a0 := TAU * float(i) / float(segments)
+		var a1 := TAU * float(i + 1) / float(segments)
+		var r0 := 0.88 + 0.12 * sin(float(i * 13 + 5))
+		var r1 := 0.88 + 0.12 * sin(float((i + 1) * 13 + 5))
+		var local0 := Vector2(cos(a0) * radii.x * r0, sin(a0) * radii.y * r0).rotated(yaw)
+		var local1 := Vector2(cos(a1) * radii.x * r1, sin(a1) * radii.y * r1).rotated(yaw)
+		var p0 := Vector3(center.x + local0.x, _terrain_height(center.x + local0.x, center.z + local0.y) + y_offset, center.z + local0.y)
+		var p1 := Vector3(center.x + local1.x, _terrain_height(center.x + local1.x, center.z + local1.y) + y_offset, center.z + local1.y)
+		_add_textured_triangle(st, center_point, p0, p1)
+	var mesh := st.commit()
+	var instance := MeshInstance3D.new()
+	instance.name = node_name
+	instance.mesh = mesh
+	instance.material_override = material
+	add_child(instance)
+
+
 func _build_units() -> void:
 	effects_root = Node3D.new()
 	effects_root.name = "CausalCombatFeedback"
@@ -101,31 +151,10 @@ func _hide_diagnostic_placeholder_meshes(node: Node) -> void:
 		if child is MeshInstance3D:
 			var mesh_instance := child as MeshInstance3D
 			var mesh := mesh_instance.mesh
-			var keep_hardstand := String(mesh_instance.name).contains("Hardstand")
-			if mesh is SphereMesh or (mesh is CylinderMesh and not keep_hardstand):
+			if mesh is SphereMesh or mesh is CylinderMesh:
 				mesh_instance.visible = false
 				hidden_placeholder_meshes += 1
 		_hide_diagnostic_placeholder_meshes(child)
-
-
-func _add_delivery_ground_and_roads() -> void:
-	_add_delivery_box("DeliveryGround", Vector3(0.0, -0.16, 0.0), Vector3(72.0, 0.24, 48.0), world_materials["meadow"] as Material)
-	_add_delivery_box("DeliveryMainShoulder", Vector3(-1.0, -0.01, MAIN_ROAD_Z), Vector3(64.0, 0.08, (MAIN_ROAD_HALF_WIDTH + 1.15) * 2.0), world_materials["shoulder"] as Material)
-	_add_delivery_box("DeliveryMainRoad", Vector3(-1.0, 0.035, MAIN_ROAD_Z), Vector3(64.0, 0.08, MAIN_ROAD_HALF_WIDTH * 2.0), world_materials["road"] as Material)
-	_add_delivery_box("DeliveryBranchShoulder", Vector3(7.1, -0.005, -9.5), Vector3((BRANCH_ROAD_HALF_WIDTH + 0.85) * 2.0, 0.08, 16.0), world_materials["shoulder"] as Material)
-	_add_delivery_box("DeliveryBranchRoad", Vector3(7.1, 0.04, -9.5), Vector3(BRANCH_ROAD_HALF_WIDTH * 2.0, 0.08, 16.0), world_materials["road"] as Material)
-	print("DELIVERY_SURFACE_OVERLAY=PASS|TOPOLOGY_SOURCE=PARENT_WORLD_METHOD|VISUAL_ONLY=YES")
-
-
-func _add_delivery_box(node_name: String, center: Vector3, size: Vector3, material: Material) -> void:
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = node_name
-	var box := BoxMesh.new()
-	box.size = size
-	mesh_instance.mesh = box
-	mesh_instance.position = center
-	mesh_instance.material_override = material
-	add_child(mesh_instance)
 
 
 func _add_real_world_delivery_assets() -> void:
@@ -173,3 +202,33 @@ func _instance_delivery_scene(path: String, point: Vector3, scale_value: float, 
 	instance.scale = Vector3.ONE * scale_value
 	add_child(instance)
 	delivery_asset_instances += 1
+
+
+func _spawn_fire_feedback(index: int) -> void:
+	super._spawn_fire_feedback(index)
+	if index == 1:
+		call_deferred("_schedule_fire_frame_marker", index)
+
+
+func _verify_player_chain() -> void:
+	super()
+	if target_destroyed:
+		call_deferred("_schedule_final_frame_marker")
+
+
+func _schedule_initial_frame_marker() -> void:
+	for _i: int in range(10):
+		await RenderingServer.frame_post_draw
+	print("PLAYER_VISIBLE_INITIAL_FRAME_READY=YES|STATE=WAITING_PLAYER_SELECTION")
+
+
+func _schedule_fire_frame_marker(index: int) -> void:
+	for _i: int in range(3):
+		await RenderingServer.frame_post_draw
+	print("PLAYER_VISIBLE_FIRE_FRAME_READY=SHOT_%02d|AMMO=%d|TARGET_HP=%d|FEEDBACK_EVENTS=%d" % [index, ammo, target_hp, visible_feedback_events])
+
+
+func _schedule_final_frame_marker() -> void:
+	for _i: int in range(3):
+		await RenderingServer.frame_post_draw
+	print("PLAYER_VISIBLE_FINAL_FRAME_READY=YES|AMMO=%d|TARGET_HP=%d|OUTCOME=TARGET_DESTROYED" % [ammo, target_hp])
