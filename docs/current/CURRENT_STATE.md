@@ -2,7 +2,7 @@
 
 STATUS=ACTIVE_BRANCH_MIRROR_OF_CONTROL_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V33
+STATE_VERSION=V36
 CONTROL_AUTHORITY=main:docs/current/CURRENT_STATE.md
 BRANCH_ROLE=SPRINT01_EVIDENCE_BUILD_RUNTIME_ARTIFACTS
 
@@ -16,81 +16,60 @@ WINDOW_03_AUDIT_CONTRACT=docs/audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md
 
 ## Authority rule
 
-This branch-local file prevents a window checked out on the learning branch from recovering obsolete project state.
-
-Final control/routing authority remains `main` / Window 00.
-Branch-local implementation, audit and runtime facts are authoritative for work performed here, but product-resume and routing decisions are not self-authorized by this branch.
+Final routing/product authority remains main / Window 00. This branch owns implementation/evidence facts only.
 
 ## Current phase
 
 ACTIVE_ISSUE=#39
 ACTIVE_SPRINT=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
-CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_FIX
+CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_FIX
+ACTIVE_TASK=REPAIR_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1
+ACTIVE_TASK_ARTIFACT=docs/learning/sprint01/TASK_02_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1.md
 PRODUCT_PRODUCTION_RESUME=NO
 SPRINT_PASS=NO
 
-## Latest evidence
+## Latest independent re-audit
 
-WORLD_CAUSAL_DECOMPOSITION_COMMIT=dcd891d7947e0ec6b97257681f258ecf6432c037
-WORLD_METHOD_AUDIT_COMMIT=7e6bf5636af83933b6e0b60269f33aafa8a7715f
-WORLD_REPRODUCTION_RUNTIME_SOURCE_COMMIT=edf8cede10cea24a6218beb73bcca14ef424f5c7
-WORLD_REPRODUCTION_EVIDENCE_COMMIT=03a56be1b0abfaf2248f23b4f9766ebd60aec27e
-WORLD_REPRODUCTION_AUDIT_COMMIT=6dfe56da2c87b62fcb581c06b728c965d4e47bac
+AUDIT_ARTIFACT=docs/audit/AUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_REPAIR_V1.md
+AUDIT_COMMIT=0d49839bf433d88018e81d0762eb0103a1e603e2
+AUDITED_RUNTIME_SOURCE_COMMIT=73224323dea523e43d773b539912a700d286ddec
+AUDITED_EVIDENCE_COMMIT=79e7b738816c1ba476f6b4a05505e97ab1b73491
 
-RUNTIME_EXECUTION_VERDICT=PASS
-GODOT_4_7_1_RUNTIME=PASS
+RUNTIME_EVIDENCE_IDENTITY=PASS
+PLAYER_CAUSAL_CHAIN_PRESERVED=PASS
 EXACT_VEHICLE_ASSET_BINDING=PASS
-WORLD_METHOD_SOURCE_PATH=PASS
-WORLD_METHOD_CAUSAL_EXECUTION=PASS
-PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
-CAPTURE_STATE_ALIGNMENT=PASS
-
-## Current failed boundary
-
-WINDOW_03_WORLD_REPRODUCTION_AUDIT=FAIL_PLAYER_DELIVERY
-PLAYER_UNIT_READABILITY=FAIL
-WORLD_LABEL_OCCLUSION=FAIL
+PLAYER_UNIT_READABILITY=PASS
+WORLD_LABEL_OCCLUSION=PASS
+PLAYER_WORLD_READABILITY=PASS
 REAL_ENOUGH_WORLD_DELIVERY=FAIL
-PLAYER_WORLD_READABILITY=FAIL
+CAPTURE_STATE_ALIGNMENT=FAIL
+CAPTURE_STATE_ALIGNMENT_BLOCKING_TO_VISUAL_DECISION=NO
 
-The previous runner blocker is closed for this gate. The current failure is downstream at PLAYER delivery, not runtime infrastructure.
+REPRODUCTION_AUDIT=FAIL
+SPRINT01_CURRENT_VERDICT=NOT_COMPLETE_REAL_ENOUGH_WORLD_DELIVERY_FAILED
+NEXT_ROUTE=RETURN_TO_02_FOR_REAL_ENOUGH_WORLD_DELIVERY_ONLY
 
 ## Current windows
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
 WINDOW_01_STATUS=HOLD_STAGE4_COMPLETE
-WINDOW_02_STATUS=ACTIVE_PLAYER_WORLD_DELIVERY_FIX
-WINDOW_03_STATUS=HOLD_PENDING_REPAIRED_RUNTIME
+WINDOW_02_STATUS=ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_FIX
+WINDOW_03_STATUS=HOLD_PENDING_REAL_ENOUGH_WORLD_RERUN
 
-## Window 02 repair scope
+## Window 02 scope
 
-Preserve:
-- topology/passability coupling;
-- functional anchors and constraint rules;
-- exact Abrams/IFV identity;
-- player input -> command -> movement -> combat -> feedback -> outcome semantics;
-- fresh player-camera capture process.
-
-Repair only:
-1. exact Abrams player readability;
-2. occluding world labels;
-3. primitive/placeholder terrain/material/vegetation/built-content presentation.
-
-Then rerun fresh Godot 4.7.1 evidence and return to Window 03.
-
-## Repository hygiene
-
-Current active branches:
-- `main`
-- `learning/sprint01-end-to-end-rts-production`
-
-First-pass cleanup reduced branches from 37 to 14. Recycled historical branch heads are preserved as tags under `recycle/2026-09-16/...` according to the main branch recycle policy.
+Preserve all passed causal/runtime and readability results. Repair only the remaining physical-world presentation defect:
+- remove board/slab reading;
+- integrate terrain, roads, shoulders and hardstand/defensive surfaces coherently;
+- retain provenance-recorded real delivery assets;
+- rerun fresh Godot 4.7.1;
+- repair checkpoint screenshot temporal alignment.
 
 ## Next route
 
-NEXT=WINDOW_02_PLAYER_WORLD_DELIVERY_FIX
-NEXT_AFTER_FIX=WINDOW_03_REAUDIT_REPAIRED_WORLD_PLAYER_ARTIFACT
-NEXT_AFTER_AUDIT=WINDOW_00_SPRINT01_TRANSFER_OR_REPAIR_DECISION
+NEXT=WINDOW_02_EXECUTE_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1
+NEXT_AFTER_FIX=WINDOW_03_AUDIT_REAL_ENOUGH_WORLD_DELIVERY_AND_CAPTURE_ALIGNMENT
+NEXT_AFTER_AUDIT=WINDOW_00_SPRINT01_FINAL_TRANSFER_OR_REPAIR_DECISION
 
 ## Historical boundary
 
