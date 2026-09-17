@@ -13,72 +13,71 @@ Any recovered window must read, in order:
 3. `docs/current/ACTIVE_WORK.md`
 4. `docs/current/VISUAL_QUALITY_BASELINE.md`
 5. refresh both main and active-branch HEADs
-6. inspect the current task/audit artifacts below.
+6. inspect the current handoff/audit artifacts below.
 
-Never infer visual quality from artifact recency. Always distinguish current task evidence from FRONTLINE visual baseline.
+Never infer visual quality from artifact recency. Always distinguish current Sprint evidence from the FRONTLINE visual baseline.
 
 ## Current checkpoint
 
-CURRENT_GATE=SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_FIX
+CURRENT_GATE=SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_REAUDIT_V2
 ACTIVE_ISSUE=#39
 
-Latest 03 audit:
-`docs/audit/AUDIT_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1.md`
+Current 02 -> 03 handoff:
+`docs/learning/sprint01/HANDOFF_02_TRANSPORT_TERRAIN_TO_03_V1.md`
 
-Audit commit:
-`ec3536a5de8ab10fbec891cf59d94bd891a2bf5b`
+Current 03 task:
+`docs/audit/TASK_03_TRANSPORT_TERRAIN_REAUDIT_V1.md`
 
-Current 02 task:
-`docs/learning/sprint01/TASK_02_TRANSPORT_TERRAIN_INTEGRATION_FIX_V1.md`
+Immutable runtime identity:
+- source `7eb34267d6fbbebd856001a7c17390c341835e59`
+- run `35204480034`
+- job `105146808996`
+- artifact `10488929099`
+- SHA256 `183e43456c951c8908c239c189f6f2cf12bbc865598c836b73146256656da500`
+- Godot `4.7.1.stable.official.a13da4feb`
 
-Task-routing commit:
-`0188ff847b4407b33137e3b38c9addf26fb05016`
+The workflow's runtime/capture/artifact steps passed. Its final evidence commit failed only because of a non-fast-forward branch race.
 
 ## Current windows
 
 `00 = ACTIVE_CONTROL`
 `01 = HOLD_STAGE4_COMPLETE`
-`02 = ACTIVE_TRANSPORT_TERRAIN_INTEGRATION_FIX`
-`03 = HOLD_PENDING_TRANSPORT_TERRAIN_RERUN`
+`02 = HOLD_RUNTIME_CAPTURE_COMPLETE`
+`03 = ACTIVE_TRANSPORT_TERRAIN_REAUDIT`
 
-## Preserved passes
+## Preserved runtime results
 
-Do not reopen without regression evidence:
+- world method runtime;
 - player causal chain;
 - exact Abrams/IFV binding;
-- Abrams readability;
-- persistent-label removal;
-- PLAYER world readability;
-- capture-state alignment;
-- Stage 4/world-to-movement causal results.
+- external input;
+- movement/contact/combat/outcome;
+- capture-state alignment.
 
-## Only remaining Sprint repair boundary
+03 must still inspect the actual screenshots/video before deciding the remaining visual boundary.
 
-`FAILED_BOUNDARY=PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`
+## Current independent decision boundary
 
-Window 02 repairs road/shoulder/verge/junction/hardstand/terrain/asset integration while preserving corridor/passability and gameplay semantics.
+`REAL_ENOUGH_WORLD_DELIVERY=PASS | FAIL`
 
-After fresh runtime:
-`02 -> 03 audit REAL_ENOUGH_WORLD_DELIVERY -> 00 final Sprint01 decision`
+Specifically re-audit:
+`PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`
+
+After 03:
+- PASS -> `00 Sprint01 final transfer decision`
+- FAIL -> `02 concrete remaining PLAYER-visible repair only`
 
 ## Visual continuity checkpoint
 
 CANONICAL_PRODUCT_VISUAL_TARGET=`docs/design/FRONTLINE_GOLDEN_FRAME_V1_SPEC.md`
 VISUAL_BASELINE_INDEX=`docs/current/VISUAL_QUALITY_BASELINE.md`
 
-Retained engine references:
+Retained engine visual/reference evidence:
 - `dev/river-town-local-high-fidelity-v1@dfc4b64e9bbc2a1c8f5d1032e92912195c575f07`
 - `dev/godot-golden-scene-v1@ec8e49e27b278299ec5654b1094789c6a9d39f6e`
 - `dev/reference-region-v1@5f2ff1c0e86553234490063e640cef8d0a2fb9f7`
 
 `Sprint01WorldReproduction` media is `LEARNING_AND_RUNTIME_EVIDENCE`, not the product visual baseline.
-
-## Historical audited artifact
-
-- source `b0fe6d8b1de747606138a9ce1b28b3541b8c464a`
-- run `35185311167`
-- artifact `10481469643`
-- SHA256 `a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f`
 
 ## Anti-loss handoff rule
 
