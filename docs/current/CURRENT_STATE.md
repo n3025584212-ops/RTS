@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V35
+STATE_VERSION=V36
 SOURCE_OF_TRUTH=THIS_FILE_FOR_CONTROL_AND_ROUTING
 CONTROL_SYNC_DATE=2026-09-17
 
@@ -24,16 +24,16 @@ MAIN_BRANCH=main
 MAIN_ROLE=CONTROL_STATE_AND_ROUTING
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 ACTIVE_BRANCH_ROLE=SPRINT01_EVIDENCE_BUILD_RUNTIME_ARTIFACTS
-LATEST_KNOWN_ACTIVE_BRANCH_HEAD=cf14bcf9dc747a62e5f162133c480c59ace4a7d4
+LATEST_KNOWN_ACTIVE_BRANCH_HEAD=9b24f98795468cf0b153f7ab265e23ecbe8d9907
 
 BRANCH_COUNT_AFTER_RECYCLE=14
 RECYCLED_BRANCH_COUNT=23
 RECYCLE_TAG_PREFIX=recycle/2026-09-16/
 RECYCLE_MANIFEST=docs/ops/BRANCH_RECYCLE_MANIFEST_2026-09-16.md
 
-IMPORTANT=main does not duplicate every learning-branch artifact. A window recovering state MUST read this file and then refresh ACTIVE_BRANCH HEAD plus the branch artifacts listed in WINDOW_RECOVERY_INDEX.md.
+IMPORTANT=main does not duplicate every learning-branch artifact. A window recovering state MUST refresh ACTIVE_BRANCH HEAD and read the branch artifacts listed in WINDOW_RECOVERY_INDEX.md.
 
-If control and active-branch facts appear different:
+If control and active-branch facts differ:
 - branch-local implementation/evidence facts come from the active branch;
 - task authority, routing, product-resume authority and conflict resolution come from Window 00 / main;
 - no window may silently overwrite one with the other.
@@ -42,84 +42,77 @@ If control and active-branch facts appear different:
 
 ACTIVE_ISSUE=#39
 ACTIVE_SPRINT=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
-CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_REAUDIT
-ACTIVE_TASK=REAUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_V1
-ACTIVE_TASK_ARTIFACT=docs/audit/TASK_03_PLAYER_WORLD_DELIVERY_REAUDIT_V1.md
+CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_FIX
+ACTIVE_TASK=REPAIR_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1
+ACTIVE_TASK_ARTIFACT=docs/learning/sprint01/TASK_02_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1.md
 PRODUCT_PRODUCTION_RESUME=NO
 SPRINT_PASS=NO
 
-## Preserved proven chain
+## Latest Window 03 re-audit
 
-PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
-CHAIN=`PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT -> COMBAT -> VISIBLE FEEDBACK -> OUTCOME`
-WORLD_CAUSAL_DECOMPOSITION=PASS_FOR_REPRODUCTION_INPUT
-WORLD_METHOD_AUDIT=PASS_WITH_DOWNGRADES
-WORLD_METHOD_CAUSAL_EXECUTION=PASS
+AUDIT_ARTIFACT=docs/audit/AUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_REPAIR_V1.md
+AUDIT_COMMIT=0d49839bf433d88018e81d0762eb0103a1e603e2
+AUDITED_RUNTIME_SOURCE_COMMIT=73224323dea523e43d773b539912a700d286ddec
+AUDITED_EVIDENCE_COMMIT=79e7b738816c1ba476f6b4a05505e97ab1b73491
+
+RUNTIME_EVIDENCE_IDENTITY=PASS
+PLAYER_CAUSAL_CHAIN_PRESERVED=PASS
 EXACT_VEHICLE_ASSET_BINDING=PASS
+PLAYER_UNIT_READABILITY=PASS
+WORLD_LABEL_OCCLUSION=PASS
+PLAYER_WORLD_READABILITY=PASS
 
-These facts are not reopened unless the repair changed or broke them.
+REAL_ENOUGH_WORLD_DELIVERY=FAIL
+CAPTURE_STATE_ALIGNMENT=FAIL
+CAPTURE_STATE_ALIGNMENT_BLOCKING_TO_VISUAL_DECISION=NO
 
-## Previous PLAYER failure
+REPRODUCTION_AUDIT=FAIL
+SPRINT01_CURRENT_VERDICT=NOT_COMPLETE_REAL_ENOUGH_WORLD_DELIVERY_FAILED
 
-PREVIOUS_WORLD_REPRODUCTION_AUDIT_COMMIT=6dfe56da2c87b62fcb581c06b728c965d4e47bac
-PREVIOUS_AUDIT=FAIL_PLAYER_DELIVERY
-PREVIOUS_PLAYER_UNIT_READABILITY=FAIL
-PREVIOUS_WORLD_LABEL_OCCLUSION=FAIL
-PREVIOUS_REAL_ENOUGH_WORLD_DELIVERY=FAIL
-PREVIOUS_PLAYER_WORLD_READABILITY=FAIL
+The previous tiny-Abrams and persistent-label defects are closed. The remaining blocking boundary is only the PLAYER-facing physical-world presentation.
 
-## Window 02 repaired runtime
+## Remaining visual defect
 
-PLAYER_WORLD_DELIVERY_REPAIR_TASK=REPAIR_SPRINT01_PLAYER_WORLD_DELIVERY_V1
-REPAIRED_RUNTIME_SOURCE_COMMIT=73224323dea523e43d773b539912a700d286ddec
-REPAIRED_EVIDENCE_COMMIT=79e7b738816c1ba476f6b4a05505e97ab1b73491
-RESULT_FILE=docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md
+The fresh player camera still reads as a textured diagnostic/tabletop prototype because:
+- playable ground appears as a large flat rectangular slab with a hard boundary;
+- main/branch roads read as rectangular overlay slabs rather than terrain-integrated roads;
+- circular hardstand/diagnostic surfaces remain visually dominant;
+- real trees/houses/rocks decorate the world but do not eliminate the board-like silhouette;
+- the visual overlay masks much of the parent terrain relief and surface transitions.
 
-CODE_EXECUTES=PASS
-WORLD_METHOD_RUNTIME=PASS
-PLAYER_CHAIN_RUNTIME=PASS
-WORLD_AND_PLAYER_CHAIN_RUNTIME=PASS
-PLAYER_VISIBLE_EVIDENCE=CAPTURED_NOT_SELF_ACCEPTED
-
-Repair runtime reports:
-- `PLAYER_WORLD_DELIVERY_ASSET_PREFLIGHT=PASS|COUNT=10`
-- `DELIVERY_BUILT_CONTENT=PASS|HOUSES=2|REAL_VEGETATION=18|REAL_ROCKS=6`
-- `REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=PROVENANCE_RECORDED_TEXTURES_AND_GLBS`
-- `PLAYER_UNIT_READABILITY_REPAIR=EXACT_ABRAMS|TARGET_SIZE=54.0|IFV_TARGET_SIZE=6.7`
-- `PLAYER_WORLD_DELIVERY_REPAIR=READY|REAL_ASSET_INSTANCES=26|HIDDEN_PLACEHOLDERS=223`
-
-These are runtime/implementation facts only. They do not prove PLAYER acceptance.
-
-Fresh evidence:
-- `artifacts/learning/sprint01/world_reproduction/world_initial.png`
-- `artifacts/learning/sprint01/world_reproduction/world_fire_feedback.png`
-- `artifacts/learning/sprint01/world_reproduction/world_final.png`
-- `artifacts/learning/sprint01/world_reproduction/world_reproduction.mp4`
-- `artifacts/learning/sprint01/world_reproduction/runtime.log`
-- `artifacts/learning/sprint01/world_reproduction/world_chain_extract.txt`
+Real/provenance assets are present and on the runtime path, but asset presence is not PLAYER acceptance.
 
 ## Current four-window allocation
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
 WINDOW_01_STATUS=HOLD_STAGE4_COMPLETE
-WINDOW_02_STATUS=HOLD_REPAIR_RUNTIME_COMPLETE
-WINDOW_03_STATUS=ACTIVE_PLAYER_WORLD_DELIVERY_REAUDIT
+WINDOW_02_STATUS=ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_FIX
+WINDOW_02_TASK_ARTIFACT=docs/learning/sprint01/TASK_02_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1.md
+WINDOW_03_STATUS=HOLD_PENDING_REAL_ENOUGH_WORLD_RERUN
 
-WINDOW_03_TASK_ARTIFACT=docs/audit/TASK_03_PLAYER_WORLD_DELIVERY_REAUDIT_V1.md
+## Window 02 scope
 
-Window 03 must independently inspect the fresh screenshots/video and decide the four previous blockers:
-- PLAYER_UNIT_READABILITY
-- WORLD_LABEL_OCCLUSION
-- REAL_ENOUGH_WORLD_DELIVERY
-- PLAYER_WORLD_READABILITY
+Preserve:
+- player input -> command -> movement -> contact -> combat -> feedback -> outcome;
+- world topology/passability and constraints;
+- functional anchors;
+- exact Abrams/IFV identity;
+- already-fixed Abrams readability and no persistent world-label occlusion;
+- provenance-recorded delivery asset pool.
 
-Asset counts, log fields and provenance declarations may support evidence identity but cannot substitute for actual PLAYER-visible inspection.
+Repair only:
+1. remove flat board/slab reading;
+2. integrate terrain, roads, shoulders and defensive/hardstand surfaces into one coherent physical world;
+3. stop relying on visually dominant BoxMesh/CylinderMesh overlay slabs for the delivered battlefield surface;
+4. keep real vegetation/rock/house/textures already proven on the runtime path;
+5. rerun fresh Godot 4.7.1 with external input;
+6. fix initial/fire PNG temporal alignment during capture.
 
 ## Next route
 
-NEXT=WINDOW_03_EXECUTE_PLAYER_WORLD_DELIVERY_REAUDIT_V1
-NEXT_IF_PASS=WINDOW_00_SPRINT01_FINAL_TRANSFER_DECISION
-NEXT_IF_FAIL=WINDOW_02_FIX_ONLY_CONCRETE_REMAINING_PLAYER_BOUNDARY
+NEXT=WINDOW_02_EXECUTE_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1
+NEXT_AFTER_FIX=WINDOW_03_AUDIT_REAL_ENOUGH_WORLD_DELIVERY_AND_CAPTURE_ALIGNMENT
+NEXT_AFTER_AUDIT=WINDOW_00_SPRINT01_FINAL_TRANSFER_OR_REPAIR_DECISION
 NEXT_AFTER_SPRINT_PASS=FIRST_POST_RESTART_FRONTLINE_PRODUCT_SLICE
 
 ## Hard boundaries
@@ -127,8 +120,8 @@ NEXT_AFTER_SPRINT_PASS=FIRST_POST_RESTART_FRONTLINE_PRODUCT_SLICE
 TECHNICAL_PASS_NOT_PRODUCT_PASS=YES
 CI_NOT_VISUAL_ACCEPTANCE=YES
 CODE_EXISTS_NOT_RUNTIME_PROOF=YES
-SCREENSHOT_NOT_HIDDEN_CAUSAL_PROOF=YES
 ASSET_COUNT_NOT_VISUAL_ACCEPTANCE=YES
+REAL_TEXTURE_ON_BOX_NOT_REAL_ENOUGH_WORLD_BY_ITSELF=YES
 GREYBOX_AS_PRODUCTION_DELIVERY=FORBIDDEN
 OLD_VISUAL_BRANCH_AS_CURRENT_AUTHORITY=FORBIDDEN
 UNKNOWN_ALLOWED=YES
