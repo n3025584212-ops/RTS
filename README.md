@@ -1,67 +1,42 @@
-# FRONTLINE / 战线
+# FRONTLINE / 战线 — Learning Sprint 01 Branch
 
-现代战争题材、Formation / Platoon 级指挥导向的实时战术游戏项目。
+本分支只承担 Sprint01 的证据、复现、runtime 和审核产物，不拥有 FRONTLINE 产品方向权威。
 
-## 当前状态
+## Control authority
 
-- Engine baseline: Godot 4.7.1
-- Operating mode: `RESTARTED_EVIDENCE_REPRODUCTION_BEFORE_PRODUCT_TRANSFER`
-- Active issue: `#39`
-- Active Sprint branch: `learning/sprint01-end-to-end-rts-production`
-- Current gate: `SPRINT01_WORLD_REPRODUCTION_RUNTIME_GATE`
-- Product production resume: `NO`
-- Control authority: `main:docs/current/CURRENT_STATE.md`
+先读 main：
+- `docs/current/CURRENT_STATE.md`
+- `docs/current/ACTIVE_WORK.md`
+- `docs/current/VISUAL_QUALITY_BASELINE.md`
+- `docs/current/WINDOW_RECOVERY_INDEX.md`
 
-旧 P0 / Prototype B / Battle01 / Golden Scene / River Town 路线均已退出当前产品权威层，只保留为技术资产、实物/失败证据和可复用工具。
+## Current Sprint gate
 
-## 开始阅读
+`SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_FIX`
 
-1. `START_HERE.md`
-2. `docs/current/CURRENT_STATE.md`
-3. `docs/current/ACTIVE_WORK.md`
-4. `docs/current/WINDOW_RECOVERY_INDEX.md`
-5. `docs/current/RESTART_DECISION.md`
-6. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
+Current windows:
+- `00 = ACTIVE_CONTROL`
+- `01 = HOLD_STAGE4_COMPLETE`
+- `02 = ACTIVE_TRANSPORT_TERRAIN_INTEGRATION_FIX`
+- `03 = HOLD_PENDING_TRANSPORT_TERRAIN_RERUN`
 
-不要从历史 Issue、旧 PR、聊天记忆或旧窗口提示推断当前状态。
+Only remaining Sprint blocker:
+`FAILED_BOUNDARY=PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`
 
-## 当前四窗口
+## Important visual classification
 
-```text
-00  CONTROL / INTEGRATION                 ACTIVE_CONTROL
-01  EVIDENCE / LEARNING                   HOLD_STAGE4_COMPLETE
-02  REPRODUCTION / BUILD                  ACTIVE_RUNTIME_GATE
-03  INDEPENDENT REVIEW / FALSIFICATION    HOLD_PENDING_FRESH_RUNTIME
-```
+The latest `Sprint01WorldReproduction` screenshots/video are:
+`LEARNING_AND_RUNTIME_EVIDENCE`
 
-## 当前 Sprint 01
+They are not:
+`FRONTLINE_CURRENT_BEST_VISUAL`
+`FRONTLINE_PRODUCT_BASELINE`
 
-已完成：
-- 真实 RTS 端到端证据学习；
-- 第一条 player causal chain fresh runtime；
-- Stage 4 world causal decomposition；
-- Window 03 world-method audit (`PASS_WITH_DOWNGRADES`)；
-- 新 `Sprint01WorldReproduction` 场景、脚本和 workflow 实现。
+The approved Golden Frame and retained high-quality River Town / Golden Scene / Reference Region evidence remain indexed from main in `docs/current/VISUAL_QUALITY_BASELINE.md`.
 
-当前未完成：
-- 新世界复现的 fresh Godot 4.7.1 runtime；
-- fresh PLAYER-visible screenshots/video；
-- Window 03 新世界实物审核；
-- Sprint 01 PASS；
-- FRONTLINE 产品生产恢复。
+## Route
 
-当前 blocker：最近 hosted world-reproduction run 在 runner 分配前失败（`runner_id=0`, `steps=[]`），因此仍是 execution-infrastructure blocker，不是 gameplay PASS/FAIL。
+`02 fresh transport-terrain runtime -> 03 REAL_ENOUGH_WORLD_DELIVERY audit -> 00 Sprint01 final decision`
 
-## 当前关键路径
-
-```text
-docs/current/       当前状态/任务/恢复入口
-docs/learning/      学习合同、证据、生产方法、复现说明
-docs/audit/         独立审核
-scenes/learning/    隔离复现场景
-scripts/learning/   隔离复现代码
-artifacts/learning/ runtime / screenshot / video 证据
-assets/              可复用资产与 provenance
-```
-
-仓库导航：`docs/ops/REPOSITORY_MAP_V3.md`。
+`SPRINT_PASS=NO`
+`PRODUCT_PRODUCTION_RESUME=NO`
