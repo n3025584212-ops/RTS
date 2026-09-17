@@ -50,6 +50,7 @@ func _build_environment() -> void:
 	_add_real_world_delivery_assets()
 	print("REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=TERRAIN_INTEGRATED_SURFACES_PLUS_PROVENANCE_RECORDED_GLBS")
 	print("DELIVERY_SURFACE_OVERLAY=REMOVED|FLAT_BOARD_BOXES=0|ROAD_BOXES=0|CYLINDER_HARDSTANDS=0")
+	print("DELIVERY_TRIANGLE_WINDING=PLAYER_CAMERA_VISIBLE|TERRAIN_AND_ROADS=UNIFIED")
 
 
 func _build_material_pipeline() -> void:
@@ -77,6 +78,26 @@ func _delivery_material(role: String, texture_path: String, roughness_value: flo
 	material.roughness = roughness_value
 	material.texture_repeat = true
 	return material
+
+
+func _add_textured_triangle(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3) -> void:
+	# Godot's visible winding for these generated battlefield surfaces is the
+	# opposite of the original terrain helper. Normalize every generated face so
+	# terrain, road ribbons and fitted patches are all visible from the command camera.
+	var raw_normal := (b - a).cross(c - a)
+	var p0 := a
+	var p1 := b
+	var p2 := c
+	if raw_normal.y > 0.0:
+		p1 = c
+		p2 = b
+	var normal := (p1 - p0).cross(p2 - p0).normalized()
+	if normal.y < 0.0:
+		normal = -normal
+	for point: Vector3 in [p0, p1, p2]:
+		st.set_normal(normal)
+		st.set_uv(Vector2(point.x * 0.13, point.z * 0.13))
+		st.add_vertex(point)
 
 
 func _build_transport_surfaces() -> void:
