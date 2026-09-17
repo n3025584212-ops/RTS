@@ -4,58 +4,76 @@ STATUS=ACTIVE
 ACTIVE_ISSUE=#39
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 MODE=EVIDENCE_REPRODUCTION_BEFORE_PRODUCT_TRANSFER
-CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_FIX
-ACTIVE_TASK=REPAIR_SPRINT01_PLAYER_WORLD_DELIVERY_V1
-TASK_ARTIFACT=docs/learning/sprint01/TASK_02_PLAYER_WORLD_DELIVERY_FIX_V1.md
+CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_REAUDIT
+ACTIVE_TASK=REAUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_V1
+TASK_ARTIFACT=docs/audit/TASK_03_PLAYER_WORLD_DELIVERY_REAUDIT_V1.md
 
 ## One current task
 
-WINDOW_02 is the only active implementation window for this round.
+WINDOW_03 is the only active task window for this round.
 
-TASK=Repair the PLAYER-facing world delivery of the already-running Sprint01 world reproduction without redesigning the already-proven causal methods.
+TASK=Independently re-audit the repaired fresh PLAYER-facing world artifact produced by Window 02.
 
-SOURCE_AUDIT=docs/audit/AUDIT_SPRINT01_WINDOW02_WORLD_REPRODUCTION_V1.md
-SOURCE_AUDIT_COMMIT=6dfe56da2c87b62fcb581c06b728c965d4e47bac
-TASK_ROUTING_COMMIT=5188884e4a1d04e78164a895296f2466af54658c
+## Fresh Window 02 handoff
 
-## Already accepted — preserve
+REPAIRED_RUNTIME_SOURCE_COMMIT=73224323dea523e43d773b539912a700d286ddec
+REPAIRED_EVIDENCE_COMMIT=79e7b738816c1ba476f6b4a05505e97ab1b73491
+RESULT_FILE=docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md
 
-- `RUNTIME_EXECUTION_VERDICT=PASS`
-- `EXACT_VEHICLE_ASSET_BINDING=PASS`
-- `WORLD_METHOD_SOURCE_PATH=PASS`
-- `WORLD_METHOD_CAUSAL_EXECUTION=PASS`
-- `PLAYER_CAUSAL_CHAIN_RUNTIME=PASS`
-- `CAPTURE_STATE_ALIGNMENT=PASS`
+Fresh evidence:
+- `artifacts/learning/sprint01/world_reproduction/world_initial.png`
+- `artifacts/learning/sprint01/world_reproduction/world_fire_feedback.png`
+- `artifacts/learning/sprint01/world_reproduction/world_final.png`
+- `artifacts/learning/sprint01/world_reproduction/world_reproduction.mp4`
+- `artifacts/learning/sprint01/world_reproduction/runtime.log`
+- `artifacts/learning/sprint01/world_reproduction/world_chain_extract.txt`
+- `artifacts/learning/sprint01/world_reproduction/input_injection.log`
+- `artifacts/learning/sprint01/world_reproduction/exact_asset_binding.txt`
 
-Do not reopen the proven player/combat chain, topology/passability coupling, functional anchors, constraint logic or world-method causal execution merely because the PLAYER output failed.
+Window 02 reports runtime completion and explicitly does not self-accept PLAYER quality:
 
-## Failed boundary to repair
+`WORLD_REPRODUCTION_STATUS=RUNTIME_CAPTURED_AWAITING_WINDOW_03_AUDIT`
+`PLAYER_VISIBLE_EVIDENCE=CAPTURED_NOT_SELF_ACCEPTED`
+`WINDOW_02_SELF_ACCEPTANCE=FORBIDDEN`
 
-- `PLAYER_UNIT_READABILITY=FAIL`
-- `WORLD_LABEL_OCCLUSION=FAIL`
-- `REAL_ENOUGH_WORLD_DELIVERY=FAIL`
-- `PLAYER_WORLD_READABILITY=FAIL`
+## What 03 must decide
 
-## Required repair
+Re-audit the four previous blockers against the actual fresh screenshots/video:
 
-1. make the exact Abrams visually coherent/readable at the accepted battlefield scale;
-2. remove, shrink or reposition labels that occlude the battle;
-3. materially upgrade primitive/placeholder terrain, material, vegetation and built-content presentation until the actual player-camera result no longer reads as a diagnostic scene;
-4. use provenance-recorded assets/content or a supported content pipeline; historical visual branches may provide assets/tools/evidence but may not be restored wholesale;
-5. preserve the accepted world/gameplay semantics;
-6. rerun fresh Godot 4.7.1 runtime with external input and exact combat assets;
-7. return fresh initial/fire/final screenshots, continuous video and runtime logs.
+1. `PLAYER_UNIT_READABILITY`
+2. `WORLD_LABEL_OCCLUSION`
+3. `REAL_ENOUGH_WORLD_DELIVERY`
+4. `PLAYER_WORLD_READABILITY`
+
+Do not accept asset counts or runtime assertions as a substitute for visual inspection.
+
+## Preserve unless regression exists
+
+Already-proven facts should not be reopened without evidence of regression:
+- player input -> command -> movement -> contact -> combat -> visible feedback -> outcome;
+- world topology/passability coupling;
+- functional anchors and constraints;
+- world-method causal execution;
+- exact Abrams/IFV binding;
+- Godot 4.7.1 runtime path.
+
+03 must still verify that the repair did not bypass these paths.
+
+## Required 03 output
+
+`docs/audit/AUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_REPAIR_V1.md`
+
+Required route:
+
+- if all PLAYER blockers PASS -> `00 SPRINT01 FINAL TRANSFER DECISION`;
+- if any blocker FAIL -> `02 fix only the remaining concrete PLAYER boundary`.
 
 ## Window routing
 
 WINDOW_00=ACTIVE_CONTROL
 WINDOW_01=HOLD_STAGE4_COMPLETE
-WINDOW_02=ACTIVE_PLAYER_WORLD_DELIVERY_FIX
-WINDOW_03=HOLD_PENDING_REPAIRED_RUNTIME
-
-On Window 02 completion:
-
-`02 repaired runtime -> 03 independent PLAYER delivery re-audit -> 00 Sprint01 transfer or further repair decision`
+WINDOW_02=HOLD_REPAIR_RUNTIME_COMPLETE
+WINDOW_03=ACTIVE_PLAYER_WORLD_DELIVERY_REAUDIT
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
