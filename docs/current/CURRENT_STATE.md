@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V37
+STATE_VERSION=V38
 SOURCE_OF_TRUTH=THIS_FILE_FOR_CONTROL_AND_ROUTING
 CONTROL_SYNC_DATE=2026-09-17
 
@@ -21,11 +21,7 @@ MAIN_BRANCH=main
 MAIN_ROLE=CONTROL_STATE_AND_ROUTING
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 ACTIVE_BRANCH_ROLE=SPRINT01_EVIDENCE_BUILD_RUNTIME_ARTIFACTS
-LATEST_KNOWN_ACTIVE_BRANCH_HEAD=23ade0a0a8c4f36386c8b722b93b0b87f2e796aa
-
-BRANCH_COUNT_AFTER_RECYCLE=14
-RECYCLED_BRANCH_COUNT=23
-RECYCLE_TAG_PREFIX=recycle/2026-09-16/
+LATEST_KNOWN_ACTIVE_BRANCH_HEAD=0188ff847b4407b33137e3b38c9addf26fb05016
 
 Implementation/runtime facts come from the active branch. Routing/product-resume authority comes from main / Window 00.
 
@@ -33,89 +29,70 @@ Implementation/runtime facts come from the active branch. Routing/product-resume
 
 ACTIVE_ISSUE=#39
 ACTIVE_SPRINT=LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION
-CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
-ACTIVE_TASK=REAUDIT_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1
-ACTIVE_TASK_ARTIFACT=docs/audit/TASK_03_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT_V1.md
+CURRENT_GATE=SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_FIX
+ACTIVE_TASK=REPAIR_SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_V1
+ACTIVE_TASK_ARTIFACT=docs/learning/sprint01/TASK_02_TRANSPORT_TERRAIN_INTEGRATION_FIX_V1.md
 PRODUCT_PRODUCTION_RESUME=NO
 SPRINT_PASS=NO
 
-## Preserved passed facts
+## Latest Window 03 re-audit
 
+AUDIT_ARTIFACT=docs/audit/AUDIT_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1.md
+AUDIT_COMMIT=ec3536a5de8ab10fbec891cf59d94bd891a2bf5b
+AUDITED_RUNTIME_SOURCE_COMMIT=b0fe6d8b1de747606138a9ce1b28b3541b8c464a
+AUDITED_RUN_ID=35185311167
+AUDITED_ARTIFACT_ID=10481469643
+AUDITED_ARTIFACT_SHA256=a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f
+
+RUNTIME_EVIDENCE_IDENTITY=PASS
 PLAYER_CAUSAL_CHAIN_PRESERVED=PASS
 EXACT_VEHICLE_ASSET_BINDING=PASS
 PLAYER_UNIT_READABILITY=PASS
 WORLD_LABEL_OCCLUSION=PASS
 PLAYER_WORLD_READABILITY=PASS
-WORLD_METHOD_CAUSAL_EXECUTION=PASS
+CAPTURE_STATE_ALIGNMENT=PASS
 
-Do not reopen these without regression evidence.
+REAL_ENOUGH_WORLD_DELIVERY=FAIL
+FAILED_BOUNDARY=PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION
+REPRODUCTION_AUDIT=FAIL
+SPRINT01_CURRENT_VERDICT=NOT_COMPLETE_REAL_ENOUGH_WORLD_DELIVERY_STILL_FAILED
 
-## Window 02 latest repair/runtime handoff
+## Remaining PLAYER-visible defect
 
-SOURCE_TASK=docs/learning/sprint01/TASK_02_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1.md
-HANDOFF=docs/learning/sprint01/HANDOFF_02_REAL_ENOUGH_WORLD_DELIVERY_TO_03_V1.md
-RUNTIME_SOURCE_COMMIT=b0fe6d8b1de747606138a9ce1b28b3541b8c464a
+The world no longer exposes the old rectangular outer board boundary and no longer uses BoxMesh road slabs/CylinderMesh hardstands, but the actual PLAYER result still reads as a test battlefield because:
+- the main road remains a broad, clean, straight-edged asphalt strip dominating the frame;
+- the branch/junction remains hard and near-orthogonal;
+- hardstand/disturbed ground still reads as radial decal geometry;
+- surface transitions are abrupt and semantic-zone-like;
+- central terrain relief and roadside physical cues are too weak;
+- real houses/vegetation/rocks remain sparse islands around transport geometry.
 
-Repair intent implemented:
-- continuous terrain rather than flat delivery board;
-- terrain-fitted roads/shoulders and hardstand patches;
-- flat board BoxMesh overlay removed;
-- road BoxMesh overlays removed;
-- CylinderMesh hardstands removed;
-- real/provenance delivery textures, vegetation, rocks and houses retained;
-- world boundary placed outside accepted player camera;
-- capture checkpoints driven by rendered-frame markers.
-
-## Fresh runtime evidence identity
-
-WORKFLOW=Sprint01 World Causal Reproduction
-RUN_ID=35185311167
-JOB_ID=105086008221
-ARTIFACT_ID=10481469643
-ARTIFACT_NAME=sprint01-world-reproduction-b0fe6d8b1de747606138a9ce1b28b3541b8c464a
-ARTIFACT_SHA256=a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f
-ARTIFACT_SIZE_BYTES=15065743
-
-GODOT_IMPORT_PARSE=PASS
-FRESH_WORLD_RUNTIME=PASS
-EXACT_VEHICLE_BLOB_PREFLIGHT=PASS
-EXTERNAL_X11_INPUT=PASS
-WORLD_METHOD_RUNTIME_ASSERTIONS=PASS
-PLAYER_CAUSAL_CHAIN_RUNTIME=PASS
-WORLD_AND_PLAYER_CHAIN_RUNTIME=PASS
-FRESH_INITIAL_CAPTURE=PASS
-FRESH_FIRE_CAPTURE=PASS
-FRESH_FINAL_CAPTURE=PASS
-CONTINUOUS_VIDEO_CAPTURE=PASS
-ACTIONS_ARTIFACT_UPLOAD=PASS
-
-The workflow conclusion is red only because the final evidence git push was rejected by a non-fast-forward race after the runtime/capture/artifact upload had succeeded.
-
-EVIDENCE_BRANCH_WRITEBACK=FAIL_NON_FAST_FORWARD_RACE
-EVIDENCE_BRANCH_WRITEBACK_BLOCKING_TO_03_AUDIT=NO
-
-This does not prove `REAL_ENOUGH_WORLD_DELIVERY=PASS`; only Window 03 may visually accept the artifact.
+Implementation primitive class changes are not PLAYER acceptance.
 
 ## Current four-window allocation
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
 WINDOW_01_STATUS=HOLD_STAGE4_COMPLETE
-WINDOW_02_STATUS=HOLD_RUNTIME_CAPTURE_COMPLETE
-WINDOW_03_STATUS=ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
+WINDOW_02_STATUS=ACTIVE_TRANSPORT_TERRAIN_INTEGRATION_FIX
+WINDOW_03_STATUS=HOLD_PENDING_TRANSPORT_TERRAIN_RERUN
 
-## Window 03 scope
+## Window 02 scope
 
-Window 03 must independently download/inspect artifact `10481469643` and decide:
-- `REAL_ENOUGH_WORLD_DELIVERY`
-- `CAPTURE_STATE_ALIGNMENT`
+Preserve all accepted gameplay, world-causality, exact-vehicle, readability and capture-state results.
 
-It must inspect actual initial/fire/final PNGs and continuous MP4. Asset counts, source claims, logs or CI status cannot substitute for PLAYER-visible inspection.
+Repair only the visible physical integration:
+1. break up clean road edges with shoulder/verge variation;
+2. visually grade branch/junction geometry without changing authoritative corridor semantics;
+3. replace radial hardstand/decal reading with context-shaped compacted/disturbed ground;
+4. add terrain relief and roadside physical cues without changing passability semantics;
+5. integrate houses/vegetation/rocks with road and terrain rather than sparse decorative islands;
+6. rerun fresh Godot 4.7.1 and return actual aligned PLAYER media.
 
 ## Next route
 
-NEXT=WINDOW_03_EXECUTE_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT_V1
-NEXT_IF_PASS=WINDOW_00_SPRINT01_FINAL_TRANSFER_DECISION
-NEXT_IF_FAIL=WINDOW_02_FIX_ONLY_CONCRETE_REMAINING_PLAYER_WORLD_BOUNDARY
+NEXT=WINDOW_02_EXECUTE_TRANSPORT_TERRAIN_INTEGRATION_FIX_V1
+NEXT_AFTER_FIX=WINDOW_03_REAUDIT_REAL_ENOUGH_WORLD_DELIVERY
+NEXT_AFTER_AUDIT=WINDOW_00_SPRINT01_FINAL_TRANSFER_OR_REPAIR_DECISION
 NEXT_AFTER_SPRINT_PASS=FIRST_POST_RESTART_FRONTLINE_PRODUCT_SLICE
 
 ## Hard boundaries
@@ -124,8 +101,7 @@ TECHNICAL_PASS_NOT_PRODUCT_PASS=YES
 CI_NOT_VISUAL_ACCEPTANCE=YES
 CODE_EXISTS_NOT_RUNTIME_PROOF=YES
 ASSET_COUNT_NOT_VISUAL_ACCEPTANCE=YES
-WORKFLOW_RED_NOT_RUNTIME_FAILURE_WHEN_ONLY_WRITEBACK_FAILED=YES
-GREYBOX_AS_PRODUCTION_DELIVERY=FORBIDDEN
+PRIMITIVE_CLASS_REPLACEMENT_NOT_PLAYER_ACCEPTANCE=YES
 OLD_VISUAL_BRANCH_AS_CURRENT_AUTHORITY=FORBIDDEN
 PLAYER_LAYER_MUST_BE_REACHED=YES
 PRODUCT_PRODUCTION_RESUME=NO
