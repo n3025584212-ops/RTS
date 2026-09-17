@@ -7,33 +7,27 @@ ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 
 Recover from main control files first, then refresh this branch HEAD.
 
-CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
+CURRENT_GATE=SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_FIX
 ACTIVE_ISSUE=#39
 
-Latest Window 02 runtime source:
-`b0fe6d8b1de747606138a9ce1b28b3541b8c464a`
+Latest 03 audit:
+`docs/audit/AUDIT_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1.md`
+commit `ec3536a5de8ab10fbec891cf59d94bd891a2bf5b`
 
-Handoff:
-`docs/learning/sprint01/HANDOFF_02_REAL_ENOUGH_WORLD_DELIVERY_TO_03_V1.md`
-
-03 task:
-`docs/audit/TASK_03_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT_V1.md`
-
-Actions evidence:
-- run `35185311167`
-- job `105086008221`
-- artifact `10481469643`
-- SHA256 `a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f`
-
-Godot runtime, capture and artifact upload passed. The final evidence git push failed only due to a non-fast-forward race, so the artifact—not the stale branch-copied PNGs—is the audit source for this round.
+Current 02 task:
+`docs/learning/sprint01/TASK_02_TRANSPORT_TERRAIN_INTEGRATION_FIX_V1.md`
 
 Current routing:
 `00 = ACTIVE_CONTROL`
 `01 = HOLD_STAGE4_COMPLETE`
-`02 = HOLD_RUNTIME_CAPTURE_COMPLETE`
-`03 = ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT`
+`02 = ACTIVE_TRANSPORT_TERRAIN_INTEGRATION_FIX`
+`03 = HOLD_PENDING_TRANSPORT_TERRAIN_RERUN`
 
-03 must decide actual PLAYER-visible `REAL_ENOUGH_WORLD_DELIVERY` and `CAPTURE_STATE_ALIGNMENT` from the fresh artifact. No product resume is authorized.
+Preserve passed causal/runtime/readability/capture results. The only active defect is:
+`PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`.
+
+After fresh runtime:
+`02 -> 03 REAL_ENOUGH_WORLD_DELIVERY re-audit -> 00 final Sprint01 decision`
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
