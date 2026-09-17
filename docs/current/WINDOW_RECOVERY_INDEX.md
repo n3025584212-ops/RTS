@@ -11,10 +11,11 @@ Any recovered window must read, in order:
 1. `START_HERE.md`
 2. `docs/current/CURRENT_STATE.md`
 3. `docs/current/ACTIVE_WORK.md`
-4. refresh both main and active-branch HEADs
-5. inspect the current task/audit artifacts below.
+4. `docs/current/VISUAL_QUALITY_BASELINE.md`
+5. refresh both main and active-branch HEADs
+6. inspect the current task/audit artifacts below.
 
-Implementation/runtime facts belong to the active branch. Routing/product-resume authority belongs to main / Window 00.
+Never infer visual quality from artifact recency. Always distinguish current task evidence from FRONTLINE visual baseline.
 
 ## Current checkpoint
 
@@ -42,7 +43,7 @@ Task-routing commit:
 
 ## Preserved passes
 
-Do not reopen without fresh regression evidence:
+Do not reopen without regression evidence:
 - player causal chain;
 - exact Abrams/IFV binding;
 - Abrams readability;
@@ -51,18 +52,29 @@ Do not reopen without fresh regression evidence:
 - capture-state alignment;
 - Stage 4/world-to-movement causal results.
 
-## Only remaining repair boundary
+## Only remaining Sprint repair boundary
 
 `FAILED_BOUNDARY=PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`
 
-Window 02 must repair the visible road/shoulder/verge/junction/hardstand/terrain/asset integration while preserving authoritative corridor/passability semantics.
+Window 02 repairs road/shoulder/verge/junction/hardstand/terrain/asset integration while preserving corridor/passability and gameplay semantics.
 
 After fresh runtime:
 `02 -> 03 audit REAL_ENOUGH_WORLD_DELIVERY -> 00 final Sprint01 decision`
 
-## Historical checkpoint retained
+## Visual continuity checkpoint
 
-Audited source/run/artifact that produced the current failure:
+CANONICAL_PRODUCT_VISUAL_TARGET=`docs/design/FRONTLINE_GOLDEN_FRAME_V1_SPEC.md`
+VISUAL_BASELINE_INDEX=`docs/current/VISUAL_QUALITY_BASELINE.md`
+
+Retained engine references:
+- `dev/river-town-local-high-fidelity-v1@dfc4b64e9bbc2a1c8f5d1032e92912195c575f07`
+- `dev/godot-golden-scene-v1@ec8e49e27b278299ec5654b1094789c6a9d39f6e`
+- `dev/reference-region-v1@5f2ff1c0e86553234490063e640cef8d0a2fb9f7`
+
+`Sprint01WorldReproduction` media is `LEARNING_AND_RUNTIME_EVIDENCE`, not the product visual baseline.
+
+## Historical audited artifact
+
 - source `b0fe6d8b1de747606138a9ce1b28b3541b8c464a`
 - run `35185311167`
 - artifact `10481469643`
@@ -74,7 +86,8 @@ Every material completion must leave:
 - commit SHA or immutable Actions run/artifact identity;
 - named artifact path/reference;
 - formal status/verdict;
-- explicit NEXT_ROUTE or blocker.
+- explicit NEXT_ROUTE or blocker;
+- correct classification as task/runtime evidence versus visual baseline/product result.
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
