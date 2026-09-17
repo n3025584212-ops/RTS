@@ -12,74 +12,61 @@ Any recovered window must read, in order:
 2. `docs/current/CURRENT_STATE.md`
 3. `docs/current/ACTIVE_WORK.md`
 4. refresh both main and active-branch HEADs
-5. inspect the current task/handoff artifacts below.
+5. inspect the current task/audit artifacts below.
 
 Implementation/runtime facts belong to the active branch. Routing/product-resume authority belongs to main / Window 00.
 
 ## Current checkpoint
 
-CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
+CURRENT_GATE=SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_FIX
 ACTIVE_ISSUE=#39
 
-Latest 02 source:
-`b0fe6d8b1de747606138a9ce1b28b3541b8c464a`
+Latest 03 audit:
+`docs/audit/AUDIT_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1.md`
 
-Latest 02 handoff:
-`docs/learning/sprint01/HANDOFF_02_REAL_ENOUGH_WORLD_DELIVERY_TO_03_V1.md`
+Audit commit:
+`ec3536a5de8ab10fbec891cf59d94bd891a2bf5b`
 
-Latest 03 task:
-`docs/audit/TASK_03_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT_V1.md`
+Current 02 task:
+`docs/learning/sprint01/TASK_02_TRANSPORT_TERRAIN_INTEGRATION_FIX_V1.md`
 
-Fresh Actions evidence:
-- run `35185311167`
-- job `105086008221`
-- artifact `10481469643`
-- SHA256 `a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f`
-
-Important: the workflow is red only because its final git evidence push lost a non-fast-forward race. Godot import/runtime, external input, world/player assertions, screenshots/video and artifact upload all passed.
+Task-routing commit:
+`0188ff847b4407b33137e3b38c9addf26fb05016`
 
 ## Current windows
 
 `00 = ACTIVE_CONTROL`
 `01 = HOLD_STAGE4_COMPLETE`
-`02 = HOLD_RUNTIME_CAPTURE_COMPLETE`
-`03 = ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT`
+`02 = ACTIVE_TRANSPORT_TERRAIN_INTEGRATION_FIX`
+`03 = HOLD_PENDING_TRANSPORT_TERRAIN_RERUN`
 
-## 03 decision boundary
+## Preserved passes
 
-03 inspects actual fresh media and decides:
-- `REAL_ENOUGH_WORLD_DELIVERY`
-- `CAPTURE_STATE_ALIGNMENT`
+Do not reopen without fresh regression evidence:
+- player causal chain;
+- exact Abrams/IFV binding;
+- Abrams readability;
+- persistent-label removal;
+- PLAYER world readability;
+- capture-state alignment;
+- Stage 4/world-to-movement causal results.
 
-Previously passed causal/readability facts remain frozen unless regression is found.
+## Only remaining repair boundary
 
-If PASS:
-`03 -> 00 Sprint01 final transfer decision`
+`FAILED_BOUNDARY=PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`
 
-If FAIL:
-`03 -> 02 concrete remaining player-world defect only`
+Window 02 must repair the visible road/shoulder/verge/junction/hardstand/terrain/asset integration while preserving authoritative corridor/passability semantics.
 
-## Historical checkpoints
+After fresh runtime:
+`02 -> 03 audit REAL_ENOUGH_WORLD_DELIVERY -> 00 final Sprint01 decision`
 
-Stage 4 world decomposition:
-`dcd891d7947e0ec6b97257681f258ecf6432c037`
+## Historical checkpoint retained
 
-World-method audit:
-`7e6bf5636af83933b6e0b60269f33aafa8a7715f`
-
-First world runtime/audit:
-`edf8cede10cea24a6218beb73bcca14ef424f5c7` / `6dfe56da2c87b62fcb581c06b728c965d4e47bac`
-
-First PLAYER delivery repair runtime/audit:
-`73224323dea523e43d773b539912a700d286ddec` / `0d49839bf433d88018e81d0762eb0103a1e603e2`
-
-## Branch/recycle state
-
-Active branches only:
-- `main`
-- `learning/sprint01-end-to-end-rts-production`
-
-23 reviewed stale branch heads are preserved under `recycle/2026-09-16/...` tags. Reference/Hold branches are not current authority.
+Audited source/run/artifact that produced the current failure:
+- source `b0fe6d8b1de747606138a9ce1b28b3541b8c464a`
+- run `35185311167`
+- artifact `10481469643`
+- SHA256 `a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f`
 
 ## Anti-loss handoff rule
 
@@ -89,4 +76,5 @@ Every material completion must leave:
 - formal status/verdict;
 - explicit NEXT_ROUTE or blocker.
 
-A chat statement alone does not change project state.
+SPRINT_PASS=NO
+PRODUCT_PRODUCTION_RESUME=NO
