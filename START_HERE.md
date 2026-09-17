@@ -3,7 +3,7 @@
 STATUS=CURRENT_ENTRYPOINT
 PROJECT=FRONTLINE《战线》
 
-如果你刚打开仓库、聊天窗口断档、上下文超限，或者怀疑“库里信息丢了”，不要从旧 Issue、旧 PR、旧 Battle01 文档或 README 历史段落自行猜状态。
+如果刚打开仓库、聊天窗口断档、上下文超限，或者怀疑“高质量画面/项目状态丢了”，不要从旧 Issue、旧 PR 或聊天记忆猜状态。
 
 ## 强制恢复顺序
 
@@ -11,79 +11,81 @@ PROJECT=FRONTLINE《战线》
 
 1. `docs/current/CURRENT_STATE.md`
 2. `docs/current/ACTIVE_WORK.md`
-3. `docs/current/WINDOW_RECOVERY_INDEX.md`
-4. `docs/current/RESTART_DECISION.md`
-5. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
+3. `docs/current/VISUAL_QUALITY_BASELINE.md`
+4. `docs/current/WINDOW_RECOVERY_INDEX.md`
+5. `docs/current/RESTART_DECISION.md`
+6. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
 
-然后根据 `CURRENT_STATE.md` 中的 `ACTIVE_BRANCH`：
+然后：
 
-6. 读取该分支最新 HEAD；
-7. 读取 `WINDOW_RECOVERY_INDEX.md` 列出的当前 Sprint 关键产物；
-8. 只有完成上述步骤后，才读取代码、资产、历史分支或旧 Issue。
+7. 刷新 `CURRENT_STATE.md` 指定的 active branch 最新 HEAD；
+8. 读取当前 task/audit/handoff；
+9. 只有完成上述步骤后，才读取历史分支和旧 Issue。
 
-## 双层状态规则
+## 必须同时回答两个问题
 
-`main` = 控制面：
-- 当前阶段；
-- 当前唯一任务；
-- 窗口路由；
-- 是否允许产品恢复；
-- 历史/现行权威边界。
+任何恢复窗口都必须同时知道：
 
-`learning/sprint01-end-to-end-rts-production` = 当前 Sprint 执行面：
-- 01证据产物；
-- 03审核产物；
-- 02复现场景/脚本；
-- runtime evidence / blockers。
+`CURRENT_TASK` — 当前正在施工/验证什么？
 
-不要假设 main 会包含 learning 分支的全部施工文件。
+`VISUAL_QUALITY_BASELINE` — FRONTLINE 当前不能遗忘的最高视觉目标和保留实机参考是什么？
 
-如果两边看起来冲突：
-- 施工/运行事实看 active branch；
-- 路由/产品权威看 main / Window 00；
-- 不能让旧 main 文档覆盖新 branch 事实，也不能让某个 branch 自行宣布产品恢复。
+这两个不是同一个东西。
+
+最新 Sprint01 截图/视频属于 `LEARNING_AND_RUNTIME_EVIDENCE`。它不是 FRONTLINE 当前最高视觉画面，也不能因为时间最新就覆盖旧的高质量实机参考。
+
+## 当前控制面
+
+`main`：阶段、任务、窗口路由、产品恢复权威、视觉基线索引。
+
+`learning/sprint01-end-to-end-rts-production`：Sprint01 证据、施工、runtime、截图/视频和审核产物。
+
+施工/运行事实看 active branch；路由和产品权威看 main / Window 00。
 
 ## 当前四窗口
 
-- `00`：CONTROL / INTEGRATION — 唯一控制、整合、冲突裁决。
-- `01`：EVIDENCE / LEARNING — 当前 Stage 4 已完成，HOLD。
-- `02`：REPRODUCTION / BUILD — 当前 ACTIVE，负责 Sprint01 世界复现 runtime gate。
-- `03`：INDEPENDENT REVIEW / FALSIFICATION — 当前 HOLD，等待02 fresh runtime 后审实物。
+- `00 = ACTIVE_CONTROL`
+- `01 = HOLD_STAGE4_COMPLETE`
+- `02 = ACTIVE_TRANSPORT_TERRAIN_INTEGRATION_FIX`
+- `03 = HOLD_PENDING_TRANSPORT_TERRAIN_RERUN`
 
-窗口编号不代表正确性。四个窗口共用一个项目状态和 Issue #39。
+## 当前 Sprint 01
 
-## 当前核心链
+已经通过并冻结（除非出现回归证据）：
+- player causal chain；
+- exact Abrams/IFV binding；
+- Abrams readability；
+- persistent world-label removal；
+- PLAYER world readability；
+- capture-state alignment；
+- Stage 4 / world-to-movement causal results。
 
-`CONTENT -> WORLD -> INPUT -> SIMULATION -> CONTROL -> STATE -> PRESENTATION -> RENDER -> PLAYER`
+当前唯一剩余边界：
 
-目前已通过：
-- 一条真实 player causal chain；
-- Stage 4 world causal decomposition；
-- 03 对 world method 的独立审核（PASS_WITH_DOWNGRADES）。
+`FAILED_BOUNDARY=PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`
 
-当前未通过：
-- 新世界复现的 fresh Godot 4.7.1 runtime；
-- 新世界 PLAYER-visible artifact audit；
-- Sprint 01 总 PASS；
-- FRONTLINE 产品恢复。
+Window 02 只修道路/路肩/地形/路口/硬化地面/建筑植被岩石的物理整合，并重新跑 fresh Godot 4.7.1 实物。
 
-## 当前唯一下一步
+## 视觉质量基线
 
-Window 02：运行已经构建好的 `Sprint01WorldReproduction.tscn`，用 fresh Godot 4.7.1 + exact sanctioned asset bytes 生成新的日志、截图和视频。
+正式视觉目标：
+`docs/design/FRONTLINE_GOLDEN_FRAME_V1_SPEC.md`
 
-最新已知 hosted attempt 在 runner 分配前失败，不是 gameplay PASS/FAIL。
+视觉连续性索引：
+`docs/current/VISUAL_QUALITY_BASELINE.md`
 
-具体看：
-- `docs/current/CURRENT_STATE.md`
-- `docs/current/ACTIVE_WORK.md`
-- active branch: `docs/learning/sprint01/WORLD_REPRODUCTION_RUNTIME_BLOCKER.md`
+保留的真实引擎参考包括：
+- `dev/river-town-local-high-fidelity-v1`
+- `dev/godot-golden-scene-v1`
+- `dev/reference-region-v1`
 
-## 历史边界
+这些旧分支不恢复为产品方向权威，但其高质量实机画面、资产和工具不会再被当前学习场遮蔽。
 
-Battle01、Prototype B、Golden Scene、River Town、Reference Region、local-high-fidelity branches 都保留，但只是：
-- 技术资产；
-- 失败/实物证据；
-- 可复用工具；
-- 参考材料。
+## 下一步
 
-它们不自动拥有当前产品方向权威。
+`02 fresh transport-terrain integration runtime -> 03 REAL_ENOUGH_WORLD_DELIVERY re-audit -> 00 Sprint01 final transfer decision`
+
+Sprint01 PASS 后，启动重启后的第一个正式 FRONTLINE 产品局部：使用 Sprint 验证的方法，但从一开始就以 Golden Frame 和保留高质量引擎参考作为视觉交付边界。
+
+`SPRINT_PASS=NO`
+`PRODUCT_PRODUCTION_RESUME=NO`
