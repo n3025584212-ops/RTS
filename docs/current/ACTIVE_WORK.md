@@ -4,76 +4,81 @@ STATUS=ACTIVE
 ACTIVE_ISSUE=#39
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
 MODE=EVIDENCE_REPRODUCTION_BEFORE_PRODUCT_TRANSFER
-CURRENT_GATE=SPRINT01_PLAYER_WORLD_DELIVERY_REAUDIT
-ACTIVE_TASK=REAUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_V1
-TASK_ARTIFACT=docs/audit/TASK_03_PLAYER_WORLD_DELIVERY_REAUDIT_V1.md
+CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_FIX
+ACTIVE_TASK=REPAIR_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1
+TASK_ARTIFACT=docs/learning/sprint01/TASK_02_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1.md
 
 ## One current task
 
-WINDOW_03 is the only active task window for this round.
+WINDOW_02 is the only active implementation window for this round.
 
-TASK=Independently re-audit the repaired fresh PLAYER-facing world artifact produced by Window 02.
+TASK=Close the single remaining blocking PLAYER boundary: `REAL_ENOUGH_WORLD_DELIVERY`.
 
-## Fresh Window 02 handoff
+## Latest Window 03 re-audit
 
-REPAIRED_RUNTIME_SOURCE_COMMIT=73224323dea523e43d773b539912a700d286ddec
-REPAIRED_EVIDENCE_COMMIT=79e7b738816c1ba476f6b4a05505e97ab1b73491
-RESULT_FILE=docs/learning/sprint01/WORLD_REPRODUCTION_RESULT.md
+AUDIT=docs/audit/AUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_REPAIR_V1.md
+AUDIT_COMMIT=0d49839bf433d88018e81d0762eb0103a1e603e2
 
-Fresh evidence:
-- `artifacts/learning/sprint01/world_reproduction/world_initial.png`
-- `artifacts/learning/sprint01/world_reproduction/world_fire_feedback.png`
-- `artifacts/learning/sprint01/world_reproduction/world_final.png`
-- `artifacts/learning/sprint01/world_reproduction/world_reproduction.mp4`
-- `artifacts/learning/sprint01/world_reproduction/runtime.log`
-- `artifacts/learning/sprint01/world_reproduction/world_chain_extract.txt`
-- `artifacts/learning/sprint01/world_reproduction/input_injection.log`
-- `artifacts/learning/sprint01/world_reproduction/exact_asset_binding.txt`
+Passed:
+- `RUNTIME_EVIDENCE_IDENTITY=PASS`
+- `PLAYER_CAUSAL_CHAIN_PRESERVED=PASS`
+- `EXACT_VEHICLE_ASSET_BINDING=PASS`
+- `PLAYER_UNIT_READABILITY=PASS`
+- `WORLD_LABEL_OCCLUSION=PASS`
+- `PLAYER_WORLD_READABILITY=PASS`
 
-Window 02 reports runtime completion and explicitly does not self-accept PLAYER quality:
+Failed:
+- `REAL_ENOUGH_WORLD_DELIVERY=FAIL`
 
-`WORLD_REPRODUCTION_STATUS=RUNTIME_CAPTURED_AWAITING_WINDOW_03_AUDIT`
-`PLAYER_VISIBLE_EVIDENCE=CAPTURED_NOT_SELF_ACCEPTED`
-`WINDOW_02_SELF_ACCEPTANCE=FORBIDDEN`
+Evidence-packaging defect:
+- `CAPTURE_STATE_ALIGNMENT=FAIL_NONBLOCKING_TO_CURRENT_VISUAL_DECISION`
 
-## What 03 must decide
+## Preserve — do not reopen
 
-Re-audit the four previous blockers against the actual fresh screenshots/video:
+Do not redesign or re-audit without regression evidence:
+- player input -> command -> movement -> contact -> combat -> feedback -> outcome;
+- world topology/passability and constraint logic;
+- functional anchors;
+- exact Abrams/IFV identities;
+- repaired Abrams readability;
+- removal of persistent world-label occlusion;
+- provenance-recorded vegetation/rock/house/texture asset pool.
 
-1. `PLAYER_UNIT_READABILITY`
-2. `WORLD_LABEL_OCCLUSION`
-3. `REAL_ENOUGH_WORLD_DELIVERY`
-4. `PLAYER_WORLD_READABILITY`
+## Remaining repair only
 
-Do not accept asset counts or runtime assertions as a substitute for visual inspection.
+The player camera still reads as a textured diagnostic/tabletop prototype because the world has a flat board/slab silhouette, roads appear as rectangular overlays, circular hardstands dominate, and the overlay layer masks terrain relief/transitions.
 
-## Preserve unless regression exists
+Window 02 must:
+1. remove the board/slab reading;
+2. integrate terrain, roads, shoulders and hardstand/defensive surfaces into one coherent physical world;
+3. stop using visually dominant flat BoxMesh/CylinderMesh overlay surfaces as the delivered battlefield;
+4. preserve the real delivery asset pool and proven causal semantics;
+5. rerun fresh Godot 4.7.1 with external input and exact combat assets;
+6. fix temporal alignment of named initial/fire/final capture checkpoints.
 
-Already-proven facts should not be reopened without evidence of regression:
-- player input -> command -> movement -> contact -> combat -> visible feedback -> outcome;
-- world topology/passability coupling;
-- functional anchors and constraints;
-- world-method causal execution;
-- exact Abrams/IFV binding;
-- Godot 4.7.1 runtime path.
+## Required handoff
 
-03 must still verify that the repair did not bypass these paths.
-
-## Required 03 output
-
-`docs/audit/AUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_REPAIR_V1.md`
-
-Required route:
-
-- if all PLAYER blockers PASS -> `00 SPRINT01 FINAL TRANSFER DECISION`;
-- if any blocker FAIL -> `02 fix only the remaining concrete PLAYER boundary`.
+Fresh outputs:
+- runtime/import log;
+- exact asset binding;
+- external input log;
+- preserved world/player-chain assertions;
+- aligned initial screenshot;
+- aligned fire-feedback screenshot;
+- final/outcome screenshot;
+- continuous runtime video;
+- result artifact;
+- runtime source SHA and evidence SHA.
 
 ## Window routing
 
 WINDOW_00=ACTIVE_CONTROL
 WINDOW_01=HOLD_STAGE4_COMPLETE
-WINDOW_02=HOLD_REPAIR_RUNTIME_COMPLETE
-WINDOW_03=ACTIVE_PLAYER_WORLD_DELIVERY_REAUDIT
+WINDOW_02=ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_FIX
+WINDOW_03=HOLD_PENDING_REAL_ENOUGH_WORLD_RERUN
+
+After Window 02 completion:
+`02 fresh repaired world runtime -> 03 audit REAL_ENOUGH_WORLD_DELIVERY + capture alignment -> 00 final Sprint01 transfer/repair decision`
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
