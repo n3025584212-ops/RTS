@@ -14,6 +14,9 @@ const ASPHALT_TEX := DELIVERY_ROOT + "asphalt_02_diff.jpg"
 
 const ABRAMS_DELIVERY_TARGET_SIZE := 54.0
 const IFV_DELIVERY_TARGET_SIZE := 6.7
+const DELIVERY_TERRAIN_HALF_X := 62.0
+const DELIVERY_TERRAIN_HALF_Z := 44.0
+const DELIVERY_TERRAIN_STEP := 2.0
 
 var delivery_asset_instances: int = 0
 var hidden_placeholder_meshes: int = 0
@@ -48,19 +51,20 @@ func _build_environment() -> void:
 	super._build_environment()
 	_hide_diagnostic_placeholder_meshes(self)
 	_add_real_world_delivery_assets()
-	print("REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=TERRAIN_INTEGRATED_SURFACES_PLUS_PROVENANCE_RECORDED_GLBS")
+	print("REAL_ENOUGH_WORLD_DELIVERY_PIPELINE=CONTINUOUS_TERRAIN_PLUS_TERRAIN_FITTED_TRANSPORT_AND_PROVENANCE_RECORDED_GLBS")
 	print("DELIVERY_SURFACE_OVERLAY=REMOVED|FLAT_BOARD_BOXES=0|ROAD_BOXES=0|CYLINDER_HARDSTANDS=0")
 	print("DELIVERY_TRIANGLE_WINDING=PLAYER_CAMERA_VISIBLE|TERRAIN_AND_ROADS=UNIFIED")
+	print("DELIVERY_WORLD_BOUNDARY=OUTSIDE_PLAYER_CAMERA|HALF_X=%.1f|HALF_Z=%.1f" % [DELIVERY_TERRAIN_HALF_X, DELIVERY_TERRAIN_HALF_Z])
 
 
 func _build_material_pipeline() -> void:
 	world_materials["meadow"] = _delivery_material("meadow", GRASS_TEX, 0.93, Color(0.80, 0.86, 0.72))
 	world_materials["forest_floor"] = _delivery_material("forest_floor", MUD_TEX, 0.96, Color(0.68, 0.72, 0.62))
-	world_materials["transition"] = _delivery_material("transition", GRAVEL_TEX, 0.95, Color(0.78, 0.76, 0.66))
+	world_materials["transition"] = _delivery_material("transition", GRAVEL_TEX, 0.95, Color(0.74, 0.72, 0.62))
 	world_materials["rock"] = _delivery_material("rock", GRAVEL_TEX, 0.91, Color(0.72, 0.74, 0.71))
-	world_materials["road"] = _delivery_material("road", ASPHALT_TEX, 0.88, Color(0.70, 0.68, 0.63))
-	world_materials["shoulder"] = _delivery_material("shoulder", MUD_TEX, 0.97, Color(0.76, 0.70, 0.57))
-	world_materials["hardstand"] = _delivery_material("hardstand", GRAVEL_TEX, 0.90, Color(0.82, 0.80, 0.72))
+	world_materials["road"] = _delivery_material("road", ASPHALT_TEX, 0.88, Color(0.64, 0.63, 0.59))
+	world_materials["shoulder"] = _delivery_material("shoulder", MUD_TEX, 0.97, Color(0.72, 0.66, 0.54))
+	world_materials["hardstand"] = _delivery_material("hardstand", GRAVEL_TEX, 0.90, Color(0.76, 0.74, 0.67))
 	world_materials["earthwork"] = _delivery_material("earthwork", MUD_TEX, 0.98, Color(0.66, 0.58, 0.45))
 	world_materials["trunk"] = _delivery_material("trunk", MUD_TEX, 0.96, Color(0.54, 0.42, 0.29))
 	world_materials["canopy"] = _delivery_material("canopy", GRASS_TEX, 0.94, Color(0.36, 0.55, 0.30))
@@ -81,9 +85,6 @@ func _delivery_material(role: String, texture_path: String, roughness_value: flo
 
 
 func _add_textured_triangle(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3) -> void:
-	# Godot's visible winding for these generated battlefield surfaces is the
-	# opposite of the original terrain helper. Normalize every generated face so
-	# terrain, road ribbons and fitted patches are all visible from the command camera.
 	var raw_normal := (b - a).cross(c - a)
 	var p0 := a
 	var p1 := b
@@ -98,6 +99,63 @@ func _add_textured_triangle(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3)
 		st.set_normal(normal)
 		st.set_uv(Vector2(point.x * 0.13, point.z * 0.13))
 		st.add_vertex(point)
+
+
+func _build_terrain_surfaces() -> void:
+	# One continuous terrain mesh removes the cell-by-cell board/tabletop reading.
+	# Forest semantics are then layered back as terrain-fitted organic patches.
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var cells_x := int((DELIVERY_TERRAIN_HALF_X * 2.0) / DELIVERY_TERRAIN_STEP)
+	var cells_z := int((DELIVERY_TERRAIN_HALF_Z * 2.0) / DELIVERY_TERRAIN_STEP)
+	for ix: int in range(cells_x):
+		var x0 := -DELIVERY_TERRAIN_HALF_X + float(ix) * DELIVERY_TERRAIN_STEP
+		var x1 := x0 + DELIVERY_TERRAIN_STEP
+		for iz: int in range(cells_z):
+			var z0 := -DELIVERY_TERRAIN_HALF_Z + float(iz) * DELIVERY_TERRAIN_STEP
+			var z1 := z0 + DELIVERY_TERRAIN_STEP
+			var p00 := Vector3(x0, _terrain_height(x0, z0), z0)
+			var p01 := Vector3(x0, _terrain_height(x0, z1), z1)
+			var p11 := Vector3(x1, _terrain_height(x1, z1), z1)
+			var p10 := Vector3(x1, _terrain_height(x1, z0), z0)
+			_add_textured_triangle(st, p00, p01, p11)
+			_add_textured_triangle(st, p00, p11, p10)
+	var base_mesh := st.commit()
+	var base_instance := MeshInstance3D.new()
+	base_instance.name = "Terrain_ContinuousBattlefield"
+	base_instance.mesh = base_mesh
+	base_instance.material_override = world_materials["meadow"] as Material
+	add_child(base_instance)
+
+	for index: int in range(FOREST_PATCH_CENTERS.size()):
+		var center: Vector3 = FOREST_PATCH_CENTERS[index]
+		var radius: float = FOREST_PATCH_RADII[index]
+		_add_organic_terrain_patch("TerrainTransition_%02d" % index, center, radius + 2.8, 0.028, world_materials["transition"] as Material, 41 + index * 17)
+		_add_organic_terrain_patch("TerrainForestFloor_%02d" % index, center, radius * 0.92, 0.050, world_materials["forest_floor"] as Material, 83 + index * 29)
+	print("TERRAIN_PIPELINE=PASS|MODE=CONTINUOUS_BASE_PLUS_ORGANIC_PATCHES|GRID_STEP=%.1f|FOREST_PATCHES=%d|BOUNDARY_IN_CAMERA=NO" % [DELIVERY_TERRAIN_STEP, FOREST_PATCH_CENTERS.size()])
+
+
+func _add_organic_terrain_patch(node_name: String, center: Vector3, radius: float, y_offset: float, material: Material, seed: int) -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var segments := 42
+	var center_point := Vector3(center.x, _terrain_height(center.x, center.z) + y_offset, center.z)
+	for i: int in range(segments):
+		var a0 := TAU * float(i) / float(segments)
+		var a1 := TAU * float(i + 1) / float(segments)
+		var r0 := radius * (0.90 + 0.07 * sin(float(seed + i * 11)) + 0.03 * cos(float(seed * 2 + i * 7)))
+		var r1 := radius * (0.90 + 0.07 * sin(float(seed + (i + 1) * 11)) + 0.03 * cos(float(seed * 2 + (i + 1) * 7)))
+		var p0 := Vector3(center.x + cos(a0) * r0, 0.0, center.z + sin(a0) * r0)
+		var p1 := Vector3(center.x + cos(a1) * r1, 0.0, center.z + sin(a1) * r1)
+		p0.y = _terrain_height(p0.x, p0.z) + y_offset
+		p1.y = _terrain_height(p1.x, p1.z) + y_offset
+		_add_textured_triangle(st, center_point, p0, p1)
+	var mesh := st.commit()
+	var instance := MeshInstance3D.new()
+	instance.name = node_name
+	instance.mesh = mesh
+	instance.material_override = material
+	add_child(instance)
 
 
 func _build_transport_surfaces() -> void:
@@ -118,8 +176,8 @@ func _build_transport_surfaces() -> void:
 	_build_ribbon("MainRoadSurface", main_points, MAIN_ROAD_HALF_WIDTH, 0.065, world_materials["road"] as Material)
 	_build_ribbon("BranchRoadShoulder", branch_points, BRANCH_ROAD_HALF_WIDTH + 0.85, 0.040, world_materials["shoulder"] as Material)
 	_build_ribbon("BranchRoadSurface", branch_points, BRANCH_ROAD_HALF_WIDTH, 0.072, world_materials["road"] as Material)
-	_add_terrain_fitted_patch("JunctionHardstandSurface", JUNCTION_ANCHOR, Vector2(5.1, 4.0), 0.078, world_materials["hardstand"] as Material, 17.0)
-	_add_terrain_fitted_patch("ObjectiveHardstandSurface", OBJECTIVE_ANCHOR, Vector2(5.4, 3.6), 0.080, world_materials["shoulder"] as Material, -11.0)
+	_add_terrain_fitted_patch("JunctionHardstandSurface", JUNCTION_ANCHOR, Vector2(3.5, 2.7), 0.078, world_materials["hardstand"] as Material, 17.0)
+	_add_terrain_fitted_patch("ObjectiveHardstandSurface", OBJECTIVE_ANCHOR, Vector2(3.8, 2.8), 0.080, world_materials["shoulder"] as Material, -11.0)
 	print("TRANSPORT_LAYER=PASS|MAIN_CORRIDOR=EXPLICIT|BRANCH=EXPLICIT|JUNCTION_ANCHOR=%s" % _fmt_vec(JUNCTION_ANCHOR))
 	print("TRANSPORT_PRESENTATION=TERRAIN_FITTED_RIBBONS_AND_PATCHES|BOX_ROADS=NO|CYLINDER_HARDSTANDS=NO")
 
@@ -130,7 +188,7 @@ func _add_terrain_fitted_patch(node_name: String, center: Vector3, radii: Vector
 	var yaw := deg_to_rad(yaw_degrees)
 	var center_height := _terrain_height(center.x, center.z) + y_offset
 	var center_point := Vector3(center.x, center_height, center.z)
-	var segments := 18
+	var segments := 22
 	for i: int in range(segments):
 		var a0 := TAU * float(i) / float(segments)
 		var a1 := TAU * float(i + 1) / float(segments)
