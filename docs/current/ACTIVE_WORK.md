@@ -3,55 +3,58 @@
 STATUS=ACTIVE
 ACTIVE_ISSUE=#39
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
-CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
-ACTIVE_TASK=REAUDIT_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1
-TASK_ARTIFACT=docs/audit/TASK_03_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT_V1.md
+CURRENT_GATE=SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_FIX
+ACTIVE_TASK=REPAIR_SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_V1
+TASK_ARTIFACT=docs/learning/sprint01/TASK_02_TRANSPORT_TERRAIN_INTEGRATION_FIX_V1.md
 
 ## One current task
 
-WINDOW_03 is the only active task window.
+WINDOW_02 is the only active implementation window.
 
-TASK=Independently audit the latest continuous-terrain PLAYER artifact for the one remaining visual boundary and capture alignment.
+TASK=Close the remaining `PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION` boundary.
 
-## Input
+## Latest Window 03 verdict
 
-RUNTIME_SOURCE_COMMIT=b0fe6d8b1de747606138a9ce1b28b3541b8c464a
-HANDOFF=docs/learning/sprint01/HANDOFF_02_REAL_ENOUGH_WORLD_DELIVERY_TO_03_V1.md
-RUN_ID=35185311167
-JOB_ID=105086008221
-ARTIFACT_ID=10481469643
-ARTIFACT_SHA256=a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f
+Audit:
+`docs/audit/AUDIT_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1.md`
 
-The world workflow completed Godot import/runtime, real external input, world/player assertions, three screenshots, continuous MP4 and artifact upload. Its final git evidence push failed only from a non-fast-forward branch race.
+Audit commit:
+`ec3536a5de8ab10fbec891cf59d94bd891a2bf5b`
 
-## Preserve unless regression
+Passed and frozen unless regression appears:
+- `RUNTIME_EVIDENCE_IDENTITY=PASS`
+- `PLAYER_CAUSAL_CHAIN_PRESERVED=PASS`
+- `EXACT_VEHICLE_ASSET_BINDING=PASS`
+- `PLAYER_UNIT_READABILITY=PASS`
+- `WORLD_LABEL_OCCLUSION=PASS`
+- `PLAYER_WORLD_READABILITY=PASS`
+- `CAPTURE_STATE_ALIGNMENT=PASS`
 
-- player causal chain;
-- exact Abrams/IFV binding;
-- Abrams readability;
-- no persistent world-label occlusion;
-- player world readability;
-- world-method causal execution.
+Failed:
+- `REAL_ENOUGH_WORLD_DELIVERY=FAIL`
+- `FAILED_BOUNDARY=PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`
 
-## 03 must decide from actual media
+## Remaining repair only
 
-1. `REAL_ENOUGH_WORLD_DELIVERY`
-2. `CAPTURE_STATE_ALIGNMENT`
+Window 02 must preserve the authoritative corridor and movement/passability semantics while repairing PLAYER-visible physical integration:
+1. road edge breakup, shoulders and verge variation;
+2. graded branch/junction composition rather than hard orthogonal test geometry;
+3. context-shaped compacted/disturbed ground rather than radial hardstand/decal reading;
+4. stronger terrain relief and roadside physical cues;
+5. houses/vegetation/rocks integrated into the transport/terrain region rather than isolated decoration;
+6. fresh Godot 4.7.1 runtime and aligned PLAYER screenshots/video.
 
-Do not accept implementation claims such as continuous terrain, real assets or no BoxMesh overlays as visual proof by themselves.
+Do not reopen input, command, movement, contact, combat, exact vehicle binding, Stage 4, world-to-movement logic, readability or capture marker logic without regression evidence.
 
 ## Window routing
 
 WINDOW_00=ACTIVE_CONTROL
 WINDOW_01=HOLD_STAGE4_COMPLETE
-WINDOW_02=HOLD_RUNTIME_CAPTURE_COMPLETE
-WINDOW_03=ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
+WINDOW_02=ACTIVE_TRANSPORT_TERRAIN_INTEGRATION_FIX
+WINDOW_03=HOLD_PENDING_TRANSPORT_TERRAIN_RERUN
 
-If PASS:
-`03 -> 00 Sprint01 final transfer decision`
-
-If FAIL:
-`03 -> 02 only the concrete remaining player-world boundary`
+After Window 02 completion:
+`02 fresh transport-terrain runtime -> 03 real-enough-world re-audit -> 00 Sprint01 final transfer/repair decision`
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
