@@ -3,82 +3,55 @@
 STATUS=ACTIVE
 ACTIVE_ISSUE=#39
 ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
-MODE=EVIDENCE_REPRODUCTION_BEFORE_PRODUCT_TRANSFER
-CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_FIX
-ACTIVE_TASK=REPAIR_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1
-TASK_ARTIFACT=docs/learning/sprint01/TASK_02_REAL_ENOUGH_WORLD_DELIVERY_FIX_V1.md
+CURRENT_GATE=SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
+ACTIVE_TASK=REAUDIT_SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_V1
+TASK_ARTIFACT=docs/audit/TASK_03_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT_V1.md
 
 ## One current task
 
-WINDOW_02 is the only active implementation window for this round.
+WINDOW_03 is the only active task window.
 
-TASK=Close the single remaining blocking PLAYER boundary: `REAL_ENOUGH_WORLD_DELIVERY`.
+TASK=Independently audit the latest continuous-terrain PLAYER artifact for the one remaining visual boundary and capture alignment.
 
-## Latest Window 03 re-audit
+## Input
 
-AUDIT=docs/audit/AUDIT_SPRINT01_PLAYER_WORLD_DELIVERY_REPAIR_V1.md
-AUDIT_COMMIT=0d49839bf433d88018e81d0762eb0103a1e603e2
+RUNTIME_SOURCE_COMMIT=b0fe6d8b1de747606138a9ce1b28b3541b8c464a
+HANDOFF=docs/learning/sprint01/HANDOFF_02_REAL_ENOUGH_WORLD_DELIVERY_TO_03_V1.md
+RUN_ID=35185311167
+JOB_ID=105086008221
+ARTIFACT_ID=10481469643
+ARTIFACT_SHA256=a5d3f9e9d8551e4ebb5875971e67c9fd769ccd33f5ca71a0b037b2d01c27104f
 
-Passed:
-- `RUNTIME_EVIDENCE_IDENTITY=PASS`
-- `PLAYER_CAUSAL_CHAIN_PRESERVED=PASS`
-- `EXACT_VEHICLE_ASSET_BINDING=PASS`
-- `PLAYER_UNIT_READABILITY=PASS`
-- `WORLD_LABEL_OCCLUSION=PASS`
-- `PLAYER_WORLD_READABILITY=PASS`
+The world workflow completed Godot import/runtime, real external input, world/player assertions, three screenshots, continuous MP4 and artifact upload. Its final git evidence push failed only from a non-fast-forward branch race.
 
-Failed:
-- `REAL_ENOUGH_WORLD_DELIVERY=FAIL`
+## Preserve unless regression
 
-Evidence-packaging defect:
-- `CAPTURE_STATE_ALIGNMENT=FAIL_NONBLOCKING_TO_CURRENT_VISUAL_DECISION`
+- player causal chain;
+- exact Abrams/IFV binding;
+- Abrams readability;
+- no persistent world-label occlusion;
+- player world readability;
+- world-method causal execution.
 
-## Preserve — do not reopen
+## 03 must decide from actual media
 
-Do not redesign or re-audit without regression evidence:
-- player input -> command -> movement -> contact -> combat -> feedback -> outcome;
-- world topology/passability and constraint logic;
-- functional anchors;
-- exact Abrams/IFV identities;
-- repaired Abrams readability;
-- removal of persistent world-label occlusion;
-- provenance-recorded vegetation/rock/house/texture asset pool.
+1. `REAL_ENOUGH_WORLD_DELIVERY`
+2. `CAPTURE_STATE_ALIGNMENT`
 
-## Remaining repair only
-
-The player camera still reads as a textured diagnostic/tabletop prototype because the world has a flat board/slab silhouette, roads appear as rectangular overlays, circular hardstands dominate, and the overlay layer masks terrain relief/transitions.
-
-Window 02 must:
-1. remove the board/slab reading;
-2. integrate terrain, roads, shoulders and hardstand/defensive surfaces into one coherent physical world;
-3. stop using visually dominant flat BoxMesh/CylinderMesh overlay surfaces as the delivered battlefield;
-4. preserve the real delivery asset pool and proven causal semantics;
-5. rerun fresh Godot 4.7.1 with external input and exact combat assets;
-6. fix temporal alignment of named initial/fire/final capture checkpoints.
-
-## Required handoff
-
-Fresh outputs:
-- runtime/import log;
-- exact asset binding;
-- external input log;
-- preserved world/player-chain assertions;
-- aligned initial screenshot;
-- aligned fire-feedback screenshot;
-- final/outcome screenshot;
-- continuous runtime video;
-- result artifact;
-- runtime source SHA and evidence SHA.
+Do not accept implementation claims such as continuous terrain, real assets or no BoxMesh overlays as visual proof by themselves.
 
 ## Window routing
 
 WINDOW_00=ACTIVE_CONTROL
 WINDOW_01=HOLD_STAGE4_COMPLETE
-WINDOW_02=ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_FIX
-WINDOW_03=HOLD_PENDING_REAL_ENOUGH_WORLD_RERUN
+WINDOW_02=HOLD_RUNTIME_CAPTURE_COMPLETE
+WINDOW_03=ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
 
-After Window 02 completion:
-`02 fresh repaired world runtime -> 03 audit REAL_ENOUGH_WORLD_DELIVERY + capture alignment -> 00 final Sprint01 transfer/repair decision`
+If PASS:
+`03 -> 00 Sprint01 final transfer decision`
+
+If FAIL:
+`03 -> 02 only the concrete remaining player-world boundary`
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
