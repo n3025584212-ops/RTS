@@ -63,7 +63,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/visual_reset
-          timeout 720s xvfb-run -a -s "-screen 0 1920x1080x24" "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy --resolution 1920x1080 res://scenes/production/RiverTownVisualSlice.tscn -- --capture 2>&1 | tee visual-slice-runtime.log
+          # Reproduce the previously successful Run #5 capture protocol: capture after the first completed draw.
+          timeout 720s xvfb-run -a -s "-screen 0 1920x1080x24" "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy --resolution 1920x1080 res://scenes/production/RiverTownVisualSlice.tscn -- --capture --capture-frame=1 2>&1 | tee visual-slice-runtime.log
           grep -q 'FRONTLINE_RIVER_TOWN_READY' visual-slice-runtime.log
           grep -q 'FRONTLINE_RIVER_TOWN_CAPTURED' visual-slice-runtime.log
           ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' visual-slice-runtime.log
