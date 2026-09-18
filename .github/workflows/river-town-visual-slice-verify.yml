@@ -3,7 +3,7 @@ name: FRONTLINE River Town Visual Slice
 on:
   push:
     branches:
-      - dev/visual-production-reset
+      - product/frontline-high-fidelity-slice-v1
     paths:
       - "scenes/production/RiverTownVisualSlice.tscn"
       - "scripts/production/river_town_visual_slice.gd"
@@ -63,7 +63,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p artifacts/visual_reset
-          timeout 720s xvfb-run -a -s "-screen 0 1920x1080x24"             "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy             --resolution 1920x1080 res://scenes/production/RiverTownVisualSlice.tscn -- --capture             2>&1 | tee visual-slice-runtime.log
+          timeout 720s xvfb-run -a -s "-screen 0 1920x1080x24" "$GODOT" --path . --rendering-method forward_plus --audio-driver Dummy --resolution 1920x1080 res://scenes/production/RiverTownVisualSlice.tscn -- --capture 2>&1 | tee visual-slice-runtime.log
           grep -q 'FRONTLINE_RIVER_TOWN_READY' visual-slice-runtime.log
           grep -q 'FRONTLINE_RIVER_TOWN_CAPTURED' visual-slice-runtime.log
           ! grep -E 'SCRIPT ERROR|Parse Error|SHADER ERROR|Shader compilation failed|Failed to load script|Cannot open file|Invalid call|Invalid access' visual-slice-runtime.log
