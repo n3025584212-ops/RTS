@@ -1,76 +1,58 @@
 # FRONTLINE — ACTIVE WORK
 
 STATUS=ACTIVE
-ACTIVE_ISSUE=#39
-ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
-CURRENT_GATE=SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_REAUDIT_V2
-ACTIVE_TASK=AUDIT_SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_V2
-TASK_ARTIFACT=docs/audit/TASK_03_TRANSPORT_TERRAIN_REAUDIT_V1.md
-HANDOFF_ARTIFACT=docs/learning/sprint01/HANDOFF_02_TRANSPORT_TERRAIN_TO_03_V1.md
+ACTIVE_ISSUE=#41
+ACTIVE_BRANCH=product/frontline-high-fidelity-slice-v1
+CURRENT_GATE=HIGH_FIDELITY_PRODUCT_BASELINE_REPRODUCTION
+ACTIVE_TASK=REPRODUCE_RIVER_TOWN_BASELINE_THEN_INTEGRATE_VALIDATED_GAMEPLAY
+TASK_ARTIFACT=docs/current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md
 
-## One current task
+## One active construction route
 
-WINDOW_03 is the only active review window.
+WINDOW_02 is the only active implementation window.
 
-TASK=Independently inspect the V2 fresh PLAYER media and decide whether `PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION` is closed enough for the Sprint01 reproduction contract.
+Build directly on:
+`res://scenes/production/RiverTownVisualSlice.tscn`
 
-## Immutable audit input
+Base branch ancestry:
+`dev/river-town-local-high-fidelity-v1@dfc4b64e9bbc2a1c8f5d1032e92912195c575f07`
 
-RUNTIME_SOURCE_COMMIT=7eb34267d6fbbebd856001a7c17390c341835e59
-WORLD_WORKFLOW_RUN=35204480034
-WORLD_WORKFLOW_JOB=105146808996
-WORLD_ARTIFACT_ID=10488929099
-WORLD_ARTIFACT_SHA256=183e43456c951c8908c239c189f6f2cf12bbc865598c836b73146256656da500
-GODOT_VERSION=4.7.1.stable.official.a13da4feb
+Local visual floor:
+`artifacts/visual_reset/baseline_local/river_town_actual_1920x1080.png`
 
-Runtime/capture/artifact upload passed. The workflow's final evidence-writeback commit failed only due branch non-fast-forward race; do not classify that as runtime failure.
+Canonical target:
+`FRONTLINE_GOLDEN_FRAME_V1`
 
-## Preserved runtime facts
+## Explicitly stopped route
 
-- `CODE_EXECUTES=PASS`
-- `WORLD_METHOD_RUNTIME=PASS`
-- `WORLD_TO_MOVEMENT=PASS`
-- `PLAYER_CHAIN_RUNTIME=PASS`
-- `WORLD_AND_PLAYER_CHAIN_RUNTIME=PASS`
-- `CAPTURE_ALIGNMENT=RENDER_FRAME_MARKERS`
+Issue #39 / Sprint01 learning-test visual iteration is closed as an active product route.
+`Sprint01WorldReproduction.tscn` is evidence only.
+No more V1/V2/V3 player-facing battlefield polishing on that learning scene unless the user explicitly reopens it.
 
-These do not answer the visual audit by themselves.
+## First product step
 
-## Direct media inspection required
+1. Freshly reproduce River Town at Godot 4.7.1 / Forward+ / 1920x1080.
+2. Confirm retained assets and high-quality pipeline still render.
+3. Freeze that fresh image as product-branch visual floor.
+4. Integrate the minimum validated controllable armored-unit chain into the high-quality scene.
+5. Do not replace terrain, architecture, vegetation, PBR materials, lighting or camera with test proxies.
+6. Capture fresh player-facing screenshots/video.
+7. Route to Window 03 for independent visual/gameplay regression audit.
 
-03 must inspect artifact `10488929099`:
-- `world_initial.png`
-- `world_fire_feedback.png`
-- `world_final.png`
-- `world_reproduction.mp4`
+## Hard constraints
 
-Primary verdict:
-`REAL_ENOUGH_WORLD_DELIVERY=PASS | FAIL`
-
-Check whether road/shoulder/verge/junction/disturbed-ground/terrain/asset composition now reads as one physical region instead of a test layout.
-
-## Visual baseline protection
-
-The Sprint01 scene is learning/runtime evidence only. It is not the current highest FRONTLINE visual artifact and cannot replace the protected visual baseline.
-
-Visual baseline index:
-`docs/current/VISUAL_QUALITY_BASELINE.md`
-
-Product visual contract:
-`docs/design/FRONTLINE_GOLDEN_FRAME_V1_SPEC.md`
+NO_BOX_PROXY_BATTLEFIELD=YES
+NO_CYLINDER_PROXY_BATTLEFIELD=YES
+NO_COLOR_BLOCK_ENVIRONMENT=YES
+NO_DEBUG_LABEL_DOMINATED_CAPTURE=YES
+NO_LEARNING_SCENE_AS_PRODUCT_ANCESTOR=YES
+RIVER_TOWN_VISUAL_FLOOR_PROTECTED=YES
 
 ## Window routing
 
 WINDOW_00=ACTIVE_CONTROL
-WINDOW_01=HOLD_STAGE4_COMPLETE
-WINDOW_02=HOLD_RUNTIME_CAPTURE_COMPLETE
-WINDOW_03=ACTIVE_TRANSPORT_TERRAIN_REAUDIT
+WINDOW_01=HOLD_LEARNING_EVIDENCE_ONLY
+WINDOW_02=ACTIVE_HIGH_FIDELITY_PRODUCT_BUILD
+WINDOW_03=HOLD_PENDING_HIGH_FIDELITY_RUNTIME
 
-If 03 PASS:
-`03 -> 00 Sprint01 final transfer decision`
-
-If 03 FAIL:
-`03 -> 02 concrete remaining PLAYER-visible defects only`
-
-SPRINT_PASS=NO
-PRODUCT_PRODUCTION_RESUME=NO
+PRODUCT_PRODUCTION_RESUME=YES_HIGH_FIDELITY_SLICE_ONLY
