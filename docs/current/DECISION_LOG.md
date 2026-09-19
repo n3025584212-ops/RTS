@@ -101,3 +101,13 @@ DECISION=RiverTownVisualSlice (product/frontline-high-fidelity-slice-v1) is the 
 EVIDENCE=User directive 2026-09-20; local re-render of the baseline scene after recycle (Vulkan 1.4.323, Intel UHD, 2129 draw calls, ~134 ms/frame); zero references from retained code to any recycled path; full recycle manifest at docs/ops/VISUAL_BASELINE_RECYCLE_2026-09-20.md on the product branch.
 IMPACT=Future visual work compares against docs/visual_baseline/river_town_sole_20260920/ captures under the stated protocol. VISUAL_QUALITY_BASELINE.md amended accordingly.
 RELATED_ISSUE_OR_PR=#41
+
+## 2026-09-20 — Gate B armored-unit integration evidence complete
+
+DATE=2026-09-20
+DECISION_ID=FRONTLINE_GATE_B_ARMORED_UNIT_EVIDENCE_V1
+STATUS=EVIDENCE_COMPLETE_PENDING_GATE_C
+DECISION=User directed continuation of the active plan (Issue #41). The minimum already-validated controllable armored-unit chain was integrated into the River Town mother scene on product/frontline-high-fidelity-slice-v1: the validated BattleFormation selection/order/movement logic and the validated core NavigationService now drive the real Abrams PBR mesh (river_town_armored_unit.gd + river_town_sim_navigation.gd; additive integration, no proxy, greybox route tables unused). Fresh 1920x1080 Forward+ runtime media (before/mid/arrived + metrics) recorded under product::docs/visual_baseline/gate_b_20260920/ with a new additive gate_b capture view. All seven Gate B PASS evidence items are recorded; TECHNICAL_PASS remains distinct from PRODUCT_PASS, so Gate C independent audit is the required next route.
+EVIDENCE=Integration commit 24ad352 + docs commits 52b0724 on the product branch; local run logs with zero script errors; displacement (2.5,7) -> (5.125,-0.875) through select -> issue_move -> NavigationService path; selection ring and terrain-height binding visible in media; sole-baseline visual comparison recorded with no regression. Audit note: the Abrams historically sat outside the hero camera frustum (the hero view frames the foreground house), explaining why earlier captures never showed it; the additive gate_b view resolves this.
+IMPACT=Window 02 construction task is evidence-complete; Window 03 independent audit of Gate B is now the active route. CI workflow FRONTLINE River Town Visual Slice is triggered by the push and serves as CI-side reproduction.
+RELATED_ISSUE_OR_PR=#41

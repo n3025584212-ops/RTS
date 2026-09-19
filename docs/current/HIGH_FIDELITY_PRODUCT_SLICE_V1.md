@@ -24,9 +24,10 @@ This closes the baseline-reproduction gate only. CI success is technical evidenc
 
 ## Gate B — Current construction task
 
-STATUS=ACTIVE
+STATUS=EVIDENCE_COMPLETE_PENDING_GATE_C
 CURRENT_GATE=MINIMUM_ARMORED_UNIT_INTEGRATION
 OWNER_WINDOW=02_REPRODUCTION_AND_CONSTRUCTION
+EVIDENCE_RECORD=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_b_20260920/EVIDENCE_RECORD.md
 
 Integrate the minimum already-validated controllable armored-unit/runtime chain into the real River Town product scene.
 
