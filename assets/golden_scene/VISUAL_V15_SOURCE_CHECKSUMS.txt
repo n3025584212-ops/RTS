@@ -1,1 +1,0 @@
-235d7470bd6e369201a981b532df131aade154ede262244f2fe312861a3ffaef  /home/runner/work/RTS/RTS/assets/golden_scene/nature_real/pine_sapling_small_lod.glb

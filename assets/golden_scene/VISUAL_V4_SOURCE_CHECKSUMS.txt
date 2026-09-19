@@ -1,3 +1,0 @@
-# FRONTLINE Golden Scene V4 source checksums
-fe3fc5e0c21735e018300f591779eeb75838ed29b54f33b40cafae36561d6911  /home/runner/work/_temp/frontline-golden-v4/ordinary_house.obj
-8c81fa973d0547d6a87c7515b36ad98bb2434eadd2ef4653ae49769c4c613e19  /home/runner/work/_temp/frontline-golden-v4/apartment.zip

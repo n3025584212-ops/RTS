@@ -615,7 +615,7 @@ func create_background() -> void:
 		var x := -84+(i%7)*25+rng.randf_range(-5,5)
 		var z := -121-floori(i/7.0)*29+rng.randf_range(-8,8)
 		spawn(ASSET+"house_intact.glb",Vector3(x,height_at(x,z),z),rng.randf_range(.7,1.05),rng.randf_range(-20,25),true)
-	var church := spawn("res://assets/golden_scene/city_real/church_landmark.glb",Vector3(-36,height_at(-36,-135),-135),1.0,0)
+	var church := spawn("res://assets/visual_slice/landmarks/church_landmark.glb",Vector3(-36,height_at(-36,-135),-135),1.0,0)
 	# Rebind the imported untextured church by its authored material names.
 	for child: Node in church.find_children("*","MeshInstance3D",true,false):
 		var mi := child as MeshInstance3D

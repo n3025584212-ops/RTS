@@ -1,11 +1,11 @@
 {
-	"average_frame_ms_short_capture": 133.109069444444,
+	"average_frame_ms_short_capture": 134.317166666667,
 	"camera_position": "(9.0, 6.4, 20.5)",
 	"camera_rotation": "(-14.17811, 15.42216, 0.0)",
 	"capture_frame": 16,
-	"capture_label": "post_recycle_verify",
+	"capture_label": "reference",
 	"capture_view": "reference",
-	"captured_at_utc": "2026-09-19T17:48:54",
+	"captured_at_utc": "2026-09-19T17:37:08",
 	"draw_calls": 2129.0,
 	"engine": {
 		"build": "official",
@@ -35,7 +35,7 @@
 	"save_error": 0,
 	"screenshot_source": "Viewport.get_texture().get_image() after frame_post_draw",
 	"visual_acceptance": "NOT_CLAIMED",
-	"wall_clock_frame_ms_mean": 490.214375,
-	"wall_clock_frame_ms_p95": 495.62,
+	"wall_clock_frame_ms_mean": 477.748125,
+	"wall_clock_frame_ms_p95": 481.437,
 	"width": 1920
 }

@@ -1,3 +1,0 @@
-# FRONTLINE Golden Scene V5 source checksums
-ff9c5dd0f235329003ffb51b5bb7afabe64d00c251ad3976fc7746662709177d  /home/runner/work/_temp/frontline-golden-v5/buildings_pack4.blend
-169bd0b99798643f6939b9f648bf5926f8e4d1d1b904c2a4b0d4868f99739584  /home/runner/work/_temp/frontline-golden-v5/meadows_gltf.zip
