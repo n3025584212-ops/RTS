@@ -2,9 +2,9 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V41
+STATE_VERSION=V42
 SOURCE_OF_TRUTH=THIS_FILE_FOR_CONTROL_AND_ROUTING
-CONTROL_SYNC_DATE=2026-09-18
+CONTROL_SYNC_DATE=2026-09-19
 USER_DIRECTION_OVERRIDE=STOP_TEST_SCENE_VISUAL_ITERATION_AND_RESUME_HIGH_FIDELITY_PRODUCT_SLICE
 
 START_HERE=START_HERE.md
@@ -17,6 +17,7 @@ GPT_FOUR_WINDOW_SYSTEM=docs/GPT_FOUR_WINDOW_SYSTEM_V5.md
 ACTIVE_ISSUE=#41
 ACTIVE_BRANCH=product/frontline-high-fidelity-slice-v1
 ACTIVE_BRANCH_BASE=dev/river-town-local-high-fidelity-v1@dfc4b64e9bbc2a1c8f5d1032e92912195c575f07
+ACTIVE_BRANCH_VERIFIED_HEAD=7032c91ccd9c58244ce36f944558fa3dd4727d01
 ACTIVE_PRODUCT_SCENE=res://scenes/production/RiverTownVisualSlice.tscn
 ACTIVE_TASK_ARTIFACT=docs/current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md
 PRODUCT_PRODUCTION_RESUME=YES_HIGH_FIDELITY_SLICE_ONLY
@@ -43,7 +44,7 @@ RETAINED_ASSET_TOOL_REFERENCE=dev/reference-region-v1@5f2ff1c0e86553234490063e64
 
 ## Product construction rule
 
-The high-fidelity River Town scene is now the product construction mother scene.
+The high-fidelity River Town scene is the product construction mother scene.
 Gameplay integration must move into this scene without degrading its terrain/material/architecture/vegetation/lighting/atmosphere/water/camera pipeline.
 
 NO_BOX_PROXY_BATTLEFIELD=YES
@@ -53,28 +54,40 @@ NO_DEBUG_LABEL_DOMINATED_CAPTURE=YES
 NO_LEARNING_SCENE_AS_PRODUCT_ANCESTOR=YES
 NO_VISUAL_REGRESSION_BELOW_RIVER_TOWN_WITHOUT_EXPLICIT_APPROVAL=YES
 
+## Baseline gate result
+
+BASELINE_REPRODUCTION_STATUS=PASS
+BASELINE_WORKFLOW=FRONTLINE River Town Visual Slice
+BASELINE_RUN_NUMBER=7
+BASELINE_RUN_ID=35325714573
+BASELINE_RUN_CONCLUSION=SUCCESS
+BASELINE_RUN_HEAD=7032c91ccd9c58244ce36f944558fa3dd4727d01
+BASELINE_RUN_COMPLETED_AT=2026-09-18T08:49:23Z
+
+The fresh River Town baseline reproduction gate is closed. CI success proves the technical baseline pipeline is functioning; it is not final visual/product acceptance.
+
 ## Immediate execution
 
-CURRENT_GATE=HIGH_FIDELITY_PRODUCT_BASELINE_REPRODUCTION
-CURRENT_TASK=REPRODUCE_RIVER_TOWN_BASELINE_THEN_INTEGRATE_VALIDATED_GAMEPLAY
+CURRENT_GATE=MINIMUM_ARMORED_UNIT_INTEGRATION
+CURRENT_TASK=INTEGRATE_VALIDATED_CONTROLLABLE_ARMORED_UNIT_CHAIN_INTO_RIVER_TOWN
 
-Fresh baseline workflow:
-- workflow: `FRONTLINE River Town Visual Slice`
-- branch: `product/frontline-high-fidelity-slice-v1`
-- renderer: Forward+
-- resolution: 1920x1080
-- engine: Godot 4.7.1
+Execution contract:
+1. Keep `res://scenes/production/RiverTownVisualSlice.tscn` as the mother scene.
+2. Transfer only validated gameplay/runtime logic into River Town.
+3. Preserve the high-fidelity terrain, architecture, vegetation, PBR materials, lighting, atmosphere, water and camera pipeline.
+4. Produce a fresh Godot 4.7.1 / Forward+ / 1920x1080 runtime capture with a controllable armored unit visibly operating inside River Town.
+5. Compare the fresh runtime against the retained River Town visual floor before advancing.
 
 ## Four-window allocation
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
 WINDOW_01_STATUS=HOLD_LEARNING_EVIDENCE_ONLY
-WINDOW_02_STATUS=ACTIVE_HIGH_FIDELITY_PRODUCT_BUILD
+WINDOW_02_STATUS=ACTIVE_MINIMUM_ARMORED_UNIT_INTEGRATION
 WINDOW_03_STATUS=HOLD_PENDING_HIGH_FIDELITY_RUNTIME
 
 ## Next route
 
-NEXT=WINDOW_02_BUILD_ON_RIVER_TOWN_HIGH_FIDELITY_SCENE
+NEXT=WINDOW_02_INTEGRATE_MINIMUM_CONTROLLABLE_ARMORED_UNIT_IN_RIVER_TOWN
 NEXT_AFTER_FRESH_PRODUCT_RUNTIME=WINDOW_03_INDEPENDENT_PLAYER_VISUAL_AUDIT
 
 TECHNICAL_PASS_NOT_PRODUCT_PASS=YES
