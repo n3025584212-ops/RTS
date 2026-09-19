@@ -75,9 +75,28 @@ func _ready() -> void:
 		camera.position = Vector3(8.5,2.4,24.)
 		camera.look_at(Vector3(3.6,-.1,15.0))
 		camera.fov = 58.0
+	elif capture_view == "gate_b":
+		camera.position = Vector3(14,5.5,17)
+		camera.look_at(Vector3(0,0.5,3))
+		camera.fov = 55.0
 	print("FRONTLINE_RIVER_TOWN_READY renderer=",RenderingServer.get_current_rendering_method()," adapter=",RenderingServer.get_video_adapter_name())
 	set_process(true)
 	capture_pending = "--capture" in OS.get_cmdline_user_args()
+	call_deferred("_integrate_gate_b_armored_unit")
+
+## Gate B (MINIMUM_ARMORED_UNIT_INTEGRATION). Binds the validated controllable
+## armored-unit chain to the foreground Abrams. Contract:
+## docs/current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md. The mother-scene terrain,
+## material, lighting and camera pipeline above is untouched.
+func _integrate_gate_b_armored_unit() -> void:
+	var tank: Node3D = find_child("M1A2_SEPv3_dannzjs_CC_BY_4", true, false) as Node3D
+	if tank == null:
+		push_error("GATE_B foreground Abrams not found; armored-unit integration skipped")
+		return
+	var unit := RiverTownArmoredUnit.new()
+	unit.name = "GateBArmoredUnit"
+	unit.setup(self, tank)
+	add_child(unit)
 
 func create_lighting() -> void:
 	var env := Environment.new()

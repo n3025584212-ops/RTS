@@ -1,0 +1,16 @@
+{
+  "arrived_world": "(5.125, -0.007794, -0.875)",
+  "before_world": "(2.5, 0.030538, 7.0)",
+  "capture_frames": [
+    "gate_b_before_order.png",
+    "gate_b_mid_move_1.png",
+    "gate_b_mid_move_2.png",
+    "gate_b_arrived.png"
+  ],
+  "capture_view": "gate_b",
+  "evidence": "CONTROL_CHAIN_DEMONSTRATED",
+  "final_order": "HOLD",
+  "gate": "MINIMUM_ARMORED_UNIT_INTEGRATION",
+  "order_target_world": "(5.0, 0.0, -1.0)",
+  "selected": "true"
+}
