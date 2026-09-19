@@ -81,3 +81,13 @@ DECISION=FRONTLINE must not be reduced to a tiny prototype with a few abstract f
 EVIDENCE=User explicitly rejected the proposed "3 formations / small scenario" framing as an inadequate representation of a real game.
 IMPACT=The current primary task is now BUILD_PROTOTYPE_B_REPRESENTATIVE_COMMAND_BATTLE_SLICE_V1. Exact counts and map sizes remain soft; readiness is based on interacting battlefield demands, autonomous local execution, changing enemy action, reserves/retasking, combat consequences and sustained play. The earlier "one repeated decision defines the game" framing is reopened as too narrow.
 RELATED_ISSUE_OR_PR=#20
+
+## 2026-09-20 — Archive M2 legacy contract scripts and expired smoke tests
+
+DATE=2026-09-20
+DECISION_ID=FRONTLINE_M2_LEGACY_CONTRACT_ARCHIVE_V1
+STATUS=ACCEPTED
+DECISION=Move 9 unreferenced legacy-contract scripts (enemy AI chain of 5, staging runtime subclass, two staging helpers, minimap) and 8 expired Battle01 smoke tests into archive/m2-legacy-contract/ with original subpaths preserved. Baseline tag archive/pre-cleanup-2026-09-20 created before the move. battle01_resupply_controller.gd and pre_battle_staging_controller.gd are deliberately retained because retained code still type-declares their classes (selection_controller.gd, battle_3d_input.gd); they are inert null-guarded hooks and become follow-up decoupling candidates.
+EVIDENCE=Full repository sweep on 2026-09-20: Battle01.tscn no longer mounts EnemyAIController/PreBattleStaging/ResupplyController nodes; filename and class_name greps show zero references from all retained code; CI workflows gate only core_v1_batch1, core_v1_battle_navigation_compat and prototype_b_core_integration. The 8 archived tests assert pre-restart contracts (supply columns, reserve deployment, VILLAGE_SCREEN/SOUTH_SCREEN postures) that no longer match code or .tres resources.
+IMPACT=main now contains only live-wired scripts and the three valid CI gates; the archived M2 contract remains fully recoverable via the baseline tag (git checkout archive/pre-cleanup-2026-09-20 -- <path>). DECISION_LOG gap between 2026-09-03 and 2026-09-20 remains unaccounted; this entry does not backfill it.
+RELATED_ISSUE_OR_PR=#41
