@@ -91,3 +91,13 @@ DECISION=Move 9 unreferenced legacy-contract scripts (enemy AI chain of 5, stagi
 EVIDENCE=Full repository sweep on 2026-09-20: Battle01.tscn no longer mounts EnemyAIController/PreBattleStaging/ResupplyController nodes; filename and class_name greps show zero references from all retained code; CI workflows gate only core_v1_batch1, core_v1_battle_navigation_compat and prototype_b_core_integration. The 8 archived tests assert pre-restart contracts (supply columns, reserve deployment, VILLAGE_SCREEN/SOUTH_SCREEN postures) that no longer match code or .tres resources.
 IMPACT=main now contains only live-wired scripts and the three valid CI gates; the archived M2 contract remains fully recoverable via the baseline tag (git checkout archive/pre-cleanup-2026-09-20 -- <path>). DECISION_LOG gap between 2026-09-03 and 2026-09-20 remains unaccounted; this entry does not backfill it.
 RELATED_ISSUE_OR_PR=#41
+
+## 2026-09-20 — River Town sole visual baseline, non-kind baselines recycled
+
+DATE=2026-09-20
+DECISION_ID=FRONTLINE_SOLE_VISUAL_BASELINE_V1
+STATUS=ACCEPTED
+DECISION=RiverTownVisualSlice (product/frontline-high-fidelity-slice-v1) is the single visual baseline of FRONTLINE, evidenced by fresh 1920x1080 Forward+ captures (reference/hero/ground) committed under docs/visual_baseline/river_town_sole_20260920/ on the product branch. Same-kind River Town family assets are retained as part of that one baseline. Non-kind baselines (FullBattlefield V1-V12 + TownProbeA-D, GoldenSceneV1, Quality scenes, assets/golden_scene library, their CI workflows) are recycled with safety tag recycle/2026-09-20/pre-visual-baseline-rationalization. Golden Frame V1 is superseded as VISUAL_TARGET_AUTHORITY. The single golden_scene file used by the baseline (church_landmark.glb) was migrated to assets/visual_slice/landmarks/ so the baseline asset graph is self-contained.
+EVIDENCE=User directive 2026-09-20; local re-render of the baseline scene after recycle (Vulkan 1.4.323, Intel UHD, 2129 draw calls, ~134 ms/frame); zero references from retained code to any recycled path; full recycle manifest at docs/ops/VISUAL_BASELINE_RECYCLE_2026-09-20.md on the product branch.
+IMPACT=Future visual work compares against docs/visual_baseline/river_town_sole_20260920/ captures under the stated protocol. VISUAL_QUALITY_BASELINE.md amended accordingly.
+RELATED_ISSUE_OR_PR=#41

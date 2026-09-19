@@ -4,6 +4,7 @@ STATUS=ACTIVE_VISUAL_BASELINE
 PROJECT=FRONTLINE
 CONTROL_AUTHORITY=main
 DATE=2026-09-17
+AMENDED=2026-09-20 (sole-baseline supersession, see bottom section)
 
 ## Purpose
 
@@ -107,3 +108,21 @@ After Sprint 01 passes, the first post-restart FRONTLINE product slice must:
 `LEARNING_SCENE_AS_PRODUCT_VISUAL_BASELINE=FORBIDDEN`
 
 This file protects visual continuity without undoing the 2026-09-12 restart decision.
+
+## 2026-09-20 — Sole visual baseline supersession
+
+DECISION_ID=FRONTLINE_SOLE_VISUAL_BASELINE_V1
+STATUS=ACCEPTED
+
+`VISUAL_TARGET_AUTHORITY` moves from `docs/design/FRONTLINE_GOLDEN_FRAME_V1_SPEC.md` (Golden Frame V1) to the **River Town sole visual baseline** on `product/frontline-high-fidelity-slice-v1`, declared and evidenced in:
+
+`product/frontline-high-fidelity-slice-v1 :: docs/visual_baseline/SOLE_BASELINE_2026-09-20.md`
+
+with official captures under `docs/visual_baseline/river_town_sole_20260920/` (reference / hero / ground, 1920x1080, Godot 4.7.1 Forward+, Vulkan, capture-frame=16, no post-capture editing).
+
+Consequences applied on 2026-09-20:
+
+1. The sections above that name Golden Frame V1 as `VISUAL_TARGET_AUTHORITY` are superseded; they remain as history.
+2. Non-kind asset baselines (FullBattlefield production line V1–V12 + TownProbeA–D, GoldenSceneV1, Quality material/test scenes, the `assets/golden_scene/` library, their evidence and CI workflows) were recycled from the product branch under safety tag `recycle/2026-09-20/pre-visual-baseline-rationalization`.
+3. The retired "3 retained engine reference branches" (river-town-local-high-fidelity / golden-scene-v1 / reference-region) remain historical references only; their best lineage has been absorbed into the product branch sole baseline.
+4. Same-kind River Town family scenes (HeroHouseHF, structure studies, HeroShotV2) are retained as part of the one baseline, not as competing baselines.
