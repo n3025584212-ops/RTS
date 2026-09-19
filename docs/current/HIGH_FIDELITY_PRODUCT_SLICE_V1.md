@@ -1,5 +1,9 @@
 # FRONTLINE — HIGH FIDELITY PRODUCT SLICE V1
 
+SUPERSEDED_BY=main::docs/current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md (authoritative gate contract with Gate A/B/C structure)
+GATE_B_EVIDENCE=docs/visual_baseline/gate_b_20260920/EVIDENCE_RECORD.md
+GATE_B_STATUS=EVIDENCE_COMPLETE_PENDING_GATE_C
+
 STATUS=ACTIVE
 ISSUE=#41
 BRANCH=product/frontline-high-fidelity-slice-v1
