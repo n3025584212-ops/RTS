@@ -24,6 +24,7 @@ var _heading: float = 0.0
 var _last_sim_position := Vector2.ZERO
 var _last_order_issued := ""
 var hostile_node: RiverTownHostileTarget
+var input_enabled := true
 
 func setup(root_node: Node3D, tank_node: Node3D) -> void:
 	scene_root = root_node
@@ -75,6 +76,8 @@ func _process(delta: float) -> void:
 			_selection_ring.global_position = Vector3(world.x, ground_y + 0.08, world.y)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not input_enabled:
+		return
 	if camera == null or tank == null or formation == null:
 		return
 	if event is InputEventMouseButton and event.is_pressed():
@@ -205,8 +208,11 @@ func _build_selection_ring() -> void:
 	_selection_ring = MeshInstance3D.new()
 	_selection_ring.name = "GateBSelectionRing"
 	var mesh := TorusMesh.new()
-	mesh.inner_radius = 2.35
-	mesh.outer_radius = 2.6
+	# The hull is 6.4 m wide and 13.0 m long, so a ring under it has to clear the
+	# hull sides to read as operator feedback from a 3/4 view (a hull-sized ring
+	# is completely hidden beneath the vehicle).
+	mesh.inner_radius = 4.0
+	mesh.outer_radius = 4.3
 	mesh.rings = 32
 	mesh.ring_segments = 8
 	_selection_ring.mesh = mesh

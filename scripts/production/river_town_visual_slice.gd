@@ -79,6 +79,13 @@ func _ready() -> void:
 		camera.position = Vector3(14,5.5,17)
 		camera.look_at(Vector3(0,0.5,3))
 		camera.fov = 55.0
+	elif capture_view == "gate_d2":
+		# Gate D2 platoon framing: 3/4 view centred on the platoon line
+		# (x 2.5..20.5 at z 7.0) and the group-order destination area to its
+		# north, so drag-box selection and the resulting line advance both read.
+		camera.position = Vector3(11.5,26,38)
+		camera.look_at(Vector3(11.5,0.5,0))
+		camera.fov = 32.0
 	print("FRONTLINE_RIVER_TOWN_READY renderer=",RenderingServer.get_current_rendering_method()," adapter=",RenderingServer.get_video_adapter_name())
 	set_process(true)
 	capture_pending = "--capture" in OS.get_cmdline_user_args()
@@ -102,6 +109,29 @@ func _integrate_gate_b_armored_unit() -> void:
 	hostile.setup(self, Vector3(8.5, 0.0, 3.0), 150.0)
 	add_child(hostile)
 	unit.bind_hostile(hostile)
+	# Gate D2 (MULTI_FORMATION_SELECTION): armor platoon — three more real
+	# Abrams spawn line-abreast beside the first so drag-box selection and group
+	# orders have a validated multi-formation chain to operate on. The hull is
+	# 6.4 x 13.0 m world (long axis Z), so the spacing along X is 8.5 m: the
+	# vehicles read as separate armour, not one interpenetrating mass.
+	var platoon := RiverTownArmorPlatoon.new()
+	platoon.name = "GateD2ArmorPlatoon"
+	add_child(platoon)
+	platoon.register_unit(unit)
+	# Entry 0 of the line is the Gate B foreground Abrams itself, already
+	# registered above; the remaining entries are the new platoon vehicles.
+	for index in range(1, platoon.PLATOON_LINE_X.size()):
+		var ground: float = float(call("height_at", platoon.PLATOON_LINE_X[index], platoon.PLATOON_LINE_Z))
+		var tank_node: Node3D = call("spawn", "res://assets/visual_slice/abrams.glb", Vector3(platoon.PLATOON_LINE_X[index], ground + 0.03, platoon.PLATOON_LINE_Z), 1.0, 170.0)
+		tank_node.name = "M1A2_SEPv3_dannzjs_CC_BY_4_%d" % (index + 1)
+		var extra := RiverTownArmoredUnit.new()
+		extra.name = "GateBArmoredUnit_%d" % (index + 1)
+		extra.setup(self, tank_node)
+		add_child(extra)
+		platoon.register_unit(extra)
+	print("FRONTLINE_GATE_D2_PLATOON_READY units=%d line_x=%s z=%.1f spacing=%.1f" % [
+		platoon.get_unit_count(), str(platoon.PLATOON_LINE_X), platoon.PLATOON_LINE_Z,
+		platoon.GROUP_SPACING_WORLD])
 
 func create_lighting() -> void:
 	var env := Environment.new()

@@ -1,0 +1,42 @@
+{
+  "capture_frames": [
+    "gate_d2_before_selection.png",
+    "gate_d2_click_selected.png",
+    "gate_d2_drag_marquee.png",
+    "gate_d2_box_selected.png",
+    "gate_d2_group_moved.png"
+  ],
+  "capture_view": "gate_d2",
+  "click_select_index": 0,
+  "click_selected_count": 1,
+  "end_positions": {
+    "GateBArmoredUnit": "(-0.375, -0.094358, -5.875)",
+    "GateBArmoredUnit_2": "(7.625, 0.184923, -5.875)",
+    "GateBArmoredUnit_3": "(15.625, 0.107849, -5.875)",
+    "GateBArmoredUnit_4": "(23.625, -0.191245, -5.875)"
+  },
+  "evidence": "CLICK_SELECT_DRAG_BOX_SELECT_AND_GROUP_MOVE_DEMONSTRATED",
+  "expected_frontage_world": 8.0,
+  "frontage_end_world": 8.0,
+  "frontage_preserved": true,
+  "frontage_start_world": 6.0,
+  "gate": "MULTI_FORMATION_SELECTION",
+  "group_base_destination": "(11.5, 0.0, -6.0)",
+  "lateral_order_preserved": true,
+  "marquee_rect_px": "[P: (507.3859, 668.4008), S: (904.9474, 54.20319)]",
+  "maximum_advance_world": 13.249,
+  "minimum_advance_world": 12.905,
+  "platoon_units": 4,
+  "selected_unit_names": [
+    "GateBArmoredUnit",
+    "GateBArmoredUnit_2",
+    "GateBArmoredUnit_3",
+    "GateBArmoredUnit_4"
+  ],
+  "start_positions": {
+    "GateBArmoredUnit": "(2.5, 0.030538, 7.0)",
+    "GateBArmoredUnit_2": "(8.5, 0.150011, 7.0)",
+    "GateBArmoredUnit_3": "(14.5, 0.082711, 7.0)",
+    "GateBArmoredUnit_4": "(20.5, -0.015969, 7.0)"
+  }
+}

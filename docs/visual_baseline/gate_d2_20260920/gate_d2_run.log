@@ -1,0 +1,43 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+Vulkan 1.4.323 - Forward+ - Using Device #0: Intel - Intel(R) UHD Graphics
+
+SOURCE_GRASS_INSTANCES grass_bermuda_01_3 26901
+SOURCE_GRASS_INSTANCES grass_bermuda_01_5 26694
+SOURCE_GRASS_INSTANCES grass_bermuda_01_7 26850
+SOURCE_GRASS_INSTANCES grass_medium_01_0 6245
+SOURCE_GRASS_INSTANCES grass_medium_01_3 6131
+SOURCE_GRASS_INSTANCES grass_medium_01_5 6199
+FRONTLINE_RIVER_TOWN_READY renderer=forward_plus adapter=Intel(R) UHD Graphics
+FRONTLINE_GATE_B_NAV_READY cells=40000 vehicle_blocked=0 source=core_navigation_service
+FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280 speed=85 sim=(275.0, 320.0) world=(2.5, 0.030538, 7.0)
+FRONTLINE_GATE_D1_TARGET_READY role=TANK hp=280 sim=(335.0, 280.0) world=(8.5, 0.07997, 3.0)
+FRONTLINE_GATE_B_NAV_READY cells=40000 vehicle_blocked=0 source=core_navigation_service
+FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280 speed=85 sim=(335.0, 320.0) world=(8.5, 0.150011, 7.0)
+FRONTLINE_GATE_B_NAV_READY cells=40000 vehicle_blocked=0 source=core_navigation_service
+FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280 speed=85 sim=(395.0, 320.0) world=(14.5, 0.082711, 7.0)
+FRONTLINE_GATE_B_NAV_READY cells=40000 vehicle_blocked=0 source=core_navigation_service
+FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280 speed=85 sim=(455.0, 320.0) world=(20.5, -0.015969, 7.0)
+FRONTLINE_GATE_D2_PLATOON_READY units=4 line_x=[2.5, 8.5, 14.5, 20.5] z=7.0 spacing=8.0
+GATE_D2_EVIDENCE user_data_dir=C:/Users/念/AppData/Roaming/Godot/app_userdata/FRONTLINE
+GATE_D2_SNAP gate_d2_before_selection
+GATE_D2_EVIDENCE_BEFORE frame=50 platoon_units=4 selected=0
+FRONTLINE_GATE_D2_CLICK_SELECT selected=0
+GATE_D2_SNAP gate_d2_click_selected
+GATE_D2_EVIDENCE_CLICK frame=56 selected=1
+FRONTLINE_GATE_D2_DRAG_BEGIN rect=[P: (507.3859, 668.4008), S: (904.9474, 54.20319)] swept=4 selected_before=1
+GATE_D2_SNAP gate_d2_drag_marquee
+GATE_D2_EVIDENCE_MARQUEE frame=59 rect=[P: (507.3859, 668.4008), S: (904.9474, 54.20319)] selected_mid_drag=1
+FRONTLINE_GATE_D2_BOX_SELECT selected=4
+FRONTLINE_GATE_D2_DRAG_RELEASE rect=[P: (507.3859, 668.4008), S: (904.9474, 54.20319)] selected=4
+GATE_D2_SNAP gate_d2_box_selected
+GATE_D2_EVIDENCE_SELECTED frame=62 count=4
+FRONTLINE_GATE_B_ORDER_ISSUED sim_from=(275.0, 320.0) sim_to=(245.0, 190.0) accepted=true
+FRONTLINE_GATE_B_ORDER_ISSUED sim_from=(335.0, 320.0) sim_to=(325.0, 190.0) accepted=true
+FRONTLINE_GATE_B_ORDER_ISSUED sim_from=(395.0, 320.0) sim_to=(405.0, 190.0) accepted=true
+FRONTLINE_GATE_B_ORDER_ISSUED sim_from=(455.0, 320.0) sim_to=(485.0, 190.0) accepted=true
+FRONTLINE_GATE_D2_DEMO_GROUP_MOVE count=4 base=(11.5, 0.0, -6.0) dests=[(23.5, 0.0, -6.0), (15.5, 0.0, -6.0), (7.5, 0.0, -6.0), (-0.5, 0.0, -6.0)]
+GATE_D2_SNAP gate_d2_group_moved
+GATE_D2_EVIDENCE_ASSERT minimum_advance=12.905 frontage_start=6.000 frontage_end=8.000 expected=8.000 order_preserved=true frontage_preserved=true
+GATE_D2_EVIDENCE_COMPLETE moved={ "GateBArmoredUnit": (-0.375, -0.094358, -5.875), "GateBArmoredUnit_2": (7.625, 0.184923, -5.875), "GateBArmoredUnit_3": (15.625, 0.107849, -5.875), "GateBArmoredUnit_4": (23.625, -0.191245, -5.875) }
+WARNING: 7 RIDs of type "Texture" were leaked.
+   at: finalize (servers/rendering/rendering_device.cpp:8900)
