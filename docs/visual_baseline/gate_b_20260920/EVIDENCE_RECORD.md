@@ -27,6 +27,24 @@ ENGINE=Godot 4.7.1-stable official, Forward+, Vulkan 1.4.323 (Intel UHD Graphics
 
 The Abrams was historically spawned statically at a position OUTSIDE the `hero` camera frustum (the historical hero view frames the foreground house — `ForegroundHeroHouseRuined` — not the vehicle), which is why earlier hero captures never showed it. The `gate_b` capture view was added to frame the unit, the house and the village together. No existing camera was moved.
 
+## Provenance (audit condition closed 2026-09-20)
+
+Gate C audit (docs/current/GATE_C_AUDIT_GATE_B_V1.md, PASS_WITH_ONE_CONDITION) identified
+an evidence-provenance gap: the order-issuing driver and the original run log were not in
+the library. Both are now committed:
+
+- Driver script: `tools/gate_b_capture.gd` — calls `demo_issue_move` through the validated
+  chain and writes `gate_b_evidence.json` during the run. Header documents the exact
+  invocation used for this evidence set.
+- Original local runtime log: `gate_b_run.log` (this directory) — the unedited log of the
+  evidence run, containing the full marker chain:
+  `FRONTLINE_GATE_B_NAV_READY` -> `FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280
+  speed=85 sim=(275,320)` -> `GATE_B_EVIDENCE_BEFORE` -> `FRONTLINE_GATE_B_ORDER_ISSUED
+  accepted=true` -> displacement -> `GATE_B_EVIDENCE_ARRIVED ... order=HOLD selected=true`
+  -> `GATE_B_EVIDENCE_COMPLETE before=(2.5,0.03,7) arrived=(5.125,-0.007794,-0.875)`.
+- Non-blocking audit observations addressed in the driver header: mid_move snaps land
+  post-arrival at this scene weight (~7fps); `gate_b_evidence.json` now ends with a newline.
+
 ## Restoration / reproduction
 
 Run: `godot --path . --rendering-method forward_plus --resolution 1920x1080 res://scenes/production/RiverTownVisualSlice.tscn -- --view=gate_b` — the unit is selected by LMB near the tank and ordered with RMB; the evidence run's programmatic path is `demo_issue_move`.
