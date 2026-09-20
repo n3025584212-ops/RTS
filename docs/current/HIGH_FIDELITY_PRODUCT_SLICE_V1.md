@@ -52,6 +52,26 @@ Required implementation rules:
 - no protected River Town subsystem is replaced by test proxies;
 - branch/commit and workflow evidence are recorded here before advancing.
 
+## Gate D — Product slice expansion (Window 00 authorized 2026-09-20, user directive "D1")
+
+## Gate D1 — MINIMUM_COMBAT_CHAIN
+
+STATUS=EVIDENCE_COMPLETE_PENDING_AUDIT
+EVIDENCE_RECORD=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_d1_20260920/EVIDENCE_RECORD.md
+INTEGRATION_COMMIT=product/aedabe0
+
+Contract: extend the Gate B armored-unit chain with the validated combat cycle inside the
+River Town mother scene — one static RED hostile armored unit (real GLB, no proxy), attack
+order routing through `set_combat_target` -> `_update_combat` (range/cooldown/ammo/validated
+damage matrix), visible damage progression, destruction state, fresh 1920x1080 media, and a
+committed evidence driver. Known limitations recorded in the evidence record (static hostile,
+no LOS field binding, tracer lifetime vs frame rate).
+
+PASS requirements: import/runtime clean; hostile instantiated as real PBR asset; fire cycle
+demonstrated in fresh media with matrix-consistent damage and ammo accounting; destruction
+state visible; no regression below the River Town floor; independent audit (Gate C protocol)
+before formal closure.
+
 ## Gate C — Independent audit
 
 STATUS=CLOSED

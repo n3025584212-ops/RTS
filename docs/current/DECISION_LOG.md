@@ -121,3 +121,13 @@ DECISION=The Gate C independent audit (performed by a separate ZCode session in 
 EVIDENCE=audit report cf91c68; condition-closure commit 394460d on product/frontline-high-fidelity-slice-v1; main routing commit (this commit).
 IMPACT=ACTIVE_BRANCH_VERIFIED_HEAD moves to 394460d. NEXT=WINDOW_00_DEFINE_NEXT_PRODUCT_GATE.
 RELATED_ISSUE_OR_PR=#41
+
+## 2026-09-20 — Gate D1 combat chain integrated, evidence complete pending audit
+
+DATE=2026-09-20
+DECISION_ID=FRONTLINE_GATE_D1_COMBAT_CHAIN_V1
+STATUS=EVIDENCE_COMPLETE_PENDING_AUDIT
+DECISION=User directive "D1" (2026-09-20) authorized Gate D1 MINIMUM_COMBAT_CHAIN per the Window 00 recommendation. The validated combat cycle is now live in the River Town mother scene: a static RED hostile armored target (second real Abrams GLB with red-shifted armor shader, hidden RED BattleFormation, progressive paint charring) and an attack order on the Gate B unit routing through set_combat_target -> _update_combat (range 300 sim, 1.5 s reload, ammo consumption, validated damage matrix TANK-vs-TANK 1.0). Evidence driver tools/gate_d1_capture.gd committed in-library (Gate C provenance lesson applied).
+EVIDENCE=Product commit aedabe0; docs/visual_baseline/gate_d1_20260920/: 7 shots x 45 damage, ammo 16->9, target hp 280->0 destroyed, 3 fresh 1920x1080 frames (before/engaging/destroyed) + metrics JSON. Known limitations recorded: static hostile does not return fire, LOS field not yet bound, tracer lifetime vs frame rate.
+IMPACT=Gate D1 awaits independent audit (Gate C protocol) before formal closure. D2 (multi-formation selection) and human playtest checkpoint remain the candidate next routes.
+RELATED_ISSUE_OR_PR=#41
