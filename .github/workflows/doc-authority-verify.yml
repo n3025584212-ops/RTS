@@ -1,0 +1,51 @@
+name: FRONTLINE Document Authority Verify
+
+# Guards the read path against the failure mode found on 2026-09-20: several
+# documents deciding "current" by their own self-declared STATUS, a directory map
+# pointing at the oldest of each chain, and archived documents still claiming to
+# be authority. Rules: docs/ops/DOCUMENT_AUTHORITY_POLICY_V1.md
+#
+# Deliberately cheap: no Godot, no cache, one Python script, seconds to run. The
+# paths filter keeps it off every unrelated push.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'tools/check_doc_authority.py'
+      - '.github/workflows/doc-authority-verify.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'tools/check_doc_authority.py'
+      - '.github/workflows/doc-authority-verify.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  doc-authority:
+    name: One ACTIVE per topic family, archive marked, read path intact
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Documentation authority check
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/check_doc_authority.py | tee doc-authority.log
+
+      - name: Upload check log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: doc-authority-log
+          path: doc-authority.log
+          if-no-files-found: ignore

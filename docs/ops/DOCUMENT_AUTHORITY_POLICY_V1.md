@@ -76,10 +76,11 @@ documents an agent actually loads, not every historical file.
 
 To wire it into CI:
 
-```yaml
-- name: Documentation authority check
-  run: python tools/check_doc_authority.py
-```
+**Wired into CI** as `.github/workflows/doc-authority-verify.yml` (`FRONTLINE Document Authority
+Verify`). It runs on pushes to `main` and on pull requests, filtered by `paths` to `docs/**`, the
+checker itself and the workflow file, plus manual `workflow_dispatch`. It installs nothing and needs
+no Godot — one Python script, seconds to run, so it costs almost nothing in Actions minutes. To
+disable it, delete the workflow file; to run it by hand, `python3 tools/check_doc_authority.py`.
 
 ## 6. Why this exists
 
