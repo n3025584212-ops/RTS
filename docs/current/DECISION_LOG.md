@@ -111,3 +111,13 @@ DECISION=User directed continuation of the active plan (Issue #41). The minimum 
 EVIDENCE=Integration commit 24ad352 + docs commits 52b0724 on the product branch; local run logs with zero script errors; displacement (2.5,7) -> (5.125,-0.875) through select -> issue_move -> NavigationService path; selection ring and terrain-height binding visible in media; sole-baseline visual comparison recorded with no regression. Audit note: the Abrams historically sat outside the hero camera frustum (the hero view frames the foreground house), explaining why earlier captures never showed it; the additive gate_b view resolves this.
 IMPACT=Window 02 construction task is evidence-complete; Window 03 independent audit of Gate B is now the active route. CI workflow FRONTLINE River Town Visual Slice is triggered by the push and serves as CI-side reproduction.
 RELATED_ISSUE_OR_PR=#41
+
+## 2026-09-20 — Gate C audit PASS; provenance condition closed; slice gates A/B/C all closed
+
+DATE=2026-09-20
+DECISION_ID=FRONTLINE_GATE_C_CLOSED_V1
+STATUS=CLOSED
+DECISION=The Gate C independent audit (performed by a separate ZCode session in the Window 03 role, report product::docs/current/GATE_C_AUDIT_GATE_B_V1.md) returned PASS_WITH_ONE_CONDITION for Gate B: zero same-renderer pixel regression across the integration (CI runs 35325714573 vs 35464759495), no proxy leakage, product-readable capture. The single provenance condition was closed by product commit 394460d: the evidence driver tools/gate_b_capture.gd is now in the library and the original local run log gate_b_run.log is archived beside the evidence media. Gate B is hereby PASS and the Gate A/B/C slice is closed. Per the contract, TECHNICAL/PRODUCT acceptance for this slice is complete; the next product gate requires a new Window 00 task definition and is intentionally not invented here.
+EVIDENCE=audit report cf91c68; condition-closure commit 394460d on product/frontline-high-fidelity-slice-v1; main routing commit (this commit).
+IMPACT=ACTIVE_BRANCH_VERIFIED_HEAD moves to 394460d. NEXT=WINDOW_00_DEFINE_NEXT_PRODUCT_GATE.
+RELATED_ISSUE_OR_PR=#41

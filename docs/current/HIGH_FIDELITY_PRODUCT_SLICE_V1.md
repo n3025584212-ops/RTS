@@ -24,10 +24,12 @@ This closes the baseline-reproduction gate only. CI success is technical evidenc
 
 ## Gate B — Current construction task
 
-STATUS=EVIDENCE_COMPLETE_PENDING_GATE_C
+STATUS=GATE_B_PASS
 CURRENT_GATE=MINIMUM_ARMORED_UNIT_INTEGRATION
 OWNER_WINDOW=02_REPRODUCTION_AND_CONSTRUCTION
 EVIDENCE_RECORD=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_b_20260920/EVIDENCE_RECORD.md
+INDEPENDENT_AUDIT=product/frontline-high-fidelity-slice-v1::docs/current/GATE_C_AUDIT_GATE_B_V1.md (PASS_WITH_ONE_CONDITION, 2026-09-20)
+CONDITION_CLOSED=product commit 394460d (capture driver tools/gate_b_capture.gd + original run log archived; EVIDENCE_RECORD.md amended)
 
 Integrate the minimum already-validated controllable armored-unit/runtime chain into the real River Town product scene.
 
@@ -52,7 +54,10 @@ Required implementation rules:
 
 ## Gate C — Independent audit
 
-STATUS=BLOCKED_BY_GATE_B
+STATUS=CLOSED
+AUDIT_REPORT=product/frontline-high-fidelity-slice-v1::docs/current/GATE_C_AUDIT_GATE_B_V1.md
+RESULT=PASS_WITH_ONE_CONDITION (condition satisfied by product commit 394460d)
+AUDIT_HIGHLIGHTS=zero same-renderer pixel regression between pre/post-integration CI renders (runs 35325714573 vs 35464759495); no proxy leakage; capture reads as a real RTS product slice.
 OWNER_WINDOW=03_INDEPENDENT_REVIEW
 
 After Gate B produces fresh high-fidelity runtime media, Window 03 independently checks:
