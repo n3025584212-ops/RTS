@@ -191,6 +191,139 @@ missing `box_selected_count` key into that same follow-up. CI success remains
 technical reproduction, not visual acceptance — the frames' hostile clipping
 makes a human eyeball pass on the next gate's media mandatory.
 
+================================================================================
+## REVISION 2 — RE-AUDIT AFTER BOTH CONDITIONS CLOSED
+
+RE_AUDIT_DATE=2026-09-20
+RE_AUDITOR_WINDOW=03_INDEPENDENT_REVIEW (same reviewer, independent re-verification)
+CLOSURE_COMMIT=product/0225e11 (integration) — conditions closed by changing the
+  integration, not the wording
+REPORT_COMMIT=product/9a228dc (this report's revision-1 text)
+CI_REAUDIT_RUN=35492164998 (completed, conclusion=success, head=9a228dc, ~7m09s)
+
+### Verdict (revision 2)
+
+**PASS.** Both revision-1 conditions are CLOSED and were independently
+re-verified; the original six PASS requirements are not regressed and remain
+PASS. The revision-1 code-review note (screen->ground raycast was the only
+uncovered part of the mouse path) is also CLOSED, and revision-1 non-blocking
+observation #5 (`box_selected_count` missing from JSON) is CLOSED. The gate's
+status moves from PASS_WITH_CONDITION to PASS.
+
+- **CONDITION-1 (evidence-record accuracy re the hostile overlap) — CLOSED.**
+  The record now states the overlap history correctly (defect #4: "Deployment
+  row overlapped the D1 hostile by ~47-58 m^2 of hull footprint and the record
+  denied it (fixed: redeployed north; record corrected)"). No added vehicle
+  overlaps the hostile.
+- **CONDITION-2 (fix or accept the vehicle-2/hostile hull overlap) — CLOSED.**
+  The three added vehicles are redeployed to z -12.0 with >= 2.3 m hull
+  clearance from the hostile; I measured **0.0000 m^2** overlap for every added
+  vehicle at both spawn and settle.
+
+### Re-verification method (independent, same reviewer)
+
+1. Read-only inspection of `0225e11` (integration) and `9a228dc` (report). The
+   fix is in code, not prose: `PLATOON_LINE_X` -> `[2.5, 6.0, 14.0, 22.0]`,
+   `PLATOON_LINE_Z` -> `-12.0`; `_formation_destinations` now centres slots on
+   the ordered point (`slot := (index - (n-1)/2) * pitch`) instead of the
+   formation's lateral midpoint; new `demo_group_order_at_world` unprojects the
+   requested world point and calls `_group_order`; `deployment_frontage()`
+   replaces the mislabeled `spacing=` print; the driver gains `box_selected_count`,
+   `group_base_requested/achieved`, a nav-map bound assert (`NAV_MAP_LIMIT_WORLD=24`),
+   live-input freeze for the driven stages, a settle watchdog, and a timeout of
+   4000 -> 900 frames.
+2. Re-ran the committed driver from `D:\Agent\rts_product` (identical
+   invocation from its header) writing to `user://gate_d2` — the archived repo
+   copies were not overwritten. Result: **exit 0**; the run log is line-for-line
+   identical to the committed `gate_d2_run.log`; the produced
+   `gate_d2_evidence.json` is **byte-identical** to the committed one.
+3. Re-derived every number from the committed JSON/log: 4 units; click 0->1;
+   marquee 643 x 504 px -> 4 selected (`box_selected_count=4`); 4 x
+   `accepted=true`; minimum advance 7.460 m (x3 vehicles), maximum 26.590 m
+   (Gate B Abrams); frontage 6.500 -> 8.000 = max(8.0, 6.5); lateral order
+   preserved; all four endpoints inside the nav map (|x| <= 23.125, |z| = 19.375
+   < 24).
+4. Numerical no-interpenetration (AABB, reusing the revision-1 method; hull
+   6.44 x 12.97 m, hostile footprint x 3.43..12.48 / z -3.20..9.03): added-vs-
+   hostile 0.0000 m^2 (x3); added-vs-added 0.0000 m^2 (x2); Gate B Abrams-vs-
+   hostile 19.50 m^2 is the pre-existing D1 pair, explicitly declared unchanged.
+   All endpoints inside +-24 m.
+5. Same-renderer CI comparison after `35492164998` finished: new artifact vs D1
+   run `35479014712` via `tools/compare_render_delta.py` (tolerance 8).
+   exact_match 93.6453%, delta 4.5635% (94,628 px) — far smaller than
+   revision-1's 23.6356% (490,108 px). Protected regions sky 0.00% /
+   hero_house 0.00% / foreground_ground 0.00% are clean; delta is concentrated
+   in vehicle_band 7.91% and far_right_field 32.05% (where the relocated added
+   hulls project). Regenerated mask written to scratch.
+
+### New numbers (revision 2, re-derived)
+
+| quantity                         | value (re-derived) | claim |
+|----------------------------------|-------------------|-------|
+| platoon units                    | 4                 | 4 |
+| click select                     | 0 -> 1            | 1 |
+| marquee rect                     | 643 x 504 px      | 643 x 504 |
+| box_selected_count               | 4                 | 4 |
+| orders accepted                  | 4 x true          | 4 x true |
+| minimum advance                  | 7.460 m           | 7.46 |
+| maximum advance (Gate B Abrams)  | 26.590 m          | 26.59 |
+| frontage start                   | 6.500 m           | 6.5 |
+| frontage end                     | 8.000 m           | 8.0 |
+| expected frontage = max(8,6.5)   | 8.000 m           | 8.0 |
+| group base requested             | (11.0, 0, -19.5)  | (11.0, 0, -19.5) |
+| group base achieved              | (11.0, 0.0305, -19.4645) | (11.0, 0.0305, -19.4645) |
+| settled x                        | -0.875/7.125/15.125/23.125 | same |
+| settled z                        | -19.375 (all)     | -19.375 |
+| all endpoints inside nav (+-24)  | yes               | yes |
+| added-vs-hostile overlap         | 0.0000 m^2        | >= 2.3 m clearance |
+| added-vs-added overlap           | 0.0000 m^2        | 1.5 m clearance |
+| CI delta vs D1                   | 4.5635%           | smaller than 23.6356% |
+
+### Findings (revision 2)
+
+1. **Conditions genuinely closed in code, not wording.** The redeployment is a
+   real `const` change; the slot-centring fix removes the off-centre offset that
+   previously pushed the outer vehicles past the map edge; the nav-map bound
+   assert now fails the run if any settled vehicle sits outside +-24 m. I
+   reproduced exit 0 and a byte-identical evidence JSON.
+2. **The order now exercises the full mouse path.** `demo_group_order_at_world`
+   unprojects (11.0, 0, -19.5) to screen (960, 292.0434) and calls `_group_order`;
+   achieved base (11.0, 0.030537, -19.46449) is 0.036 m from requested — the
+   raycast the revision-1 code-review flagged as uncovered is now covered.
+3. **No-regression delta improved ~5.2x.** The reference-capture delta fell from
+   23.6356% to 4.5635% because the added row moved from z 7.0 (in the reference
+   camera's field) to z -12.0 (further north); the three fully-protected
+   environment regions are at 0.00%.
+
+### Unverified / limitations (revision 2)
+
+- **Visual frame inspection.** This environment's Read tool filters image
+  content, so I could not visually open the five PNGs. I verified hull clearance
+  and overlaps numerically from the committed JSON/log geometry plus the AABB
+  computation, and confirmed the run reproduces the documented frames via an
+  identical log and byte-identical JSON. A human eyeball pass on the next gate's
+  media remains the correct final acceptance step (the pre-existing Gate B
+  Abrams/hostile AABB touch of ~19.5 m^2 is unchanged from D1 and declared).
+- The `far_right_field` region carries 32.05% delta; this is where the rightmost
+  added vehicle (x 22-23) and its shadow project, not environmental degradation
+  (sky/hero/foreground = 0%). Confirmed additive by region breakdown, not by
+  viewing the mask (images filtered).
+
+### Post-mortem — git write-side-effect commands (item 5)
+
+I did **NOT** run any git write-side-effect command in `D:\Agent\rts_product` or
+`D:\Agent\rts_scan` during either audit. The only git commands used were
+read-only: `git show`, `git diff`, `git log`, `git branch -vv`,
+`git status --porcelain`, `git remote -v`. CI inspection used `gh` (read-only
+`run view` / `api` / `run download`). No `checkout`/`switch`/`branch`/`worktree`/
+`stash`/`reset`/`restore`/`prune`/`rebase`/`gc`/`update-ref` was executed, and
+no `commit`/`push`/`tag` or working-tree write touched either repository — the
+driver wrote only to `user://`, and this revision-2 report edit is the sole
+repository write, explicitly requested by the re-audit task.
+
+**Answer: No.**
+
+
 ---
 
 # REVISION 2 — INDEPENDENT RE-VERIFICATION (2026-09-20, same audit window)
