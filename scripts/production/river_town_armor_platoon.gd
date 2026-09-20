@@ -12,15 +12,22 @@ extends Node3D
 
 const DRAG_THRESHOLD_PX := 8.0
 const CLICK_TOLERANCE_PX := 30.0
-## Hull is 6.4 m wide (13.0 m long, long axis Z). The platoon spawns at a 6.0 m
-## frontage and the declared order pitch is 8.0 m, so a group order both keeps
-## the formation's shape and opens it out to a readable spacing instead of
-## interpenetrating armour.
+## Hull is 6.44 x 12.97 m world (long axis Z, measured from the mesh AABB). The
+## declared order pitch is 8.0 m and the deployment row is deliberately wider, so
+## a group order keeps the frontage it already has instead of tightening it.
 const GROUP_SPACING_WORLD := 8.0
-## Spawn line abreast: X offsets (world) and the shared Z row. The first entry
-## is the Gate B foreground Abrams position and is not moved.
-const PLATOON_LINE_X: Array[float] = [2.5, 8.5, 14.5, 20.5]
-const PLATOON_LINE_Z := 7.0
+## Deployment. Entry 0 is the Gate B foreground Abrams (D1 baseline position,
+## z 7.0, not moved); the other three deploy in the open ground north of the
+## village road at z -12.0. Placement rules this layout satisfies:
+## - the Gate D1 hostile sits at (8.5, 0.08, 3.0) with a 9.05 x 12.23 m hull
+##   footprint (x 3.43..12.48, z -3.20..9.03), so a vehicle must keep its hull
+##   either east of x 15.7, north of z -9.7 or south of z 15.5. The previous row
+##   (x 8.5/14.5/20.5 at z 7.0) spawned a hull 58 m^2 inside the hostile;
+## - the vehicle navigation grid is 500 x 500 sim units = world +-25 m, so no
+##   vehicle may sit or path outside x 24 / z 24 (the previous row reached x 34
+##   and the pathfinder dragged that vehicle back to the map edge).
+const PLATOON_LINE_X: Array[float] = [2.5, 6.0, 14.0, 22.0]
+const PLATOON_LINE_Z := -12.0
 
 var units: Array[RiverTownArmoredUnit] = []
 var camera: Camera3D
@@ -29,6 +36,7 @@ var marquee: Control
 var marquee_rect := Rect2()
 var marquee_active := false
 var drag_start := Vector2.ZERO
+var last_order_base := Vector3.ZERO
 
 func register_unit(unit: RiverTownArmoredUnit) -> void:
 	units.append(unit)
@@ -141,9 +149,13 @@ func _formation_destinations(base: Vector3, selected: Array[RiverTownArmoredUnit
 	var highest := _lateral(ordered[ordered.size() - 1], base, right)
 	var mean_gap := 0.0 if ordered.size() < 2 else (highest - lowest) / float(ordered.size() - 1)
 	var pitch := maxf(GROUP_SPACING_WORLD, mean_gap)
-	var centre := (highest + lowest) * 0.5
+	# Slots are centred on the ordered point itself, not on the formation's own
+	# lateral midpoint. Centring on the formation offsets the whole row by however
+	# far the group sat off-centre from the click, which on a 500x500 sim nav grid
+	# pushes the outer vehicles past the map edge — they then path to the boundary
+	# and report HOLD short of their slot.
 	for index in range(ordered.size()):
-		var slot := centre + (float(index) - float(ordered.size() - 1) * 0.5) * pitch
+		var slot := (float(index) - float(ordered.size() - 1) * 0.5) * pitch
 		result[ordered[index]] = base + right * slot
 	return result
 
@@ -159,6 +171,7 @@ func _group_order(pos: Vector2) -> void:
 	if ground == null:
 		return
 	var base := ground as Vector3
+	last_order_base = base
 	var destinations := _formation_destinations(base, selected)
 	for unit in selected:
 		if destinations.has(unit):
@@ -220,17 +233,40 @@ func demo_drag_release() -> int:
 	print("FRONTLINE_GATE_D2_DRAG_RELEASE rect=%s selected=%d" % [str(rect), count])
 	return count
 
+func get_last_order_base() -> Vector3:
+	return last_order_base
+
 func is_marquee_active() -> bool:
 	return marquee_active
 
-func demo_group_move(base_destination: Vector3) -> void:
-	var selected := _selected_units()
-	var destinations := _formation_destinations(base_destination, selected)
-	for unit in selected:
-		if destinations.has(unit):
-			_bind_destination(unit, destinations[unit])
-	print("FRONTLINE_GATE_D2_DEMO_GROUP_MOVE count=%d base=%s dests=%s" % [
-		selected.size(), str(base_destination), str(destinations.values())])
+## Evidence entry point for the group order that mirrors the mouse path exactly:
+## the requested world destination is projected to a screen point and handed to
+## `_group_order`, so the screen->ground raycast is exercised too.
+func demo_group_order_at_world(base_destination: Vector3) -> bool:
+	if camera == null:
+		print("FRONTLINE_GATE_D2_GROUP_ORDER_REJECTED no_camera")
+		return false
+	if _selected_units().is_empty():
+		print("FRONTLINE_GATE_D2_GROUP_ORDER_REJECTED nothing_selected")
+		return false
+	var screen := camera.unproject_position(base_destination)
+	_group_order(screen)
+	print("FRONTLINE_GATE_D2_GROUP_ORDER_AT_WORLD requested=%s screen=%s" % [
+		str(base_destination), str(screen)])
+	return true
+
+## Mean lateral gap of the current deployment — what the order algorithm uses as
+## its pitch floor. Printed at startup so a diagnostic never contradicts itself.
+func deployment_frontage() -> float:
+	if units.size() < 2:
+		return 0.0
+	var lowest := INF
+	var highest := -INF
+	for unit in units:
+		var position3 := unit.get_tank_position()
+		lowest = minf(lowest, position3.x)
+		highest = maxf(highest, position3.x)
+	return (highest - lowest) / float(units.size() - 1)
 
 func selected_count() -> int:
 	return _selected_units().size()

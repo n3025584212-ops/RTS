@@ -80,12 +80,12 @@ func _ready() -> void:
 		camera.look_at(Vector3(0,0.5,3))
 		camera.fov = 55.0
 	elif capture_view == "gate_d2":
-		# Gate D2 platoon framing: 3/4 view centred on the platoon line
-		# (x 2.5..20.5 at z 7.0) and the group-order destination area to its
-		# north, so drag-box selection and the resulting line advance both read.
-		camera.position = Vector3(11.5,26,38)
-		camera.look_at(Vector3(11.5,0.5,0))
-		camera.fov = 32.0
+		# Gate D2 platoon framing: 3/4 view covering the Gate B Abrams at
+		# (2.5, 7.0), the deployed row at z -12.0 and the group-order
+		# destination row on the north road (z ~ -20.7).
+		camera.position = Vector3(11,46,34)
+		camera.look_at(Vector3(11,0.5,-6))
+		camera.fov = 34.0
 	print("FRONTLINE_RIVER_TOWN_READY renderer=",RenderingServer.get_current_rendering_method()," adapter=",RenderingServer.get_video_adapter_name())
 	set_process(true)
 	capture_pending = "--capture" in OS.get_cmdline_user_args()
@@ -129,9 +129,9 @@ func _integrate_gate_b_armored_unit() -> void:
 		extra.setup(self, tank_node)
 		add_child(extra)
 		platoon.register_unit(extra)
-	print("FRONTLINE_GATE_D2_PLATOON_READY units=%d line_x=%s z=%.1f spacing=%.1f" % [
+	print("FRONTLINE_GATE_D2_PLATOON_READY units=%d line_x=%s z=%.1f deployment_frontage=%.3f order_pitch_floor=%.1f" % [
 		platoon.get_unit_count(), str(platoon.PLATOON_LINE_X), platoon.PLATOON_LINE_Z,
-		platoon.GROUP_SPACING_WORLD])
+		platoon.deployment_frontage(), platoon.GROUP_SPACING_WORLD])
 
 func create_lighting() -> void:
 	var env := Environment.new()

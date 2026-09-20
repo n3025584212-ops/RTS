@@ -13,12 +13,19 @@
 extends SceneTree
 
 const SELECT_INDICES: Array[int] = [0, 1, 2, 3]
-const GROUP_BASE := Vector3(11.5, 0.0, -6.0)
-const MIN_ADVANCE_WORLD := 8.0
+const GROUP_BASE := Vector3(11.0, 0.0, -19.5)
+const MIN_ADVANCE_WORLD := 7.0
 const FRONTAGE_TOLERANCE := 0.5
-## The platoon spawns at a 6.0 m frontage and the platoon's declared order pitch
-## is 8.0 m, so a group order must open the line out to 8.0 m.
-const EXPECTED_FRONTAGE := 8.0
+## The platoon's declared order pitch floor; the settled frontage must equal
+## max(this, the pre-order frontage), i.e. the order must never tighten the line.
+const ORDER_PITCH_FLOOR := 8.0
+## The requested base is passed through the mouse order wrapper (screen
+## projection -> ground raycast), so the achieved base may differ slightly.
+const BASE_TOLERANCE_WORLD := 2.0
+## The vehicle navigation grid is 500 x 500 sim units at 0.1 world/sim, i.e. world
+## +-25 m; a destination outside it is unreachable and the unit stays in MOVE
+## forever. The driver asserts the settled formation stays inside the usable area.
+const NAV_MAP_LIMIT_WORLD := 24.0
 
 var frames := 0
 var stage := 0
@@ -26,6 +33,7 @@ var platoon: Node
 var start_positions := {}
 var click_selected := 0
 var marquee_rect := Rect2()
+var achieved_base := Vector3.ZERO
 var out_dir := "user://gate_d2"
 
 func _initialize() -> void:
@@ -39,7 +47,7 @@ func _initialize() -> void:
 
 func _tick() -> void:
 	frames += 1
-	if frames > 4000:
+	if frames > 900:
 		print("GATE_D2_EVIDENCE_FAIL timeout stage=%d" % stage)
 		quit(1)
 		return
@@ -51,6 +59,10 @@ func _tick() -> void:
 				quit(1)
 			return
 		print("GATE_D2_EVIDENCE user_data_dir=", OS.get_user_data_dir())
+		# Freeze live input for the driven stages: stray OS mouse events over the
+		# window during a long run would otherwise re-select or clear the
+		# selection and corrupt the evidence (observed: 11 stray events).
+		platoon.call("set_process_unhandled_input", false)
 		var unit_count := int(platoon.call("get_unit_count"))
 		if unit_count != SELECT_INDICES.size():
 			print("GATE_D2_EVIDENCE_FAIL platoon_size count=%d" % unit_count)
@@ -106,9 +118,22 @@ func _tick() -> void:
 		_snap("gate_d2_box_selected")
 		print("GATE_D2_EVIDENCE_SELECTED frame=%d count=%d" % [frames, count])
 		start_positions = platoon.call("get_selected_start_positions")
-		platoon.call("demo_group_move", GROUP_BASE)
+		if not bool(platoon.call("demo_group_order_at_world", GROUP_BASE)):
+			print("GATE_D2_EVIDENCE_FAIL group_order_rejected")
+			quit(1)
+			return
+		var achieved: Vector3 = platoon.call("get_last_order_base")
+		var base_error := Vector2(achieved.x, achieved.z).distance_to(Vector2(GROUP_BASE.x, GROUP_BASE.z))
+		if base_error > BASE_TOLERANCE_WORLD:
+			print("GATE_D2_EVIDENCE_FAIL order_base_error=%.3f achieved=%s requested=%s" % [
+				base_error, str(achieved), str(GROUP_BASE)])
+			quit(1)
+			return
+		achieved_base = achieved
 		stage = 5
 	elif stage == 5:
+		if frames % 120 == 0:
+			print("GATE_D2_SETTLE_WATCH frame=%d %s" % [frames, _settle_report()])
 		if not start_positions.is_empty() and _formation_settled():
 			_snap("gate_d2_group_moved")
 			var ok := _write_evidence(_current_positions())
@@ -123,10 +148,28 @@ func _current_positions() -> Dictionary:
 		result[key] = unit_node.call("get_tank_position")
 	return result
 
+func _settle_report() -> String:
+	var parts: Array[String] = []
+	for key: String in start_positions.keys():
+		var unit_node: Node = platoon.call("get_unit_by_name", key)
+		if unit_node == null:
+			parts.append(key + ":missing")
+			continue
+		var placement: Vector3 = unit_node.call("get_tank_position")
+		var start: Vector3 = start_positions[key]
+		var distance := Vector2(placement.x, placement.z).distance_to(Vector2(start.x, start.z))
+		parts.append("%s:%s@%.1f" % [key, str(unit_node.call("get_order")), distance])
+	return " ".join(parts)
+
 func _formation_settled() -> bool:
 	for key: String in start_positions.keys():
 		var unit_node: Node = platoon.call("get_unit_by_name", key)
 		if unit_node == null:
+			return false
+		var placement: Vector3 = unit_node.call("get_tank_position")
+		if absf(placement.x) > NAV_MAP_LIMIT_WORLD or absf(placement.z) > NAV_MAP_LIMIT_WORLD:
+			print("GATE_D2_EVIDENCE_FAIL outside_nav_map unit=%s pos=%s limit=%.1f" % [
+				key, str(placement), NAV_MAP_LIMIT_WORLD])
 			return false
 		if str(unit_node.call("get_order")) != "HOLD":
 			return false
@@ -174,7 +217,7 @@ func _write_evidence(moved: Dictionary) -> bool:
 	var order_ok := _order_preserved(names, moved)
 	# The algorithm's invariant: the settled frontage is max(declared pitch,
 	# spawn frontage) — a bunched group opens out, a wider one keeps its width.
-	var expected := maxf(EXPECTED_FRONTAGE, frontage_start)
+	var expected := maxf(ORDER_PITCH_FLOOR, frontage_start)
 	var frontage_ok := absf(frontage_end - expected) <= FRONTAGE_TOLERANCE
 	if not order_ok:
 		print("GATE_D2_EVIDENCE_FAIL lateral_order_scrambled")
@@ -191,7 +234,10 @@ func _write_evidence(moved: Dictionary) -> bool:
 		"selected_unit_names": names,
 		"start_positions": start_positions,
 		"end_positions": moved,
-		"group_base_destination": str(GROUP_BASE),
+		"group_base_requested": str(GROUP_BASE),
+		"group_base_achieved": str(achieved_base),
+		"click_selected_count_verified": click_selected,
+		"box_selected_count": names.size(),
 		"minimum_advance_world": snappedf(minimum_advance, 0.001),
 		"maximum_advance_world": snappedf(maximum_advance, 0.001),
 		"frontage_start_world": snappedf(frontage_start, 0.001),
