@@ -78,7 +78,7 @@ before formal closure.
 STATUS=GATE_D2_PASS
 EVIDENCE_RECORD=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_d2_20260920/EVIDENCE_RECORD.md (revision 2)
 INDEPENDENT_AUDIT=product/frontline-high-fidelity-slice-v1::docs/current/GATE_D2_INDEPENDENT_AUDIT_V1.md (PASS_WITH_CONDITION 2026-09-20, then REVISION2_VERDICT=PASS with both conditions CLOSED)
-INTEGRATION_COMMIT=product/9d026ed (revision 1) / product/0225e11 (revision 2, conditions closed) / product/cf81bb2 (revision-2 CI comparison) / product/3abbf59 (re-audit)
+INTEGRATION_COMMIT=product/9d026ed (revision 1) / product/0225e11 (revision 2, conditions closed) / product/cf81bb2 (revision-2 CI comparison) / product/3abbf59 (re-audit recorded) / product/e511eb1 (revision-2 re-audit text committed)
 EVIDENCE_COMMIT=product/7a4d688 (reproducibility + same-renderer no-regression evidence)
 CI_RUN=35488489417 (revision 1, success 4m18s) / 35492164998 (revision 2, success 7m7s)
 OPENED_BY=main (this commit, per the user directive "你接着做吧" continuing the "D1" line opened 2026-09-20)
