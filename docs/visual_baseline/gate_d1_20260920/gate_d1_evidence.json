@@ -1,0 +1,17 @@
+{
+  "blue_ammo_end": 9,
+  "blue_ammo_start": 16,
+  "capture_frames": [
+    "gate_d1_before_engagement.png",
+    "gate_d1_engaging.png",
+    "gate_d1_target_destroyed.png"
+  ],
+  "capture_view": "gate_b",
+  "evidence": "FIRE_CYCLE_DAMAGE_DESTRUCTION_DEMONSTRATED",
+  "gate": "MINIMUM_COMBAT_CHAIN",
+  "shots_fired": 7,
+  "target_destroyed": true,
+  "target_hp_end": 0,
+  "target_hp_start": 280,
+  "target_world_end": "(8.5, 0.07997, 3.0)"
+}

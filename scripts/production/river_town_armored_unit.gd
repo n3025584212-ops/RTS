@@ -23,6 +23,7 @@ var _selection_ring: MeshInstance3D
 var _heading: float = 0.0
 var _last_sim_position := Vector2.ZERO
 var _last_order_issued := ""
+var hostile_node: RiverTownHostileTarget
 
 func setup(root_node: Node3D, tank_node: Node3D) -> void:
 	scene_root = root_node
@@ -44,6 +45,7 @@ func _ready() -> void:
 	formation.definition = definition
 	add_child(formation)
 	formation.set_navigation(navigation)
+	formation.attack_fired.connect(_on_attack_fired)
 	formation.global_position = world_to_sim(tank.global_position)
 	formation.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	_last_sim_position = formation.global_position
@@ -110,6 +112,58 @@ func issue_move_to(world_target: Vector3) -> bool:
 	print("FRONTLINE_GATE_B_ORDER_ISSUED sim_from=%s sim_to=%s accepted=%s" % [
 		str(formation.global_position), str(sim_target), str(accepted)])
 	return accepted
+
+func demo_issue_attack() -> bool:
+	# Gate D1 evidence entry point: engages the bound hostile through the
+	# validated combat chain (set_combat_target -> _update_combat fire cycle).
+	if hostile_node == null or hostile_node.formation == null:
+		print("FRONTLINE_GATE_D1_ATTACK_REJECTED no_hostile_bound")
+		return false
+	formation.set_selected(true)
+	formation.set_combat_target(hostile_node.formation)
+	print("FRONTLINE_GATE_D1_ATTACK_ORDERED target=%s range_sim=%.1f ammo=%d" % [
+		str(hostile_node.formation.global_position),
+		formation.global_position.distance_to(hostile_node.formation.global_position),
+		formation.current_ammo])
+	return true
+
+func get_ammo() -> int:
+	return formation.current_ammo if formation != null else 0
+
+func bind_hostile(hostile: RiverTownHostileTarget) -> void:
+	hostile_node = hostile
+
+func _on_attack_fired(attacker: BattleFormation, target: BattleFormation, damage: int) -> void:
+	if tank == null:
+		return
+	var target_position := Vector3.ZERO
+	if hostile_node != null and target == hostile_node.formation:
+		target_position = hostile_node.get_tank_position() + Vector3(0.0, 1.3, 0.0)
+	else:
+		return
+	var heading_forward := Vector3(-sin(_heading), 0.0, -cos(_heading))
+	var muzzle := tank.global_position + heading_forward * 2.8 + Vector3(0.0, 1.55, 0.0)
+	_spawn_tracer(muzzle, target_position)
+	print("FRONTLINE_GATE_D1_SHOT fired_at=%s damage=%d ammo_left=%d" % [str(target_position), damage, formation.current_ammo])
+
+func _spawn_tracer(from_point: Vector3, to_point: Vector3) -> void:
+	var tracer := MeshInstance3D.new()
+	tracer.name = "GateD1Tracer"
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(0.055, 0.055, 1.0)
+	tracer.mesh = mesh
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(1.0, 0.85, 0.4)
+	material.emission_enabled = true
+	material.emission = Color(1.0, 0.75, 0.25)
+	material.emission_energy_multiplier = 2.2
+	tracer.material_override = material
+	var length := from_point.distance_to(to_point)
+	add_child(tracer)
+	tracer.global_position = (from_point + to_point) * 0.5
+	tracer.scale = Vector3(1.0, 1.0, maxf(0.1, length))
+	tracer.look_at(to_point, Vector3.UP)
+	get_tree().create_timer(0.12).timeout.connect(tracer.queue_free)
 
 func demo_issue_move(world_target: Vector3) -> bool:
 	# Evidence-capture entry point: issues the order through the same validated

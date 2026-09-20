@@ -97,6 +97,11 @@ func _integrate_gate_b_armored_unit() -> void:
 	unit.name = "GateBArmoredUnit"
 	unit.setup(self, tank)
 	add_child(unit)
+	var hostile := RiverTownHostileTarget.new()
+	hostile.name = "GateBHostileTarget"
+	hostile.setup(self, Vector3(8.5, 0.0, 3.0), 150.0)
+	add_child(hostile)
+	unit.bind_hostile(hostile)
 
 func create_lighting() -> void:
 	var env := Environment.new()
