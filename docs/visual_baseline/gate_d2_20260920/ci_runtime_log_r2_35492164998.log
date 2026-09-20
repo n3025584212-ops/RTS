@@ -1,0 +1,23 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+Vulkan 1.4.318 - Forward+ - Using Device #0: Unknown - llvmpipe (LLVM 20.1.2, 256 bits)
+
+SOURCE_GRASS_INSTANCES grass_bermuda_01_3 26901
+SOURCE_GRASS_INSTANCES grass_bermuda_01_5 26694
+SOURCE_GRASS_INSTANCES grass_bermuda_01_7 26850
+SOURCE_GRASS_INSTANCES grass_medium_01_0 6245
+SOURCE_GRASS_INSTANCES grass_medium_01_3 6131
+SOURCE_GRASS_INSTANCES grass_medium_01_5 6199
+FRONTLINE_RIVER_TOWN_READY renderer=forward_plus adapter=llvmpipe (LLVM 20.1.2, 256 bits)
+FRONTLINE_GATE_B_NAV_READY cells=40000 vehicle_blocked=0 source=core_navigation_service
+FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280 speed=85 sim=(275.0, 320.0) world=(2.5, 0.030538, 7.0)
+FRONTLINE_GATE_D1_TARGET_READY role=TANK hp=280 sim=(335.0, 280.0) world=(8.5, 0.07997, 3.0)
+FRONTLINE_GATE_B_NAV_READY cells=40000 vehicle_blocked=0 source=core_navigation_service
+FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280 speed=85 sim=(310.0, 130.0) world=(6.0, 0.031008, -12.0)
+FRONTLINE_GATE_B_NAV_READY cells=40000 vehicle_blocked=0 source=core_navigation_service
+FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280 speed=85 sim=(390.0, 130.0) world=(14.0, -0.098198, -12.0)
+FRONTLINE_GATE_B_NAV_READY cells=40000 vehicle_blocked=0 source=core_navigation_service
+FRONTLINE_GATE_B_ARMORED_UNIT_READY role=TANK hp=280 speed=85 sim=(470.0, 130.0) world=(22.0, -0.05484, -12.0)
+FRONTLINE_GATE_D2_PLATOON_READY units=4 line_x=[2.5, 6.0, 14.0, 22.0] z=-12.0 deployment_frontage=6.500 order_pitch_floor=8.0
+FRONTLINE_RIVER_TOWN_CAPTURED res://artifacts/visual_reset/local_high_fidelity/river_town_actual_1920x1080.png (1920, 1080) average_ms=0.0
+WARNING: 7 RIDs of type "Texture" were leaked.
+   at: finalize (servers/rendering/rendering_device.cpp:8900)

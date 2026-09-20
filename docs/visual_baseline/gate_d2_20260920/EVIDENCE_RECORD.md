@@ -119,6 +119,14 @@ shows the delta is vehicle-shaped only — the added vehicles, their shadows and
 ring. Correction against the audit's note 3: the reference captures are taken at frame 1 with nothing
 selected, so the ring cannot appear in that comparison; the delta is the added vehicles and their
 shadows. Revision 2 also moves the deployed row further from the reference camera (z -12.0 across the
+north road instead of a row beside the street), and its CI comparison is materially smaller: run
+35492164998 vs run 35479014712 gives exact_match=93.6453%, delta 4.5635% (94,628 px), bbox
+(858,249)-(1919,569); region report sky_and_distant_village 0.00%, hero_house 0.00%,
+foreground_ground 0.00%, center_village 5.30%, vehicle_band 7.91%, far_right_field 32.05%
+(`reference_delta_report_r2_35479014712_vs_35492164998.txt`, mask
+`reference_delta_mask_r2_35479014712_vs_35492164998.png`; CI runtime log archived as
+`ci_runtime_log_r2_35492164998.log`). The delta is entirely the added vehicles and their shadows
+in the field they now occupy; the protected environment is pixel-identical (0.00%).
 north road instead of a row beside the street), and the revision-2 CI comparison is recorded in
 `reference_delta_report.txt` after the revision-2 push.
 

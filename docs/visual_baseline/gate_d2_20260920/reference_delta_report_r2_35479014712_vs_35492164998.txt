@@ -1,0 +1,13 @@
+mask_written=D:/Agent/rts_product/docs/visual_baseline/gate_d2_20260920/reference_delta_mask_r2_35479014712_vs_35492164998.png
+capture_size=1920x1080 tolerance=8
+exact_match=93.6453%
+delta_pixels=4.5635% (94628 px)
+max_channel_delta=177
+delta_bbox=(858,249)-(1919,569)
+region report (describe where the change lives):
+  sky_and_distant_village: delta=0.00% mean_abs_delta=0.00
+  hero_house: delta=0.00% mean_abs_delta=0.00
+  center_village: delta=5.30% mean_abs_delta=2.51
+  vehicle_band: delta=7.91% mean_abs_delta=3.33
+  far_right_field: delta=32.05% mean_abs_delta=14.21
+  foreground_ground: delta=0.00% mean_abs_delta=0.00
