@@ -56,8 +56,9 @@ Required implementation rules:
 
 ## Gate D1 — MINIMUM_COMBAT_CHAIN
 
-STATUS=EVIDENCE_COMPLETE_PENDING_AUDIT
+STATUS=GATE_D1_PASS
 EVIDENCE_RECORD=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_d1_20260920/EVIDENCE_RECORD.md
+INDEPENDENT_AUDIT=product/frontline-high-fidelity-slice-v1::docs/current/GATE_D1_INDEPENDENT_AUDIT_V1.md (PASS, no blocking conditions, 2026-09-20)
 INTEGRATION_COMMIT=product/aedabe0
 
 Contract: extend the Gate B armored-unit chain with the validated combat cycle inside the

@@ -131,3 +131,13 @@ DECISION=User directive "D1" (2026-09-20) authorized Gate D1 MINIMUM_COMBAT_CHAI
 EVIDENCE=Product commit aedabe0; docs/visual_baseline/gate_d1_20260920/: 7 shots x 45 damage, ammo 16->9, target hp 280->0 destroyed, 3 fresh 1920x1080 frames (before/engaging/destroyed) + metrics JSON. Known limitations recorded: static hostile does not return fire, LOS field not yet bound, tracer lifetime vs frame rate.
 IMPACT=Gate D1 awaits independent audit (Gate C protocol) before formal closure. D2 (multi-formation selection) and human playtest checkpoint remain the candidate next routes.
 RELATED_ISSUE_OR_PR=#41
+
+## 2026-09-20 — Gate D1 independent audit PASS; GATE_D1_PASS recorded
+
+DATE=2026-09-20
+DECISION_ID=FRONTLINE_GATE_D1_CLOSED_V1
+STATUS=CLOSED
+DECISION=The Gate D1 independent audit (separate ZCode session, Window 03 role; report product::docs/current/GATE_D1_INDEPENDENT_AUDIT_V1.md, commit 49318e7) returned PASS with no blocking conditions. Numeric audit confirmed matrix consistency (tank.tres 45 dmg / 300 range / 1.5 s / 16 rnd; 7 shots x 45 x 1.0 = 315 >= 280 hp; engaging frame at 145 hp matches the 60% stage trigger). Same-renderer CI comparison (35479014712 vs 35464759495) shows 5.8% pixel delta = the newly added hostile vehicle, not degradation. GATE_D1_PASS is hereby recorded. Non-blocking audit suggestions adopted as D-gate evidence policy: archive raw run logs beside JSON; migrate driver output paths to user://.
+EVIDENCE=audit commit 49318e7 on product/frontline-high-fidelity-slice-v1; main routing commit (this commit).
+IMPACT=Gate D1 closed. Candidate next: Gate D2 (multi-formation selection) or human playtest checkpoint - Window 00 selection pending.
+RELATED_ISSUE_OR_PR=#41

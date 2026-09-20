@@ -17,7 +17,7 @@ GPT_FOUR_WINDOW_SYSTEM=docs/GPT_FOUR_WINDOW_SYSTEM_V5.md
 ACTIVE_ISSUE=#41
 ACTIVE_BRANCH=product/frontline-high-fidelity-slice-v1
 ACTIVE_BRANCH_BASE=dev/river-town-local-high-fidelity-v1@dfc4b64e9bbc2a1c8f5d1032e92912195c575f07
-ACTIVE_BRANCH_VERIFIED_HEAD=aedabe0
+ACTIVE_BRANCH_VERIFIED_HEAD=49318e7
 ACTIVE_PRODUCT_SCENE=res://scenes/production/RiverTownVisualSlice.tscn
 ACTIVE_TASK_ARTIFACT=docs/current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md
 PRODUCT_PRODUCTION_RESUME=YES_HIGH_FIDELITY_SLICE_ONLY
@@ -72,7 +72,7 @@ The fresh River Town baseline reproduction gate is closed. CI success proves the
 CURRENT_GATE=MINIMUM_COMBAT_CHAIN (Gate D1)
 GATE_B_STATUS=GATE_B_PASS
 GATE_C_STATUS=CLOSED (PASS_WITH_ONE_CONDITION; condition closed by product commit 394460d)
-GATE_D1_STATUS=EVIDENCE_COMPLETE_PENDING_AUDIT (product commit aedabe0; evidence product::docs/visual_baseline/gate_d1_20260920/)
+GATE_D1_STATUS=GATE_D1_PASS (product::docs/current/GATE_D1_INDEPENDENT_AUDIT_V1.md, 49318e7)
 CURRENT_TASK=INTEGRATE_VALIDATED_CONTROLLABLE_ARMORED_UNIT_CHAIN_INTO_RIVER_TOWN
 
 Execution contract:
@@ -91,8 +91,8 @@ WINDOW_03_STATUS=HOLD_PENDING_HIGH_FIDELITY_RUNTIME
 
 ## Next route
 
-NEXT=WINDOW_03_INDEPENDENT_AUDIT_OF_GATE_D1 (MINIMUM_COMBAT_CHAIN evidence complete)
-NEXT_AFTER_GATE_D1_AUDIT=WINDOW_00_DEFINE_GATE_D2 (multi-formation selection) OR human playtest checkpoint
+NEXT=WINDOW_00_SELECT_GATE_D2 (multi-formation selection) OR HUMAN_PLAYTEST_CHECKPOINT (both pre-approved candidates; user to pick)
+NOTE=D-gate evidence policy going forward: archive raw run log alongside JSON; driver output paths migrate to user:// (D1 audit non-blocking suggestions)
 
 TECHNICAL_PASS_NOT_PRODUCT_PASS=YES
 CI_NOT_VISUAL_ACCEPTANCE=YES
