@@ -10,14 +10,14 @@ USER_DIRECTION_OVERRIDE=STOP_TEST_SCENE_VISUAL_ITERATION_AND_RESUME_HIGH_FIDELIT
 START_HERE=START_HERE.md
 ACTIVE_WORK=docs/current/ACTIVE_WORK.md
 VISUAL_QUALITY_BASELINE=docs/current/VISUAL_QUALITY_BASELINE.md
-GPT_FOUR_WINDOW_SYSTEM=docs/GPT_FOUR_WINDOW_SYSTEM_V5.md
+EXECUTION_MODEL=docs/FRONTLINE_EXECUTION_MODEL_V1.md
 
 ## Active product route
 
 ACTIVE_ISSUE=#41
 ACTIVE_BRANCH=product/frontline-high-fidelity-slice-v1
 ACTIVE_BRANCH_BASE=dev/river-town-local-high-fidelity-v1@dfc4b64e9bbc2a1c8f5d1032e92912195c575f07
-ACTIVE_BRANCH_VERIFIED_HEAD=e511eb1
+ACTIVE_BRANCH_VERIFIED_HEAD=d01c6d0 (.gitignore-only commit on top of e511eb1; product code unchanged)
 ACTIVE_PRODUCT_SCENE=res://scenes/production/RiverTownVisualSlice.tscn
 ACTIVE_TASK_ARTIFACT=docs/current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md
 PRODUCT_PRODUCTION_RESUME=YES_HIGH_FIDELITY_SLICE_ONLY
@@ -85,12 +85,11 @@ Execution contract:
 4b. Gate D2: the capture must show platoon selection (single click and drag box) and a group order operating on several real vehicles at once.
 5. Compare the fresh runtime against the retained River Town visual floor before advancing.
 
-## Four-window allocation
+## Execution
 
-WINDOW_00_STATUS=ACTIVE_CONTROL
-WINDOW_01_STATUS=HOLD_LEARNING_EVIDENCE_ONLY
-WINDOW_02_STATUS=IDLE_GATE_D2_CLOSED
-WINDOW_03_STATUS=IDLE_GATE_D2_AUDITED_PASS
+No window allocation exists. Work is executed directly under `docs/FRONTLINE_EXECUTION_MODEL_V1.md`;
+the per-task state is the gate status recorded above. Parallel windows are retired, so the four
+`WINDOW_0x_STATUS` keys this section used to carry no longer exist anywhere.
 
 ## Next route
 

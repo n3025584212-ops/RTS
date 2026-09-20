@@ -14,15 +14,16 @@ This file does not state the project status. Exactly one file does:
 
 先读 main：
 
-1. `docs/current/CURRENT_STATE.md` — 唯一控制状态（stage / gate / window / head 都在这里）
-2. `docs/current/VISUAL_QUALITY_BASELINE.md`
-3. `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`
+1. `docs/current/CURRENT_STATE.md` — 唯一控制状态（stage / gate / head 都在这里）
+2. `docs/current/ACTIVE_WORK.md` — 长期约束与被停路线
+3. `docs/current/VISUAL_QUALITY_BASELINE.md` — 视觉基线与保留实机参考
+4. `docs/FRONTLINE_EXECUTION_MODEL_V1.md` — 怎么干活、谁复核、证据规则
 
 然后：
 
-4. 按 `CURRENT_STATE.md` 指定的 active branch 刷新该分支最新 HEAD；
-5. 读取当前 task / audit / handoff；
-6. 只有完成上述步骤后，才读历史分支和旧 Issue。
+5. 按 `CURRENT_STATE.md` 指定的 active branch 刷新该分支最新 HEAD；
+6. 读取当前 task 合同、证据目录与独立复核结论；
+7. 只有完成上述步骤后，才读历史分支和旧 Issue。
 
 **指向规则：本文件与 `ACTIVE_WORK.md` 只做指向，不重复状态。**
 任何文件若声称了 `CURRENT_STATE.md` 里没有的当前状态（阶段 / gate / window / head），
@@ -30,7 +31,7 @@ This file does not state the project status. Exactly one file does:
 
 ## 必须同时回答两个问题
 
-任何恢复窗口都必须同时知道：
+任何接续者都必须同时知道：
 
 `CURRENT_TASK` — 当前正在施工/验证什么？
 
@@ -43,11 +44,11 @@ This file does not state the project status. Exactly one file does:
 
 ## 权威划分
 
-`main`：阶段、任务、窗口路由、产品恢复权威、视觉基线索引。
+`main`：阶段、任务、产品恢复权威、视觉基线索引。
 
 active branch：施工、runtime、截图/视频与审核产物（分支名由 `CURRENT_STATE.md` 指定）。
 
-路由与产品权威只来自 main / Window 00。
+产品权威只来自 main 的 `CURRENT_STATE.md`。没有窗口，也没有路由层。
 
 ## 视觉质量基线
 

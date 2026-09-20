@@ -1,21 +1,24 @@
 # FRONTLINE GPT WINDOW RUNTIME PLAN V2
 
+ARCHIVED=2026-09-20 — non-authoritative. Retired with the window system; superseded by docs/FRONTLINE_EXECUTION_MODEL_V1.md
 STATUS=ACTIVE_RUNTIME_PLAN
 PROJECT=FRONTLINE
 SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md
 WINDOW_SYSTEM=docs/GPT_FOUR_WINDOW_SYSTEM_V5.md
 SUPERSEDES=docs/archive/governance/GPT_WINDOW_RUNTIME_PLAN_V1.md
 
-## Current mode: Visual Production Reset
+## Mode and allocation
 
-WINDOW_00=ACTIVE
-WINDOW_01=ACTIVE_IMPLEMENTATION_GRADE_DESIGN
-WINDOW_02=STANDBY_UNTIL_DESIGN_APPROVAL
-WINDOW_03=ACTIVE_ONLY_FOR_EXISTING_PR30_REVIEW
+The current mode, window allocation and immediate sequence are stated in exactly one place:
+`docs/current/CURRENT_STATE.md`. They are deliberately not repeated here — this section used to
+carry a snapshot of the "Visual Production Reset" mode and drifted out of date.
 
-## Immediate sequence
+## Standing sequence
 
-1. WINDOW_01 creates the new implementation-grade FRONTLINE design package.
+The role sequence below holds at every gate; only the current instance of it lives in
+`docs/current/CURRENT_STATE.md`.
+
+1. WINDOW_01 produces the implementation-grade design package for the current product question.
 2. User explicitly approves/rejects/revises it.
 3. After approval, WINDOW_00 freezes that package as current visual/production authority.
 4. WINDOW_02 implements the approved scene with logic and presentation together.

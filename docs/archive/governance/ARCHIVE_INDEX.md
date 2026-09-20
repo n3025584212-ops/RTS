@@ -15,11 +15,18 @@ Project system:
 GPT collaboration / window system:
 
 - `GPT_MULTI_WINDOW_SYSTEM_V2.md` → `GPT_MULTI_WINDOW_SYSTEM_V3.md` →
-  `GPT_COLLABORATION_SYSTEM_V4.md` → **`docs/GPT_FOUR_WINDOW_SYSTEM_V5.md` (current)**
+  `GPT_COLLABORATION_SYSTEM_V4.md` → `GPT_FOUR_WINDOW_SYSTEM_V5.md` →
+  **retired 2026-09-20; replaced by `docs/FRONTLINE_EXECUTION_MODEL_V1.md`**
 
 Window runtime plan:
 
-- `GPT_WINDOW_RUNTIME_PLAN_V1.md` → **`docs/GPT_WINDOW_RUNTIME_PLAN_V2.md` (current)**
+- `GPT_WINDOW_RUNTIME_PLAN_V1.md` → `GPT_WINDOW_RUNTIME_PLAN_V2.md` →
+  **retired 2026-09-20 with the window layer; no replacement**
+
+Window initialization prompts:
+
+- `gpt_windows/` (README + WINDOW_00–WINDOW_03) → **retired 2026-09-20; superseded by the
+  four-step read path in `docs/FRONTLINE_EXECUTION_MODEL_V1.md` section 5**
 
 Repository map:
 

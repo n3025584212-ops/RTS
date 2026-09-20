@@ -1,9 +1,9 @@
 # FRONTLINE — Sprint 01 World-to-Player Closure V1
 
-STATUS=ACTIVE_CURRENT_PHASE_UPDATED
+STATUS=CLOSED_ROUTE_RECORD_NOT_CURRENT_STATE
 CONTROL_WINDOW=00
-ACTIVE_ISSUE=#39
-ACTIVE_BRANCH=learning/sprint01-end-to-end-rts-production
+CLOSED_ISSUE=#39
+CLOSED_BRANCH=learning/sprint01-end-to-end-rts-production
 
 ## Objective
 
@@ -127,3 +127,8 @@ Only after Sprint 01 passes may Window 00 authorize the first post-restart FRONT
 
 SPRINT_PASS=NO
 PRODUCT_PRODUCTION_RESUME=NO
+
+NOTE: both values above are Sprint-01-route conclusions and are NOT the current route state.
+The Sprint 01 route is stopped (see `docs/current/ACTIVE_WORK.md`); the current state, including
+`PRODUCT_PRODUCTION_RESUME=YES_HIGH_FIDELITY_SLICE_ONLY`, is in `docs/current/CURRENT_STATE.md`.
+This file is retained as the closure record of that route only.

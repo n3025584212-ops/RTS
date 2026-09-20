@@ -22,10 +22,9 @@ Validated workflow:
 
 This closes the baseline-reproduction gate only. CI success is technical evidence, not final player-facing visual acceptance.
 
-## Gate B — Current construction task
+## Gate B — Minimum armored unit integration
 
 STATUS=GATE_B_PASS
-CURRENT_GATE=MINIMUM_ARMORED_UNIT_INTEGRATION
 OWNER_WINDOW=02_REPRODUCTION_AND_CONSTRUCTION
 EVIDENCE_RECORD=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_b_20260920/EVIDENCE_RECORD.md
 INDEPENDENT_AUDIT=product/frontline-high-fidelity-slice-v1::docs/current/GATE_C_AUDIT_GATE_B_V1.md (PASS_WITH_ONE_CONDITION, 2026-09-20)
@@ -122,9 +121,7 @@ After Gate B produces fresh high-fidelity runtime media, Window 03 independently
 
 ## Routing
 
-WINDOW_00=CONTROL_AND_ROUTING
-WINDOW_01=HOLD_LEARNING_EVIDENCE_ONLY
-WINDOW_02=ACTIVE_MINIMUM_ARMORED_UNIT_INTEGRATION
-WINDOW_03=HOLD_PENDING_FRESH_RUNTIME_EVIDENCE
-
-NEXT_REQUIRED_DELIVERABLE=FRESH_HIGH_FIDELITY_RIVER_TOWN_RUNTIME_WITH_CONTROLLABLE_ARMORED_UNIT
+Routing and window allocation are stated in exactly one place: `docs/current/CURRENT_STATE.md`.
+They are deliberately not repeated here — this section used to carry a snapshot and drifted out of
+date (it still named `MINIMUM_ARMORED_UNIT_INTEGRATION` as the active window-02 task and the Gate B
+capture as the next required deliverable while main had already closed Gate D2).

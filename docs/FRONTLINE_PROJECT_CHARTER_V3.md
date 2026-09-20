@@ -10,10 +10,11 @@ ENGINE_BASELINE=GODOT_4_7_1
 SUPERSEDES=
 - FRONTLINE_PROJECT_CHARTER_V2 (superseded; not retained in this repository)
 - fixed FRONTLINE numbered-window authority model
+- the GPT four-window routing layer (retired 2026-09-20; see docs/FRONTLINE_EXECUTION_MODEL_V1.md)
 
 LEGACY_PERMANENT_NUMBERED_WINDOW_SYSTEM=ABOLISHED
-GPT_MULTI_WINDOW_COLLABORATION=PERMITTED
-GPT_WINDOW_IDS=ROUTING_LABELS_ONLY
+GPT_WINDOW_ROUTING_LAYER=RETIRED
+ROUTING_BY_WINDOW_NUMBER=NO
 
 ---
 
@@ -42,28 +43,24 @@ No specialist, test, implementation agent, GPT window, old window, old contract 
 
 ---
 
-## 3. No permanent authority windows; four GPT routing windows are allowed
+## 3. No windows at all: one execution unit, one state
 
-FRONTLINE no longer has permanent numbered work windows that own independent state, roadmap or freeze authority.
+FRONTLINE has no numbered work windows — neither permanent authority windows nor routing labels.
+The window layer was retired on 2026-09-20. It existed to move work between human-driven chat
+conversations; the execution unit is now a single agent that reads and writes this repository, runs
+the engine and spawns isolated sub-agents for review. See `docs/FRONTLINE_EXECUTION_MODEL_V1.md`.
 
-There is no required handoff chain, no window-to-window receipt protocol, and no independent current state per discipline.
+There is no handoff chain, no window-to-window receipt protocol, no independent current state per
+discipline, and no routing by window number.
 
-Design, engineering, art, audio, AI, UX and QA are CAPABILITIES used when a task needs them. They are not separate project authorities.
+Design, engineering, art, audio, AI, UX and QA are CAPABILITIES used when a task needs them. They
+are not separate project authorities, and they are not windows.
 
-For practical multi-chat work, FRONTLINE may use four stable GPT conversation/routing labels under `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`:
+Historical WINDOW references in older documents, audits and branch names remain historical. Those
+numbers carry no authority and must not be revived.
 
-- WINDOW_00 = Project Control / Integration
-- WINDOW_01 = Design / Experience
-- WINDOW_02 = Development
-- WINDOW_03 = Review / Operations
-
-Activation rules live in `docs/GPT_WINDOW_RUNTIME_PLAN_V2.md`.
-
-These GPT window labels do **not** restore the retired permanent-window operating model. Every GPT window must use the same `docs/current/CURRENT_STATE.md`, current Active Issue and authority order.
-
-Historical WINDOW references from older systems remain historical unless explicitly reaccepted. Identical numbers in the current GPT collaboration system are routing labels, not inherited authority.
-
-A task may use several capabilities/windows at once when that produces a better playable result, but it should use the smallest set needed.
+One task is active at a time, chosen in `docs/current/CURRENT_STATE.md`. Capabilities may be
+combined when that produces a better playable result, but the smallest set that does the job wins.
 
 ---
 
@@ -222,7 +219,8 @@ Active authority should normally fit in:
 - `docs/current/CURRENT_STATE.md`
 - active GitHub issue/PR for the current task
 
-`docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`, `docs/GPT_WINDOW_RUNTIME_PLAN_V2.md` and `docs/gpt_windows/` define collaboration/routing behavior but do not create additional project truth.
+`docs/FRONTLINE_EXECUTION_MODEL_V1.md` defines how work is executed and reviewed. It states
+permanent rules only and never declares current state.
 
 Older contracts, audits and superseded window systems remain available through Git history or `archive/legacy-unused` but are historical unless CURRENT_STATE explicitly reaccepts them.
 Do not create documents solely to acknowledge other documents.

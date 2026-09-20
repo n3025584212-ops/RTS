@@ -43,8 +43,9 @@ A topic family is a filename minus its `_V<n>` suffix:
 | Family | Archived | Current |
 |---|---|---|
 | `FRONTLINE_PROJECT_SYSTEM` | V1, V2 | **V3** |
-| `GPT_MULTI_WINDOW_SYSTEM` / `GPT_COLLABORATION_SYSTEM` | V2, V3, V4 | **GPT_FOUR_WINDOW_SYSTEM_V5** |
-| `GPT_WINDOW_RUNTIME_PLAN` | V1 | **V2** |
+| `FRONTLINE_EXECUTION_MODEL` | — | **V1** |
+| `GPT_MULTI_WINDOW_SYSTEM` / `GPT_COLLABORATION_SYSTEM` / `GPT_FOUR_WINDOW_SYSTEM` | V2, V3, V4, V5 | none — the window layer is retired |
+| `GPT_WINDOW_RUNTIME_PLAN` | V1, V2 | none — the window layer is retired |
 | `REPOSITORY_MAP` | V2 | **V3** |
 
 **At most one `STATUS=ACTIVE` per family, outside the archive.** Superseding never means deleting:

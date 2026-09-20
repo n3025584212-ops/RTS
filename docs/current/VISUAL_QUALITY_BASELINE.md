@@ -64,10 +64,14 @@ Role:
 - historical implementation evidence;
 - not current product direction authority.
 
-## Current learning artifact classification
+## Learning artifact classification
 
-ACTIVE_LEARNING_BRANCH=`learning/sprint01-end-to-end-rts-production`
-CURRENT_GATE=`SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_FIX`
+The learning route is stopped; its current state is not declared here. Current route state lives in
+`docs/current/CURRENT_STATE.md` (Learning route status); stopped routes are listed in
+`docs/current/ACTIVE_WORK.md`. This section previously declared an active learning branch and a
+current gate and drifted out of date.
+
+CLASSIFIED_LEARNING_BRANCH=`learning/sprint01-end-to-end-rts-production`
 
 `Sprint01WorldReproduction.tscn` and its PNG/MP4 evidence are classified as:
 

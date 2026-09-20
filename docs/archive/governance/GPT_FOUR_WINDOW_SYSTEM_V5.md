@@ -1,5 +1,6 @@
 # FRONTLINE GPT FOUR-WINDOW SYSTEM V5
 
+ARCHIVED=2026-09-20 — non-authoritative. Retired with the window system; superseded by docs/FRONTLINE_EXECUTION_MODEL_V1.md
 STATUS=ACTIVE
 PROJECT=FRONTLINE
 SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md
@@ -35,7 +36,7 @@ Window 00 does NOT:
 - approve its own unverified theory;
 - substitute governance documents for a real game artifact.
 
-Current Sprint 01 responsibility:
+Sprint 01 responsibility (that route is stopped; see docs/current/ACTIVE_WORK.md):
 - maintain Issue #39, evidence status, current branch and transfer gate;
 - enforce the 13-layer end-to-end learning mainline;
 - decide when evidence is strong enough to move from learning to reproduction and from reproduction to product transfer.
@@ -79,7 +80,7 @@ Macro chain:
 Canonical contract:
 `docs/learning/FRONTLINE_END_TO_END_EVIDENCE_CHAIN_V1.md`
 
-Current Sprint 01 responsibility:
+Sprint 01 responsibility (that route is stopped; see docs/current/ACTIVE_WORK.md):
 - use 0 A.D. Release 28 as the first primary inspectable reference;
 - cross-check important conclusions with BAR/Recoil and Warzone 2100 where useful;
 - trace at least one real playable path through all thirteen layers;
@@ -103,7 +104,7 @@ Window 02 does NOT:
 - scan or refactor the repository broadly unless the current task requires it;
 - report PASS because code exists or CI is green.
 
-Current Sprint 01 responsibility:
+Sprint 01 responsibility (that route is stopped; see docs/current/ACTIVE_WORK.md):
 - after Window 01 supplies a concrete linked chain, implement the isolated learning slice on `learning/sprint01-end-to-end-rts-production`;
 - required small complete chain: `PLAYER INPUT -> COMMAND -> MOVEMENT -> CONTACT/COMBAT -> VISIBLE FEEDBACK -> OUTCOME`;
 - environment must be causally authored, not arbitrary object placement;
@@ -145,7 +146,7 @@ Window 03 does NOT:
 6. `COUNTEREXAMPLE_SEARCH`
    - use BAR/Recoil, Warzone 2100 or another mature implementation to attack claims of necessity/universality.
 
-Current Sprint 01 responsibility:
+Sprint 01 responsibility (that route is stopped; see docs/current/ACTIVE_WORK.md):
 - audit every major edge of the 13-layer chain rather than only the final summary;
 - verify versions and primary-source provenance;
 - treat the archived `0ad/0ad` GitHub mirror as historical unless the exact revision is matched to the release being discussed;
@@ -230,14 +231,13 @@ FORBIDDEN_SUBSTITUTIONS=
 REQUIRED_EVIDENCE=
 EXIT_CONDITION=
 
-## 9. Current allocation — Learning Sprint 01
+## 9. Current allocation
 
-WINDOW_00=ACTIVE_CONTROL_AND_INTEGRATION
-WINDOW_01=ACTIVE_END_TO_END_EVIDENCE_GRAPH
-WINDOW_02=WAITING_FOR_REPRODUCIBLE_CHAIN_THEN_ACTIVE_REPRODUCTION
-WINDOW_03=ACTIVE_STRICT_EVIDENCE_AUDIT_THEN_REPRODUCTION_REVIEW
+Window allocation is stated in exactly one place: `docs/current/CURRENT_STATE.md` (see the
+`WINDOW_0x_STATUS` keys). It is deliberately not repeated here — this section used to carry a
+snapshot of the Learning Sprint 01 allocation and drifted out of date.
 
-One project, one Issue #39, one shared truth. No four independent roadmaps.
+One project, one active issue, one shared truth. No four independent roadmaps.
 
 ## 10. After Sprint 01
 

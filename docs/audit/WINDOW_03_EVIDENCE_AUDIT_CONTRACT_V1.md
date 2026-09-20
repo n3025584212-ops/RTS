@@ -1,14 +1,15 @@
-# FRONTLINE — WINDOW 03 EVIDENCE AUDIT CONTRACT V1
+# FRONTLINE — EVIDENCE AUDIT CONTRACT V1 (formerly "WINDOW 03")
 
 STATUS=ACTIVE
 PROJECT=FRONTLINE《战线》
-WINDOW=03_INDEPENDENT_REVIEW_AND_FALSIFICATION
+ROLE=INDEPENDENT_REVIEW_AND_FALSIFICATION
 SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md
-ACTIVE_ISSUE=#39
+NOTE=The filename keeps the historical "WINDOW_03" token for traceability only. The window layer is
+     retired; this document is a protocol for isolated review, not a routing rule.
 
 ## 1. Mission
 
-Window 03 does not restate Window 01. It audits whether Window 01's chain from evidence -> fact -> inference -> recommendation crosses the boundary of what the evidence actually supports.
+The reviewer does not restate the author. It audits whether the author's chain from evidence -> fact -> inference -> recommendation crosses the boundary of what the evidence actually supports.
 
 The default posture is falsification-first:
 - look for source mistakes;
@@ -18,7 +19,10 @@ The default posture is falsification-first:
 - look for competing explanations;
 - look for mature counterexamples.
 
-A different window number does not create independence. Independence must come from separate source inspection, explicit counterevidence search, and pre-stated audit criteria.
+A different label does not create independence. Independence comes from isolated context, separate
+source inspection, explicit counterevidence search and pre-stated audit criteria: the reviewer
+receives only the task contract and the evidence directory, never the builder's reasoning
+(`docs/FRONTLINE_EXECUTION_MODEL_V1.md` section 3).
 
 ## 2. Six hard audit checks
 
@@ -96,9 +100,9 @@ Typical FAIL:
 - "0 A.D. uses a component system" -> "RTS should use a component system."
 
 ### CHECK_05 — ALTERNATIVE_EXPLANATIONS
-Question: Did Window 01 search for at least one serious competing explanation?
+Question: Did the author search for at least one serious competing explanation?
 
-For important causal claims, Window 03 must test whether the observed implementation could instead be explained by:
+For important causal claims, the reviewer must test whether the observed implementation could instead be explained by:
 - historical evolution / legacy constraint;
 - deterministic simulation or networking requirements;
 - scripting convenience;
@@ -117,7 +121,7 @@ Typical FAIL:
 ### CHECK_06 — COUNTEREXAMPLE_SEARCH
 Question: Do BAR/Recoil, Warzone 2100, or another mature RTS achieve the same player function with a materially different implementation boundary?
 
-Window 03 must actively look for counterexamples when Window 01 proposes a necessary condition, general rule, or strong recommendation.
+The reviewer must actively look for counterexamples when the author proposes a necessary condition, general rule, or strong recommendation.
 
 Current verified counterexample warnings:
 - Beyond All Reason explicitly separates game code from the Recoil RTS Engine and also has a separate lobby/client layer. Reading only the BAR game repository does not reveal the whole engine/game/runtime architecture.
@@ -127,9 +131,9 @@ Current verified counterexample warnings:
 A mature counterexample does not automatically make the original project wrong. It lowers claims of necessity or universality.
 
 Typical FAIL:
-- a different mature architecture exists but Window 01 still labels one implementation as required for RTS.
+- a different mature architecture exists but the author still labels one implementation as required for RTS.
 
-## 3. Required audit record for each important Window 01 claim
+## 3. Required audit record for each important author claim
 
 ORIGINAL_CLAIM=
 CHAIN_LAYER_OR_EDGE=
@@ -139,7 +143,7 @@ PROJECT=
 VERSION_TAG_COMMIT=
 SOURCE_TYPE=SOURCE_CODE|OFFICIAL_DOC|RUNTIME|SECONDARY
 RUNTIME_SEMANTICS=
-WINDOW_01_CONCLUSION=
+AUTHOR_CONCLUSION=
 HIDDEN_ASSUMPTIONS=
 ALTERNATIVE_EXPLANATION=
 COUNTEREXAMPLE_SEARCH=
@@ -185,12 +189,12 @@ The final transfer statement must be labeled DESIGN_RECOMMENDATION unless direct
 
 ## 6. Relation to the 13-layer evidence graph
 
-Window 03 audits edges, not only documents.
+The reviewer audits edges, not only documents.
 
 For every critical edge in:
 `CONTENT -> WORLD -> INPUT -> SIMULATION -> CONTROL -> STATE -> PRESENTATION -> RENDER -> PLAYER`
 
-Window 03 asks:
+The reviewer asks:
 1. What exactly is the source fact?
 2. Which exact source/version proves it?
 3. Does the runtime path actually connect A -> B?
@@ -199,11 +203,11 @@ Window 03 asks:
 6. Do BAR/Recoil, Warzone, or another mature project provide a counterexample?
 7. What wording and generalization level are actually allowed?
 
-## 7. Audit behavior toward Window 02
+## 7. Audit behavior toward the builder
 
 The same standard applies to reproduction/build claims.
 
-Window 03 must distinguish:
+The reviewer must distinguish:
 - code exists;
 - code executes;
 - intended state change occurs;
@@ -227,15 +231,15 @@ ALERT_03_COMPONENT_EXISTENCE_NOT_CALL_CHAIN=ACTIVE
 
 PASS = evidence, version, semantics, scope, alternatives, and wording are all supported.
 DOWNGRADE = underlying evidence is usable but conclusion/generalization must be narrowed.
-FIX = likely repairable evidence gap; Window 01 must obtain better source/version/runtime tracing.
+FIX = likely repairable evidence gap; the author must obtain better source/version/runtime tracing.
 REJECT = source or reasoning materially contradicts the claim.
 UNKNOWN = available evidence is insufficient; do not fill with plausible prose.
 
-Window 03 should prefer DOWNGRADE/FIX/UNKNOWN over inventing a stronger alternative conclusion without evidence.
+The reviewer should prefer DOWNGRADE/FIX/UNKNOWN over inventing a stronger alternative conclusion without evidence.
 
 ## 10. Exit condition
 
-Window 03 audit for a chain segment is complete only when:
+The reviewer's audit for a chain segment is complete only when:
 - core sources are primary and version-identified;
 - critical runtime edges have semantic tracing, not symbol existence alone;
 - project-specific facts are separated from cross-project patterns;
@@ -246,5 +250,5 @@ Window 03 audit for a chain segment is complete only when:
 
 AUDIT_PRIORITY=FIND_FAILURES_BEFORE_SUPPORTING_ARGUMENTS
 INTERNAL_AGREEMENT_IS_NOT_EVIDENCE=YES
-WINDOW_01_PASS_IS_NOT_SELF_AUTHORIZING=YES
-WINDOW_03_TITLE_IS_NOT_PROOF_OF_INDEPENDENCE=YES
+BUILDER_PASS_IS_NOT_SELF_AUTHORIZING=YES
+SEPARATE_LABEL_IS_NOT_PROOF_OF_INDEPENDENCE=YES
