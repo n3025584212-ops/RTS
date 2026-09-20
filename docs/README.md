@@ -1,34 +1,33 @@
-# FRONTLINE documentation map
+# FRONTLINE documentation map — product branch
 
-This directory contains only **active project authority and current-state support**.
+This branch carries **gate evidence and the product integration**. Governance authority lives on
+`main`. Do not look for it here, and do not trust a governance document found on this branch.
 
-## Active authority
+## On this branch
 
-Use these files for current work:
+- `current/GATE_*_INDEPENDENT_AUDIT_V1.md` — independent audit reports cited by main's control state
+- `visual_baseline/gate_*/` — gate evidence: media, JSON, run logs, delta reports
+- `licenses/` — asset provenance for the assets this branch ships
+- `design/`, `production/` — visual spec and asset-manifest copies
+- `audit/WINDOW_03_EVIDENCE_AUDIT_CONTRACT_V1.md` — copy of the Window 03 audit protocol
+  (canonical on main; keep the two in sync)
 
-- `current/CURRENT_STATE.md` — single source of current project truth.
-- `FRONTLINE_PROJECT_CHARTER_V3.md` — project authority and phase model.
-- `FRONTLINE_PROJECT_SYSTEM_V1.md` — day-to-day task/decision/evidence workflow.
-- `current/DECISION_LOG.md` — append-only material decision history.
+## On main (authority)
 
-The active GitHub Issue named by `CURRENT_STATE.md` is the working contract/evidence thread for the current primary task.
+- `current/CURRENT_STATE.md` — the single control state (stage / gate / window / head)
+- `current/DECISION_LOG.md`, `current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md`
+- `FRONTLINE_PROJECT_CHARTER_V3.md`, `FRONTLINE_PROJECT_SYSTEM_V3.md`
+- `GPT_FOUR_WINDOW_SYSTEM_V5.md`, `GPT_WINDOW_RUNTIME_PLAN_V2.md`
+- `ops/REPOSITORY_MAP_V3.md`
+- `archive/governance/ARCHIVE_INDEX.md` — the supersession chains
 
-## GPT four-window collaboration
+## Archived here
 
-- `GPT_MULTI_WINDOW_SYSTEM_V2.md` — shared rules for the four GPT routing contexts.
-- `GPT_WINDOW_RUNTIME_PLAN_V1.md` — ACTIVE / STANDBY / phase and decision-gate runtime rules.
-- `gpt_windows/` — ready-to-copy initialization prompts for WINDOW_00–WINDOW_03.
+`archive/governance/` — the superseded governance versions this branch happened to carry
+(project system V1/V2, multi-window V2/V3, runtime plan V1). Non-authoritative.
 
-Window IDs are routing labels only. All windows share the same CURRENT_STATE and authority order.
+## Local copies of authority documents
 
-## Historical / unused material
-
-Clearly superseded Battle01 contracts, retired governance documents, old visual targets and superseded GPT window systems are stored on:
-
-`archive/legacy-unused`
-
-That branch is non-authoritative. Material there may only regain current authority if explicitly reaccepted through `docs/current/CURRENT_STATE.md` on `main`.
-
-## Rule of thumb
-
-When two sources disagree, follow the authority order in `FRONTLINE_PROJECT_CHARTER_V3.md`; do not restore an old rule merely because it once had a PASS/FROZEN label.
+`current/DECISION_LOG.md` and `current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md` also exist on this branch
+as working copies. They are **not** authority; main's versions win. `current/CURRENT_STATE.md` on
+this branch is deliberately reduced to a pointer at main's.
