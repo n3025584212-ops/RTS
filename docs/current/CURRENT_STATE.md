@@ -2,7 +2,7 @@
 
 STATUS=ACCEPTED_CURRENT_PRODUCT_STATE
 PROJECT=FRONTLINE
-STATE_VERSION=V42
+STATE_VERSION=V43
 SOURCE_OF_TRUTH=THIS_FILE_FOR_CONTROL_AND_ROUTING
 CONTROL_SYNC_DATE=2026-09-20
 USER_DIRECTION_OVERRIDE=STOP_TEST_SCENE_VISUAL_ITERATION_AND_RESUME_HIGH_FIDELITY_PRODUCT_SLICE
@@ -17,11 +17,12 @@ GPT_FOUR_WINDOW_SYSTEM=docs/GPT_FOUR_WINDOW_SYSTEM_V5.md
 ACTIVE_ISSUE=#41
 ACTIVE_BRANCH=product/frontline-high-fidelity-slice-v1
 ACTIVE_BRANCH_BASE=dev/river-town-local-high-fidelity-v1@dfc4b64e9bbc2a1c8f5d1032e92912195c575f07
-ACTIVE_BRANCH_VERIFIED_HEAD=49318e7
+ACTIVE_BRANCH_VERIFIED_HEAD=7a4d688
 ACTIVE_PRODUCT_SCENE=res://scenes/production/RiverTownVisualSlice.tscn
 ACTIVE_TASK_ARTIFACT=docs/current/HIGH_FIDELITY_PRODUCT_SLICE_V1.md
 PRODUCT_PRODUCTION_RESUME=YES_HIGH_FIDELITY_SLICE_ONLY
 GATE_B_EVIDENCE=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_b_20260920/EVIDENCE_RECORD.md
+GATE_D2_EVIDENCE=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_d2_20260920/EVIDENCE_RECORD.md
 
 ## Learning route status
 
@@ -69,29 +70,31 @@ The fresh River Town baseline reproduction gate is closed. CI success proves the
 
 ## Immediate execution
 
-CURRENT_GATE=MINIMUM_COMBAT_CHAIN (Gate D1)
+CURRENT_GATE=MULTI_FORMATION_SELECTION (Gate D2)
 GATE_B_STATUS=GATE_B_PASS
 GATE_C_STATUS=CLOSED (PASS_WITH_ONE_CONDITION; condition closed by product commit 394460d)
 GATE_D1_STATUS=GATE_D1_PASS (product::docs/current/GATE_D1_INDEPENDENT_AUDIT_V1.md, 49318e7)
-CURRENT_TASK=INTEGRATE_VALIDATED_CONTROLLABLE_ARMORED_UNIT_CHAIN_INTO_RIVER_TOWN
+GATE_D2_STATUS=EVIDENCE_COMPLETE_PENDING_AUDIT (product::docs/visual_baseline/gate_d2_20260920/EVIDENCE_RECORD.md, 9d026ed)
+CURRENT_TASK=INTEGRATE_VALIDATED_MULTI_FORMATION_SELECTION_INTO_RIVER_TOWN
 
 Execution contract:
 1. Keep `res://scenes/production/RiverTownVisualSlice.tscn` as the mother scene.
 2. Transfer only validated gameplay/runtime logic into River Town.
 3. Preserve the high-fidelity terrain, architecture, vegetation, PBR materials, lighting, atmosphere, water and camera pipeline.
 4. Produce a fresh Godot 4.7.1 / Forward+ / 1920x1080 runtime capture with a controllable armored unit visibly operating inside River Town.
+4b. Gate D2: the capture must show platoon selection (single click and drag box) and a group order operating on several real vehicles at once.
 5. Compare the fresh runtime against the retained River Town visual floor before advancing.
 
 ## Four-window allocation
 
 WINDOW_00_STATUS=ACTIVE_CONTROL
 WINDOW_01_STATUS=HOLD_LEARNING_EVIDENCE_ONLY
-WINDOW_02_STATUS=ACTIVE_MINIMUM_ARMORED_UNIT_INTEGRATION
-WINDOW_03_STATUS=HOLD_PENDING_HIGH_FIDELITY_RUNTIME
+WINDOW_02_STATUS=ACTIVE_MULTI_FORMATION_SELECTION
+WINDOW_03_STATUS=HOLD_PENDING_GATE_D2_AUDIT
 
 ## Next route
 
-NEXT=WINDOW_00_SELECT_GATE_D2 (multi-formation selection) OR HUMAN_PLAYTEST_CHECKPOINT (both pre-approved candidates; user to pick)
+NEXT=WINDOW_03_INDEPENDENT_AUDIT_OF_GATE_D2 (evidence complete at 7a4d688, CI 35488489417 success) THEN user selects: human playtest checkpoint OR Gate D3 (RED force and victory conditions)
 NOTE=D-gate evidence policy going forward: archive raw run log alongside JSON; driver output paths migrate to user:// (D1 audit non-blocking suggestions)
 
 TECHNICAL_PASS_NOT_PRODUCT_PASS=YES

@@ -73,6 +73,38 @@ demonstrated in fresh media with matrix-consistent damage and ammo accounting; d
 state visible; no regression below the River Town floor; independent audit (Gate C protocol)
 before formal closure.
 
+## Gate D2 — MULTI_FORMATION_SELECTION
+
+STATUS=GATE_D2_EVIDENCE_COMPLETE_PENDING_AUDIT
+EVIDENCE_RECORD=product/frontline-high-fidelity-slice-v1::docs/visual_baseline/gate_d2_20260920/EVIDENCE_RECORD.md
+INTEGRATION_COMMIT=product/9d026ed
+EVIDENCE_COMMIT=product/7a4d688 (reproducibility + same-renderer no-regression evidence)
+CI_RUN=35488489417 (Gate D2 integration push, success 4m18s)
+OPENED_BY=main (this commit, per the user directive "你接着做吧" continuing the "D1" line opened 2026-09-20)
+
+Contract: extend the Gate B/D1 armoured chain from one controllable vehicle to a platoon inside the
+River Town mother scene — single-click select, drag-box multi select with visible marquee, and a group
+move order that routes every selected vehicle through the validated `BattleFormation` selection/move
+chain (`set_selected` / `issue_move` -> `NavigationService`). No parallel movement code, no proxy
+geometry, fresh 1920x1080 media, committed evidence driver.
+
+PASS requirements:
+1. import/runtime completes without fatal error (CI run recorded);
+2. the platoon is real product geometry (more instances of the existing `abrams.glb`, no proxies);
+3. click select and drag-box select are demonstrated in fresh media and counted in the evidence JSON;
+4. a group order moves every selected vehicle through the validated chain (per-vehicle order-issued
+   evidence, all accepted) and the settled formation preserves lateral order and frontage per the
+   declared algorithm invariant `frontage = max(declared pitch, pre-order frontage)`;
+5. no regression below the River Town floor beyond the newly required vehicles and their feedback;
+6. independent audit (Gate C protocol) before formal closure.
+
+Note: at the time of opening, the implementation and evidence already existed as uncommitted work in the
+product worktree (a Window 02 partial run). This contract records the gate retrospectively for the
+completed, re-derived and re-captured integration; the previously produced partial captures were
+superseded because the platoon spawned with interpenetrating vehicles, the framing could not read the
+platoon, and the group order scrambled the formation (all three defects are documented in the evidence
+record).
+
 ## Gate C — Independent audit
 
 STATUS=CLOSED
