@@ -3,7 +3,7 @@
 STATUS=ACTIVE_APPEND_ONLY_HISTORY
 PROJECT=FRONTLINE
 CURRENT_STATE=docs/current/CURRENT_STATE.md
-GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V1.md
+GOVERNING_SYSTEM=docs/FRONTLINE_PROJECT_SYSTEM_V3.md
 
 This file records material product/project decisions after they are made.
 It is not the current roadmap and does not override CURRENT_STATE.

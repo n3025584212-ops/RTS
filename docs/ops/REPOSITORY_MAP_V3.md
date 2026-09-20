@@ -6,7 +6,7 @@ PROJECT=FRONTLINE
 
 ## Single entry
 
-`README.md -> START_HERE.md -> docs/current/CURRENT_STATE.md -> docs/current/ACTIVE_WORK.md -> docs/current/WINDOW_RECOVERY_INDEX.md`
+`README.md -> START_HERE.md -> docs/current/CURRENT_STATE.md -> docs/current/ACTIVE_WORK.md -> docs/current/VISUAL_QUALITY_BASELINE.md`
 
 ## Authority
 

@@ -50,14 +50,14 @@ There is no required handoff chain, no window-to-window receipt protocol, and no
 
 Design, engineering, art, audio, AI, UX and QA are CAPABILITIES used when a task needs them. They are not separate project authorities.
 
-For practical multi-chat work, FRONTLINE may use four stable GPT conversation/routing labels under `docs/GPT_MULTI_WINDOW_SYSTEM_V2.md`:
+For practical multi-chat work, FRONTLINE may use four stable GPT conversation/routing labels under `docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`:
 
 - WINDOW_00 = Project Control / Integration
 - WINDOW_01 = Design / Experience
 - WINDOW_02 = Development
 - WINDOW_03 = Review / Operations
 
-Activation rules live in `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md`.
+Activation rules live in `docs/GPT_WINDOW_RUNTIME_PLAN_V2.md`.
 
 These GPT window labels do **not** restore the retired permanent-window operating model. Every GPT window must use the same `docs/current/CURRENT_STATE.md`, current Active Issue and authority order.
 
@@ -222,7 +222,7 @@ Active authority should normally fit in:
 - `docs/current/CURRENT_STATE.md`
 - active GitHub issue/PR for the current task
 
-`docs/GPT_MULTI_WINDOW_SYSTEM_V2.md`, `docs/GPT_WINDOW_RUNTIME_PLAN_V1.md` and `docs/gpt_windows/` define collaboration/routing behavior but do not create additional project truth.
+`docs/GPT_FOUR_WINDOW_SYSTEM_V5.md`, `docs/GPT_WINDOW_RUNTIME_PLAN_V2.md` and `docs/gpt_windows/` define collaboration/routing behavior but do not create additional project truth.
 
 Older contracts, audits and superseded window systems remain available through Git history or `archive/legacy-unused` but are historical unless CURRENT_STATE explicitly reaccepts them.
 Do not create documents solely to acknowledge other documents.

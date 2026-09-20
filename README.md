@@ -2,51 +2,35 @@
 
 现代战争题材、Formation / Platoon 级指挥导向的实时战术游戏项目。
 
-## 当前状态入口
+## 当前状态入口（本文件不写状态）
+
+状态只有一个来源：`docs/current/CURRENT_STATE.md`。
+
+恢复顺序：
 
 1. `START_HERE.md`
-2. `docs/current/CURRENT_STATE.md`
-3. `docs/current/ACTIVE_WORK.md`
-4. `docs/current/VISUAL_QUALITY_BASELINE.md`
-5. `docs/current/WINDOW_RECOVERY_INDEX.md`
+2. `docs/current/CURRENT_STATE.md` — 唯一控制状态（stage / gate / window / head）
+3. `docs/current/ACTIVE_WORK.md` — 长期约束与被停路线
+4. `docs/current/VISUAL_QUALITY_BASELINE.md` — 视觉基线与保留实机参考
 
-## 当前任务
-
-Active Sprint：`LEARNING_SPRINT_01_END_TO_END_RTS_PRODUCTION`
-
-Current gate：`SPRINT01_TRANSPORT_TERRAIN_INTEGRATION_FIX`
-
-当前窗口：
-- `00 = ACTIVE_CONTROL`
-- `01 = HOLD_STAGE4_COMPLETE`
-- `02 = ACTIVE_TRANSPORT_TERRAIN_INTEGRATION_FIX`
-- `03 = HOLD_PENDING_TRANSPORT_TERRAIN_RERUN`
-
-当前唯一阻断：
-`FAILED_BOUNDARY=PLAYER_VISIBLE_TRANSPORT_TERRAIN_INTEGRATION`
-
-Sprint01 的截图/视频是学习与 runtime 证据，不等于 FRONTLINE 当前最高视觉质量。
+本文件、`START_HERE.md`、`ACTIVE_WORK.md` 都只做指向，不重复状态。
+任何文件若声称了 `CURRENT_STATE.md` 里没有的当前状态（阶段 / gate / window / head），
+按过期处理并在回复里报告，而不是照抄。
 
 ## 视觉质量基线
 
-正式产品视觉目标仍是：
+正式产品视觉目标：
 `docs/design/FRONTLINE_GOLDEN_FRAME_V1_SPEC.md`
 
-视觉连续性与保留高质量实机参考见：
+视觉连续性与保留高质量实机参考：
 `docs/current/VISUAL_QUALITY_BASELINE.md`
 
-保留参考：
-- River Town local high fidelity；
-- Golden Scene V1；
-- Reference Region asset/tool pool。
+保留参考（不恢复成旧产品方向，但也不会被视为"丢失"）：
+River Town local high fidelity / Golden Scene V1 / Reference Region asset-tool pool。
 
-它们不恢复成旧产品方向，但也不会再因为当前学习场较新而被视为“丢失”。
+## 文档地图
 
-## 下一步
+`docs/README.md` — 目录地图与当前权威清单。
 
-`02 transport-terrain fresh runtime -> 03 visual re-audit -> 00 Sprint01 transfer decision`
-
-Sprint01 通过后，启动第一个重启后的正式 FRONTLINE 产品局部：采用 Sprint 验证的方法，同时从一开始以 Golden Frame / retained high-quality engine references 为视觉交付边界。
-
-`SPRINT_PASS=NO`
-`PRODUCT_PRODUCTION_RESUME=NO`
+被取代的治理文档在 `docs/archive/governance/`（附取代链条索引 `ARCHIVE_INDEX.md`）；
+一次性历史决策在 `docs/current/history/`。两者都非权威，不要用它们判断当前状态。

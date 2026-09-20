@@ -25,9 +25,9 @@ MODE=UNIFIED_FRONTLINE_PROJECT_SESSION
 从 GitHub main 读取：
 
 1. docs/FRONTLINE_PROJECT_CHARTER_V3.md
-2. docs/FRONTLINE_PROJECT_SYSTEM_V1.md
-3. docs/GPT_MULTI_WINDOW_SYSTEM_V2.md
-4. docs/GPT_WINDOW_RUNTIME_PLAN_V1.md
+2. docs/FRONTLINE_PROJECT_SYSTEM_V3.md
+3. docs/GPT_FOUR_WINDOW_SYSTEM_V5.md
+4. docs/GPT_WINDOW_RUNTIME_PLAN_V2.md
 5. docs/current/CURRENT_STATE.md
 6. CURRENT_STATE 指向的 Active Issue
 7. 当前待审查的 PR / branch / commit / tests / runtime evidence
