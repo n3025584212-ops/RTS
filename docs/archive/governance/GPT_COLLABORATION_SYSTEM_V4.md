@@ -1,5 +1,7 @@
 # FRONTLINE GPT COLLABORATION SYSTEM V4
 
+ARCHIVED=2026-09-20 — non-authoritative, superseded; chains in docs/archive/governance/ARCHIVE_INDEX.md
+
 STATUS=ACTIVE
 PROJECT=FRONTLINE
 SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md

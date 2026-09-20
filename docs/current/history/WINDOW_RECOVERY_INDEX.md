@@ -1,5 +1,7 @@
 # FRONTLINE — Window Recovery Index
 
+ARCHIVED=2026-09-20 — non-authoritative, historical decision record; chains in docs/archive/governance/ARCHIVE_INDEX.md
+
 STATUS=ACTIVE_RECOVERY_INDEX
 PROJECT=FRONTLINE
 CONTROL_AUTHORITY=main

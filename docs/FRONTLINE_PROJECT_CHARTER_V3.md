@@ -8,7 +8,7 @@ SOURCE_OF_TRUTH=docs/current/CURRENT_STATE.md
 ENGINE_BASELINE=GODOT_4_7_1
 
 SUPERSEDES=
-- docs/FRONTLINE_PROJECT_CHARTER_V2.md
+- FRONTLINE_PROJECT_CHARTER_V2 (superseded; not retained in this repository)
 - fixed FRONTLINE numbered-window authority model
 
 LEGACY_PERMANENT_NUMBERED_WINDOW_SYSTEM=ABOLISHED

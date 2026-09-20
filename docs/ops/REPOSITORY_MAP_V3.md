@@ -1,7 +1,7 @@
 # FRONTLINE Repository Map V3
 
 STATUS=CURRENT_NAVIGATION
-DATE=2026-09-17
+DATE=2026-09-20 (navigation revised; structure unchanged since V3, 2026-09-17)
 PROJECT=FRONTLINE
 
 ## Single entry
@@ -11,61 +11,60 @@ PROJECT=FRONTLINE
 ## Authority
 
 ### main
-Control/routing/product-resume authority.
+
+Control/routing/product-resume authority. The only place where the current stage, gate, window
+routing and verified branch head are stated: `docs/current/CURRENT_STATE.md`.
+
+### product/frontline-high-fidelity-slice-v1
+
+The product slice. Carries gate evidence under `docs/visual_baseline/gate_*/` and the independent
+audit reports under `docs/current/GATE_*_INDEPENDENT_AUDIT_V1.md`. It holds no state authority —
+its copy of `docs/current/CURRENT_STATE.md` is deliberately a pointer at main.
 
 ### learning/sprint01-end-to-end-rts-production
-Sprint 01 evidence, implementation, runtime artifacts and audits.
+
+Sprint 01 learning evidence, implementation, runtime artifacts and audits. Stopped as an active
+product route; see `docs/current/ACTIVE_WORK.md` for the standing rule.
 
 ### Reference / Hold
+
 Historical assets/tools/evidence only; no current task authority.
 
 ### recycle tags
+
 23 reviewed stale branch heads preserved under `recycle/2026-09-16/...`; not current authority.
 
-## Current Sprint gate
+## Current state
 
-`SPRINT01_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT`
-
-Latest implementation/runtime source:
-`b0fe6d8b1de747606138a9ce1b28b3541b8c464a`
-
-Latest handoff:
-`docs/learning/sprint01/HANDOFF_02_REAL_ENOUGH_WORLD_DELIVERY_TO_03_V1.md`
-
-Latest audit task:
-`docs/audit/TASK_03_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT_V1.md`
-
-Fresh artifact:
-`Actions run 35185311167 / artifact 10481469643`
-
-The Actions run is red only at the final evidence branch writeback; runtime/capture/artifact upload succeeded.
-
-## Current windows
-
-- `00 CONTROL` — ACTIVE_CONTROL
-- `01 EVIDENCE` — HOLD_STAGE4_COMPLETE
-- `02 REPRODUCTION` — HOLD_RUNTIME_CAPTURE_COMPLETE
-- `03 AUDIT` — ACTIVE_REAL_ENOUGH_WORLD_DELIVERY_REAUDIT
-
-03 now decides only the latest `REAL_ENOUGH_WORLD_DELIVERY` and `CAPTURE_STATE_ALIGNMENT` from actual fresh media, while checking for regressions in already-passed causal/readability fields.
+Deliberately not recorded here. `docs/current/CURRENT_STATE.md` is the only document that states
+the current stage, gate, window routing and verified branch head. This map describes structure,
+not status — if you need status, read the control state.
 
 ## Key paths
 
-- `docs/current/` — current control state
-- `docs/learning/sprint01/` — learning/reproduction tasks, results, handoffs
-- `docs/audit/` — independent audits/tasks
-- `scenes/learning/sprint01/` — isolated Sprint scenes
-- `scripts/learning/sprint01/` — isolated Sprint scripts
-- `artifacts/learning/sprint01/` — branch-persisted evidence; always check Actions artifact identity for the newest run when a writeback race is recorded
+- `docs/current/` — control state, decision history, visual baseline, gate contract
+- `docs/design/` — the formal visual target specification
+- `docs/audit/` — Window 03 audit protocol and audit tasks
+- `docs/ops/` — repository operations: branch recycling, archive manifests, this map
+- `docs/archive/governance/` — superseded governance versions plus `ARCHIVE_INDEX.md`
+- `scenes/production/RiverTownVisualSlice.tscn` — the product mother scene
+- `scripts/production/` — product scripts
+- `tools/` — capture drivers and checkers (`gate_*_capture.gd`, `compare_render_delta.py`,
+  `check_doc_authority.py`)
 
 ## Branch hygiene
 
 Active branches:
-- `main`
-- `learning/sprint01-end-to-end-rts-production`
 
-Reference/Hold branches remain non-authoritative. Recycled branch heads remain recoverable through tags.
+- `main`
+- `product/frontline-high-fidelity-slice-v1`
+
+Reference/Hold branches remain non-authoritative. Recycled branch heads remain recoverable through
+tags. Superseded governance documents are **archived** under `docs/archive/governance/` rather than
+deleted, so a supersession can be traced; `tools/check_doc_authority.py` fails if two documents of
+the same topic family both claim to be current.
 
 ## Handoff completeness
 
-A completion must leave an immutable commit SHA or Actions run/artifact identity, named artifact, formal status and explicit next route.
+A completion must leave an immutable commit SHA or Actions run/artifact identity, named artifact,
+formal status and explicit next route.
