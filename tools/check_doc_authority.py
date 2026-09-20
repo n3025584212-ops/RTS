@@ -25,6 +25,10 @@ Usage
 -----
     python tools/check_doc_authority.py [--root <repo root>]
 
+--root wants a real filesystem path. From Git Bash / MSYS on Windows, `/d/Agent/...`
+is not understood by Python and resolves to `D:\d\Agent\...`; pass `D:/Agent/...`
+or a relative path instead.
+
 Exit code 0 = clean, 1 = findings printed.
 """
 
