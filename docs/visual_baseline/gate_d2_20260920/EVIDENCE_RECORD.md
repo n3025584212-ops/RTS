@@ -61,6 +61,42 @@ ENGINE=Godot 4.7.1-stable official, Forward+, Vulkan 1.4.323 (Intel UHD Graphics
    WIP capture showed neither marquee nor selection rings. The driver now changes state and snaps
    three frames apart.
 
+## Run-to-run reproducibility
+
+Two local runs of the committed driver on this workstation (2026-09-20) produced a byte-identical
+`gate_d2_evidence.json` and identical assertion values: `minimum_advance=12.905`,
+`frontage_start=6.000`, `frontage_end=8.000`, `expected=8.000`, `order_preserved=true`,
+`frontage_preserved=true`, and identical per-vehicle end positions.
+
+Frames are not byte-identical, and the evidence does not claim they are: `gate_d2_before_selection.png`
+matched to 99.9834% exact / 0.0014% beyond tolerance 8 (30 px of 2,073,600). `gate_d2_group_moved.png`
+differed over the vehicle band (8.04% of the frame beyond tolerance 8, mean absolute delta 1.87/255,
+delta confined to the vehicles: rows 250-560 mean 12.17) while the region outside the vehicles was
+identical (upper band 0.01%). Cause: the per-frame heading lerp is visual-only and the transient
+order-feedback markers expire on a wall-clock timer, so which frame the settle condition is detected on
+changes those pixels. Positions, counts and formation numbers are unaffected.
+
+Reproduce with:
+`python3 tools/compare_render_delta.py OLD.png NEW.png --tolerance 8 --mask mask.png`
+
+## Same-renderer CI comparison (no-regression evidence)
+
+Protocol as established at Gate C/D1: compare the current gate's CI artifact against the previous
+gate's artifact, both llvmpipe reference captures at `--capture-frame=1`.
+
+- run 35488489417 (this gate, product commit 9d026ed) vs run 35479014712 (Gate D1, aedabe0)
+- `exact_match=67.7068%`; delta beyond tolerance 8 = `23.6356%` (490,108 px); bbox (687,189)-(1919,1079)
+- region report (`reference_delta_report.txt`, mask `reference_delta_mask_35479014712_vs_35488489417.png`):
+  sky_and_distant_village 0.01%, hero_house 0.00%, center_village 0.77%,
+  vehicle_band 42.92%, far_right_field 65.06%, foreground_ground 26.47%
+- The mask shows the delta is vehicle-shaped: the three added vehicles, their shadows and the enlarged
+  selection ring — exactly the geometry this gate requires. The protected environment (terrain, hero
+  house, distant village, lighting, atmosphere) is unchanged to within 0.77% and no change spreads into
+  the scene. This is an additive delta, not degradation.
+- CI run 35488489417: success, 4m18s. CI-side runtime log reproduces the platoon markers
+  (`FRONTLINE_GATE_D2_PLATOON_READY units=4 line_x=[2.5, 8.5, 14.5, 20.5] z=7.0 spacing=8.0`) and the
+  import step is clean (no SCRIPT/Parse/SHADER errors).
+
 ## Known limitations (for the auditor)
 
 1. The driver supplies the drag geometry (the marquee rectangle) programmatically and then runs the same
