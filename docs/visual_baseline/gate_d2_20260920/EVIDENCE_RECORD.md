@@ -127,8 +127,6 @@ foreground_ground 0.00%, center_village 5.30%, vehicle_band 7.91%, far_right_fie
 `reference_delta_mask_r2_35479014712_vs_35492164998.png`; CI runtime log archived as
 `ci_runtime_log_r2_35492164998.log`). The delta is entirely the added vehicles and their shadows
 in the field they now occupy; the protected environment is pixel-identical (0.00%).
-north road instead of a row beside the street), and the revision-2 CI comparison is recorded in
-`reference_delta_report.txt` after the revision-2 push.
 
 ## Defects found and fixed across this gate (worth auditing)
 

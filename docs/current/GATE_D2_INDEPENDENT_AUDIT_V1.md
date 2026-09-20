@@ -190,3 +190,117 @@ playtest checkpoint; (2) fold the mislabeled `spacing=` diagnostic and the
 missing `box_selected_count` key into that same follow-up. CI success remains
 technical reproduction, not visual acceptance — the frames' hostile clipping
 makes a human eyeball pass on the next gate's media mandatory.
+
+---
+
+# REVISION 2 — INDEPENDENT RE-VERIFICATION (2026-09-20, same audit window)
+
+STATUS=PASS
+REVISION2_VERDICT=PASS — CONDITION-1 CLOSED, CONDITION-2 CLOSED
+REVISION2_AUDITED_COMMIT=product/0225e11 (integration + evidence) / product/9a228dc (this report, revision-1 text)
+REVISION2_CI_RUN=35492164998 (success, 7m07s)
+
+Everything above this divider is the revision-1 record and is kept unchanged
+for the audit trail. What follows is an independent adversarial re-verification
+of revision 2 (commit 0225e11), performed from the code and evidence alone. No
+claim below is taken from the revision-2 record's own prose; every number was
+re-derived or re-measured.
+
+## CONDITION-1 (evidence record accuracy) — CLOSED
+
+Re-derived geometry, not the record's word:
+
+- Deployment: the three added vehicles spawn at (6.0, -12.0), (14.0, -12.0),
+  (22.0, -12.0) (`river_town_armor_platoon.gd` PLATOON_LINE_X/PLATOON_LINE_Z,
+  confirmed by the four `FRONTLINE_GATE_B_ARMORED_UNIT_READY` world positions
+  and JSON start_positions). The D1 hostile is at (8.5, 3.0) yaw 150
+  (`river_town_visual_slice.gd:109`).
+- Footprints: hull 6.44 x 12.97 m (long axis Z; platoon vehicles yaw 170).
+  Added-vehicle z-extent is about [-18.5, -5.5] (hull) or [-18.95, -5.05]
+  (yawed-AABB worst case). Against the declared hostile footprint
+  (x 3.43..12.48, z -3.20..9.03) the z gap is 2.3 m; even reading the hostile
+  as the full yawed AABB of the same hull (z-max ~10.23) the gap stays
+  positive (~0.83 m). No x/z intersection with any added vehicle -> no spawn
+  overlap. At settle (z -19.375) the clearance only grows. No settled overlap.
+- Frames: all five committed frames opened and inspected. The red hostile sits
+  beside the Gate B Abrams only; the deployed row north of the road and the
+  settled row on the north road are fully separated from it. No clipping
+  anywhere.
+- The contradicted sentence is gone; known-limitation 2 now declares only the
+  pre-existing Gate B Abrams/hostile mesh-AABB proximity (unchanged from D1,
+  outside these conditions).
+
+## CONDITION-2 (fix or explicit acceptance) — CLOSED
+
+Fixed in the integration, not accepted. Path check re-derived: the Gate B
+Abrams' order path runs x = 2.5 -> -0.875, monotonically west of the hostile's
+declared x-min 3.43 for its whole length; the three added vehicles path
+z = -12.0 -> -19.375, entirely north of the hostile's z range. No vehicle's
+path crosses the hostile footprint.
+
+## Reproduction and re-derived numbers
+
+- Re-ran `tools/gate_d2_capture.gd` (Godot 4.7.1-stable, Forward+, Intel UHD,
+  output to user://, archived copies untouched): exit 0, 49 s. Evidence JSON
+  byte-identical to the committed one; run-log body line-for-line identical.
+- unit count 4; click 0->1; `box_selected_count` 4 (the new key is present);
+  4 x `accepted=true`.
+- Advances: unit 1 sqrt(3.375^2 + 26.375^2) = 26.590 (max); units 2-4
+  sqrt(1.125^2 + 7.375^2) = 7.460 (min, matches `minimum_advance_world`).
+- Frontage: start (22.0-2.5)/3 = 6.500; end (23.125-(-0.875))/3 = 8.000;
+  expected max(8.0, 6.5) = 8.000. The invariant is implemented in
+  `_formation_destinations` (`pitch = maxf(GROUP_SPACING_WORLD, mean_gap)`),
+  not just asserted.
+- Lateral order preserved (start x-order equals end x-order; no pair flips).
+- Navigation map: I re-derived the sim->world mapping from the log
+  (world = sim/10 - 25, i.e. 500x500 sim = +-25 m). Settled |x| <= 23.125,
+  |z| = 19.375 < 24 — every vehicle inside; the driver now asserts this
+  (`_formation_settled`, NAV_MAP_LIMIT_WORLD 24).
+- Mouse wrapper: `FRONTLINE_GATE_D2_GROUP_ORDER_AT_WORLD requested=(11.0, 0.0,
+  -19.5)` -> achieved base (11.0, 0.0305, -19.4645), 0.036 m apart — the
+  screen->ground raycast is now exercised, closing the revision-1 code-review
+  note.
+
+## Same-renderer CI delta (revision 2)
+
+- Downloaded the artifacts of run 35492164998 (rev2) and 35479014712 (Gate D1),
+  verified both are reference-view `--capture-frame=1` llvmpipe captures
+  (runtime_metrics.json), and re-ran `tools/compare_render_delta.py`
+  (tolerance 8): exact_match=93.6453%, delta=4.5635% (94,628 px),
+  max_channel_delta=177, bbox (858,249)-(1919,569). Regions:
+  sky_and_distant_village 0.00%, hero_house 0.00%, foreground_ground 0.00%,
+  center_village 5.30%, vehicle_band 7.91%, far_right_field 32.05%.
+- My regenerated mask is vehicle-shaped: three hull + exhaust-smoke blobs at
+  the redeployed row's position in the reference view; protected regions
+  clean.
+- Revision 2's delta (4.5635%) is indeed far smaller than revision 1's
+  23.6356% — the row moved away from the reference camera. Claim confirmed.
+
+## Revision-2 findings (non-blocking)
+
+1. The EVIDENCE_RECORD says the revision-2 CI comparison "is recorded in
+   reference_delta_report.txt after the revision-2 push", but commit 0225e11
+   did not touch that file: the committed report and mask filename still hold
+   the revision-1 comparison (67.7068% / 23.6356% vs run 35488489417). The
+   revision-2 delta numbers above exist only from my independent re-run.
+   Commit the rev2 report/mask (or correct the sentence) in the next evidence
+   commit.
+2. The platoon script declares the hostile footprint as 9.05 x 12.23 m
+   (x 3.43..12.48, z -3.20..9.03), tighter than the yawed AABB of a
+   6.44 x 12.97 hull at 150 degrees (~12.06 x 14.45). My closure check used
+   both readings and the vehicles clear even the larger one, so closure does
+   not depend on the definition — but the constant's comment should state its
+   provenance.
+3. `GATE_D2_SETTLE_WATCH` never appears in the log: the watchdog prints every
+   120 frames of stage 5 and the formation settles inside the first window.
+   Working as designed; noted so the absence is not misread as missing
+   hardening.
+
+## Revision-2 final verdict
+
+PASS. Both conditions are genuinely closed by product commit 0225e11: the
+platoon/hostile hull overlap no longer exists at spawn or settle, no path
+crosses the hostile, and the evidence record no longer contradicts the frames.
+The gate mechanics numbers reproduce exactly, and the same-renderer delta
+remains vehicle-shaped with protected regions clean at less than one fifth of
+the revision-1 delta. Gate D2 can be routed as PASS.
