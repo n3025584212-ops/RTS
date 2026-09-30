@@ -1,0 +1,33 @@
+name: DKQKAR S4 26D experiment
+
+on:
+  push:
+    branches:
+      - exp/dkqkar-s4-26d-run-20260930
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy pandas scikit-learn openpyxl
+      - name: Run comparison
+        working-directory: experiments/s4_force_26d
+        run: python run_compare.py | tee results_console.txt
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dkqkar-s4-26d-results
+          path: |
+            experiments/s4_force_26d/results/
+            experiments/s4_force_26d/results_console.txt
+          retention-days: 7
