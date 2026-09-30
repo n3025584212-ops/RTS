@@ -1,0 +1,26 @@
+name: TEMP baseline 25D vs 26D
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/temp_baselines_26d.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: exp/dkqkar-s4-26d-run-20260930
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --upgrade pip numpy pandas scikit-learn openpyxl xgboost
+      - name: Run baseline comparison
+        working-directory: experiments/s4_force_26d
+        run: python run_all_baselines.py
