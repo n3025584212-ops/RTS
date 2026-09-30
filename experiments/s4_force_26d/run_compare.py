@@ -215,3 +215,9 @@ with (OUT/"comparison_summary.json").open("w",encoding="utf-8") as f:
     json.dump(summary,f,ensure_ascii=False,indent=2)
 
 print(json.dumps(summary,ensure_ascii=False,indent=2))
+
+
+print("===FOLD_METRICS===")
+print(pd.DataFrame(all_fold_rows).to_csv(index=False))
+print("===SELECTED_QUANTUM_FEATURES===")
+print(pd.DataFrame(all_selected).to_csv(index=False))
